@@ -1,11 +1,11 @@
-### qt
+### Qt
 
 Python 2 and 3 compatibility wrapper around all Qt bindings - PySide, PySide2, PyQt4 and PyQt5.
 
 ### Install
 
 ```bash
-$ pip install qt
+$ pip install Qt
 ```
 
 ### Usage
