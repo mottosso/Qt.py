@@ -2,11 +2,19 @@
 
 Python 2 and 3 compatibility wrapper around all Qt bindings - PySide, PySide2, PyQt4 and PyQt5.
 
+<br>
+<br>
+<br>
+
 ### Install
 
 ```bash
 $ pip install Qt
 ```
+
+<br>
+<br>
+<br>
 
 ### Usage
 
@@ -19,6 +27,10 @@ button = QtWidgets.QPushButton("Hello World")
 button.show()
 app.exec_()
 ```
+
+<br>
+<br>
+<br>
 
 ### How it works
 
