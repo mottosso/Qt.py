@@ -1,0 +1,6 @@
+setup.py
+Qt.egg-info/PKG-INFO
+Qt.egg-info/SOURCES.txt
+Qt.egg-info/dependency_links.txt
+Qt.egg-info/not-zip-safe
+Qt.egg-info/top_level.txt
