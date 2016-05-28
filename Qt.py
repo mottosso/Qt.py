@@ -4,6 +4,8 @@ Qt relative the running version of Python.
 
 import sys
 
+QT_BINDING_LOAD_ORDER = ['PySide2', 'PyQt5', 'PySide', 'PyQt4']
+
 
 def load_pyqt5():
     """Load PyQt5 for Qt5 bindings"""
@@ -43,21 +45,23 @@ def load_pyside():
     PySide.__binding__ = "PySide"
 
 
-def init():
-    """Support Qt 4 and 5, PyQt and PySide"""
+def load_wrapper(function_name):
+    """Load the function given and handle error messages"""
     try:
-        load_pyside2()
+        exec function_name
+        return True
     except ImportError:
-        try:
-            load_pyqt5()
-        except ImportError:
-            try:
-                load_pyside()
-            except ImportError:
-                try:
-                    load_pyqt4()
-                except:
-                    sys.stderr.write("Qt: Could not find "
-                                     "appropriate bindings for Qt\n")
+        return False
+    except NameError:
+        sys.stderr.write('Qt: Function name, ' + function_name +
+                         ' doesn\'t exist.\n')
+        return False
 
-init()
+
+loaded = False
+for binding in QT_BINDING_LOAD_ORDER:
+    if not loaded:
+        function_name = 'load_' + binding.lower() + '()'
+        loaded = load_wrapper(function_name)
+if not loaded:
+    sys.stderr.write("Qt: Could not find appropriate bindings for Qt\n")
