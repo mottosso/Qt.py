@@ -1,6 +1,6 @@
 from setuptools import setup
 
-version = "0.1"
+version = "0.1.0"
 
 
 classifiers = [
@@ -28,6 +28,6 @@ setup(
     url="https://github.com/mottosso/Qt",
     license="MIT",
     zip_safe=False,
-    py_modules=["iscompatible"],
+    py_modules=["Qt"],
     classifiers=classifiers,
 )
