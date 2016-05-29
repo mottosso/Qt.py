@@ -75,7 +75,13 @@ def _pyside():
 
 
 def _init():
-    # Try loading each binding in turn
+    """Try loading each binding in turn
+
+    Please note: the entire Qt module is replaced with this code:
+        sys.modules["Qt"] = binding()
+    This means no functions or variables can be called after this has
+    executed.
+    """
     for binding in (_pyside2,
                     _pyqt5,
                     _pyside,
