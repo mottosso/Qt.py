@@ -1,63 +1,92 @@
-"""Importing this file means importing the most desireable bindings for
-Qt relative the running version of Python.
+"""Map all bindings to PySide2
+
+This module replaces itself with the most desirable binding.
+
+Resolution order:
+    - PySide2
+    - PyQt5
+    - PySide
+    - PyQt4
+
+Usage:
+    >>> import sys
+    >>> from Qt import QtWidgets
+    >>> app = QtWidgets.QApplication(sys.argv)
+    >>> button = QtWidgets.QPushButton("Hello World")
+    >>> button.show()
+    >>> app.exec_()
+
 """
 
 import sys
 
 
-def load_pyqt5():
-    """Load PyQt5 for Qt5 bindings"""
+def _pyqt5():
     import PyQt5.Qt
-    sys.modules["Qt"] = PyQt5
+
+    # Remap
     PyQt5.QtCore.Signal = PyQt5.QtCore.pyqtSignal
     PyQt5.QtCore.Slot = PyQt5.QtCore.pyqtSlot
     PyQt5.QtCore.Property = PyQt5.QtCore.pyqtProperty
+
+    # Add
     PyQt5.__binding__ = "PyQt5"
 
+    return PyQt5
 
-def load_pyqt4():
-    """Load PyQt4 for Qt4 bindings"""
+
+def _pyqt4():
     import PyQt4.Qt
-    sys.modules["Qt"] = PyQt4
+
+    # Remap
     PyQt4.QtWidgets = PyQt4.QtGui
+
     PyQt4.QtCore.Signal = PyQt4.QtCore.pyqtSignal
     PyQt4.QtCore.Slot = PyQt4.QtCore.pyqtSlot
     PyQt4.QtCore.Property = PyQt4.QtCore.pyqtProperty
+
+    # Add
     PyQt4.__binding__ = "PyQt4"
 
+    return PyQt4
 
-def load_pyside2():
-    """Load PySide2 for Qt5 bindings"""
+
+def _pyside2():
     import PySide2
-    sys.modules["Qt"] = PySide2
+
+    # Add
     PySide2.__binding__ = "PySide2"
 
+    return PySide2
 
-def load_pyside():
-    """Load PySide for Qt4 bindings"""
+
+def _pyside():
     import PySide
-    from PySide import QtGui
-    PySide.QtWidgets = QtGui
+
+    # Remap
+    PySide.QtWidgets = PySide.QtGui
+
     PySide.QtCore.QSortFilterProxyModel = PySide.QtGui.QSortFilterProxyModel
-    sys.modules["Qt"] = PySide
+
+    # Add
     PySide.__binding__ = "PySide"
 
+    return PySide
 
-def init():
-    """Support Qt 4 and 5, PyQt and PySide"""
-    try:
-        load_pyside2()
-    except ImportError:
+
+def _init():
+    # Try loading each binding in turn
+    for binding in (_pyside2,
+                    _pyqt5,
+                    _pyside,
+                    _pyqt4):
         try:
-            load_pyqt5()
+            sys.modules["Qt"] = binding()
+            return
         except ImportError:
-            try:
-                load_pyside()
-            except ImportError:
-                try:
-                    load_pyqt4()
-                except:
-                    sys.stderr.write("Qt: Could not find "
-                                     "appropriate bindings for Qt\n")
+            continue
 
-init()
+    # If not binding were found, throw this error
+    raise ImportError("No Qt binding were found.")
+
+_init()
