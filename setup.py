@@ -20,7 +20,7 @@ classifiers = [
 
 
 setup(
-    name="Qt",
+    name="Qt.py",
     version=version,
     description="Python 2 & 3 compatibility wrapper around all Qt bindings - PySide, PySide2, PyQt4 and PyQt5.",
     author="Marcus Ottosson",
