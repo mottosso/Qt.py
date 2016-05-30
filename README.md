@@ -83,7 +83,7 @@ Qt.__qt_version__ == '5.6.1'
 Qt.__binding_version__ == '1.2.6'
 
 # Version of this project
-Qt.__version__ == '1.0.0'
+Qt.__wrapper_version__ == '1.0.0'
 ```
 
 **Branch binding-specific code**

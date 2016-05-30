@@ -1,6 +1,8 @@
+import sys
 from setuptools import setup
 
-version = "0.2.2"
+sys.modules["PySide2"] = None  # Mock module for successful import
+version = __import__("Qt").__wrapper_version__
 
 
 classifiers = [

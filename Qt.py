@@ -21,6 +21,8 @@ Usage:
 import os
 import sys
 
+__version__ = "0.2.3"
+
 
 def _pyqt5():
     import PyQt5.Qt
@@ -31,6 +33,7 @@ def _pyqt5():
     PyQt5.QtCore.Property = PyQt5.QtCore.pyqtProperty
 
     # Add
+    PyQt5.__wrapper_version__ = __version__
     PyQt5.__binding__ = "PyQt5"
     PyQt5.__binding_version__ = PyQt5.QtCore.PYQT_VERSION_STR
     PyQt5.__qt_version__ = PyQt5.QtCore.PYQT_VERSION_STR
@@ -49,6 +52,7 @@ def _pyqt4():
     PyQt4.QtCore.Property = PyQt4.QtCore.pyqtProperty
 
     # Add
+    PyQt4.__wrapper_version__ = __version__
     PyQt4.__binding__ = "PyQt4"
     PyQt4.__binding_version__ = PyQt4.QtCore.PYQT_VERSION_STR
     PyQt4.__qt_version__ = PyQt4.QtCore.PYQT_VERSION_STR
@@ -60,6 +64,7 @@ def _pyside2():
     import PySide2
 
     # Add
+    PySide2.__wrapper_version__ = __version__
     PySide2.__binding__ = "PySide2"
     PySide2.__binding_version__ = PySide2.__version__
     PySide2.__qt_version__ = PySide2.QtCore.qVersion()
@@ -77,6 +82,7 @@ def _pyside():
     PySide.QtCore.QSortFilterProxyModel = PySide.QtGui.QSortFilterProxyModel
 
     # Add
+    PySide.__wrapper_version__ = __version__
     PySide.__binding__ = "PySide"
     PySide.__binding_version__ = PySide.__version__
     PySide.__qt_version__ = PySide.QtCore.qVersion()
