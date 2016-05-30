@@ -18,6 +18,7 @@ Usage:
 
 """
 
+import os
 import sys
 
 
@@ -62,6 +63,7 @@ def _pyside2():
 
 def _pyside():
     import PySide
+    import PySide.QtGui
 
     # Remap
     PySide.QtWidgets = PySide.QtGui
@@ -79,18 +81,39 @@ def _init():
 
     Please note: the entire Qt module is replaced with this code:
         sys.modules["Qt"] = binding()
-    This means no functions or variables can be called after this has
-    executed.
+
+    This means no functions or variables can be called after
+    this has executed.
+
     """
-    for binding in (_pyside2,
-                    _pyqt5,
-                    _pyside,
-                    _pyqt4):
-        try:
-            sys.modules["Qt"] = binding()
-            return
-        except ImportError:
-            continue
+
+    preferred = os.getenv("QT_PREFERRED_BINDING")
+
+    if preferred:
+        available = {
+            "PySide2": _pyside2,
+            "PySide": _pyside,
+            "PyQt5": _pyqt5,
+            "PyQt4": _pyqt4
+        }
+
+        if preferred not in available:
+            raise ImportError("Preferred Qt binding \"%s\" "
+                              "not available" % preferred)
+
+        sys.modules["Qt"] = available[preferred]()
+        return
+
+    else:
+        for binding in (_pyside2,
+                        _pyqt5,
+                        _pyside,
+                        _pyqt4):
+            try:
+                sys.modules["Qt"] = binding()
+                return
+            except ImportError:
+                continue
 
     # If not binding were found, throw this error
     raise ImportError("No Qt binding were found.")
