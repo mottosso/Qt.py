@@ -32,8 +32,8 @@ def _pyqt5():
 
     # Add
     PyQt5.__binding__ = "PyQt5"
-    PyQt5.__bindingVersion__ = PyQt5.__version__
-    PyQt5.__qtVersion__ = PyQt5.__qt_version__
+    PyQt5.__binding_version__ = PyQt5.__version__
+    PyQt5.__qt_version__ = PyQt5.__qt_version__
 
     return PyQt5
 
@@ -59,8 +59,8 @@ def _pyside2():
 
     # Add
     PySide2.__binding__ = "PySide2"
-    PySide2.__bindingVersion__ = PySide2.__version__
-    PySide2.__qtVersion__ = PySide2.QtCore.qVersion()
+    PySide2.__binding_version__ = PySide2.__version__
+    PySide2.__qt_version__ = PySide2.QtCore.qVersion()
 
     return PySide2
 
@@ -76,8 +76,8 @@ def _pyside():
 
     # Add
     PySide.__binding__ = "PySide"
-    PySide.__bindingVersion__ = PySide.__version__
-    PySide.__qtVersion__ = PySide.QtCore.qVersion()
+    PySide.__binding_version__ = PySide.__version__
+    PySide.__qt_version__ = PySide.QtCore.qVersion()
 
     return PySide
 
