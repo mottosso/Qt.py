@@ -1,6 +1,6 @@
-### Qt
+### Qt.py
 
-Python 2 and 3 compatibility wrapper around all Qt bindings - PySide, PySide2, PyQt4 and PyQt5.
+Qt.py enables you to write software that dynamically chooses the most desireable bindings based on what's available, including PySide, PySide2, PyQt4 and PyQt5.
 
 <br>
 <br>
@@ -8,8 +8,10 @@ Python 2 and 3 compatibility wrapper around all Qt bindings - PySide, PySide2, P
 
 ### Install
 
+Qt.py is a single file and can either be downloaded as-is or installed via PyPI.
+
 ```bash
-$ pip install Qt
+$ pip install Qt.py
 ```
 
 <br>
@@ -17,6 +19,10 @@ $ pip install Qt
 <br>
 
 ### Usage
+
+Use Qt.py as you would use PyQt5 or PySide2.
+
+![image](https://cloud.githubusercontent.com/assets/2152766/15653248/b5ce298e-2683-11e6-8c0c-f041ecae203d.png)
 
 ```python
 import sys
@@ -34,17 +40,21 @@ app.exec_()
 
 ### How it works
 
-This wrapper provides a common interface around all available Python bindings for Qt by adhering to the interface of PySide2 and mapping everything that differs into that interface.
+Once you import Qt.py, Qt.py replaces itself with the most desirable binding on your platform, or throws an `ImportError` if none are available.
 
-**Example**
+For example.
+
+**Qt.py**
 
 ```python
-if binding == "PySide":
-    Qt.QtWidgets = Qt.QtGui
+import sys
+import PyQt5
+
+# Replace myself PyQt5
+sys.modules["Qt"] = PyQt5
 ```
 
-
-The idea is to map the parts that does not change - i.e. legacy code - to the parts that do - i.e. the latest version.
+Once imported, it is as your application was importing whichever binding was chosen and Qt.py never existed.
 
 <br>
 <br>
@@ -52,9 +62,7 @@ The idea is to map the parts that does not change - i.e. legacy code - to the pa
 
 ### Documentation
 
-All members of `Qt` stem directly from those available via PySide2.
-
-Here are a few additional members.
+All members of `Qt` stem directly from those available via PySide2, along with these additional members.
 
 ```python
 import Qt
@@ -72,33 +80,27 @@ Qt.__bindingVersion == (1, 2, 6)
 Qt.__version__ == "1.0.0"
 ```
 
-> Additional members follow mixedCase rather than standard PEP08 snake_case, to remain similar to Qt and the bindings themselves.
+**Branch binding-specific code**
 
-<br>
-<br>
-<br>
+Some bindings offer features not avaialble in others, you can use `__binding__` to capture those.
 
-### Contributing
+```python
+if "PySide" in Qt.__binding__:
+  do_pyside_stuff()
+```
 
-To contribute, fork this project and submit a pull-request.
+**Override preferred choice**
 
-Your code will be reviewed and merged once it:
+If your system has multiple choices, one of which is preferred, you can override the dynamic discovery mechanism with this environment variable.
 
-1. Does something useful
-1. Is up to par with surrounding code
+```bash
+# Windows
+$ set QT_PREFERRED_BINDING=PyQt5
+$ python -c "import Qt;print(Qt.__binding__)"
+PyQt5
 
-Development for this project takes place in individual forks. The parent project ever only contains a single branch, a branch containing the latest working version of the project.
-
-Bugreports must include:
-
-1. Description
-2. Expected results
-3. Short reproducible
- 
-Feature requests must include:
-
-1. Goal (what the feature aims to solve)
-2. Motivation (why *you* think this is necessary)
-3. Suggested implementation (psuedocode)
-
-Questions may also be submitted as issues.
+# Unix/OSX
+$ export QT_PREFERRED_BINDING=PyQt5
+$ python -c "import Qt;print(Qt.__binding__)"
+PyQt5
+```
