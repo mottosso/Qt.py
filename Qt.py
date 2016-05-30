@@ -32,8 +32,8 @@ def _pyqt5():
 
     # Add
     PyQt5.__binding__ = "PyQt5"
-    PyQt5.__binding_version__ = PyQt5.__version__
-    PyQt5.__qt_version__ = PyQt5.__qt_version__
+    PyQt5.__binding_version__ = PyQt5.QtCore.PYQT_VERSION_STR
+    PyQt5.__qt_version__ = PyQt5.QtCore.PYQT_VERSION_STR
 
     return PyQt5
 
@@ -50,6 +50,8 @@ def _pyqt4():
 
     # Add
     PyQt4.__binding__ = "PyQt4"
+    PyQt4.__binding_version__ = PyQt4.QtCore.PYQT_VERSION_STR
+    PyQt4.__qt_version__ = PyQt4.QtCore.PYQT_VERSION_STR
 
     return PyQt4
 
