@@ -62,6 +62,7 @@ def _pyside2():
 
 def _pyside():
     import PySide
+    import PySide.QtGui
 
     # Remap
     PySide.QtWidgets = PySide.QtGui
