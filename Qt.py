@@ -21,16 +21,19 @@ Usage:
 import os
 import sys
 
-__version__ = "0.2.4"
+__version__ = "0.2.5"
 
 
 def _pyqt5():
     import PyQt5.Qt
+    from PyQt5 import uic
 
     # Remap
     PyQt5.QtCore.Signal = PyQt5.QtCore.pyqtSignal
     PyQt5.QtCore.Slot = PyQt5.QtCore.pyqtSlot
     PyQt5.QtCore.Property = PyQt5.QtCore.pyqtProperty
+
+    PyQt5.load_ui = uic.loadUi
 
     # Add
     PyQt5.__wrapper_version__ = __version__
@@ -43,6 +46,7 @@ def _pyqt5():
 
 def _pyqt4():
     import PyQt4.Qt
+    from PyQt4 import uic
 
     # Remap
     PyQt4.QtWidgets = PyQt4.QtGui
@@ -50,6 +54,8 @@ def _pyqt4():
     PyQt4.QtCore.Signal = PyQt4.QtCore.pyqtSignal
     PyQt4.QtCore.Slot = PyQt4.QtCore.pyqtSlot
     PyQt4.QtCore.Property = PyQt4.QtCore.pyqtProperty
+
+    PyQt4.load_ui = uic.loadUi
 
     # Add
     PyQt4.__wrapper_version__ = __version__
@@ -62,6 +68,7 @@ def _pyqt4():
 
 def _pyside2():
     import PySide2
+    from PySide2 import QtUiTools
 
     # Add
     PySide2.__wrapper_version__ = __version__
@@ -69,17 +76,39 @@ def _pyside2():
     PySide2.__binding_version__ = PySide2.__version__
     PySide2.__qt_version__ = PySide2.QtCore.qVersion()
 
+    # Remap
+    def load_ui(ui_filepath, *args, **kwargs):
+        """Wrap QtUiTools.QUiLoader().load()
+        for compatibility against PyQt5.uic.loadUi()
+
+        Args:
+            ui_filepath (str): The filepath to the .ui file
+        """
+        return QtUiTools.QUiLoader().load(ui_filepath)
+    PySide2.load_ui = load_ui
+
     return PySide2
 
 
 def _pyside():
     import PySide
     import PySide.QtGui
+    from PySide import QtUiTools
 
     # Remap
     PySide.QtWidgets = PySide.QtGui
 
     PySide.QtCore.QSortFilterProxyModel = PySide.QtGui.QSortFilterProxyModel
+
+    def load_ui(ui_filepath, *args, **kwargs):
+        """Wrap QtUiTools.QUiLoader().load()
+        for compatibility against PyQt4.uic.loadUi()
+
+        Args:
+            ui_filepath (str): The filepath to the .ui file
+        """
+        return QtUiTools.QUiLoader().load(ui_filepath)
+    PySide.load_ui = load_ui
 
     # Add
     PySide.__wrapper_version__ = __version__
@@ -104,7 +133,7 @@ def _init():
     preferred = os.getenv("QT_PREFERRED_BINDING")
 
     if preferred:
-        
+
         # Debug mode, used in installer
         if preferred == "None":
             sys.modules[__name__].__wrapper_version__ = __version__
