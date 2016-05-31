@@ -21,7 +21,7 @@ Usage:
 import os
 import sys
 
-__version__ = "0.2.3"
+__version__ = "0.2.4"
 
 
 def _pyqt5():
@@ -31,6 +31,9 @@ def _pyqt5():
     PyQt5.QtCore.Signal = PyQt5.QtCore.pyqtSignal
     PyQt5.QtCore.Slot = PyQt5.QtCore.pyqtSlot
     PyQt5.QtCore.Property = PyQt5.QtCore.pyqtProperty
+
+    from PyQt5 import uic
+    PyQt5.load_ui = uic.loadUi
 
     # Add
     PyQt5.__wrapper_version__ = __version__
@@ -51,6 +54,9 @@ def _pyqt4():
     PyQt4.QtCore.Slot = PyQt4.QtCore.pyqtSlot
     PyQt4.QtCore.Property = PyQt4.QtCore.pyqtProperty
 
+    from PyQt4 import uic
+    PyQt4.load_ui = uic.loadUi
+
     # Add
     PyQt4.__wrapper_version__ = __version__
     PyQt4.__binding__ = "PyQt4"
@@ -69,6 +75,15 @@ def _pyside2():
     PySide2.__binding_version__ = PySide2.__version__
     PySide2.__qt_version__ = PySide2.QtCore.qVersion()
 
+    # Remap
+    def load_ui(ui_filepath, *args, **kwargs):
+        """Wrap QtUiTools.QUiLoader().load()
+        for compatibility against PyQt5.uic.loadUi()
+        """
+        from PySide2 import QtUiTools
+        return QtUiTools.QUiLoader().load(ui_filepath)
+    PySide2.load_ui = load_ui
+
     return PySide2
 
 
@@ -80,6 +95,14 @@ def _pyside():
     PySide.QtWidgets = PySide.QtGui
 
     PySide.QtCore.QSortFilterProxyModel = PySide.QtGui.QSortFilterProxyModel
+
+    def load_ui(ui_filepath, *args, **kwargs):
+        """Wrap QtUiTools.QUiLoader().load()
+        for compatibility against PyQt5.uic.loadUi()
+        """
+        from PySide import QtUiTools
+        return QtUiTools.QUiLoader().load(ui_filepath)
+    PySide.load_ui = load_ui
 
     # Add
     PySide.__wrapper_version__ = __version__
