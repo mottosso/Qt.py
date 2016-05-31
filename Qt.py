@@ -21,7 +21,7 @@ Usage:
 import os
 import sys
 
-__version__ = "0.2.4"
+__version__ = "0.2.5"
 
 
 def _pyqt5():
@@ -133,6 +133,12 @@ def _init():
     preferred = os.getenv("QT_PREFERRED_BINDING")
 
     if preferred:
+
+        # Debug mode, used in installer
+        if preferred == "None":
+            sys.modules[__name__].__wrapper_version__ = __version__
+            return
+
         available = {
             "PySide2": _pyside2,
             "PySide": _pyside,
