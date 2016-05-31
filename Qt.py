@@ -79,6 +79,9 @@ def _pyside2():
     def load_ui(ui_filepath, *args, **kwargs):
         """Wrap QtUiTools.QUiLoader().load()
         for compatibility against PyQt5.uic.loadUi()
+        
+        Args:
+            ui_filepath (str): The filepath to the .ui file
         """
         from PySide2 import QtUiTools
         return QtUiTools.QUiLoader().load(ui_filepath)
@@ -99,6 +102,9 @@ def _pyside():
     def load_ui(ui_filepath, *args, **kwargs):
         """Wrap QtUiTools.QUiLoader().load()
         for compatibility against PyQt5.uic.loadUi()
+        
+        Args:
+            ui_filepath (str): The filepath to the .ui file
         """
         from PySide import QtUiTools
         return QtUiTools.QUiLoader().load(ui_filepath)
