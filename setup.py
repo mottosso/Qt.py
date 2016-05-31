@@ -1,7 +1,8 @@
+import os
 import sys
 from setuptools import setup
 
-sys.modules["PySide2"] = None  # Mock module for successful import
+os.environ["QT_PREFERRED_BINDING"] = "None"
 version = __import__("Qt").__wrapper_version__
 
 
