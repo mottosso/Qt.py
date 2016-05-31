@@ -26,13 +26,13 @@ __version__ = "0.2.4"
 
 def _pyqt5():
     import PyQt5.Qt
+    from PyQt5 import uic
 
     # Remap
     PyQt5.QtCore.Signal = PyQt5.QtCore.pyqtSignal
     PyQt5.QtCore.Slot = PyQt5.QtCore.pyqtSlot
     PyQt5.QtCore.Property = PyQt5.QtCore.pyqtProperty
 
-    from PyQt5 import uic
     PyQt5.load_ui = uic.loadUi
 
     # Add
@@ -46,6 +46,7 @@ def _pyqt5():
 
 def _pyqt4():
     import PyQt4.Qt
+    from PyQt4 import uic
 
     # Remap
     PyQt4.QtWidgets = PyQt4.QtGui
@@ -54,7 +55,6 @@ def _pyqt4():
     PyQt4.QtCore.Slot = PyQt4.QtCore.pyqtSlot
     PyQt4.QtCore.Property = PyQt4.QtCore.pyqtProperty
 
-    from PyQt4 import uic
     PyQt4.load_ui = uic.loadUi
 
     # Add
