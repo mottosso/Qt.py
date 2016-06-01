@@ -37,7 +37,7 @@ def _pyqt5():
     PyQt5.__binding__ = "PyQt5"
     PyQt5.__binding_version__ = PyQt5.QtCore.PYQT_VERSION_STR
     PyQt5.__qt_version__ = PyQt5.QtCore.PYQT_VERSION_STR
-    PyQt5.load_ui = pyqt_load_ui
+    PyQt5.load_ui = pyqt5_load_ui
 
     return PyQt5
 
@@ -56,7 +56,7 @@ def _pyqt4():
     PyQt4.__binding__ = "PyQt4"
     PyQt4.__binding_version__ = PyQt4.QtCore.PYQT_VERSION_STR
     PyQt4.__qt_version__ = PyQt4.QtCore.PYQT_VERSION_STR
-    PyQt4.load_ui = pyqt_load_ui
+    PyQt4.load_ui = pyqt4_load_ui
 
     return PyQt4
 
@@ -69,7 +69,7 @@ def _pyside2():
     PySide2.__binding__ = "PySide2"
     PySide2.__binding_version__ = PySide2.__version__
     PySide2.__qt_version__ = PySide2.QtCore.qVersion()
-    PySide2.load_ui = pyside_load_ui
+    PySide2.load_ui = pyside2_load_ui
 
     return PySide2
 
@@ -112,7 +112,19 @@ def pyside_load_ui(fname):
     return QtUiTools.QUiLoader().load(fname)
 
 
-def pyqt_load_ui(fname):
+def pyside2_load_ui(fname):
+    """Read Qt Designer .ui `fname`
+
+    Args:
+        fname (str): Absolute path to .ui file
+
+    """
+
+    from PySide2 import QtUiTools
+    return QtUiTools.QUiLoader().load(fname)
+
+
+def pyqt4_load_ui(fname):
     """Read Qt Designer .ui `fname`
 
     Args:
@@ -121,6 +133,18 @@ def pyqt_load_ui(fname):
     """
 
     from PyQt4 import uic
+    return uic.loadUi(fname)
+
+
+def pyqt5_load_ui(fname):
+    """Read Qt Designer .ui `fname`
+
+    Args:
+        fname (str): Absolute path to .ui file
+
+    """
+
+    from PyQt5 import uic
     return uic.loadUi(fname)
 
 
