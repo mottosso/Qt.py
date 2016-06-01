@@ -121,12 +121,13 @@ def install_load_ui(module):
 
     """
 
-    if 'PyQt' in module.__name__:
-        uic = module
-        return uic.loadUi
-    elif 'PySide' in module.__name__:
-        QtUiTools = module
-        return QtUiTools.QUiLoader().load
+    return None
+    # if 'PyQt' in module.__name__:
+    #     uic = module
+    #     return uic.loadUi
+    # elif 'PySide' in module.__name__:
+    #     QtUiTools = module
+    #     return QtUiTools.QUiLoader().load
 
 
 def _init():
