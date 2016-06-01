@@ -152,3 +152,4 @@ None yet.
 Send us a pull-request with your project here.
 
 - https://github.com/pyblish/pyblish-lite
+- https://github.com/fredrikaverpil/pyvfx-boilerplate
