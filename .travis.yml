@@ -1,15 +1,11 @@
 language: python
 
 python:
-  - 2.7
-  - 3.4
+  - 2.7_with_system_site_packages
+  - 3.2_with_system_site_packages
 
 env:
   QT_VERBOSE=true
-
-virtualenv:
-  # apt packages ends up amongst system packages
-  system_site_packages: true
 
 addons:
   apt:
@@ -22,9 +18,9 @@ addons:
 install:
   # Based on http://stackoverflow.com/a/24545890/478949
   - pip install PySide --no-index --find-links https://parkin.github.io/python-wheelhouse/;
-  - python ~/virtualenv/python${TRAVIS_PYTHON_VERSION}_with_system_site_packages/bin/pyside_postinstall.py -install
   - python -c "import PySide;print(PySide)"
   - python -c "import PyQt4;print(PyQt4)"
+  - python ~/virtualenv/python${TRAVIS_PYTHON_VERSION}_with_system_site_packages/bin/pyside_postinstall.py -install
 
 # Enable virtual framebuffer, this way we can instantiate
 # a QApplication and create widgets.
