@@ -175,8 +175,8 @@ def _init():
 
             try:
                 sys.modules["Qt"] = binding()
-
                 return
+
             except ImportError as e:
 
                 if verbose:

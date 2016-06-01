@@ -35,8 +35,6 @@ def test_environment():
 @with_setup(_clean)
 def test_preferred():
     """Setting QT_PREFERRED_BINDING properly forces a particular binding"""
-    import PySide
-
     import Qt
 
     # PySide is the more desirable binding
