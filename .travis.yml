@@ -3,6 +3,9 @@ language: python
 python:
   - 2.7
 
+env:
+  QT_VERBOSE=true
+
 virtualenv:
   # apt packages ends up amongst system packages
   system_site_packages: true

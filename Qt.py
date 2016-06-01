@@ -168,6 +168,10 @@ def _init():
                         _pyqt5,
                         _pyside,
                         _pyqt4):
+
+            if os.getenv("QT_VERBOSE") is not None:
+                print("Trying %s" % binding)
+
             try:
                 sys.modules["Qt"] = binding()
                 return

@@ -35,8 +35,7 @@ def test_environment():
 @with_setup(_clean)
 def test_preferred():
     """Setting QT_PREFERRED_BINDING properly forces a particular binding"""
-    sys.modules.pop("Qt", None)
-    os.environ.pop("QT_PREFERRED_BINDING", None)
+    import PySide
 
     import Qt
 
