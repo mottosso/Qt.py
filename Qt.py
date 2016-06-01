@@ -46,6 +46,7 @@ def _pyqt5():
 def _pyqt4():
     import PyQt4.Qt
     from PyQt4 import uic
+    import sip
 
     # Remap
     PyQt4.QtWidgets = PyQt4.QtGui
@@ -59,7 +60,7 @@ def _pyqt4():
     PyQt4.__binding_version__ = PyQt4.QtCore.PYQT_VERSION_STR
     PyQt4.__qt_version__ = PyQt4.QtCore.PYQT_VERSION_STR
     PyQt4.load_ui = install_load_ui(module=uic)
-    set_sip_api_v2()
+    set_sip_api_v2(module=sip)
 
     return PyQt4
 
@@ -97,8 +98,13 @@ def _pyside():
     return PySide
 
 
-def set_sip_api_v2():
-    """Attempt to set sip API to v2"""
+def set_sip_api_v2(module):
+    """Attempt to set sip API to v2
+
+        Args:
+            module (module): The sip module
+
+    """
 
     def setapi(name, version):
         """Set the given API `version` to the object `name`.
@@ -117,10 +123,8 @@ def set_sip_api_v2():
         except ValueError as error:
             sys.stdout.write('Qt Warning: ' + str(error) + '\n')    
 
-    import sip
     setapi(name='QString', version=2)
     setapi(name='QVariant', version=2)
-
 
 
 def install_load_ui(module):
