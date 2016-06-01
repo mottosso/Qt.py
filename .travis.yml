@@ -20,4 +20,4 @@ install:
   - pip install PySide --no-index --find-links https://parkin.github.io/python-wheelhouse/;
 
 script:
-  - nosetests .
+  - nosetests --verbose
