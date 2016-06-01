@@ -134,6 +134,11 @@ sys.exit(app.exec_())
 
 Please note, for maximum compatibility, only pass the argument of the filename to the `load_ui` function.
 
+**sip API v2**
+
+If you're using PyQt4, `sip` attempts to set its API to version 2 for the following:
+- `QString`
+- `QVariant`
 
 <br>
 <br>
