@@ -111,6 +111,30 @@ $ python -c "import Qt;print(Qt.__binding__)"
 PyQt5
 ```
 
+**Load Qt Designer .ui files**
+
+The `uic.loadUi` function of PyQt4 and PyQt5 as well as the `QtUiTools.QUiLoader().load` function of PySide/PySide2 are mappend to a convenience function `load_ui`.
+
+```python
+import sys
+from Qt import QtWidgets
+from Qt import load_ui
+
+
+class Hello(QtWidgets.QWidget):
+    def __init__(self):
+        super(Hello, self).__init__()
+        self.ui = load_ui('my_ui.ui')
+
+app = QtWidgets.QApplication(sys.argv)
+window = Hello()
+window.ui.show()
+sys.exit(app.exec_())
+```
+
+Please note, for maximum compatibility, only pass the argument of the filename to the `load_ui` function.
+
+
 <br>
 <br>
 <br>
