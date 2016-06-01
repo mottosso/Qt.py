@@ -25,7 +25,8 @@ install:
   - python -c "import PySide;print(PySide)"
   - python -c "import PyQt4;print(PyQt4)"
 
-# Enable virtual framebuffer.
+# Enable virtual framebuffer, this way we can instantiate
+# a QApplication and create widgets.
 # https://docs.travis-ci.com/user/gui-and-headless-browsers/
 before_script:
   - "export DISPLAY=:99.0"
