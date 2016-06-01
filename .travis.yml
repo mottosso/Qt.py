@@ -7,6 +7,10 @@ python:
 env:
   QT_VERBOSE=true
 
+virtualenv:
+  # apt packages ends up amongst system packages
+  system_site_packages: true
+
 addons:
   apt:
     packages:
