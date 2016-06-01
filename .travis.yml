@@ -2,14 +2,9 @@ language: python
 
 python:
   - 2.7_with_system_site_packages
-  - 3.4
 
 env:
   QT_VERBOSE=true
-
-virtualenv:
-  # apt packages ends up amongst system packages
-  system_site_packages: true
 
 addons:
   apt:
