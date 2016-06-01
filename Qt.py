@@ -141,6 +141,7 @@ def _init():
     """
 
     preferred = os.getenv("QT_PREFERRED_BINDING")
+    verbose = os.getenv("QT_VERBOSE") is not None
 
     if preferred:
 
@@ -169,13 +170,18 @@ def _init():
                         _pyside,
                         _pyqt4):
 
-            if os.getenv("QT_VERBOSE") is not None:
-                print("Trying %s" % binding)
+            if verbose:
+                sys.stdout.write("Trying %s" % binding.__name__[1:])
 
             try:
                 sys.modules["Qt"] = binding()
+
                 return
-            except ImportError:
+            except ImportError as e:
+
+                if verbose:
+                    sys.stdout.write(" - ImportError(\"%s\")\n" % e)
+
                 continue
 
     # If not binding were found, throw this error
