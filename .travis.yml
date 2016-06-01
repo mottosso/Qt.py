@@ -21,6 +21,7 @@ addons:
 install:
   # Based on http://stackoverflow.com/a/24545890/478949
   - pip install PySide --no-index --find-links https://parkin.github.io/python-wheelhouse/;
+  - python ~/virtualenv/python${TRAVIS_PYTHON_VERSION}_with_system_site_packages/bin/pyside_postinstall.py -install
   - python -c "import PySide;print(PySide)"
   - python -c "import PyQt4;print(PyQt4)"
 
