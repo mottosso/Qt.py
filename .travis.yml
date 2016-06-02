@@ -21,7 +21,7 @@ addons:
 
 install:
   # Based on http://stackoverflow.com/a/24545890/478949
-  - sudo apt-get install qt4-qmake libqt4-dev python-qt4 python-pyside
+  - sudo apt-get install -y qt4-qmake libqt4-dev python-qt4 python-pyside
   - python -c "import PySide;print(PySide)"
   - python -c "import PyQt4;print(PyQt4)"
 
