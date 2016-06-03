@@ -35,7 +35,6 @@ script:
   - pip install git+git://github.com/mottosso/Qt.py.git
 
 deploy:
-    python: 2.7
   provider: pypi
   user: mottosso
   password:
@@ -44,3 +43,4 @@ deploy:
     tags: true
     distributions: sdist
     repo: mottosso/Qt.py
+    python: 2.7
