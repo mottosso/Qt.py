@@ -158,6 +158,18 @@ Send us a pull-request with your project here.
 <br>
 <br>
 
+### Projects similar to Qt.py
+
+Send us a pull-request with your project here.
+
+- https://github.com/spyder-ide/qtpy/tree/master/qtpy
+- https://github.com/jupyter/qtconsole/blob/master/qtconsole/qt_loaders.py
+
+<br>
+<br>
+<br>
+
+
 ### Developer Guide
 
 Due to the nature of multiple bindings and multiple interpreter support, setting up a development environment in which to properly test your contraptions can be challenging. So here is a guide for how to do just that using **Docker**.
