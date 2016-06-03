@@ -66,6 +66,40 @@ Once imported, it is as though your application was importing whichever binding 
 <br>
 <br>
 
+### Rules
+
+The PyQt and PySide bindings are similar, but not identical. Where there is ambiguity, there must to be a clear direction on which path to take.
+
+**Governing API**
+
+The official [Qt 5 documentation](http://doc.qt.io/qt-5/classes.html) is always right. Where the documentation lacks answers, PySide2 is right.
+
+For example.
+
+```python
+# PyQt5 adheres to PySide2 signals and slots
+PyQt5.Signal = PyQt5.pyqtSignal
+PyQt5.Slot = PyQt5.pyqtSlot
+
+# PySide2 adheres to the official documentation
+PySide2.QtCore.QStringListModel = PySide2.QtGui.QStringListModel
+```
+
+**Portability**
+
+Qt.py does not remove members from the original binding. This can be problematic if, for example, you accidentally use a member that only exists PyQt5 and later try running your software with a different binding.
+
+```python
+import Qt
+
+# Incompatible with PySide
+signal = Qt.pyqtSignal()
+```
+
+<br>
+<br>
+<br>
+
 ### Documentation
 
 All members of `Qt` stem directly from those available via PySide2, along with these additional members.

@@ -8,14 +8,28 @@ Usage:
 import os
 import sys
 import imp
+import contextlib
 
 from nose.tools import (
     with_setup,
     assert_raises,
 )
 
+@contextlib.contextmanager
+def pyqt4():
+    os.environ["QT_PREFERRED_BINDING"] = "PyQt4"
+    yield
+    os.environ.pop("QT_PREFERRED_BINDING")
 
-def _clean():
+
+@contextlib.contextmanager
+def pyside():
+    os.environ["QT_PREFERRED_BINDING"] = "PySide"
+    yield
+    os.environ.pop("QT_PREFERRED_BINDING")
+
+
+def clean():
     """Provide clean working environment"""
     sys.modules.pop("Qt", None)
     os.environ.pop("QT_PREFERRED_BINDING", None)
@@ -32,7 +46,7 @@ def test_environment():
     assert_raises(ImportError, imp.find_module, "PyQt5")
 
 
-@with_setup(_clean)
+@with_setup(clean)
 def test_preferred():
     """Setting QT_PREFERRED_BINDING properly forces a particular binding"""
     import Qt
@@ -43,17 +57,32 @@ def test_preferred():
 
     # Try again
     sys.modules.pop("Qt")
-    os.environ["QT_PREFERRED_BINDING"] = "PySide"
+    
+    with pyside():
+        import Qt
+        assert Qt.__name__ == "PySide", ("PySide should have been picked, "
+                                         "instead got %s" % Qt)
 
-    import Qt
-    assert Qt.__name__ == "PySide", ("PySide should have been picked, "
-                                     "instead got %s" % Qt)
 
-
-@with_setup(_clean)
+@with_setup(clean)
 def test_preferred_none():
     """Preferring None shouldn't import anything"""
 
     os.environ["QT_PREFERRED_BINDING"] = "None"
     import Qt
     assert Qt.__name__ == "Qt", Qt
+
+
+@with_setup(clean)
+def test_coexistence():
+    """Qt.py may be use alongside the actual binding"""
+    
+    with pyside():
+        from Qt import QtCore
+        import PySide.QtGui
+
+        # Qt remaps QStringListModel
+        assert QtCore.QStringListModel
+
+        # But does not delete the original
+        assert PySide.QtGui.QStringListModel
