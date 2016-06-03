@@ -32,6 +32,7 @@ before_script:
 
 script:
   - nosetests --verbose
+  - pip install git+git://github.com/mottosso/Qt.py.git
 
 deploy:
     python: 2.7
