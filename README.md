@@ -207,7 +207,7 @@ Send us a pull-request with your project here.
 
 Due to the nature of multiple bindings and multiple interpreter support, setting up a development environment in which to properly test your contraptions can be challenging. So here is a guide for how to do just that using **Docker**.
 
-This project uses Travis for continuous integration and Travis uses Ubuntu 12.04. For an ideal development environment, we'd better stick with it. There is one more advantage to using the same environment, which I will show you.
+This project uses Travis for continuous integration and Travis uses Ubuntu 14.04. For an ideal development environment, we'd better stick with it. There is one more advantage to using the same environment, which I will show you.
 
 Assuming you have Docker already setup.
 
@@ -216,12 +216,14 @@ Assuming you have Docker already setup.
 # -ti 	interactive session
 # --rm 	delete the image on exit
 # -v 	mount local path to container path
-docker run -ti --rm -v /local/path/to/Qt.py:/root/Qt.py ubuntu:12.04
+docker run -ti --rm -v /local/path/to/Qt.py:/root/Qt.py ubuntu:14.04
 
 # Depdendencies used in tests
 apt-get update && apt-get install -y \
   python-qt4 \
   python-pyside \
+  python3-pyqt4 \
+  python3-pyside \
   python-pip
 pip install nose
 
