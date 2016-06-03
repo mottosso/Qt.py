@@ -84,6 +84,10 @@ def _pyqt4():
 
 def _pyside2():
     import PySide2
+    from PySide2 import QtGui, QtCore
+
+    # Remap
+    QtCore.QStringListModel = QtGui.QStringListModel
 
     # Add
     PySide2.__wrapper_version__ = __version__
@@ -97,11 +101,12 @@ def _pyside2():
 
 def _pyside():
     import PySide
-    import PySide.QtGui
+    from PySide import QtGui, QtCore
 
     # Remap
-    PySide.QtWidgets = PySide.QtGui
-    PySide.QtCore.QSortFilterProxyModel = PySide.QtGui.QSortFilterProxyModel
+    PySide.QtWidgets = QtGui
+    QtCore.QSortFilterProxyModel = QtGui.QSortFilterProxyModel
+    QtCore.QStringListModel = QtGui.QStringListModel
 
     # Add
     PySide.__wrapper_version__ = __version__
