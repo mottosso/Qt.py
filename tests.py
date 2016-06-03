@@ -15,6 +15,7 @@ from nose.tools import (
     assert_raises,
 )
 
+
 @contextlib.contextmanager
 def pyqt4():
     os.environ["QT_PREFERRED_BINDING"] = "PyQt4"
@@ -57,7 +58,7 @@ def test_preferred():
 
     # Try again
     sys.modules.pop("Qt")
-    
+
     with pyside():
         import Qt
         assert Qt.__name__ == "PySide", ("PySide should have been picked, "
@@ -76,7 +77,7 @@ def test_preferred_none():
 @with_setup(clean)
 def test_coexistence():
     """Qt.py may be use alongside the actual binding"""
-    
+
     with pyside():
         from Qt import QtCore
         import PySide.QtGui
@@ -86,3 +87,26 @@ def test_coexistence():
 
         # But does not delete the original
         assert PySide.QtGui.QStringListModel
+
+
+@with_setup(clean)
+def test_sip_api_pyqt4():
+    """PyQt should have sip version 1"""
+
+    from PyQt4 import QtCore
+    import sip
+    api_version = sip.getapi('QString')
+    assert api_version == 1, ("PyQt4 API version should be 1, "
+                              "instead is %s" % api_version)
+
+
+@with_setup(clean)
+def test_sip_api_qtpy():
+    """Qt.py with preferred binding PyQt4 should have sip version 2"""
+
+    os.environ["QT_PREFERRED_BINDING"] = "PyQt4"
+    import Qt
+    import sip
+    api_version = sip.getapi('QString')
+    assert api_version == 2, ("PyQt4 API version should be 2, "
+                              "instead is %s" % api_version)
