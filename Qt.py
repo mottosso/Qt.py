@@ -69,15 +69,14 @@ def _pyqt4():
             sip.setapi('QTextStream', 2)
             sip.setapi('QTime', 2)
             sip.setapi('QUrl', 2)
-            PyQt4.__sip_api_version__ = 2
         except AttributeError as error:
             # PyQt < v4.6
-            PyQt4.__sip_api_version__ = sip.getapi('QString')
+            sys.stdout.write('Qt.py Warning: ' + str(error) + '\n')
         except ValueError as error:
-            # Version 1 already set
-            PyQt4.__sip_api_version__ = sip.getapi('QString')
+            # Version (1?) already set
+            sys.stdout.write('Qt.py Warning: ' + str(error) + '\n')
     except ImportError as error:
-        sys.stdout.write('Qt Warning: ' + str(error) + '\n')
+        sys.stdout.write('Qt.py Warning: ' + str(error) + '\n')
 
     return PyQt4
 
