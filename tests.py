@@ -110,7 +110,6 @@ def test_sip_api_qtpy():
         if mod in sys.modules:
             sys.modules.pop(mod)
 
-    pop_module("Qt")
     pop_module("PyQt4")
     pop_module("sip")
     os.environ["QT_PREFERRED_BINDING"] = "PyQt4"
