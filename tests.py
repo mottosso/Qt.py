@@ -91,27 +91,9 @@ def test_coexistence():
 
 
 @with_setup(clean)
-def test_sip_api_pyqt4():
-    """PyQt should have sip version 1"""
-
-    from PyQt4 import QtCore
-    import sip
-    api_version = sip.getapi("QString")
-    assert api_version == 1, ("PyQt4 API version should be 1, "
-                              "instead is %s" % api_version)
-
-
-@with_setup(clean)
 def test_sip_api_qtpy():
     """Qt.py with preferred binding PyQt4 should have sip version 2"""
 
-    def pop_module(mod):
-        """Remove given module from sys.modules"""
-        if mod in sys.modules:
-            sys.modules.pop(mod)
-
-    pop_module("PyQt4")
-    pop_module("sip")
     os.environ["QT_PREFERRED_BINDING"] = "PyQt4"
     import Qt
     import sip
