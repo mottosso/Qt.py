@@ -58,6 +58,27 @@ def _pyqt4():
     PyQt4.__qt_version__ = PyQt4.QtCore.QT_VERSION_STR
     PyQt4.load_ui = pyqt4_load_ui
 
+    # Attempt to set sip API v2
+    try:
+        import sip
+        try:
+            sip.setapi('QString', 2)
+            sip.setapi('QVariant', 2)
+            sip.setapi('QDate', 2)
+            sip.setapi('QDateTime', 2)
+            sip.setapi('QTextStream', 2)
+            sip.setapi('QTime', 2)
+            sip.setapi('QUrl', 2)
+            PyQt4.__sip_api_version__ = 2
+        except AttributeError as error:
+            # PyQt < v4.6
+            PyQt4.__sip_api_version__ = sip.getapi('QString')
+        except ValueError as error:
+            # Version 1 already set
+            PyQt4.__sip_api_version__ = sip.getapi('QString')
+    except ImportError as error:
+        sys.stdout.write('Qt Warning: ' + str(error) + '\n')
+
     return PyQt4
 
 
