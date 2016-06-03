@@ -90,10 +90,10 @@ PySide2.QtCore.QStringListModel = PySide2.QtGui.QStringListModel
 Qt.py does not hide members from the original binding. This can be problematic if, for example, you accidentally use a member that only exists PyQt5 and later try running your software with a different binding.
 
 ```python
-import Qt
+from Qt import QtCore
 
 # Incompatible with PySide
-signal = Qt.pyqtSignal()
+signal = QtCore.pyqtSignal()
 ```
 
 <br>
