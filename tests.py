@@ -105,8 +105,14 @@ def test_sip_api_pyqt4():
 def test_sip_api_qtpy():
     """Qt.py with preferred binding PyQt4 should have sip version 2"""
 
-    sys.modules.pop("PyQt4")
-    sys.modules.pop("sip")
+    def pop_module(mod):
+        """Remove given module from sys.modules"""
+        if mod in sys.modules:
+            sys.modules.pop(mod)
+
+    pop_module("Qt")
+    pop_module("PyQt4")
+    pop_module("sip")
     os.environ["QT_PREFERRED_BINDING"] = "PyQt4"
     import Qt
     import sip
