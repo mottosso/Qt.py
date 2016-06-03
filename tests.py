@@ -34,6 +34,7 @@ def clean():
     """Provide clean working environment"""
     sys.modules.pop("Qt", None)
     os.environ.pop("QT_PREFERRED_BINDING", None)
+    sys.modules.pop("sip", None)
 
 
 def test_environment():
@@ -104,6 +105,7 @@ def test_sip_api_pyqt4():
 def test_sip_api_qtpy():
     """Qt.py with preferred binding PyQt4 should have sip version 2"""
 
+    sys.modules.pop("PyQt4")
     sys.modules.pop("sip")
     os.environ["QT_PREFERRED_BINDING"] = "PyQt4"
     import Qt
