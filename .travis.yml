@@ -1,0 +1,33 @@
+language: python
+
+python:
+  - 2.7_with_system_site_packages
+
+env:
+  QT_VERBOSE=true
+
+addons:
+  apt:
+    packages:
+    - qt4-qmake
+    - libqt4-dev
+    - python-qt4
+    # - python-pyside  # not whitelisted for some reason
+
+install:
+  # Based on http://stackoverflow.com/a/24545890/478949
+  - pip install PySide --no-index --find-links https://parkin.github.io/python-wheelhouse/;
+  - python -c "import PySide;print(PySide)"
+  - python -c "import PyQt4;print(PyQt4)"
+  - python ~/virtualenv/python${TRAVIS_PYTHON_VERSION}/bin/pyside_postinstall.py -install
+
+# Enable virtual framebuffer, this way we can instantiate
+# a QApplication and create widgets.
+# https://docs.travis-ci.com/user/gui-and-headless-browsers/
+before_script:
+  - "export DISPLAY=:99.0"
+  - "sh -e /etc/init.d/xvfb start"
+  - sleep 3 # give xvfb some time to start
+
+script:
+  - nosetests --verbose

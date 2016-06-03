@@ -158,3 +158,46 @@ Send us a pull-request with your project here.
 
 - https://github.com/pyblish/pyblish-lite
 - https://github.com/fredrikaverpil/pyvfx-boilerplate
+
+<br>
+<br>
+<br>
+
+### Developer Guide
+
+Due to the nature of multiple bindings and multiple interpreter support, setting up a development environment in which to properly test your contraptions can be challenging. So here is a guide for how to do just that using **Docker**.
+
+This project uses Travis for continuous integration and Travis uses Ubuntu 12.04. For an ideal development environment, we'd better stick with it. There is one more advantage to using the same environment, which I will show you.
+
+Assuming you have Docker already setup.
+
+```bash
+# Explanation of flags
+# -ti 	interactive session
+# --rm 	delete the image on exit
+# -v 	mount local path to container path
+docker run -ti --rm -v /local/path/to/Qt.py:/root/Qt.py ubuntu:12.04
+
+# Depdendencies used in tests
+apt-get update && apt-get install -y \
+  python-qt4 \
+  python-pyside \
+  python-pip
+pip install nose
+
+# Finally, cd into your local working directory
+# and run the tests.
+cd Qt.py
+nosetests --verbose
+
+# Tests require PySide and PyQt4 bindings to be installed ... ok
+# Setting QT_PREFERRED_BINDING properly forces a particular binding ... ok
+# Preferring None shouldn't import anything ... ok
+# 
+# ----------------------------------------------------------------------
+# Ran 3 tests in 0.530s
+# 
+# OK
+```
+
+The dependencies, and OS, can and should be identical to those found in [`.travis.yml`](https://github.com/mottosso/Qt.py/blob/master/.travis.yml). That way, both you and Travis are operating on the same assumptions which means that when the tests pass on your machine, they pass on Travis. And everybody wins!
