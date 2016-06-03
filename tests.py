@@ -95,7 +95,7 @@ def test_sip_api_pyqt4():
 
     from PyQt4 import QtCore
     import sip
-    api_version = sip.getapi('QString')
+    api_version = sip.getapi("QString")
     assert api_version == 1, ("PyQt4 API version should be 1, "
                               "instead is %s" % api_version)
 
@@ -104,9 +104,10 @@ def test_sip_api_pyqt4():
 def test_sip_api_qtpy():
     """Qt.py with preferred binding PyQt4 should have sip version 2"""
 
+    sys.modules.pop("sip")
     os.environ["QT_PREFERRED_BINDING"] = "PyQt4"
     import Qt
     import sip
-    api_version = sip.getapi('QString')
+    api_version = sip.getapi("QString")
     assert api_version == 2, ("PyQt4 API version should be 2, "
                               "instead is %s" % api_version)
