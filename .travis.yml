@@ -34,6 +34,7 @@ script:
   - nosetests --verbose
 
 deploy:
+    python: 2.7
   provider: pypi
   user: mottosso
   password:
