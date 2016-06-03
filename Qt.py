@@ -21,7 +21,7 @@ Usage:
 import os
 import sys
 
-__version__ = "0.2.5"
+__version__ = "0.2.6"
 
 
 def _pyqt5():
@@ -36,7 +36,7 @@ def _pyqt5():
     PyQt5.__wrapper_version__ = __version__
     PyQt5.__binding__ = "PyQt5"
     PyQt5.__binding_version__ = PyQt5.QtCore.PYQT_VERSION_STR
-    PyQt5.__qt_version__ = PyQt5.QtCore.PYQT_VERSION_STR
+    PyQt5.__qt_version__ = PyQt5.QtCore.QT_VERSION_STR
     PyQt5.load_ui = pyqt5_load_ui
 
     return PyQt5
@@ -55,7 +55,7 @@ def _pyqt4():
     PyQt4.__wrapper_version__ = __version__
     PyQt4.__binding__ = "PyQt4"
     PyQt4.__binding_version__ = PyQt4.QtCore.PYQT_VERSION_STR
-    PyQt4.__qt_version__ = PyQt4.QtCore.PYQT_VERSION_STR
+    PyQt4.__qt_version__ = PyQt4.QtCore.QT_VERSION_STR
     PyQt4.load_ui = pyqt4_load_ui
 
     return PyQt4
