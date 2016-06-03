@@ -43,22 +43,7 @@ def _pyqt5():
 
 
 def _pyqt4():
-    import PyQt4.Qt
-
-    # Remap
-    PyQt4.QtWidgets = PyQt4.QtGui
-    PyQt4.QtCore.Signal = PyQt4.QtCore.pyqtSignal
-    PyQt4.QtCore.Slot = PyQt4.QtCore.pyqtSlot
-    PyQt4.QtCore.Property = PyQt4.QtCore.pyqtProperty
-
-    # Add
-    PyQt4.__wrapper_version__ = __version__
-    PyQt4.__binding__ = "PyQt4"
-    PyQt4.__binding_version__ = PyQt4.QtCore.PYQT_VERSION_STR
-    PyQt4.__qt_version__ = PyQt4.QtCore.QT_VERSION_STR
-    PyQt4.load_ui = pyqt4_load_ui
-
-    # Attempt to set sip API v2
+    # Attempt to set sip API v2 (must be done prior to importing PyQt4)
     try:
         import sip
         try:
@@ -77,6 +62,21 @@ def _pyqt4():
             sys.stdout.write('Qt.py Warning: ' + str(error) + '\n')
     except ImportError as error:
         sys.stdout.write('Qt.py Warning: ' + str(error) + '\n')
+
+    import PyQt4.Qt
+
+    # Remap
+    PyQt4.QtWidgets = PyQt4.QtGui
+    PyQt4.QtCore.Signal = PyQt4.QtCore.pyqtSignal
+    PyQt4.QtCore.Slot = PyQt4.QtCore.pyqtSlot
+    PyQt4.QtCore.Property = PyQt4.QtCore.pyqtProperty
+
+    # Add
+    PyQt4.__wrapper_version__ = __version__
+    PyQt4.__binding__ = "PyQt4"
+    PyQt4.__binding_version__ = PyQt4.QtCore.PYQT_VERSION_STR
+    PyQt4.__qt_version__ = PyQt4.QtCore.QT_VERSION_STR
+    PyQt4.load_ui = pyqt4_load_ui
 
     return PyQt4
 
