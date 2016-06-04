@@ -272,6 +272,11 @@ Changes this and does that
 Change this and do that
 ```
 
+The reason is that, each commit is like an action. An event. And it is perfectly possible to "cherry-pick" a commit onto any given branch. In this style, it makes more sense what exactly the commit will do to your code.
+
+- Cherry pick "Add this and remove that"
+- Cherry pick "Remove X and replace with Y"
+
 **Incremeneting the version**
 
 This project uses [semantic versioning](http://semver.org/) and is updated *after* a new release has been made.
