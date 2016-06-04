@@ -5,5 +5,5 @@ RUN apt-get update && apt-get install -y \
     python3-pyqt4 \
     python3-pyside \
     python-pip
-RUN pip install supervisor nose
-RUN mkdir -p /var/log/supervisor
+RUN pip install nose
+ENTRYPOINT nosetests --verbose /Qt.py/tests.py

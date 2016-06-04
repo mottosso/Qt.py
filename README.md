@@ -214,25 +214,16 @@ This project uses Travis for continuous integration and Travis uses Ubuntu 14.04
 Assuming you have Docker already setup.
 
 ```bash
-# Explanation of flags
-# -ti 	interactive session
-# --rm 	delete the image on exit
+# Build image (see Dockerfile for specifics)
+# Re-run this command to pull latest version of image
+docker build --pull --force-rm -t mottosso/qtpy https://github.com/mottosso/Qt.py.git
+
+# Run nosetests
+# Explanation of flags:
+# --rm 	delete the container on exit
 # -v 	mount local path to container path
-docker run -ti --rm -v /local/path/to/Qt.py:/root/Qt.py ubuntu:14.04
-
-# Depdendencies used in tests
-apt-get update && apt-get install -y \
-  python-qt4 \
-  python-pyside \
-  python3-pyqt4 \
-  python3-pyside \
-  python-pip
-pip install nose
-
-# Finally, cd into your local working directory
-# and run the tests.
 cd Qt.py
-nosetests --verbose
+docker run --rm -v $(pwd):/Qt.py mottosso/qtpy
 
 # Tests require PySide and PyQt4 bindings to be installed ... ok
 # Setting QT_PREFERRED_BINDING properly forces a particular binding ... ok
