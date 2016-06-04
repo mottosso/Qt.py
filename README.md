@@ -173,6 +173,11 @@ Please note, for maximum compatibility, only pass the argument of the filename t
 If you're using PyQt4, `sip` attempts to set its API to version 2 for the following:
 - `QString`
 - `QVariant`
+- `QDate`
+- `QDateTime`
+- `QTextStream`
+- `QTime`
+- `QUrl`
 
 <br>
 <br>
