@@ -245,3 +245,28 @@ nosetests --verbose
 ```
 
 The dependencies, and OS, can and should be identical to those found in [`.travis.yml`](https://github.com/mottosso/Qt.py/blob/master/.travis.yml). That way, both you and Travis are operating on the same assumptions which means that when the tests pass on your machine, they pass on Travis. And everybody wins!
+
+**Incremeneting the version**
+
+This project uses [semantic versioning](http://semver.org/) and is updated *after* a new release has been made.
+
+For example, if the project had 100 commits at the time of the latest release and has 103 commits now, then it's time to increment. If however you modify the project and it has not yet been released, then your changes are included in the overall next release.
+
+The goal is to make a new release per increment.
+
+**Making a Release**
+
+Once the project has gained features, had bugs sorted out and is in a relatively stable state, it's time to make a new release.
+
+- https://github.com/mottosso/Qt.py/releases
+
+Each release should come with:
+
+- An short summary of what has changed.
+- A full changelog, including links to resolved issues.
+ 
+The release is then automatically uploaded to PyPI.
+
+```bash
+$ pip install Qt.py
+```
