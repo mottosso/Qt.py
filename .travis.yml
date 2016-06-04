@@ -35,10 +35,10 @@ before_script:
 
 script:
   - nosetests --verbose
-  
+
   # Test setup.py
-  - pip install git+git://github.com/mottosso/Qt.py.git
-  
+  - pip install file://$(pwd)
+
   # Test Dockerfile
   - docker build -t mottosso/qt.py .
   - docker run mottosso/qt.py
