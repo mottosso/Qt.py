@@ -254,7 +254,6 @@ nosetests --verbose
 
 The dependencies, and OS, can and should be identical to those found in [`.travis.yml`](https://github.com/mottosso/Qt.py/blob/master/.travis.yml). That way, both you and Travis are operating on the same assumptions which means that when the tests pass on your machine, they pass on Travis. And everybody wins!
 
-
 **Commits**
 
 Commits should be well contained, as small as possible (but no smaller) and its messages should be in present-tense, imperative-style.
@@ -277,7 +276,7 @@ The reason is that, each commit is like an action. An event. And it is perfectly
 - Cherry pick "Add this and remove that"
 - Cherry pick "Remove X and replace with Y"
 
-**Incremeneting the version**
+**Version bumping**
 
 This project uses [semantic versioning](http://semver.org/) and is updated *after* a new release has been made.
 
