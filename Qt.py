@@ -21,7 +21,7 @@ Usage:
 import os
 import sys
 
-__version__ = "0.2.6"
+__version__ = "0.2.7"
 
 
 def _pyqt5():
@@ -44,24 +44,20 @@ def _pyqt5():
 
 def _pyqt4():
     # Attempt to set sip API v2 (must be done prior to importing PyQt4)
+    import sip
     try:
-        import sip
-        try:
-            sip.setapi('QString', 2)
-            sip.setapi('QVariant', 2)
-            sip.setapi('QDate', 2)
-            sip.setapi('QDateTime', 2)
-            sip.setapi('QTextStream', 2)
-            sip.setapi('QTime', 2)
-            sip.setapi('QUrl', 2)
-        except AttributeError as error:
-            # PyQt < v4.6
-            sys.stdout.write('Qt.py Warning: ' + str(error) + '\n')
-        except ValueError as error:
-            # Version (1?) already set
-            sys.stdout.write('Qt.py Warning: ' + str(error) + '\n')
-    except ImportError as error:
-        sys.stdout.write('Qt.py Warning: ' + str(error) + '\n')
+        sip.setapi("QString", 2)
+        sip.setapi("QVariant", 2)
+        sip.setapi("QDate", 2)
+        sip.setapi("QDateTime", 2)
+        sip.setapi("QTextStream", 2)
+        sip.setapi("QTime", 2)
+        sip.setapi("QUrl", 2)
+    except AttributeError:
+        raise AttributeError("Qt.py error: PyQt version < 4.6 not supported")
+    except ValueError as error:
+        # API version already set to v1
+        raise ValueError("Qt.py error: " + str(error))
 
     import PyQt4.Qt
 
