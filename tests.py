@@ -77,7 +77,7 @@ def test_preferred_none():
 
 @with_setup(clean)
 def test_coexistence():
-    """Qt.py may be use alongside the actudddddddddddddal binding"""
+    """Qt.py may be use alongside the actual binding"""
 
     with pyside():
         from Qt import QtCore
