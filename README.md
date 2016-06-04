@@ -22,7 +22,7 @@ $ pip install Qt.py
 
 ### Usage
 
-Use Qt.py as you would use PyQt5 or PySide2.
+Use Qt.py as you would use PySide2.
 
 ![image](https://cloud.githubusercontent.com/assets/2152766/15653248/b5ce298e-2683-11e6-8c0c-f041ecae203d.png)
 
@@ -98,6 +98,14 @@ from Qt import QtCore
 signal = QtCore.pyqtSignal()
 ```
 
+But it enables use of Qt.py as a helper library, in conjunction with an existing binding, simplifying the transition of an existing project from a particular binding.
+
+```python
+# This is ok
+from Qt import QtCore
+from PyQt4 import QtGui
+```
+
 <br>
 <br>
 <br>
@@ -170,6 +178,16 @@ sys.exit(app.exec_())
 
 Please note, for maximum compatibility, only pass the argument of the filename to the `load_ui` function.
 
+**sip API v2**
+
+If you're using PyQt4, `sip` attempts to set its API to version 2 for the following:
+- `QString`
+- `QVariant`
+- `QDate`
+- `QDateTime`
+- `QTextStream`
+- `QTime`
+- `QUrl`
 
 <br>
 <br>
@@ -236,3 +254,50 @@ docker run --rm -v $(pwd):/Qt.py mottosso/qtpy
 ```
 
 The dependencies, and OS, can and should be identical to those found in [`.travis.yml`](https://github.com/mottosso/Qt.py/blob/master/.travis.yml). That way, both you and Travis are operating on the same assumptions which means that when the tests pass on your machine, they pass on Travis. And everybody wins!
+
+**Commits**
+
+Commits should be well contained, as small as possible (but no smaller) and its messages should be in present-tense, imperative-style.
+
+E.g.
+
+```bash
+# No
+Changed this and did that
+
+# No
+Changes this and does that
+
+# Yes
+Change this and do that
+```
+
+The reason is that, each commit is like an action. An event. And it is perfectly possible to "cherry-pick" a commit onto any given branch. In this style, it makes more sense what exactly the commit will do to your code.
+
+- Cherry pick "Add this and remove that"
+- Cherry pick "Remove X and replace with Y"
+
+**Version bumping**
+
+This project uses [semantic versioning](http://semver.org/) and is updated *after* a new release has been made.
+
+For example, if the project had 100 commits at the time of the latest release and has 103 commits now, then it's time to increment. If however you modify the project and it has not yet been released, then your changes are included in the overall next release.
+
+The goal is to make a new release per increment.
+
+**Making a Release**
+
+Once the project has gained features, had bugs sorted out and is in a relatively stable state, it's time to make a new release.
+
+- https://github.com/mottosso/Qt.py/releases
+
+Each release should come with:
+
+- An short summary of what has changed.
+- A full changelog, including links to resolved issues.
+ 
+The release is then automatically uploaded to PyPI.
+
+```bash
+$ pip install Qt.py
+```
