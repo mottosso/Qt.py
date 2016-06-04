@@ -98,6 +98,14 @@ from Qt import QtCore
 signal = QtCore.pyqtSignal()
 ```
 
+But it enables use of Qt.py as a helper library, in conjunction with an existing binding, simplifying the transition of an existing project from a particular binding.
+
+```python
+# This is ok
+from Qt import QtCore
+from PyQt4 import QtGui
+```
+
 <br>
 <br>
 <br>
