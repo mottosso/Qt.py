@@ -41,7 +41,7 @@ script:
 
   # Test Dockerfile
   - docker build -t mottosso/qt.py .
-  - docker run mottosso/qt.py
+  - docker run -v $(pwd):/Qt.py mottosso/qt.py
 
 deploy:
   provider: pypi
