@@ -234,14 +234,14 @@ Assuming you have Docker already setup.
 ```bash
 # Build image (see Dockerfile for specifics)
 # Re-run this command to pull latest version of image
-docker build -t mottosso/qtpy https://github.com/mottosso/Qt.py.git
+docker build -t mottosso/qt.py https://github.com/mottosso/Qt.py.git
 
 # Run nosetests
 # Explanation of flags:
 # --rm 	delete the container on exit
 # -v 	mount local path to container path
 cd Qt.py
-docker run --rm -v $(pwd):/Qt.py mottosso/qtpy
+docker run --rm -v $(pwd):/Qt.py mottosso/qt.py
 
 # Tests require PySide and PyQt4 bindings to be installed ... ok
 # Setting QT_PREFERRED_BINDING properly forces a particular binding ... ok
