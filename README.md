@@ -216,7 +216,7 @@ Assuming you have Docker already setup.
 ```bash
 # Build image (see Dockerfile for specifics)
 # Re-run this command to pull latest version of image
-docker build --pull --force-rm -t mottosso/qtpy https://github.com/mottosso/Qt.py.git
+docker build -t mottosso/qtpy https://github.com/mottosso/Qt.py.git
 
 # Run nosetests
 # Explanation of flags:
