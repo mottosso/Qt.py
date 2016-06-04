@@ -22,7 +22,7 @@ $ pip install Qt.py
 
 ### Usage
 
-Use Qt.py as you would use PyQt5 or PySide2.
+Use Qt.py as you would use PySide2.
 
 ![image](https://cloud.githubusercontent.com/assets/2152766/15653248/b5ce298e-2683-11e6-8c0c-f041ecae203d.png)
 
