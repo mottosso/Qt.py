@@ -244,4 +244,36 @@ nosetests --verbose
 # OK
 ```
 
+You can also use the provided **docker-compose** setup:
+
+```
+# Download/build image
+cd Qt.py/docker
+docker-compose build
+
+# Start container
+docker-compose up
+
+# In a new shell, enter the container
+docker exec -ti qtpydev bash
+
+# Enter Qt.py directory and run tests
+cd /root/Qt.py
+nosetests --verbose
+
+# Exit container
+exit
+
+# Stop container
+docker-compose stop
+
+# Restart container
+docker-compose restart
+
+# Remove containers and image
+docker rm -v qtpydev
+docker rm -v qtpydev_image
+docker rmi qtpy/qtpydev:1.0
+```
+
 The dependencies, and OS, can and should be identical to those found in [`.travis.yml`](https://github.com/mottosso/Qt.py/blob/master/.travis.yml). That way, both you and Travis are operating on the same assumptions which means that when the tests pass on your machine, they pass on Travis. And everybody wins!
