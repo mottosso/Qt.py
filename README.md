@@ -254,6 +254,24 @@ nosetests --verbose
 
 The dependencies, and OS, can and should be identical to those found in [`.travis.yml`](https://github.com/mottosso/Qt.py/blob/master/.travis.yml). That way, both you and Travis are operating on the same assumptions which means that when the tests pass on your machine, they pass on Travis. And everybody wins!
 
+
+**Commits**
+
+Commits should be well contained, as small as possible (but no smaller) and its messages should be in present-tense, imperative-style.
+
+E.g.
+
+```bash
+# No
+Changed this and did that
+
+# No
+Changes this and does that
+
+# Yes
+Change this and do that
+```
+
 **Incremeneting the version**
 
 This project uses [semantic versioning](http://semver.org/) and is updated *after* a new release has been made.
