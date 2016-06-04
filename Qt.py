@@ -53,11 +53,12 @@ def _pyqt4():
         sip.setapi("QTextStream", 2)
         sip.setapi("QTime", 2)
         sip.setapi("QUrl", 2)
-    except AttributeError:
-        raise AttributeError("Qt.py error: PyQt version < 4.6 not supported")
+    except AttributeError as error:
+        raise ImportError(error)
+        # PyQt4 < v4.6
     except ValueError as error:
         # API version already set to v1
-        raise ValueError("Qt.py error: " + str(error))
+        raise ImportError(error)
 
     import PyQt4.Qt
 
