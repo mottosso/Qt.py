@@ -77,7 +77,7 @@ def test_preferred_none():
 
 @with_setup(clean)
 def test_coexistence():
-    """Qt.py may be use alongside the actual binding"""
+    """Qt.py may be use alongside the actudddddddddddddal binding"""
 
     with pyside():
         from Qt import QtCore
@@ -94,9 +94,9 @@ def test_coexistence():
 def test_sip_api_qtpy():
     """Qt.py with preferred binding PyQt4 should have sip version 2"""
 
-    os.environ["QT_PREFERRED_BINDING"] = "PyQt4"
-    import Qt
-    import sip
-    api_version = sip.getapi("QString")
-    assert api_version == 2, ("PyQt4 API version should be 2, "
-                              "instead is %s" % api_version)
+    with pyqt4():
+        import Qt
+        import sip
+        assert sip.getapi("QString") == 2, ("PyQt4 API version should be 2, "
+                                            "instead is %s"
+                                            % sip.getapi("QString"))
