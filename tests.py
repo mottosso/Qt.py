@@ -30,13 +30,6 @@ def pyside():
     os.environ.pop("QT_PREFERRED_BINDING")
 
 
-def clean():
-    """Provide clean working environment"""
-    sys.modules.pop("Qt", None)
-    os.environ.pop("QT_PREFERRED_BINDING", None)
-    sys.modules.pop("sip", None)
-
-
 def test_environment():
     """Tests require PySide and PyQt4 bindings to be installed"""
 
@@ -48,7 +41,6 @@ def test_environment():
     assert_raises(ImportError, imp.find_module, "PyQt5")
 
 
-@with_setup(clean)
 def test_preferred():
     """Setting QT_PREFERRED_BINDING properly forces a particular binding"""
     import Qt
@@ -66,7 +58,6 @@ def test_preferred():
                                          "instead got %s" % Qt)
 
 
-@with_setup(clean)
 def test_preferred_none():
     """Preferring None shouldn't import anything"""
 
@@ -75,7 +66,6 @@ def test_preferred_none():
     assert Qt.__name__ == "Qt", Qt
 
 
-@with_setup(clean)
 def test_coexistence():
     """Qt.py may be use alongside the actual binding"""
 
@@ -90,7 +80,6 @@ def test_coexistence():
         assert PySide.QtGui.QStringListModel
 
 
-@with_setup(clean)
 def test_sip_api_qtpy():
     """Qt.py with preferred binding PyQt4 should have sip version 2"""
 
@@ -100,3 +89,13 @@ def test_sip_api_qtpy():
         assert sip.getapi("QString") == 2, ("PyQt4 API version should be 2, "
                                             "instead is %s"
                                             % sip.getapi("QString"))
+
+
+def test_sip_api_pyqt4():
+    """PyQt4 should have sip version 1"""
+
+    from PyQt4 import QtCore
+    import sip
+    assert sip.getapi("QString") == 1, ("PyQt4 API version should be 1, "
+                                        "instead is %s"
+                                        % sip.getapi("QString"))
