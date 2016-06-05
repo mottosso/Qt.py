@@ -89,13 +89,3 @@ def test_sip_api_qtpy():
         assert sip.getapi("QString") == 2, ("PyQt4 API version should be 2, "
                                             "instead is %s"
                                             % sip.getapi("QString"))
-
-
-def test_sip_api_pyqt4():
-    """PyQt4 should have sip version 1"""
-
-    from PyQt4 import QtCore
-    import sip
-    assert sip.getapi("QString") == 1, ("PyQt4 API version should be 1, "
-                                        "instead is %s"
-                                        % sip.getapi("QString"))
