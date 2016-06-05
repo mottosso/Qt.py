@@ -113,10 +113,10 @@ def test_sip_api_already_set():
         def import_qt():
             import Qt
 
-    if sys.version_info[0] == 2:
-        # Python 2.x
+        if sys.version_info[0] == 2:
+            # Python 2.x
 
-        from PyQt4 import QtCore
-        import sip
-        sip.setapi("QString", 1)
-        assert_raises(ImportError, import_qt)
+            from PyQt4 import QtCore
+            import sip
+            sip.setapi("QString", 1)
+            assert_raises(ImportError, import_qt)
