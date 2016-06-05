@@ -15,6 +15,8 @@ from nose.tools import (
     assert_raises,
 )
 
+from nose.plugins.skip import SkipTest
+
 
 @contextlib.contextmanager
 def pyqt4():
@@ -96,6 +98,7 @@ def test_sip_api_pyqt4():
                                             "instead is %s"
                                             % sip.getapi("QString"))
 
+
 def test_sip_api_qtpy():
     """Qt.py with preferred binding PyQt4 should have sip version 2"""
 
@@ -106,18 +109,20 @@ def test_sip_api_qtpy():
                                             "instead is %s"
                                             % sip.getapi("QString"))
 
+
 def test_sip_api_already_set():
     """Qt.py should cause ImportError when sip API v1 was already set
     (Python 2.x only)"""
 
-    with pyqt4():
-        def import_qt():
-            import Qt
-
-        if sys.version_info[0] == 2:
-            # Python 2.x
+    if sys.version_info[0] == 2:
+        # Python 2.x
+        with pyqt4():
+            def import_qt():
+                import Qt
 
             from PyQt4 import QtCore
             import sip
             sip.setapi("QString", 1)
             assert_raises(ImportError, import_qt)
+    else:
+        raise SkipTest("Test skipped when Python version ≠ 2.x")
