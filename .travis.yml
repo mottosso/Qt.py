@@ -36,18 +36,13 @@ before_script:
   - sleep 3 # give xvfb some time to start
 
 script:
-<<<<<<< develop
-  - nosetests --verbose
+  - nosetests --verbose --with-process-isolation
 
   # Test setup.py
   - pip install file://$(pwd)
 
   # Test Dockerfile
   - docker build -t mottosso/qt.py .
-=======
-  - nosetests --verbose --with-process-isolation
-  - pip install git+git://github.com/mottosso/Qt.py.git
->>>>>>> Remove filepath, add pip install nosepipe
 
 deploy:
   provider: pypi
