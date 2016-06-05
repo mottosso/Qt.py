@@ -100,7 +100,7 @@ def test_sip_api_pyqt4():
 
 
 def test_sip_api_qtpy():
-    """Qt.py with preferred binding PyQt4 should have sip version 2"""
+    """Preferred binding PyQt4 should have sip version 2"""
 
     with pyqt4():
         import Qt
@@ -111,8 +111,7 @@ def test_sip_api_qtpy():
 
 if PY_VER_MAJOR == 2:
     def test_sip_api_already_set():
-        """Qt.py should cause ImportError when sip API v1 was already set
-        (Python 2.x only)"""
+        """Raise ImportError if sip API v1 was already set (Python 2.x only)"""
 
         with pyqt4():
             from PyQt4 import QtCore
