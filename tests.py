@@ -99,3 +99,15 @@ def test_sip_api_qtpy():
         assert sip.getapi("QString") == 2, ("PyQt4 API version should be 2, "
                                             "instead is %s"
                                             % sip.getapi("QString"))
+
+def test_sip_api_already_set():
+    """Qt.py should cause ImportError when sip API v1 was already set"""
+
+    with pyqt4():
+        def import_qt():
+            import Qt
+
+        from PyQt4 import QtCore
+        import sip
+        sip.setapi("QString", 1)
+        assert_raises(ImportError, import_qt)
