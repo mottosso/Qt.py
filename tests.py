@@ -81,7 +81,7 @@ def test_coexistence():
 
 
 def test_sip_api_pyqt4():
-    """PyQt4 default sip API version"""
+    """PyQt4 default sip API version (Python 2.x = 1, Python 3.x = 2)"""
 
     from PyQt4 import QtCore
     import sip
@@ -107,7 +107,8 @@ def test_sip_api_qtpy():
                                             % sip.getapi("QString"))
 
 def test_sip_api_already_set():
-    """Qt.py should cause ImportError when sip API v1 was already set"""
+    """Qt.py should cause ImportError when sip API v1 was already set
+    (Python 2.x only)"""
 
     with pyqt4():
         def import_qt():
