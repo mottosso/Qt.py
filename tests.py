@@ -10,12 +10,11 @@ import sys
 import imp
 import contextlib
 
+from nose import SkipTest
 from nose.tools import (
     with_setup,
     assert_raises,
 )
-
-from nose.plugins.skip import SkipTest
 
 
 @contextlib.contextmanager
@@ -125,4 +124,4 @@ def test_sip_api_already_set():
             sip.setapi("QString", 1)
             assert_raises(ImportError, import_qt)
     else:
-        raise SkipTest("Test skipped when Python version not equal to 2.x")
+        raise SkipTest("Skipped because Python version is not 2.x")
