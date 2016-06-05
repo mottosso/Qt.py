@@ -82,23 +82,6 @@ def test_coexistence():
         assert PySide.QtGui.QStringListModel
 
 
-def test_sip_api_pyqt4():
-    """PyQt4 default sip API version (Python 2.x = 1, Python 3.x = 2)"""
-
-    from PyQt4 import QtCore
-    import sip
-    if PYTHON == 2:
-        # Python 2.x
-        assert sip.getapi("QString") == 1, ("PyQt4 API version should be 1, "
-                                            "instead is %s"
-                                            % sip.getapi("QString"))
-    elif PYTHON == 3:
-        # Python 3.x
-        assert sip.getapi("QString") == 2, ("PyQt4 API version should be 2, "
-                                            "instead is %s"
-                                            % sip.getapi("QString"))
-
-
 def test_sip_api_qtpy():
     """Preferred binding PyQt4 should have sip version 2"""
 
