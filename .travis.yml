@@ -19,6 +19,10 @@ services:
 env:
   QT_VERBOSE=true
 
+virtualenv:
+  # apt-install ends up amongst system packages
+  system_site_packages: true
+
 install:
   # Based on http://stackoverflow.com/a/24545890/478949
   - sudo apt-get install -y qt4-qmake libqt4-dev
