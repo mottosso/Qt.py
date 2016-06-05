@@ -1,21 +1,46 @@
 language: python
 
 sudo: required
+dist: trusty
+
+python:
+  - 2.7
+  - 3.4
 
 services:
   - docker
 
+env:
+  QT_VERBOSE=true
+
+virtualenv:
+  # apt-install ends up amongst system packages
+  system_site_packages: true
+
 install:
-  - docker build -t mottosso/qt.py2 -f Dockerfile.py2 .
-  - docker build -t mottosso/qt.py3 -f Dockerfile.py3 .
+  # Based on http://stackoverflow.com/a/24545890/478949
+  - sudo apt-get install -y qt4-qmake libqt4-dev
+  - sudo apt-get install -y python-qt4 python-pyside
+  - sudo apt-get install -y python3-pyqt4 python3-pyside
+  - python -c "import PySide;print(PySide)"
+  - python -c "import PyQt4;print(PyQt4)"
+
+# Enable virtual framebuffer, this way we can instantiate
+# a QApplication and create widgets.
+# https://docs.travis-ci.com/user/gui-and-headless-browsers/
+before_script:
+  - "export DISPLAY=:99.0"
+  - "sh -e /etc/init.d/xvfb start"
+  - sleep 3 # give xvfb some time to start
 
 script:
+  - nosetests --verbose
+
   # Test setup.py
   - pip install file://$(pwd)
-  
-  # Run tests
-  - docker run --rm -v $(pwd):/Qt.py mottosso/qt.py2
-  - docker run --rm -v $(pwd):/Qt.py mottosso/qt.py3
+
+  # Test Dockerfile
+  - docker build -t mottosso/qt.py .
 
 deploy:
   provider: pypi
