@@ -16,6 +16,8 @@ from nose.tools import (
     assert_raises,
 )
 
+PYTHON_VERSION = sys.version_info[0]  # e.g. 2 or 3
+
 
 @contextlib.contextmanager
 def pyqt4():
@@ -108,13 +110,11 @@ def test_sip_api_qtpy():
                                             "instead is %s"
                                             % sip.getapi("QString"))
 
+if PYTHON_VERSION == 2:
+    def test_sip_api_already_set():
+        """Qt.py should cause ImportError when sip API v1 was already set
+        (Python 2.x only)"""
 
-def test_sip_api_already_set():
-    """Qt.py should cause ImportError when sip API v1 was already set
-    (Python 2.x only)"""
-
-    if sys.version_info[0] == 2:
-        # Python 2.x
         with pyqt4():
             def import_qt():
                 import Qt
@@ -123,5 +123,3 @@ def test_sip_api_already_set():
             import sip
             sip.setapi("QString", 1)
             assert_raises(ImportError, import_qt)
-    else:
-        raise SkipTest("Skipped because Python version is not 2.x")
