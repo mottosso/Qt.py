@@ -115,10 +115,7 @@ if PY_VER_MAJOR == 2:
         (Python 2.x only)"""
 
         with pyqt4():
-            def import_qt():
-                import Qt
-
             from PyQt4 import QtCore
             import sip
             sip.setapi("QString", 1)
-            assert_raises(ImportError, import_qt)
+            assert_raises(ImportError, __import__, "Qt")
