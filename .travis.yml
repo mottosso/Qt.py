@@ -22,6 +22,7 @@ install:
   - sudo apt-get install -y qt4-qmake libqt4-dev
   - sudo apt-get install -y python-qt4 python-pyside
   - sudo apt-get install -y python3-pyqt4 python3-pyside
+  - sudo pip install nosepipe
   - python -c "import PySide;print(PySide)"
   - python -c "import PyQt4;print(PyQt4)"
 
@@ -34,6 +35,7 @@ before_script:
   - sleep 3 # give xvfb some time to start
 
 script:
+<<<<<<< develop
   - nosetests --verbose
 
   # Test setup.py
@@ -41,6 +43,10 @@ script:
 
   # Test Dockerfile
   - docker build -t mottosso/qt.py .
+=======
+  - nosetests --verbose --with-process-isolation
+  - pip install git+git://github.com/mottosso/Qt.py.git
+>>>>>>> Remove filepath, add pip install nosepipe
 
 deploy:
   provider: pypi
