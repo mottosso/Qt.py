@@ -125,4 +125,4 @@ def test_sip_api_already_set():
             sip.setapi("QString", 1)
             assert_raises(ImportError, import_qt)
     else:
-        raise SkipTest("Test skipped when Python version ≠ 2.x")
+        raise SkipTest("Test skipped when Python version not equal to 2.x")
