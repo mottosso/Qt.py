@@ -6,9 +6,9 @@ RUN apt-get update && apt-get install -y \
     python-pip
 
 # Nose is the Python test-runner
-RUN pip install nose
+RUN pip install nose nosepipe
 
 # Enable additional output from Qt.py
 ENV QT_VERBOSE true
 
-ENTRYPOINT nosetests --verbose /Qt.py/tests.py
+ENTRYPOINT nosetests --verbose --with-process-isolation /Qt.py/tests.py
