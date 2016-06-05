@@ -10,7 +10,6 @@ import sys
 import imp
 import contextlib
 
-from nose import SkipTest
 from nose.tools import (
     with_setup,
     assert_raises,
