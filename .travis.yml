@@ -7,6 +7,9 @@ python:
   - 2.7
   - 3.4
 
+services:
+  - docker
+
 env:
   QT_VERBOSE=true
 
@@ -32,7 +35,12 @@ before_script:
 
 script:
   - nosetests --verbose
-  - pip install git+git://github.com/mottosso/Qt.py.git
+
+  # Test setup.py
+  - pip install file://$(pwd)
+
+  # Test Dockerfile
+  - docker build -t mottosso/qt.py .
 
 deploy:
   provider: pypi
