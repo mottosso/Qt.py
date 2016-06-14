@@ -203,6 +203,7 @@ def _init():
                               "not available" % preferred)
 
         sys.modules["Qt"] = available[preferred]()
+        sys.modules[__name__] = sys.modules["Qt"]
         return
 
     else:
@@ -216,6 +217,7 @@ def _init():
 
             try:
                 sys.modules["Qt"] = binding()
+                sys.modules[__name__] = sys.modules["Qt"]
                 return
 
             except ImportError as e:
