@@ -182,8 +182,6 @@ def _init():
     """
     
     # Save reference to module list
-    _mods = sys.modules
-    
     preferred = os.getenv("QT_PREFERRED_BINDING")
     verbose = os.getenv("QT_VERBOSE") is not None
 
@@ -191,7 +189,7 @@ def _init():
 
         # Debug mode, used in installer
         if preferred == "None":
-            _mods[__name__].__wrapper_version__ = __version__
+            sys.modules[__name__].__wrapper_version__ = __version__
             return
 
         available = {
@@ -205,9 +203,8 @@ def _init():
             raise ImportError("Preferred Qt binding \"%s\" "
                               "not available" % preferred)
 
-        b = available[preferred]()
-        _mods["Qt"] = b
-        _mods[__name__] = b
+        binding = available[preferred]
+        sys.modules[__name__] = binding()
         return
 
     else:
@@ -220,9 +217,7 @@ def _init():
                 sys.stdout.write("Trying %s" % binding.__name__[1:])
 
             try:
-                b = binding()
-                _mods["Qt"] = b
-                _mods[__name__] = b
+                sys.modules[__name__] = binding()
                 return
 
             except ImportError as e:
