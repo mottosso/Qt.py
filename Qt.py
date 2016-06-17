@@ -181,7 +181,6 @@ def _init():
 
     """
     
-    # Save reference to module list
     preferred = os.getenv("QT_PREFERRED_BINDING")
     verbose = os.getenv("QT_VERBOSE") is not None
 
