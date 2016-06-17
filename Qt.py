@@ -180,7 +180,7 @@ def _init():
     this has executed.
 
     """
-
+    
     preferred = os.getenv("QT_PREFERRED_BINDING")
     verbose = os.getenv("QT_VERBOSE") is not None
 
@@ -202,7 +202,8 @@ def _init():
             raise ImportError("Preferred Qt binding \"%s\" "
                               "not available" % preferred)
 
-        sys.modules["Qt"] = available[preferred]()
+        binding = available[preferred]
+        sys.modules[__name__] = binding()
         return
 
     else:
@@ -215,7 +216,7 @@ def _init():
                 sys.stdout.write("Trying %s" % binding.__name__[1:])
 
             try:
-                sys.modules["Qt"] = binding()
+                sys.modules[__name__] = binding()
                 return
 
             except ImportError as e:
