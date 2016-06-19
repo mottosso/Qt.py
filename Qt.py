@@ -67,6 +67,8 @@ def _pyqt4():
     PyQt4.QtCore.Signal = PyQt4.QtCore.pyqtSignal
     PyQt4.QtCore.Slot = PyQt4.QtCore.pyqtSlot
     PyQt4.QtCore.Property = PyQt4.QtCore.pyqtProperty
+    PyQt4.QtCore.QItemSelection = PyQt4.QtGui.QItemSelection
+    PyQt4.QtCore.QItemSelectionModel = PyQt4.QtGui.QItemSelectionModel
 
     # Add
     PyQt4.__wrapper_version__ = __version__
@@ -103,6 +105,8 @@ def _pyside():
     PySide.QtWidgets = QtGui
     QtCore.QSortFilterProxyModel = QtGui.QSortFilterProxyModel
     QtCore.QStringListModel = QtGui.QStringListModel
+    PySide.QtCore.QItemSelection = PySide.QtGui.QItemSelection
+    PySide.QtCore.QItemSelectionModel = PySide.QtGui.QItemSelectionModel
 
     # Add
     PySide.__wrapper_version__ = __version__
