@@ -106,6 +106,10 @@ from Qt import QtCore
 from PyQt4 import QtGui
 ```
 
+**Caveats**
+
+There are cases where Qt.py is not handling incompatibility issues. Please see [`CAVEATS.md`](CAVEATS.md) for more information.
+
 <br>
 <br>
 <br>
