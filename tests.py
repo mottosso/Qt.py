@@ -98,19 +98,19 @@ def test_sip_api_qtpy():
 
 def test_vendoring():
     """Qt.py may be bundled along with another library/project
-    
+
     Create toy project
-    
+
     from project.vendor import Qt  # Absolute
     from .vendor import Qt         # Relative
-    
+
     project/
         vendor/
         __init__.py
             __init__.py
 
     """
-    
+
     dirname = os.path.dirname(__file__)
     tempdir = tempfile.mkdtemp()
 
