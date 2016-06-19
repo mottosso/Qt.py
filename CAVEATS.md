@@ -3,14 +3,15 @@
 There are cases where Qt.py is not handling incompatibility issues.
 
 - [Closures](CAVEATS.md#Closures)
-- [QtCore](CAVEATS.md#QtCore)
-  - [QtCore.QAbstractModel.createIndex](CAVEATS.md#QtCore.QAbstractModel.createIndex)
-  - [QtCore.QItemSelection](CAVEATS.md#QtCore.QItemSelection)
-  - [QtCore.Slot](CAVEATS.md#QtCore.Slot)
-- [QtGui](CAVEATS.md#QtGui)
-  - [QtGui.QRegExpValidator](CAVEATS.md#QtGui.QRegExpValidator)
-- [QtWidgets](CAVEATS.md#QtWidgets)
-  - [QtWidgets.QAction.triggered](CAVEATS.md#QtWidgets.QAction.triggered)
+- [QtCore.QAbstractModel.createIndex](CAVEATS.md#QtCore.QAbstractModel.createIndex)
+- [QtCore.QItemSelection](CAVEATS.md#QtCore.QItemSelection)
+- [QtCore.Slot](CAVEATS.md#QtCore.Slot)
+- [QtGui.QRegExpValidator](CAVEATS.md#QtGui.QRegExpValidator)
+- [QtWidgets.QAction.triggered](CAVEATS.md#QtWidgets.QAction.triggered)
+
+<br>
+<br>
+<br>
 
 ## Closures
 
@@ -29,7 +30,10 @@ def someMethod(self):
 NameError: free variable 'self' referenced before assignment in enclosing scope
 ```
 
-## QtCore
+<br>
+<br>
+<br>
+
 
 #### QtCore.QAbstractModel.createIndex
 
@@ -50,6 +54,10 @@ In PySide, somehow the last argument (the id) is allowed to be negative and is m
 > Note - I had been using the id as an index into a list. But the unexpected return value from PyQt4 broke it by being invalid. The workaround was to always check that the returned id was between 0 and the max size I expect.  
 – @justinfx
 
+<br>
+<br>
+<br>
+
 #### QtCore.QItemSelection
 
 ```python
@@ -62,6 +70,9 @@ In PySide, somehow the last argument (the id) is allowed to be negative and is m
 
 However, they both do support the len(selection) operation.
 
+<br>
+<br>
+<br>
 
 #### QtCore.Slot
 
@@ -72,7 +83,9 @@ PySide allows for a `result=None` keyword param to set the return type. PyQt4 cr
 TypeError: string or ASCII unicode expected not 'NoneType'
 ```
 
-## QtGui
+<br>
+<br>
+<br>
 
 #### QtGui.QRegExpValidator
 
@@ -84,8 +97,10 @@ In PyQt4 you are required to pass some form of a parent argument, otherwise you 
 QtGui.QRegExpValidator(regex, None)
 ```
 
+<br>
+<br>
+<br>
 
-## QtWidgets
 
 #### QtWidgets.QAction.triggered
 
