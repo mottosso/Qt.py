@@ -2,12 +2,12 @@
 
 There are cases where Qt.py is not handling incompatibility issues.
 
-- [Closures](CAVEATS.md#Closures)
-- [QtCore.QAbstractModel.createIndex](CAVEATS.md#QtCore.QAbstractModel.createIndex)
-- [QtCore.QItemSelection](CAVEATS.md#QtCore.QItemSelection)
-- [QtCore.Slot](CAVEATS.md#QtCore.Slot)
-- [QtGui.QRegExpValidator](CAVEATS.md#QtGui.QRegExpValidator)
-- [QtWidgets.QAction.triggered](CAVEATS.md#QtWidgets.QAction.triggered)
+- [Closures](CAVEATS.md#closures)
+- [QtCore.QAbstractModel.createIndex](CAVEATS.md#qtcoreqabstractmodelcreateindex)
+- [QtCore.QItemSelection](CAVEATS.md#qtcoreqitemselection)
+- [QtCore.Slot](CAVEATS.md#qtcoreslot)
+- [QtGui.QRegExpValidator](CAVEATS.md#qtguiqregexpvalidator)
+- [QtWidgets.QAction.triggered](CAVEATS.md#qtwidgetsqactiontriggered)
 
 <br>
 <br>
