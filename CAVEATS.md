@@ -13,7 +13,7 @@ There are cases where Qt.py is not handling incompatibility issues.
 <br>
 <br>
 
-## Closures
+#### Closures
 
 ```python 
 # valid in PySide
