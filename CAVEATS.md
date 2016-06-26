@@ -149,13 +149,42 @@ QtGui.QRegExpValidator(regex, None)
 
 ```python
 # PySide
->>> a.triggered.emit()
->>> a.triggered.emit(True)
-TypeError: triggered() only accept 0 arguments, 2 given!
+>>> from Qt import QtCore, QtGui
+>>> obj = QtCore.QObject()
+>>> action = QtGui.QAction(obj)
+>>> try:
+...     assert action.triggered.emit()
+... except:
+...     assert False
+... else:
+...     assert True
+>>>
+>>> try:
+...     action.triggered.emit(True)
+... except TypeError:
+...     # TypeError: triggered() only accept 0 arguments, 2 given!
+...     assert True
+... else:
+...     assert False
+```
 
+```python
 # PyQt4
->>> a.triggered.emit()
-TypeError: triggered(bool) has 1 argument(s) but 0 provided
-
->>> a.triggered.emit(True)  # is checked
+>>> from Qt import QtCore, QtGui
+>>> obj = QtCore.QObject()
+>>> action = QtGui.QAction(obj)
+>>> try:
+...     assert action.triggered.emit()
+... except TypeError:
+...     # TypeError: triggered(bool) has 1 argument(s) but 0 provided
+...     assert True
+... else:
+...     assert False
+>>>
+>>> try:
+...     action.triggered.emit(True)
+... except:
+...     assert False
+... else:
+...     assert True
 ```
