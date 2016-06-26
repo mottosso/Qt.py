@@ -14,7 +14,6 @@ import subprocess
 import contextlib
 
 from nose.tools import (
-    with_setup,
     assert_raises,
 )
 
@@ -89,7 +88,7 @@ def test_sip_api_qtpy():
     """Preferred binding PyQt4 should have sip version 2"""
 
     with pyqt4():
-        import Qt
+        __import__("Qt")  # Bypass linter warning
         import sip
         assert sip.getapi("QString") == 2, ("PyQt4 API version should be 2, "
                                             "instead is %s"
