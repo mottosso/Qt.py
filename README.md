@@ -245,7 +245,6 @@ docker build -t mottosso/qt.py https://github.com/mottosso/Qt.py.git
 # --rm 	delete the container on exit
 # -v 	mount local path to container path
 cd Qt.py
-python build_caveats_tests.py
 docker run --rm -v $(pwd):/Qt.py mottosso/qt.py
 
 # Tests require PySide and PyQt4 bindings to be installed ... ok

@@ -55,20 +55,26 @@ NameError: free variable 'self' referenced before assignment in enclosing scope
 <br>
 
 
-#### QtCore.QAbstractModel.createIndex
+#### QtCore.QAbstractItemModel.createIndex
 
 In PySide, somehow the last argument (the id) is allowed to be negative and is maintained. While in PyQt4 it gets coerced into an undefined unsigned value.
 
 ```python
 # PySide
->>> idx = model.createIndex(0, 0, -1)
->>> print idx.internalId()
-# -1
+>>> from Qt import QtGui
+>>> model = QtGui.QStandardItemModel()
+>>> index = model.createIndex(0, 0, -1)
+>>> index.internalId()
+-1L
+```
 
+```python
 # PyQt4
->>> idx = model.createIndex(0, 0, -1)
->>> print idx.internalId()
-# 18446744073709551615
+>>> from Qt import QtGui
+>>> model = QtGui.QStandardItemModel()
+>>> index = model.createIndex(0, 0, -1)
+>>> index.internalId()
+18446744073709551615L
 ```
 
 > Note - I had been using the id as an index into a list. But the unexpected return value from PyQt4 broke it by being invalid. The workaround was to always check that the returned id was between 0 and the max size I expect.  
