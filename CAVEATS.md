@@ -86,10 +86,12 @@ In PySide, somehow the last argument (the id) is allowed to be negative and is m
 
 #### QtCore.QItemSelection
 
+PySide has the `QItemSelection.isEmpty` and `QItemSelection.empty` attributes while PyQt4 only has the `QItemSelection.isEmpty` attribute.
+
 ```python
 # PySide
 >>> from Qt import QtCore
->>> assert not hasattr(QtCore.QItemSelection, "isEmpty")
+>>> assert hasattr(QtCore.QItemSelection, "isEmpty")
 >>> assert hasattr(QtCore.QItemSelection, "empty")
 ```
 
@@ -106,14 +108,24 @@ However, they both do support the len(selection) operation.
 <br>
 <br>
 
+
 #### QtCore.Slot
 
 PySide allows for a `result=None` keyword param to set the return type. PyQt4 crashes:
 
 ```python
->>> QtCore.Slot(QtGui.QWidget, result=None)
-TypeError: string or ASCII unicode expected not 'NoneType'
+# PySide
+>>> from Qt import QtCore, QtGui
+>>> assert QtCore.Slot(QtGui.QWidget, result=None)
 ```
+
+```python
+# PyQt4
+>>> from Qt import QtCore, QtGui
+>>> assert QtCore.Slot(QtGui.QWidget)
+>>> assert_raises(TypeError, QtCore.Slot, QtGui.QWidget, result=None)
+```
+
 
 <br>
 <br>
@@ -126,7 +138,19 @@ In PySide, the constructor for `QtGui.QRegExpValidator()` can just take a `QRegE
 In PyQt4 you are required to pass some form of a parent argument, otherwise you get a TypeError:
 
 ```python
-QtGui.QRegExpValidator(regex, None)
+# PySide
+>>> from Qt import QtCore, QtGui
+>>> regex = QtCore.QRegExp("\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}")
+>>> assert QtGui.QRegExpValidator(regex, None)
+>>> assert QtGui.QRegExpValidator(regex)
+```
+
+```python
+# PyQt4
+>>> from Qt import QtCore, QtGui
+>>> regex = QtCore.QRegExp("\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}")
+>>> assert QtGui.QRegExpValidator(regex, None)
+>>> assert_raises(TypeError, QtGui.QRegExpValidator, regex)  # Seems this works fine in PyQt4?
 ```
 
 <br>
@@ -136,17 +160,27 @@ QtGui.QRegExpValidator(regex, None)
 
 #### QtWidgets.QAction.triggered
 
-`QAction.triggered` signal requires a bool arg in PyQt4, while PySide cannot accept any arguments.
+PySide cannot accept any arguments. In PyQt4, `QAction.triggered` signal requires a bool arg.
 
 ```python
 # PySide
->>> a.triggered.emit()
->>> a.triggered.emit(True)
-TypeError: triggered() only accept 0 arguments, 2 given!
+>>> from Qt import QtCore, QtGui
+>>> obj = QtCore.QObject()
+>>> action = QtGui.QAction(obj)
+>>> assert action.triggered.emit()
+>>> assert_raises(TypeError, action.triggered.emit, True)
+```
 
+```python
 # PyQt4
->>> a.triggered.emit()
-TypeError: triggered(bool) has 1 argument(s) but 0 provided
-
->>> a.triggered.emit(True)  # is checked
+>>> from Qt import QtCore, QtGui
+>>> obj = QtCore.QObject()
+>>> action = QtGui.QAction(obj)
+>>> try:
+...     action.triggered.emit(True)
+... except:
+...     assert False
+... else:
+...     assert True
+>>> assert_raises(TypeError, action.triggered.emit)
 ```
