@@ -36,7 +36,8 @@ before_script:
   - sleep 3 # give xvfb some time to start
 
 script:
-  - nosetests --verbose --with-process-isolation
+  - python build_caveats_tests.py
+  - nosetests --verbose --with-doctest --with-process-isolation --exe
 
   # Test setup.py
   - pip install file://$(pwd)

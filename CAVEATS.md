@@ -11,6 +11,26 @@ There are cases where Qt.py is not handling incompatibility issues.
 
 <br>
 <br>
+
+**Contribute your own caveat**
+
+Pull-requests are welcome, here's how you can make yours.
+
+Code blocks in file are automatically tested on before commited into the project. In order for your code to run successfully, follow these guidelines.
+
+1. Each caveat MUST have a header prefixed with four (4) `#`, e.g. `#### My Heading`.
+1. Each caveat SHOULD have example code.
+1. Each caveat MAY have one or more example.
+1. Each example MAY NOT use more than one (1) binding at a time, e.g. both PyQt5 and PySide.
+1. Each example SHOULD `assert` what *is* working, along with what *isn't*.
+1. An example MUST reside under a heading, e.g. `#### My Heading`
+1. A heading MUST NOT contain anything but letters, numbers, spaces and dots.
+1. The first line of each example MUST be `# MyBinding`, where `MyBinding` is the binding you intend to test with, such as `PySide` or `PyQt5`.
+1. Examples MUST be in docstring format. See other caveats for samples.
+1. Examples MUST `import Qt` (where appropriate), NOT e.g. `import PyQt5`.
+
+<br>
+<br>
 <br>
 
 #### Closures
@@ -62,10 +82,16 @@ In PySide, somehow the last argument (the id) is allowed to be negative and is m
 
 ```python
 # PySide
->>> QtGui.QItemSelection.empty()
+>>> from Qt import QtCore
+>>> assert not hasattr(QtCore.QItemSelection, "isEmpty")
+>>> assert hasattr(QtCore.QItemSelection, "empty")
+```
 
+```python
 # PyQt4
->>> QtGui.QItemSelection.isEmpty()
+>>> from Qt import QtCore
+>>> assert hasattr(QtCore.QItemSelection, "isEmpty")
+>>> assert not hasattr(QtCore.QItemSelection, "empty")
 ```
 
 However, they both do support the len(selection) operation.
