@@ -144,15 +144,28 @@ In PyQt4 you are required to pass some form of a parent argument, otherwise you 
 ...     assert isinstance(QtGui.QRegExpValidator(regex, None), QtGui.QRegExpValidator)
 ... except:
 ...     assert False
-... else:
-...     assert True
 >>>
 >>> try:
 ...     assert isinstance(QtGui.QRegExpValidator(regex), QtGui.QRegExpValidator)
 ... except:
 ...     assert False
-... else:
+```
+
+```python
+# PyQt4
+>>> from Qt import QtCore, QtGui
+>>> regex = QtCore.QRegExp("\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}")
+>>> try:
+...     assert isinstance(QtGui.QRegExpValidator(regex, None), QtGui.QRegExpValidator)
+... except:
+...     assert False
+>>>
+>>> try:
+...     isinstance(QtGui.QRegExpValidator(regex), QtGui.QRegExpValidator)
+... except TypeError:
 ...     assert True
+... else:
+...     assert False
 ```
 
 <br>
