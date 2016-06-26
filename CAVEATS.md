@@ -100,14 +100,29 @@ However, they both do support the len(selection) operation.
 <br>
 <br>
 
+
 #### QtCore.Slot
 
 PySide allows for a `result=None` keyword param to set the return type. PyQt4 crashes:
 
 ```python
->>> QtCore.Slot(QtGui.QWidget, result=None)
-TypeError: string or ASCII unicode expected not 'NoneType'
+# PySide
+>>> from Qt import QtCore, QtGui
+>>> try:
+...     assert isinstance(QtCore.Slot(QtGui.QWidget, result=None), QtCore.Slot)
+... except TypeError:
+...     assert False
 ```
+
+```python
+# PyQt4
+>>> from Qt import QtCore, QtGui
+>>> try:
+...     assert not isinstance(QtCore.Slot(QtGui.QWidget, result=None), QtCore.Slot)
+... except TypeError:
+...     assert True
+```
+
 
 <br>
 <br>
