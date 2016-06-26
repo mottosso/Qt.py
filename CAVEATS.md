@@ -80,10 +80,12 @@ In PySide, somehow the last argument (the id) is allowed to be negative and is m
 
 #### QtCore.QItemSelection
 
+PySide has the `QItemSelection.isEmpty` and `QItemSelection.empty` attributes while PyQt4 only has the `QItemSelection.isEmpty` attribute.
+
 ```python
 # PySide
 >>> from Qt import QtCore
->>> assert not hasattr(QtCore.QItemSelection, "isEmpty")
+>>> assert hasattr(QtCore.QItemSelection, "isEmpty")
 >>> assert hasattr(QtCore.QItemSelection, "empty")
 ```
 
@@ -160,7 +162,7 @@ In PyQt4 you are required to pass some form of a parent argument, otherwise you 
 
 #### QtWidgets.QAction.triggered
 
-`QAction.triggered` signal requires a bool arg in PyQt4, while PySide cannot accept any arguments.
+PySide cannot accept any arguments. In PyQt4, `QAction.triggered` signal requires a bool arg.
 
 ```python
 # PySide
@@ -177,8 +179,7 @@ In PyQt4 you are required to pass some form of a parent argument, otherwise you 
 >>> try:
 ...     action.triggered.emit(True)
 ... except TypeError:
-...     # TypeError: triggered() only accept 0 arguments, 2 given!
-...     assert True
+...     assert True  # TypeError: triggered() only accept 0 arguments, 2 given!
 ... else:
 ...     assert False
 ```
@@ -189,10 +190,9 @@ In PyQt4 you are required to pass some form of a parent argument, otherwise you 
 >>> obj = QtCore.QObject()
 >>> action = QtGui.QAction(obj)
 >>> try:
-...     assert action.triggered.emit()
+...     action.triggered.emit()
 ... except TypeError:
-...     # TypeError: triggered(bool) has 1 argument(s) but 0 provided
-...     assert True
+...     assert True  # TypeError: triggered(bool) has 1 argument(s) but 0 provided
 ... else:
 ...     assert False
 >>>
