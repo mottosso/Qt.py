@@ -64,7 +64,9 @@ In PySide, somehow the last argument (the id) is allowed to be negative and is m
 >>> idx = model.createIndex(0, 0, -1)
 >>> print idx.internalId()
 # -1
+```
 
+```python
 # PyQt4
 >>> idx = model.createIndex(0, 0, -1)
 >>> print idx.internalId()
@@ -110,19 +112,14 @@ PySide allows for a `result=None` keyword param to set the return type. PyQt4 cr
 ```python
 # PySide
 >>> from Qt import QtCore, QtGui
->>> try:
-...     assert isinstance(QtCore.Slot(QtGui.QWidget, result=None), QtCore.Slot)
-... except TypeError:
-...     assert False
+>>> assert QtCore.Slot(QtGui.QWidget, result=None)
 ```
 
 ```python
 # PyQt4
 >>> from Qt import QtCore, QtGui
->>> try:
-...     assert not isinstance(QtCore.Slot(QtGui.QWidget, result=None), QtCore.Slot)
-... except TypeError:
-...     assert True
+>>> assert QtCore.Slot(QtGui.QWidget)
+>>> assert_raises(TypeError, QtCore.Slot, QtGui.QWidget, result=None)
 ```
 
 
@@ -140,32 +137,16 @@ In PyQt4 you are required to pass some form of a parent argument, otherwise you 
 # PySide
 >>> from Qt import QtCore, QtGui
 >>> regex = QtCore.QRegExp("\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}")
->>> try:
-...     assert isinstance(QtGui.QRegExpValidator(regex, None), QtGui.QRegExpValidator)
-... except:
-...     assert False
->>>
->>> try:
-...     assert isinstance(QtGui.QRegExpValidator(regex), QtGui.QRegExpValidator)
-... except:
-...     assert False
+>>> assert QtGui.QRegExpValidator(regex, None)
+>>> assert QtGui.QRegExpValidator(regex)
 ```
 
 ```python
 # PyQt4
 >>> from Qt import QtCore, QtGui
 >>> regex = QtCore.QRegExp("\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}")
->>> try:
-...     assert isinstance(QtGui.QRegExpValidator(regex, None), QtGui.QRegExpValidator)
-... except:
-...     assert False
->>>
->>> try:
-...     isinstance(QtGui.QRegExpValidator(regex), QtGui.QRegExpValidator)
-... except TypeError:
-...     assert True
-... else:
-...     assert False
+>>> assert QtGui.QRegExpValidator(regex, None)
+>>> assert_raises(TypeError, QtGui.QRegExpValidator, regex)  # Seems this works fine in PyQt4?
 ```
 
 <br>
@@ -182,19 +163,8 @@ PySide cannot accept any arguments. In PyQt4, `QAction.triggered` signal require
 >>> from Qt import QtCore, QtGui
 >>> obj = QtCore.QObject()
 >>> action = QtGui.QAction(obj)
->>> try:
-...     assert action.triggered.emit()
-... except:
-...     assert False
-... else:
-...     assert True
->>>
->>> try:
-...     action.triggered.emit(True)
-... except TypeError:
-...     assert True  # TypeError: triggered() only accept 0 arguments, 2 given!
-... else:
-...     assert False
+>>> assert action.triggered.emit()
+>>> assert_raises(TypeError, action.triggered.emit, True)
 ```
 
 ```python
@@ -203,16 +173,10 @@ PySide cannot accept any arguments. In PyQt4, `QAction.triggered` signal require
 >>> obj = QtCore.QObject()
 >>> action = QtGui.QAction(obj)
 >>> try:
-...     action.triggered.emit()
-... except TypeError:
-...     assert True  # TypeError: triggered(bool) has 1 argument(s) but 0 provided
-... else:
-...     assert False
->>>
->>> try:
 ...     action.triggered.emit(True)
 ... except:
 ...     assert False
 ... else:
 ...     assert True
+>>> assert_raises(TypeError, action.triggered.emit)
 ```

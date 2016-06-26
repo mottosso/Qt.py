@@ -67,6 +67,7 @@ if __name__ == '__main__':
 def test_{header}():
     '''Test {header}
 
+    >>> from nose.tools import assert_raises
     >>> import os
     >>> os.environ["QT_PREFERRED_BINDING"] = "{binding}"
     {body}
