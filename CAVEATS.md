@@ -2,7 +2,6 @@
 
 There are cases where Qt.py is not handling incompatibility issues.
 
-- [Closures](CAVEATS.md#closures)
 - [QtCore.QAbstractModel.createIndex](CAVEATS.md#qtcoreqabstractmodelcreateindex)
 - [QtCore.QItemSelection](CAVEATS.md#qtcoreqitemselection)
 - [QtCore.Slot](CAVEATS.md#qtcoreslot)
@@ -28,27 +27,6 @@ Code blocks in file are automatically tested on before commited into the project
 1. The first line of each example MUST be `# MyBinding`, where `MyBinding` is the binding you intend to test with, such as `PySide` or `PyQt5`.
 1. Examples MUST be in docstring format. See other caveats for samples.
 1. Examples MUST `import Qt` (where appropriate), NOT e.g. `import PyQt5`.
-
-<br>
-<br>
-<br>
-
-#### Closures
-
-```python 
-# valid in PySide
-def someMethod(self):
-    def _wrapper():
-        self.runSomething("foo")
-
-    someObject._callback = _wrapper
-    someObject.someSignal.connect(_wrapper)
-
-# In PyQt4 an exception is generated when the signal fires
-    def _wrapper():
-        self.runSomething("foo")
-NameError: free variable 'self' referenced before assignment in enclosing scope
-```
 
 <br>
 <br>
