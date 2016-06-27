@@ -2,11 +2,14 @@
 
 There are cases where Qt.py is not handling incompatibility issues.
 
-- [QtCore.QAbstractModel.createIndex](CAVEATS.md#qtcoreqabstractmodelcreateindex)
-- [QtCore.QItemSelection](CAVEATS.md#qtcoreqitemselection)
-- [QtCore.Slot](CAVEATS.md#qtcoreslot)
-- [QtGui.QRegExpValidator](CAVEATS.md#qtguiqregexpvalidator)
-- [QtWidgets.QAction.triggered](CAVEATS.md#qtwidgetsqactiontriggered)
+- Caveats
+  - [QtCore.QAbstractModel.createIndex](CAVEATS.md#qtcoreqabstractmodelcreateindex)
+  - [QtCore.QItemSelection](CAVEATS.md#qtcoreqitemselection)
+  - [QtCore.Slot](CAVEATS.md#qtcoreslot)
+  - [QtWidgets.QAction.triggered](CAVEATS.md#qtwidgetsqactiontriggered)
+
+- Fixed caveats
+  - [QtGui.QRegExpValidator](CAVEATS.md#qtguiqregexpvalidator)
 
 <br>
 <br>
@@ -33,7 +36,12 @@ Code blocks in file are automatically tested on before commited into the project
 <br>
 
 
-#### QtCore.QAbstractItemModel.createIndex
+#### QtGui.QStandardItemModel.createIndex
+
+| Affects       | Version
+|:--------------|:---------
+| PyQt4         | <= 4.10.4
+| PySide        | <= 1.2.1
 
 In PySide, somehow the last argument (the id) is allowed to be negative and is maintained. While in PyQt4 it gets coerced into an undefined unsigned value.
 
@@ -64,6 +72,11 @@ In PySide, somehow the last argument (the id) is allowed to be negative and is m
 
 #### QtCore.QItemSelection
 
+| Affects       | Version
+|:--------------|:---------
+| PyQt4         | <= 4.10.4
+| PySide        | <= 1.2.1
+
 PySide has the `QItemSelection.isEmpty` and `QItemSelection.empty` attributes while PyQt4 only has the `QItemSelection.isEmpty` attribute.
 
 ```python
@@ -89,6 +102,11 @@ However, they both do support the len(selection) operation.
 
 #### QtCore.Slot
 
+| Affects       | Version
+|:--------------|:---------
+| PyQt4         | <= 4.10.4
+| PySide        | <= 1.2.1
+
 PySide allows for a `result=None` keyword param to set the return type. PyQt4 crashes:
 
 ```python
@@ -109,34 +127,13 @@ PySide allows for a `result=None` keyword param to set the return type. PyQt4 cr
 <br>
 <br>
 
-#### QtGui.QRegExpValidator
-
-In PySide, the constructor for `QtGui.QRegExpValidator()` can just take a `QRegExp` instance, and that is all.
-
-In PyQt4 you are required to pass some form of a parent argument, otherwise you get a TypeError:
-
-```python
-# PySide
->>> from Qt import QtCore, QtGui
->>> regex = QtCore.QRegExp("\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}")
->>> assert QtGui.QRegExpValidator(regex, None)
->>> assert QtGui.QRegExpValidator(regex)
-```
-
-```python
-# PyQt4
->>> from Qt import QtCore, QtGui
->>> regex = QtCore.QRegExp("\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}")
->>> assert QtGui.QRegExpValidator(regex, None)
->>> assert_raises(TypeError, QtGui.QRegExpValidator, regex)  # Seems this works fine in PyQt4?
-```
-
-<br>
-<br>
-<br>
-
 
 #### QtWidgets.QAction.triggered
+
+| Affects       | Version
+|:--------------|:---------
+| PyQt4         | <= 4.10.4
+| PySide        | <= 1.2.1
 
 PySide cannot accept any arguments. In PyQt4, `QAction.triggered` signal requires a bool arg.
 
@@ -162,3 +159,41 @@ PySide cannot accept any arguments. In PyQt4, `QAction.triggered` signal require
 ...     assert True
 >>> assert_raises(TypeError, action.triggered.emit)
 ```
+
+<br>
+<br>
+<br>
+
+
+## Fixed caveats
+
+#### QtGui.QRegExpValidator
+
+| Affects       | Version
+|:--------------|:-----------------
+| PyQt4         | present in 4.8.4
+| PySide        | ?
+
+In PySide, the constructor for `QtGui.QRegExpValidator()` can just take a `QRegExp` instance, and that is all.
+
+In PyQt4 you are required to pass some form of a parent argument, otherwise you get a TypeError:
+
+```python
+# PySide
+>>> from Qt import QtCore, QtGui
+>>> regex = QtCore.QRegExp("\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}")
+>>> assert QtGui.QRegExpValidator(regex, None)
+>>> assert QtGui.QRegExpValidator(regex)
+```
+
+```python
+# PyQt4
+>>> from Qt import QtCore, QtGui
+>>> regex = QtCore.QRegExp("\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}")
+>>> assert QtGui.QRegExpValidator(regex, None)
+>>> assert_raises(TypeError, QtGui.QRegExpValidator, regex)
+```
+
+<br>
+<br>
+<br>
