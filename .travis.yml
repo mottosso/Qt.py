@@ -24,15 +24,14 @@ install:
   - sudo apt-get install -y python3-pyqt4 python3-pyside python3-pip
   - sudo pip install nosepipe
   - sudo pip3 install nosepipe
-  - python -c "test '%s' % here"
 
   # Print version information
-  - python -c "import PySide;print('Path: %s' % PySide)"
-  - python -c "import PySide;print('Binding: %s' % PySide.__version__)"
-  - python -c "import PySide;print('Qt: %s' % PySide.QtCore.qVersion())"
+  - python -c "import PySide;print('Path, %s' % PySide)"
+  - python -c "import PySide;print('Binding, %s' % PySide.__version__)"
+  - python -c "import PySide;print('Qt, %s' % PySide.QtCore.qVersion())"
 
-  - python -c "import PyQt4;print('Binding: %s' % PyQt4.PYQT_VERSION_STR)"
-  - python -c "import PyQt4;print('Qt: %s' % PyQt4.QT_VERSION_STR)"
+  - python -c "import PyQt4;print('Binding, %s' % PyQt4.PYQT_VERSION_STR)"
+  - python -c "import PyQt4;print('Qt, %s' % PyQt4.QT_VERSION_STR)"
   - python -c "import PyQt4;print(PyQt4)"
 
 # Enable virtual framebuffer, this way we can instantiate
