@@ -64,8 +64,8 @@ In PySide, somehow the last argument (the id) is allowed to be negative and is m
 >>> from Qt import QtGui
 >>> model = QtGui.QStandardItemModel()
 >>> index = model.createIndex(0, 0, -1)
->>> index.internalId()
--1L
+>>> int(index.internalId())
+-1
 ```
 
 ```python
@@ -73,8 +73,8 @@ In PySide, somehow the last argument (the id) is allowed to be negative and is m
 >>> from Qt import QtGui
 >>> model = QtGui.QStandardItemModel()
 >>> index = model.createIndex(0, 0, -1)
->>> index.internalId()
-18446744073709551615L
+>>> int(index.internalId())
+18446744073709551615
 ```
 
 > Note - I had been using the id as an index into a list. But the unexpected return value from PyQt4 broke it by being invalid. The workaround was to always check that the returned id was between 0 and the max size I expect.  
