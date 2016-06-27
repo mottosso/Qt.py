@@ -24,7 +24,7 @@ Code blocks in file are automatically tested on before commited into the project
 1. Each caveat SHOULD have example code.
 1. Each caveat MAY have one or more example.
 1. Each example MAY NOT use more than one (1) binding at a time, e.g. both PyQt5 and PySide.
-1. Each example SHOULD `assert` what *is* working, along with what *isn't*.
+1. Each example SHOULD `assert` what *is* working, along with what *isn't*. Use `assert_raises` and `assert_equals` whenever this makes the example easier to read.
 1. An example MUST reside under a heading, e.g. `#### My Heading`
 1. A heading MUST NOT contain anything but letters, numbers, spaces and dots.
 1. The first line of each example MUST be `# MyBinding`, where `MyBinding` is the binding you intend to test with, such as `PySide` or `PyQt5`.
@@ -50,8 +50,7 @@ In PySide, somehow the last argument (the id) is allowed to be negative and is m
 >>> from Qt import QtGui
 >>> model = QtGui.QStandardItemModel()
 >>> index = model.createIndex(0, 0, -1)
->>> int(index.internalId())
--1
+>>> assert_equals(int(index.internalId()), -1)
 ```
 
 ```python
@@ -59,8 +58,7 @@ In PySide, somehow the last argument (the id) is allowed to be negative and is m
 >>> from Qt import QtGui
 >>> model = QtGui.QStandardItemModel()
 >>> index = model.createIndex(0, 0, -1)
->>> int(index.internalId())
-18446744073709551615
+>>> assert_equals(int(index.internalId()), 18446744073709551615)
 ```
 
 > Note - I had been using the id as an index into a list. But the unexpected return value from PyQt4 broke it by being invalid. The workaround was to always check that the returned id was between 0 and the max size I expect.  
