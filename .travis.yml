@@ -30,8 +30,8 @@ install:
   - python -c "import PySide;print('Binding, %s' % PySide.__version__)"
   - python -c "import PySide;print('Qt, %s' % PySide.QtCore.qVersion())"
 
-  - python -c "import PyQt4;print('Binding, %s' % PyQt4.PYQT_VERSION_STR)"
-  - python -c "import PyQt4;print('Qt, %s' % PyQt4.QT_VERSION_STR)"
+  - python -c "import PyQt4.QtCore;print('Binding, %s' % PyQt4.QtCore.PYQT_VERSION_STR)"
+  - python -c "import PyQt4.QtCore;print('Qt, %s' % PyQt4.QtCore.QT_VERSION_STR)"
   - python -c "import PyQt4;print(PyQt4)"
 
 # Enable virtual framebuffer, this way we can instantiate
