@@ -16,6 +16,8 @@ def parse(fname):
         current_header = ""
 
         for line in f:
+            if line.startswith('## Fixed caveats'):
+                break
             if line.startswith("#### "):
                 current_header = line.rstrip()
             if line.startswith("```"):
