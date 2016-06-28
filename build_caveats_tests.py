@@ -16,6 +16,8 @@ def parse(fname):
         current_header = ""
 
         for line in f:
+            if line.startswith('## Fixed caveats'):
+                break
             if line.startswith("#### "):
                 current_header = line.rstrip()
             if line.startswith("```"):
@@ -67,7 +69,7 @@ if __name__ == '__main__':
 def test_{header}():
     '''Test {header}
 
-    >>> from nose.tools import assert_raises
+    >>> from nose.tools import assert_raises, assert_equals
     >>> import os
     >>> os.environ["QT_PREFERRED_BINDING"] = "{binding}"
     {body}
