@@ -28,6 +28,7 @@ Code blocks in file are automatically tested on before commited into the project
 1. An example MUST reside under a heading, e.g. `#### My Heading`
 1. A heading MUST NOT contain anything but letters, numbers, spaces and dots.
 1. The first line of each example MUST be `# MyBinding`, where `MyBinding` is the binding you intend to test with, such as `PySide` or `PyQt5`.
+1. Examples MAY indicate either Python 2 or 3 as `# MyBinding, Python2`
 1. Examples MUST be in docstring format. See other caveats for samples.
 1. Examples MUST `import Qt` (where appropriate), NOT e.g. `import PyQt5`.
 
@@ -105,13 +106,23 @@ PySide allows for a `result=None` keyword param to set the return type. PyQt4 cr
 ```
 
 ```python
-# PyQt4
+# PyQt4, Python2
 >>> from Qt import QtCore, QtGui
 >>> slot = QtCore.Slot(QtGui.QWidget)
 >>> slot = QtCore.Slot(QtGui.QWidget, result=None)
 Traceback (most recent call last):
 ...
 TypeError: string or ASCII unicode expected not 'NoneType'
+```
+
+```python
+# PyQt4, Python3
+>>> from Qt import QtCore, QtGui
+>>> slot = QtCore.Slot(QtGui.QWidget)
+>>> slot = QtCore.Slot(QtGui.QWidget, result=None)
+Traceback (most recent call last):
+...
+TypeError: bytes or ASCII unicode expected not 'NoneType'
 ```
 
 

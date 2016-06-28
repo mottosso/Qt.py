@@ -1,5 +1,8 @@
 """Caveats do as advertised"""
 
+import re
+import sys
+
 
 def parse(fname):
     """Return blocks of code as list of dicts
@@ -16,28 +19,53 @@ def parse(fname):
         current_header = ""
 
         for line in f:
+
+            # Doctests are within a quadruple hashtag header.
             if line.startswith("#### "):
                 current_header = line.rstrip()
+                
+            # The actuat test is within a fenced block.
             if line.startswith("```"):
                 in_block = False
+
             if in_block:
                 current_block.append(line)
+
             if line.startswith("```python"):
                 in_block = True
                 current_block = list()
                 current_block.append(current_header)
                 blocks.append(current_block)
 
-    return list({
-        "header": block[0].strip("# ")         # Remove Markdown
-                          .rstrip()            # Remove newline
-                          .lower()             # PEP08
-                          .replace(" ", "_")   # Only allow spaces..
-                          .replace(".", "_"),  # ..and dots in headers.
-        "binding": block[1].strip("# ")
-                           .rstrip(),
-        "body": block[2:]
-    } for block in blocks)
+    tests = list()
+
+    for block in blocks:
+        header = (
+            block[0].strip("# ") # Remove Markdown
+                    .rstrip()    # Remove newline
+                    .lower()     # PEP08
+        )
+
+        # Remove unsupported characters
+        header = re.sub(r"\W", "_", header)
+
+        binding, doctest_version = (
+            block[1].strip("# ")  # Remove previx
+                    .rstrip()     # Remove newline
+                    .split(",") +
+            ["Python2"]  # Default
+        )[:2]
+        
+        active_version = "Python%i" % sys.version_info[0]
+
+        if doctest_version == active_version:
+            tests.append({
+                "header": header,
+                "binding": binding,
+                "body": block[2:]
+            })
+
+    return tests
 
 
 if __name__ == '__main__':
@@ -68,7 +96,9 @@ if __name__ == '__main__':
 def test_{count}_{header}():
     '''Test {header}
 
-    >>> import os
+    >>> import os, sys
+    >>> PY2 = sys.version_info[0] == 2
+    >>> PY3 = sys.version_info[0] == 3
     >>> _ = os.environ.pop("QT_VERBOSE", None)  # Disable debug output
     >>> os.environ["QT_PREFERRED_BINDING"] = "{binding}"
     {body}
