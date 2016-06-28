@@ -3,7 +3,7 @@
 There are cases where Qt.py is not handling incompatibility issues.
 
 - Caveats
-  - [QtCore.QAbstractModel.createIndex](CAVEATS.md#qtcoreqabstractmodelcreateindex)
+  - [QtCore.QAbstractItemModel.createIndex](CAVEATS.md#qtcoreqabstractmodelcreateindex)
   - [QtCore.QItemSelection](CAVEATS.md#qtcoreqitemselection)
   - [QtCore.Slot](CAVEATS.md#qtcoreslot)
   - [QtWidgets.QAction.triggered](CAVEATS.md#qtwidgetsqactiontriggered)
@@ -24,7 +24,7 @@ Code blocks in file are automatically tested on before commited into the project
 1. Each caveat SHOULD have example code.
 1. Each caveat MAY have one or more example.
 1. Each example MAY NOT use more than one (1) binding at a time, e.g. both PyQt5 and PySide.
-1. Each example SHOULD `assert` what *is* working, along with what *isn't*. Use `assert_raises` and `assert_equals` whenever this makes the example easier to read.
+1. Each example MUST visualise return value and any exceptions thrown.
 1. An example MUST reside under a heading, e.g. `#### My Heading`
 1. A heading MUST NOT contain anything but letters, numbers, spaces and dots.
 1. The first line of each example MUST be `# MyBinding`, where `MyBinding` is the binding you intend to test with, such as `PySide` or `PyQt5`.
@@ -36,12 +36,7 @@ Code blocks in file are automatically tested on before commited into the project
 <br>
 
 
-#### QtGui.QStandardItemModel.createIndex
-
-| Affects       | Version
-|:--------------|:---------
-| PyQt4         | <= 4.10.4
-| PySide        | <= 1.2.1
+#### QtGui.QAbstractItemModel.createIndex
 
 In PySide, somehow the last argument (the id) is allowed to be negative and is maintained. While in PyQt4 it gets coerced into an undefined unsigned value.
 
@@ -50,7 +45,8 @@ In PySide, somehow the last argument (the id) is allowed to be negative and is m
 >>> from Qt import QtGui
 >>> model = QtGui.QStandardItemModel()
 >>> index = model.createIndex(0, 0, -1)
->>> assert int(index.internalId()) == -1
+>>> int(index.internalId()) == -1
+True
 ```
 
 ```python
@@ -58,7 +54,9 @@ In PySide, somehow the last argument (the id) is allowed to be negative and is m
 >>> from Qt import QtGui
 >>> model = QtGui.QStandardItemModel()
 >>> index = model.createIndex(0, 0, -1)
->>> assert int(index.internalId()) == 18446744073709551615
+>>> int(index.internalId()) == 18446744073709551615
+True
+
 ```
 
 > Note - I had been using the id as an index into a list. But the unexpected return value from PyQt4 broke it by being invalid. The workaround was to always check that the returned id was between 0 and the max size I expect.  
@@ -70,25 +68,23 @@ In PySide, somehow the last argument (the id) is allowed to be negative and is m
 
 #### QtCore.QItemSelection
 
-| Affects       | Version
-|:--------------|:---------
-| PyQt4         | <= 4.10.4
-| PySide        | <= 1.2.1
-
 PySide has the `QItemSelection.isEmpty` and `QItemSelection.empty` attributes while PyQt4 only has the `QItemSelection.isEmpty` attribute.
 
 ```python
 # PySide
 >>> from Qt import QtCore
->>> assert hasattr(QtCore.QItemSelection, "isEmpty")
->>> assert hasattr(QtCore.QItemSelection, "empty")
+>>> func = QtCore.QItemSelection.isEmpty
+>>> func = QtCore.QItemSelection.empty
 ```
 
 ```python
 # PyQt4
 >>> from Qt import QtCore
->>> assert hasattr(QtCore.QItemSelection, "isEmpty")
->>> assert not hasattr(QtCore.QItemSelection, "empty")
+>>> func = QtCore.QItemSelection.isEmpty
+>>> func = QtCore.QItemSelection.empty
+Traceback (most recent call last):
+...
+AttributeError: type object 'QItemSelection' has no attribute 'empty'
 ```
 
 However, they both do support the len(selection) operation.
@@ -100,24 +96,22 @@ However, they both do support the len(selection) operation.
 
 #### QtCore.Slot
 
-| Affects       | Version
-|:--------------|:---------
-| PyQt4         | <= 4.10.4
-| PySide        | <= 1.2.1
-
 PySide allows for a `result=None` keyword param to set the return type. PyQt4 crashes:
 
 ```python
 # PySide
 >>> from Qt import QtCore, QtGui
->>> QtCore.Slot(QtGui.QWidget, result=None)  # This is ok
+>>> slot = QtCore.Slot(QtGui.QWidget, result=None)
 ```
 
 ```python
 # PyQt4
 >>> from Qt import QtCore, QtGui
->>> assert QtCore.Slot(QtGui.QWidget)
->>> assert_raises(TypeError, QtCore.Slot, QtGui.QWidget, result=None)
+>>> slot = QtCore.Slot(QtGui.QWidget)
+>>> slot = QtCore.Slot(QtGui.QWidget, result=None)
+Traceback (most recent call last):
+...
+TypeError: string or ASCII unicode expected not 'NoneType'
 ```
 
 
@@ -128,11 +122,6 @@ PySide allows for a `result=None` keyword param to set the return type. PyQt4 cr
 
 #### QtWidgets.QAction.triggered
 
-| Affects       | Version
-|:--------------|:---------
-| PyQt4         | <= 4.10.4
-| PySide        | <= 1.2.1
-
 PySide cannot accept any arguments. In PyQt4, `QAction.triggered` signal requires a bool arg.
 
 ```python
@@ -140,8 +129,12 @@ PySide cannot accept any arguments. In PyQt4, `QAction.triggered` signal require
 >>> from Qt import QtCore, QtGui
 >>> obj = QtCore.QObject()
 >>> action = QtGui.QAction(obj)
->>> assert action.triggered.emit()
->>> assert_raises(TypeError, action.triggered.emit, True)
+>>> action.triggered.emit()  # Note the return value (!)
+True
+>>> action.triggered.emit(True)
+Traceback (most recent call last):
+...
+TypeError: triggered() only accepts 0 arguments, 2 given!
 ```
 
 ```python
@@ -149,49 +142,9 @@ PySide cannot accept any arguments. In PyQt4, `QAction.triggered` signal require
 >>> from Qt import QtCore, QtGui
 >>> obj = QtCore.QObject()
 >>> action = QtGui.QAction(obj)
->>> try:
-...     action.triggered.emit(True)
-... except:
-...     assert False
-... else:
-...     assert True
->>> assert_raises(TypeError, action.triggered.emit)
+>>> action.triggered.emit(True)
+>>> action.triggered.emit()
+Traceback (most recent call last):
+...
+TypeError: QAction.triggered[bool] signal has 1 argument(s) but 0 provided
 ```
-
-<br>
-<br>
-<br>
-
-
-## Fixed caveats
-
-#### QtGui.QRegExpValidator
-
-| Affects       | Version
-|:--------------|:-----------------
-| PyQt4         | present in 4.8.4
-| PySide        | ?
-
-In PySide, the constructor for `QtGui.QRegExpValidator()` can just take a `QRegExp` instance, and that is all.
-
-In PyQt4 you are required to pass some form of a parent argument, otherwise you get a TypeError:
-
-```python
-# PySide
->>> from Qt import QtCore, QtGui
->>> regex = QtCore.QRegExp("\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}")
->>> assert QtGui.QRegExpValidator(regex, None)
->>> assert QtGui.QRegExpValidator(regex)
-```
-
-```python
-# PyQt4
->>> from Qt import QtCore, QtGui
->>> regex = QtCore.QRegExp("\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}")
->>> assert QtGui.QRegExpValidator(regex, None)
->>> assert_raises(TypeError, QtGui.QRegExpValidator, regex)
-```
-
-<br>
-<br>
-<br>

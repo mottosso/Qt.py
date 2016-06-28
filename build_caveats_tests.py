@@ -16,8 +16,6 @@ def parse(fname):
         current_header = ""
 
         for line in f:
-            if line.startswith('## Fixed caveats'):
-                break
             if line.startswith("#### "):
                 current_header = line.rstrip()
             if line.startswith("```"):
@@ -61,17 +59,17 @@ if __name__ == '__main__':
             block["body"].insert(0, ">>> assert False, "
                                  "'Invalid binding'\n")
 
-        block["header"] = "%s_%s" % (str(function_count), block["header"])
+        block["header"] = block["header"]
+        block["count"] = str(function_count)
         block["body"] = "    ".join(block["body"])
 
         tests.append("""\
 
-def test_{header}():
+def test_{count}_{header}():
     '''Test {header}
 
-    >>> from nose.tools import assert_raises, assert_equals
     >>> import os
-    >>> _ = os.environ.pop("QT_VERBOSE", None)
+    >>> _ = os.environ.pop("QT_VERBOSE", None)  # Disable debug output
     >>> os.environ["QT_PREFERRED_BINDING"] = "{binding}"
     {body}
     '''
