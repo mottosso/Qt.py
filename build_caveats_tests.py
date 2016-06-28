@@ -61,7 +61,7 @@ if __name__ == '__main__':
             block["body"].insert(0, ">>> assert False, "
                                  "'Invalid binding'\n")
 
-        block["header"] = block["header"] + str(function_count)
+        block["header"] = "%s_%s" % (str(function_count), block["header"])
         block["body"] = "    ".join(block["body"])
 
         tests.append("""\
@@ -71,6 +71,7 @@ def test_{header}():
 
     >>> from nose.tools import assert_raises, assert_equals
     >>> import os
+    >>> os.environ.pop("QT_VERBOSE", None)
     >>> os.environ["QT_PREFERRED_BINDING"] = "{binding}"
     {body}
     '''
