@@ -174,6 +174,11 @@ def pyqt5_load_ui(fname):
     return uic.loadUi(fname)
 
 
+def _log(text, verbose):
+    if verbose:
+        sys.stdout.write(text)
+
+
 def _init():
     """Try loading each binding in turn
 
@@ -187,48 +192,42 @@ def _init():
     
     preferred = os.getenv("QT_PREFERRED_BINDING")
     verbose = os.getenv("QT_VERBOSE") is not None
+    bindings = (_pyside2, _pyqt5, _pyside, _pyqt4)
 
     if preferred:
-
-        # Debug mode, used in installer
+        
+        # Internal flag (used in installer)
         if preferred == "None":
             sys.modules[__name__].__wrapper_version__ = __version__
             return
-
+        
+        preferred = preferred.split(os.pathsep)
         available = {
             "PySide2": _pyside2,
-            "PySide": _pyside,
             "PyQt5": _pyqt5,
+            "PySide": _pyside,
             "PyQt4": _pyqt4
         }
 
-        if preferred not in available:
-            raise ImportError("Preferred Qt binding \"%s\" "
-                              "not available" % preferred)
+        try:
+            bindings = [available[binding] for binding in preferred]
+        except KeyError:
+            raise ImportError(
+                "Available preferred Qt bindings: "
+                "\n".join(preferred)
+            )
 
-        binding = available[preferred]
-        sys.modules[__name__] = binding()
-        return
+    for binding in bindings:
+        _log("Trying %s" % binding.__name__[1:], verbose)
 
-    else:
-        for binding in (_pyside2,
-                        _pyqt5,
-                        _pyside,
-                        _pyqt4):
+        try:
+            sys.modules[__name__] = binding()
+            return
 
-            if verbose:
-                sys.stdout.write("Trying %s" % binding.__name__[1:])
+        except ImportError as e:
+            _log(" - ImportError(\"%s\")\n" % e, verbose)
 
-            try:
-                sys.modules[__name__] = binding()
-                return
-
-            except ImportError as e:
-
-                if verbose:
-                    sys.stdout.write(" - ImportError(\"%s\")\n" % e)
-
-                continue
+            continue
 
     # If not binding were found, throw this error
     raise ImportError("No Qt binding were found.")
