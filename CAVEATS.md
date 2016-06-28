@@ -50,7 +50,7 @@ In PySide, somehow the last argument (the id) is allowed to be negative and is m
 >>> from Qt import QtGui
 >>> model = QtGui.QStandardItemModel()
 >>> index = model.createIndex(0, 0, -1)
->>> assert int(index.internalId() == -1
+>>> assert int(index.internalId()) == -1
 ```
 
 ```python
@@ -110,7 +110,7 @@ PySide allows for a `result=None` keyword param to set the return type. PyQt4 cr
 ```python
 # PySide
 >>> from Qt import QtCore, QtGui
->>> assert QtCore.Slot(QtGui.QWidget, result=None)
+>>> QtCore.Slot(QtGui.QWidget, result=None)  # This is ok
 ```
 
 ```python

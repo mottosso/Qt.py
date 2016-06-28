@@ -71,7 +71,7 @@ def test_{header}():
 
     >>> from nose.tools import assert_raises, assert_equals
     >>> import os
-    >>> os.environ.pop("QT_VERBOSE", None)
+    >>> _ = os.environ.pop("QT_VERBOSE", None)
     >>> os.environ["QT_PREFERRED_BINDING"] = "{binding}"
     {body}
     '''
