@@ -2,14 +2,11 @@
 
 There are cases where Qt.py is not handling incompatibility issues.
 
-- Caveats
-  - [QtCore.QAbstractItemModel.createIndex](CAVEATS.md#qtcoreqabstractmodelcreateindex)
-  - [QtCore.QItemSelection](CAVEATS.md#qtcoreqitemselection)
-  - [QtCore.Slot](CAVEATS.md#qtcoreslot)
-  - [QtWidgets.QAction.triggered](CAVEATS.md#qtwidgetsqactiontriggered)
-
-- Fixed caveats
-  - [QtGui.QRegExpValidator](CAVEATS.md#qtguiqregexpvalidator)
+- [QtCore.QAbstractItemModel.createIndex](CAVEATS.md#qtcoreqabstractmodelcreateindex)
+- [QtCore.QItemSelection](CAVEATS.md#qtcoreqitemselection)
+- [QtCore.Slot](CAVEATS.md#qtcoreslot)
+- [QtWidgets.QAction.triggered](CAVEATS.md#qtwidgetsqactiontriggered)
+- [QtGui.QRegExpValidator](CAVEATS.md#qtguiqregexpvalidator)
 
 <br>
 <br>
@@ -31,6 +28,8 @@ Code blocks in file are automatically tested on before commited into the project
 1. Examples MAY indicate either Python 2 or 3 as `# MyBinding, Python2`
 1. Examples MUST be in docstring format. See other caveats for samples.
 1. Examples MUST `import Qt` (where appropriate), NOT e.g. `import PyQt5`.
+1. Examples MAY include `untested` in which case the continuous integration mechanism will look the other way.
+
 
 <br>
 <br>
@@ -60,12 +59,17 @@ True
 
 ```
 
-> Note - I had been using the id as an index into a list. But the unexpected return value from PyQt4 broke it by being invalid. The workaround was to always check that the returned id was between 0 and the max size I expect.  
+##### Usecase
+
+I had been using the id as an index into a list. But the unexpected return value from PyQt4 broke it by being invalid. The workaround was to always check that the returned id was between 0 and the max size I expect.  
+
 – @justinfx
+
 
 <br>
 <br>
 <br>
+
 
 #### QtCore.QItemSelection
 
@@ -88,7 +92,26 @@ Traceback (most recent call last):
 AttributeError: type object 'QItemSelection' has no attribute 'empty'
 ```
 
-However, they both do support the len(selection) operation.
+##### Workaround
+
+They both support the `len(selection)` operation.
+
+```python
+# PyQt4
+>>> from Qt import QtCore
+>>> selection = QtCore.QItemSelection()
+>>> len(selection)
+0
+```
+
+```python
+# PySide
+>>> from Qt import QtCore
+>>> selection = QtCore.QItemSelection()
+>>> len(selection)
+0
+```
+
 
 <br>
 <br>
@@ -158,4 +181,42 @@ TypeError: triggered() only accepts 0 arguments, 2 given!
 Traceback (most recent call last):
 ...
 TypeError: QAction.triggered[bool] signal has 1 argument(s) but 0 provided
+```
+
+
+<br>
+<br>
+<br>
+
+
+#### QtGui.QRegExpValidator
+
+| Affects       | Version
+|:--------------|:-----------------
+| PyQt4         | <= 4.8.4
+
+In PySide, the constructor for `QtGui.QRegExpValidator()` can just take a `QRegExp` instance, and that is all.
+
+In PyQt4 you are required to pass some form of a parent argument, otherwise you get a TypeError:
+
+```python
+# PySide, untested
+>>> from Qt import QtCore, QtGui
+>>> regex = QtCore.QRegExp("\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}")
+>>> validator = QtGui.QRegExpValidator(regex)
+>>> validator = QtGui.QRegExpValidator(regex, None)
+Traceback (most recent call last):
+...
+TypeError: ...
+```
+
+```python
+# PyQt4, untested
+>>> from Qt import QtCore, QtGui
+>>> regex = QtCore.QRegExp("\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}")
+>>> validator = QtGui.QRegExpValidator(regex, None)
+>>> validator = QtGui.QRegExpValidator(regex)
+Traceback (most recent call last):
+...
+TypeError: ...
 ```
