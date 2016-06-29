@@ -14,7 +14,6 @@ import subprocess
 import contextlib
 
 from nose.tools import (
-    with_setup,
     assert_raises,
 )
 
@@ -63,6 +62,24 @@ def test_preferred():
                                          "instead got %s" % Qt)
 
 
+def test_multiple_preferred():
+    """Setting QT_PREFERRED_BINDING to more than one binding excludes others
+    
+    PyQt5 is not available on this system, and PySide is preferred over PyQt4,
+    however this tests should prove that it should still pick up PyQt4
+    when preferred.
+
+    """
+    
+    # However
+    os.environ["QT_PREFERRED_BINDING"] = os.pathsep.join(["PyQt5", "PyQt4"])
+    import Qt
+
+    # PySide is the more desirable binding
+    assert Qt.__name__ == "PyQt4", ("PyQt4 should have been picked, "
+                                    "instead got %s" % Qt)
+
+
 def test_preferred_none():
     """Preferring None shouldn't import anything"""
 
@@ -89,7 +106,7 @@ def test_sip_api_qtpy():
     """Preferred binding PyQt4 should have sip version 2"""
 
     with pyqt4():
-        import Qt
+        __import__("Qt")  # Bypass linter warning
         import sip
         assert sip.getapi("QString") == 2, ("PyQt4 API version should be 2, "
                                             "instead is %s"

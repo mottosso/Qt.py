@@ -11,4 +11,11 @@ RUN pip install nose nosepipe
 # Enable additional output from Qt.py
 ENV QT_VERBOSE true
 
-ENTRYPOINT nosetests --verbose --with-process-isolation /Qt.py/tests.py
+WORKDIR /workspace/Qt.py
+ENTRYPOINT cp -r /Qt.py /workspace && \
+	python build_caveats_tests.py && \
+	nosetests \
+		--verbose \
+		--with-process-isolation \
+		--with-doctest \
+		--exe 
