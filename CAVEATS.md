@@ -156,9 +156,9 @@ PySide cannot accept any arguments. In PyQt4, `QAction.triggered` signal require
 
 ```python
 # PySide
->>> from Qt import QtCore, QtGui
+>>> from Qt import QtCore, QtWidgets
 >>> obj = QtCore.QObject()
->>> action = QtGui.QAction(obj)
+>>> action = QtWidgets.QAction(obj)
 >>> action.triggered.emit()  # Note the return value (!)
 True
 >>> action.triggered.emit(True)
@@ -169,9 +169,9 @@ TypeError: triggered() only accepts 0 arguments, 2 given!
 
 ```python
 # PyQt4
->>> from Qt import QtCore, QtGui
+>>> from Qt import QtCore, QtWidgets
 >>> obj = QtCore.QObject()
->>> action = QtGui.QAction(obj)
+>>> action = QtWidgets.QAction(obj)
 >>> action.triggered.emit(True)
 >>> action.triggered.emit()
 Traceback (most recent call last):
