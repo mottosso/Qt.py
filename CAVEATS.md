@@ -145,7 +145,7 @@ TypeError: string or ASCII unicode expected not 'NoneType'
 >>> slot = QtCore.Slot(QtGui.QWidget, result=None)
 Traceback (most recent call last):
 ...
-TypeError: bytes or ASCII unicode expected not 'NoneType'
+TypeError: bytes or ASCII string expected not 'NoneType'
 ```
 
 

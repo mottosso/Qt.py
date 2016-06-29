@@ -36,7 +36,6 @@ def parse(fname):
                 blocks.append(current_block)
 
     tests = list()
-
     for block in blocks:
         header = (
             block[0].strip("# ") # Remove Markdown
@@ -47,39 +46,49 @@ def parse(fname):
         # Remove unsupported characters
         header = re.sub(r"\W", "_", header)
 
-        data = re.sub(" ", "", block[1])  # Remove spaces
-
         # Adding "untested" anywhere in the first line of
         # the doctest excludes it from the test.
-        if "untested" in data.lower():
+        if "untested" in block[1].lower():
             continue
 
+        data = re.sub(" ", "", block[1])  # Remove spaces
         data = (
             data.strip("#")
                 .rstrip()     # Remove newline
                 .split(",")
         )
 
-        binding, doctest_version = (data + ["Python2"])[:2]  # Default to Python 2
-
-        if doctest_version not in ("Python2", "Python3"):
-            raise SyntaxError("Invalid Python version:\n%s\n"
-                              "Python version must follow binding, e.g.\n"
-                              "# PyQt5, Python3" % doctest_version)
+        binding, doctest_version = (data + [None])[:2]
         
-        active_version = "Python%i" % sys.version_info[0]
+        # Run tests on both Python 2 and 3, unless explicitly stated
+        if doctest_version is not None:
+            if doctest_version not in ("Python2", "Python3"):
+                raise SyntaxError(
+                    "Invalid Python version:\n%s\n"
+                    "Python version must follow binding, e.g.\n"
+                    "# PyQt5, Python3" % doctest_version)
 
-        if doctest_version == active_version:
-            tests.append({
-                "header": header,
-                "binding": binding,
-                "body": block[2:]
-            })
+            active_version = "Python%i" % sys.version_info[0]
+            if doctest_version != active_version:
+                continue
+
+        tests.append({
+            "header": header,
+            "binding": binding,
+            "body": block[2:]
+        })
 
     return tests
 
 
 def format_(blocks):
+    """Produce Python module from blocks of tests
+    
+    Arguments:
+        blocks (list): Blocks of tests from func:`parse()`
+
+    """
+
     tests = list()
     function_count = 0  # For each test to have a unique name
 
@@ -107,8 +116,6 @@ def test_{count}_{header}():
     '''Test {header}
 
     >>> import os, sys
-    >>> PY2 = sys.version_info[0] == 2
-    >>> PY3 = sys.version_info[0] == 3
     >>> _ = os.environ.pop("QT_VERBOSE", None)  # Disable debug output
     >>> os.environ["QT_PREFERRED_BINDING"] = "{binding}"
     {body}
