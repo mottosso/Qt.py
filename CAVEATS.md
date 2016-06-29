@@ -11,24 +11,20 @@ There are cases where Qt.py is not handling incompatibility issues.
 <br>
 <br>
 
-**Contribute your own caveat**
+**Tests**
 
-Pull-requests are welcome, here's how you can make yours.
+Code blocks in this document are automatically tested at each commit before being accepted into the project. In order for your code to run successfully, follow these guidelines.
 
-Code blocks in file are automatically tested on before commited into the project. In order for your code to run successfully, follow these guidelines.
-
-1. Each caveat MUST have a header prefixed with four (4) `#`, e.g. `#### My Heading`.
-1. Each caveat SHOULD have example code.
-1. Each caveat MAY have one or more example.
+1. Each caveat MUST contain (1) a header, (2) description, (3) one or more examples and (4, optional) a solution.
+1. Each caveat MUST have a header prefixed with four hashtags, e.g. `#### My Heading`.
 1. Each example MAY NOT use more than one (1) binding at a time, e.g. both PyQt5 and PySide.
 1. Each example MUST visualise return value and any exceptions thrown.
 1. An example MUST reside under a heading, e.g. `#### My Heading`
-1. A heading MUST NOT contain anything but letters, numbers, spaces and dots.
-1. The first line of each example MUST be `# MyBinding`, where `MyBinding` is the binding you intend to test with, such as `PySide` or `PyQt5`.
+1. The first line of each example MUST be `# MyBinding`, where `MyBinding` is the binding you intend to test with, such as `PySide` or `PyQt4`.
 1. Examples MAY indicate either Python 2 or 3 as `# MyBinding, Python2`
-1. Examples MUST be in docstring format. See other caveats for samples.
+1. Examples MUST be in [doctest](https://docs.python.org/2.7/library/doctest.html) format. See other caveats for samples.
 1. Examples MUST `import Qt` (where appropriate), NOT e.g. `import PyQt5`.
-1. Examples MAY include `untested` in which case the continuous integration mechanism will look the other way.
+1. Examples MAY include `untested` in which case the continuous integration mechanism will look the other way, e.g. `# PyQt4, untested`
 
 
 <br>
