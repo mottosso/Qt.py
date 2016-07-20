@@ -134,7 +134,7 @@ Qt.__binding_version__ == '1.2.6'
 Qt.__wrapper_version__ == '1.0.0'
 ```
 
-**Branch binding-specific code**
+##### Branch binding-specific code
 
 Some bindings offer features not available in others, you can use `__binding__` to capture those.
 
@@ -143,9 +143,9 @@ if "PySide" in Qt.__binding__:
   do_pyside_stuff()
 ```
 
-**Override preferred choice**
+##### Override preferred choice
 
-If your system has multiple choices, one of which is preferred, you can override the dynamic discovery mechanism with this environment variable.
+If your system has multiple choices where one or more is preferred, you can override the preference and order in which they are tried with this environment variable.
 
 ```bash
 # Windows
@@ -159,7 +159,7 @@ $ python -c "import Qt;print(Qt.__binding__)"
 PyQt5
 ```
 
-**Load Qt Designer .ui files**
+##### Load Qt Designer .ui files
 
 The `uic.loadUi` function of PyQt4 and PyQt5 as well as the `QtUiTools.QUiLoader().load` function of PySide/PySide2 are mappend to a convenience function `load_ui`.
 
@@ -182,7 +182,7 @@ sys.exit(app.exec_())
 
 Please note, for maximum compatibility, only pass the argument of the filename to the `load_ui` function.
 
-**sip API v2**
+##### sip API v2
 
 If you're using PyQt4, `sip` attempts to set its API to version 2 for the following:
 - `QString`
