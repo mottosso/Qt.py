@@ -159,6 +159,15 @@ $ python -c "import Qt;print(Qt.__binding__)"
 PyQt5
 ```
 
+Constrain available choices and order of discovery by supplying multiple values.
+
+```bash
+# Try PyQt first and then PySide, but nothing else.
+$ export QT_PREFERRED_BINDING=PyQt:PySide
+```
+
+Using the OS path separator (`os.pathsep`) which is `:` on Unix systems and `;` on Windows.
+
 ##### Load Qt Designer .ui files
 
 The `uic.loadUi` function of PyQt4 and PyQt5 as well as the `QtUiTools.QUiLoader().load` function of PySide/PySide2 are mappend to a convenience function `load_ui`.
