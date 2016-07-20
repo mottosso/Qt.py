@@ -64,13 +64,13 @@ def test_preferred():
 
 def test_multiple_preferred():
     """Setting QT_PREFERRED_BINDING to more than one binding excludes others
-    
+
     PyQt5 is not available on this system, and PySide is preferred over PyQt4,
     however this tests should prove that it should still pick up PyQt4
     when preferred.
 
     """
-    
+
     # However
     os.environ["QT_PREFERRED_BINDING"] = os.pathsep.join(["PyQt5", "PyQt4"])
     import Qt
@@ -177,7 +177,7 @@ if PYTHON == 2:
         """Raise ImportError if sip API v1 was already set (Python 2.x only)"""
 
         with pyqt4():
-            from PyQt4 import QtCore
+            __import__("PyQt4.QtCore")  # Bypass linter warning
             import sip
             sip.setapi("QString", 1)
             assert_raises(ImportError, __import__, "Qt")
