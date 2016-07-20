@@ -205,6 +205,15 @@ None yet.
 <br>
 <br>
 
+### Who's using Qt.py?
+
+Send us a pull-request with your studio here.
+
+- Framestore
+- Weta Digital
+- Disney Animation
+- Industriromantik
+
 ### Projects using Qt.py
 
 Send us a pull-request with your project here.
