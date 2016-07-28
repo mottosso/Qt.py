@@ -191,7 +191,7 @@ if PYTHON == 2:
 
 
 def test_load_ui_into_self_pyside():
-    """load widgets into self using PySide"""
+    """load_ui: Load widgets into self using PySide"""
 
     ui = """\
 <?xml version="1.0" encoding="UTF-8"?>
@@ -228,7 +228,7 @@ def test_load_ui_into_self_pyside():
  <connections/>
 </ui>"""
 
-    with tempfile.NamedTemporaryFile(suffix=".ui") as f:
+    with tempfile.NamedTemporaryFile(mode='w', suffix='.ui') as f:
         f.write(ui)
         f.seek(0)
 
@@ -249,7 +249,7 @@ def test_load_ui_into_self_pyside():
 
 
 def test_load_ui_into_self_pyqt4():
-    """load widgets into self using PyQt4"""
+    """load_ui: Load widgets into self using PyQt4"""
 
     ui = """\
 <?xml version="1.0" encoding="UTF-8"?>
@@ -286,7 +286,7 @@ def test_load_ui_into_self_pyqt4():
  <connections/>
 </ui>"""
 
-    with tempfile.NamedTemporaryFile(suffix=".ui") as f:
+    with tempfile.NamedTemporaryFile(mode='w', suffix='.ui') as f:
         f.write(ui)
         f.seek(0)
 
@@ -307,7 +307,7 @@ def test_load_ui_into_self_pyqt4():
 
 
 def test_load_ui_into_custom_pyside():
-    """load widgets into custom using PySide"""
+    """load_ui: Load widgets into custom using PySide"""
 
     ui = """\
 <?xml version="1.0" encoding="UTF-8"?>
@@ -344,7 +344,7 @@ def test_load_ui_into_custom_pyside():
  <connections/>
 </ui>"""
 
-    with tempfile.NamedTemporaryFile(suffix=".ui") as f:
+    with tempfile.NamedTemporaryFile(mode='w', suffix='.ui') as f:
         f.write(ui)
         f.seek(0)
 
@@ -365,7 +365,7 @@ def test_load_ui_into_custom_pyside():
 
 
 def test_load_ui_into_custom_pyqt4():
-    """load widgets into custom using PyQt4"""
+    """load_ui: Load widgets into custom using PyQt4"""
 
     ui = """\
 <?xml version="1.0" encoding="UTF-8"?>
@@ -402,7 +402,7 @@ def test_load_ui_into_custom_pyqt4():
  <connections/>
 </ui>"""
 
-    with tempfile.NamedTemporaryFile(suffix=".ui") as f:
+    with tempfile.NamedTemporaryFile(mode='w', suffix='.ui') as f:
         f.write(ui)
         f.seek(0)
 
