@@ -186,15 +186,15 @@ from Qt import load_ui
 class Hello(QtWidgets.QWidget):
     def __init__(self):
         super(Hello, self).__init__()
-        self.ui = load_ui('my_ui.ui')
+        load_ui('my_ui.ui', self)
 
 app = QtWidgets.QApplication(sys.argv)
 window = Hello()
-window.ui.show()
+window.show()
 sys.exit(app.exec_())
 ```
 
-Please note, for maximum compatibility, only pass the argument of the filename to the `load_ui` function.
+The `QUiLoader` class was modified to accept a base instance argument as well as custom widgets argument to become as compatible with `uic.loadUi` as possible.
 
 ##### sip API v2
 
