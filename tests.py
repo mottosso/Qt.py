@@ -181,3 +181,235 @@ if PYTHON == 2:
             import sip
             sip.setapi("QString", 1)
             assert_raises(ImportError, __import__, "Qt")
+
+
+def test_load_ui_into_self_pyside():
+    """load widgets into self"""
+
+    ui = """\
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
+     <widget class="QPushButton" name="pushButton">
+      <property name="text">
+       <string>PushButton</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>125</width>
+     <height>22</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>"""
+
+    with tempfile.NamedTemporaryFile(suffix=".ui") as f:
+        f.write(ui)
+        f.seek(0)
+
+        with pyside():
+            from Qt import QtWidgets, load_ui
+
+            class MainWindow(QtWidgets.QMainWindow):
+
+                def __init__(self, parent=None):
+                    QtWidgets.QMainWindow.__init__(self, parent)
+                    load_ui(f.name, self)
+                    assert self.pushButton
+
+            app = QtWidgets.QApplication(sys.argv)
+            window = MainWindow()
+            # window.show()
+            # app.exec_()
+
+
+def test_load_ui_into_self_pyqt4():
+    """load widgets into self"""
+
+    ui = """\
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
+     <widget class="QPushButton" name="pushButton">
+      <property name="text">
+       <string>PushButton</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>125</width>
+     <height>22</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>"""
+
+    with tempfile.NamedTemporaryFile(suffix=".ui") as f:
+        f.write(ui)
+        f.seek(0)
+
+        with pyqt4():
+            from Qt import QtWidgets, load_ui
+
+            class MainWindow(QtWidgets.QMainWindow):
+
+                def __init__(self, parent=None):
+                    QtWidgets.QMainWindow.__init__(self, parent)
+                    load_ui(f.name, self)
+                    assert self.pushButton
+
+            app = QtWidgets.QApplication(sys.argv)
+            window = MainWindow()
+            # window.show()
+            # app.exec_()
+
+
+def test_load_ui_into_custom_pyside():
+    """load widgets into self"""
+
+    ui = """\
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
+     <widget class="QPushButton" name="pushButton">
+      <property name="text">
+       <string>PushButton</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>125</width>
+     <height>22</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>"""
+
+    with tempfile.NamedTemporaryFile(suffix=".ui") as f:
+        f.write(ui)
+        f.seek(0)
+
+        with pyside():
+            from Qt import QtWidgets, load_ui
+
+            class MainWindow(QtWidgets.QMainWindow):
+
+                def __init__(self, parent=None):
+                    QtWidgets.QMainWindow.__init__(self, parent)
+                    self.custom = load_ui(f.name)
+                    assert self.custom.pushButton
+
+            app = QtWidgets.QApplication(sys.argv)
+            window = MainWindow()
+            # window.custom.show()
+            # app.exec_()
+
+
+def test_load_ui_into_custom_pyqt4():
+    """load widgets into self"""
+
+    ui = """\
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
+     <widget class="QPushButton" name="pushButton">
+      <property name="text">
+       <string>PushButton</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>125</width>
+     <height>22</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>"""
+
+    with tempfile.NamedTemporaryFile(suffix=".ui") as f:
+        f.write(ui)
+        f.seek(0)
+
+        with pyqt4():
+            from Qt import QtWidgets, load_ui
+
+            class MainWindow(QtWidgets.QMainWindow):
+
+                def __init__(self, parent=None):
+                    QtWidgets.QMainWindow.__init__(self, parent)
+                    self.custom = load_ui(f.name)
+                    assert self.custom.pushButton
+
+            app = QtWidgets.QApplication(sys.argv)
+            window = MainWindow()
+            # window.custom.show()
+            # app.exec_()
