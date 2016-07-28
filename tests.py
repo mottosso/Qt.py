@@ -184,7 +184,7 @@ if PYTHON == 2:
 
 
 def test_load_ui_into_self_pyside():
-    """load widgets into self"""
+    """load widgets into self using PySide"""
 
     ui = """\
 <?xml version="1.0" encoding="UTF-8"?>
@@ -242,7 +242,7 @@ def test_load_ui_into_self_pyside():
 
 
 def test_load_ui_into_self_pyqt4():
-    """load widgets into self"""
+    """load widgets into self using PyQt4"""
 
     ui = """\
 <?xml version="1.0" encoding="UTF-8"?>
@@ -300,7 +300,7 @@ def test_load_ui_into_self_pyqt4():
 
 
 def test_load_ui_into_custom_pyside():
-    """load widgets into self"""
+    """load widgets into custom using PySide"""
 
     ui = """\
 <?xml version="1.0" encoding="UTF-8"?>
@@ -358,7 +358,7 @@ def test_load_ui_into_custom_pyside():
 
 
 def test_load_ui_into_custom_pyqt4():
-    """load widgets into self"""
+    """load widgets into custom using PyQt4"""
 
     ui = """\
 <?xml version="1.0" encoding="UTF-8"?>
