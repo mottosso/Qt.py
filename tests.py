@@ -263,7 +263,7 @@ def test_load_ui_into_custom_pyside():
 
             app = QtWidgets.QApplication(sys.argv)
             widget = load_ui(fname)
-            
+
             # From .ui file
             assert hasattr(widget, "pushButton")
 
@@ -277,7 +277,7 @@ def test_load_ui_into_custom_pyqt4():
 
             app = QtWidgets.QApplication(sys.argv)
             widget = load_ui(fname)
-            
+
             # From .ui file
             assert hasattr(widget, "pushButton")
 
@@ -291,4 +291,3 @@ if PYTHON == 2:
             import sip
             sip.setapi("QString", 1)
             assert_raises(ImportError, __import__, "Qt")
-
