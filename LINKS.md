@@ -1,12 +1,12 @@
 ### Qt4, Qt5
 
-Documentation:
+* Documentation:
   * Qt4: http://doc.qt.io/qt-4.8
   * Qt5: http://doc.qt.io/qt-5
-Mailing lists: http://lists.qt-project.org/mailman/listinfo
-Source: https://wiki.qt.io/Get_the_Source
-Bug tracker/issues: https://bugreports.qt.io/browse/QTBUG
-Roadmap: https://wiki.qt.io/Category:Developing_Qt::Qt_Planning
+* Mailing lists: http://lists.qt-project.org/mailman/listinfo
+* Source: https://wiki.qt.io/Get_the_Source
+* Bug tracker/issues: https://bugreports.qt.io/browse/QTBUG
+* Roadmap: https://wiki.qt.io/Category:Developing_Qt::Qt_Planning
 
 ___
 
