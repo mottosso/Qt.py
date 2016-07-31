@@ -36,6 +36,11 @@ button.show()
 app.exec_()
 ```
 
+**Guides**
+
+- [Dealing with Maya 2017 and PySide2](https://fredrikaverpil.github.io/2016/07/25/dealing-with-maya-2017-and-pyside2/)
+- [Developing with Qt.py](https://fredrikaverpil.github.io/2016/07/25/developing-with-qt-py/)
+
 <br>
 <br>
 <br>
