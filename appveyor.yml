@@ -2,8 +2,8 @@ build: false
 
 environment:
   matrix:
-    - PYTHON: "C:\\Python27"
-      PyQt: "http://sourceforge.net/projects/pyqt/files/PyQt4/PyQt-4.11.4/PyQt4-4.11.4-gpl-Py2.7-Qt4.8.7-x32.exe"
+    - PYTHON: "C:\\Python27-x64"
+      PyQt: "http://sourceforge.net/projects/pyqt/files/PyQt4/PyQt-4.11.4/PyQt4-4.11.4-gpl-Py2.7-Qt4.8.7-x64.exe"
 
 init:
   - ECHO %PYTHON%
@@ -14,7 +14,6 @@ install:
   - python -m pip install nose nosepipe PySide
 
   # Install PyQt4
-
   # miniconda (provided by AppVeyor) prevents PyQt installer
   # to run because of a registry key. So the line below overwrite
   # the registry key.
