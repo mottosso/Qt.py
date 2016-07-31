@@ -7,21 +7,16 @@ RUN apt-get update && apt-get install -y \
     xvfb
 
 # Nose is the Python test-runner
-RUN pip install nose nosepipe
+RUN pip install nose nosepipe xvfbwrapper
 
 # Enable additional output from Qt.py
 ENV QT_VERBOSE true
 
-# Xvfb
-ENV DISPLAY :99
-
 WORKDIR /workspace/Qt.py
 ENTRYPOINT cp -r /Qt.py /workspace && \
 	python build_caveats_tests.py && \
-	Xvfb :99 -screen 0 1024x768x16 & \
-	sleep 3 && \
 	nosetests \
 		--verbose \
 		--with-process-isolation \
 		--with-doctest \
-		--exe 
+		--exe
