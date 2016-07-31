@@ -328,3 +328,11 @@ The release is then automatically uploaded to PyPI.
 ```bash
 $ pip install Qt.py
 ```
+
+<br>
+<br>
+<br>
+
+### Links
+
+Links to e.g. bindings documentations, source files, bug trackers etc are collected in [LINKS.md](LINKS.md).
