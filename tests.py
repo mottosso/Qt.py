@@ -144,10 +144,10 @@ def test_vendoring():
     os.makedirs(vendor)
 
     # Make packages out of folders
-    with open(os.path.join(project, "__init__.py"), "w") as f:
+    with open(os.path.join(project, "__init__.py"), "wb") as f:
         f.write("from .vendor.Qt import QtWidgets")
 
-    with open(os.path.join(vendor, "__init__.py"), "w") as f:
+    with open(os.path.join(vendor, "__init__.py"), "wb") as f:
         f.write("\n")
 
     # Copy real Qt.py into myproject
@@ -158,18 +158,24 @@ def test_vendoring():
     assert subprocess.call(
         ["python", "-c", "import myproject"],
         cwd=self.tempdir,
+        stdout=subprocess.PIPE,    # With nose process isolation, buffer can
+        stderr=subprocess.STDOUT,  # easily get full and throw an error.
     ) == 0
 
     print("Testing absolute import..")
     assert subprocess.call(
         ["python", "-c", "from myproject.vendor.Qt import QtWidgets"],
         cwd=self.tempdir,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
     ) == 0
 
     print("Testing direct import..")
     assert subprocess.call(
         ["python", "-c", "import myproject.vendor.Qt"],
         cwd=self.tempdir,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
     ) == 0
 
 
