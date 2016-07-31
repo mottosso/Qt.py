@@ -5,8 +5,8 @@ environment:
     - PYTHON: "C:\\Python27-x64"
       PYQT: "http://sourceforge.net/projects/pyqt/files/PyQt4/PyQt-4.11.4/PyQt4-4.11.4-gpl-Py2.7-Qt4.8.7-x64.exe"
 
-    - PYTHON: "C:\\Python34-x64"
-      PYQT: "http://sourceforge.net/projects/pyqt/files/PyQt4/PyQt-4.11.4/PyQt4-4.11.4-gpl-Py3.4-Qt4.8.7-x64.exe"
+    # - PYTHON: "C:\\Python34-x64"
+    #   PYQT: "http://sourceforge.net/projects/pyqt/files/PyQt4/PyQt-4.11.4/PyQt4-4.11.4-gpl-Py3.4-Qt4.8.7-x64.exe"
 
 init:
   - ECHO %PYTHON%
