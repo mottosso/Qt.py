@@ -1,0 +1,31 @@
+build: false
+
+environment:
+  matrix:
+    - PYTHON: "C:\\Python27"
+      PyQt: "http://sourceforge.net/projects/pyqt/files/PyQt4/PyQt-4.11.4/PyQt4-4.11.4-gpl-Py2.7-Qt4.8.7-x32.exe"
+
+init:
+  - ECHO %PYTHON%
+  - SET PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%
+
+install:
+  # Install PySide
+  - python -m pip install nose nosepipe PySide
+
+  # Install PyQt4
+
+  # miniconda (provided by AppVeyor) prevents PyQt installer
+  # to run because of a registry key. So the line below overwrite
+  # the registry key.
+
+  - REG ADD HKCU\Software\Python\PythonCore\2.7\InstallPath /f /ve /t REG_SZ /d %PYTHON%
+  - ps: (new-object net.webclient).DownloadFile($env:PyQT, "C:\install-PyQt4.exe")
+  - ps: Start-Process -FilePath C:\install-PyQt4.exe -ArgumentList "/S" -Wait -Passthru
+
+  # Test install
+  - python -c "from PyQt4 import QtGui"
+  - python -c "from PySide import QtGui"
+
+test_script:
+  - nosetests --verbose --with-doctest --with-process-isolation --exe
