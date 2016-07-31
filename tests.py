@@ -276,7 +276,7 @@ def test_load_ui_into_self_pyqt4():
 
 
 def test_load_ui_into_custom_pyside():
-    """load_ui: Load .ui file into custom using PySide"""
+    """load_ui: Load widgets into custom using PySide"""
 
     with xvfb():
         with ui() as fname:
