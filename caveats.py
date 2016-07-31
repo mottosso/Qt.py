@@ -21,7 +21,7 @@ def parse(fname):
             # Doctests are within a quadruple hashtag header.
             if line.startswith("#### "):
                 current_header = line.rstrip()
-                
+
             # The actuat test is within a fenced block.
             if line.startswith("```"):
                 in_block = False
@@ -38,9 +38,9 @@ def parse(fname):
     tests = list()
     for block in blocks:
         header = (
-            block[0].strip("# ") # Remove Markdown
-                    .rstrip()    # Remove newline
-                    .lower()     # PEP08
+            block[0].strip("# ")  # Remove Markdown
+                    .rstrip()     # Remove newline
+                    .lower()      # PEP08
         )
 
         # Remove unsupported characters
@@ -59,7 +59,7 @@ def parse(fname):
         )
 
         binding, doctest_version = (data + [None])[:2]
-        
+
         # Run tests on both Python 2 and 3, unless explicitly stated
         if doctest_version is not None:
             if doctest_version not in ("Python2", "Python3"):
@@ -83,7 +83,7 @@ def parse(fname):
 
 def format_(blocks):
     """Produce Python module from blocks of tests
-    
+
     Arguments:
         blocks (list): Blocks of tests from func:`parse()`
 
@@ -122,5 +122,5 @@ def test_{count}_{header}():
     '''
 
     """.format(**block))
-    
+
     return tests
