@@ -22,8 +22,8 @@ install:
   - sudo apt-get install -y qt4-qmake libqt4-dev
   - sudo apt-get install -y python-qt4 python-pyside
   - sudo apt-get install -y python3-pyqt4 python3-pyside python3-pip
-  - sudo pip install nosepipe
-  - sudo pip3 install nosepipe
+  - sudo pip install nosepipe xvfbwrapper
+  - sudo pip3 install nosepipe xvfbwrapper
 
   # Print version information
   - python -c "import PySide;print('Path, %s' % PySide)"
