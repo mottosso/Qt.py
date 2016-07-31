@@ -28,4 +28,5 @@ install:
   - python -c "from PySide import QtGui"
 
 test_script:
+  - python build_caveats_tests.py
   - nosetests --verbose --with-doctest --with-process-isolation --exe
