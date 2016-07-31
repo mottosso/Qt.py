@@ -41,8 +41,8 @@ In PySide, somehow the last argument (the id) is allowed to be negative and is m
 >>> from Qt import QtGui
 >>> model = QtGui.QStandardItemModel()
 >>> index = model.createIndex(0, 0, -1)
->>> int(index.internalId()) == -1
-True
+>>> int(index.internalId())
+-1
 ```
 
 ```python
@@ -50,8 +50,8 @@ True
 >>> from Qt import QtGui
 >>> model = QtGui.QStandardItemModel()
 >>> index = model.createIndex(0, 0, -1)
->>> int(index.internalId()) == 18446744073709551615
-True
+>>> int(index.internalId())
+18446744073709551615
 
 ```
 
