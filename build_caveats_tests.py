@@ -1,8 +1,8 @@
 #!/usr/bin/env python
-import parser
+import caveats
 
-blocks = parser.parse("CAVEATS.md")
-tests = parser.format_(blocks)
+blocks = caveats.parse("CAVEATS.md")
+tests = caveats.format_(blocks)
 
 # Write formatted tests
 with open("test_caveats.py", "w") as f:

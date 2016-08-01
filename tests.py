@@ -19,6 +19,16 @@ from nose.tools import (
 
 PYTHON = sys.version_info[0]  # e.g. 2 or 3
 
+self = sys.modules[__name__]
+
+
+def setup():
+    self.tempdir = tempfile.mkdtemp()
+
+
+def teardown():
+    shutil.rmtree(self.tempdir)
+
 
 @contextlib.contextmanager
 def pyqt4():
@@ -123,53 +133,50 @@ def test_vendoring():
 
     project/
         vendor/
-        __init__.py
             __init__.py
+        __init__.py
 
     """
 
-    dirname = os.path.dirname(__file__)
-    tempdir = tempfile.mkdtemp()
+    project = os.path.join(self.tempdir, "myproject")
+    vendor = os.path.join(project, "vendor")
 
-    try:
-        project = os.path.join(tempdir, "myproject")
-        vendor = os.path.join(tempdir, "myproject", "vendor")
+    os.makedirs(vendor)
 
-        os.makedirs(vendor)
+    # Make packages out of folders
+    with open(os.path.join(project, "__init__.py"), "w") as f:
+        f.write("from .vendor.Qt import QtWidgets")
 
-        # Make packages out of folders
-        with open(os.path.join(project, "__init__.py"), "w") as f:
-            f.write("from .vendor.Qt import QtWidgets")
+    with open(os.path.join(vendor, "__init__.py"), "w") as f:
+        f.write("\n")
 
-        with open(os.path.join(vendor, "__init__.py"), "w") as f:
-            pass
+    # Copy real Qt.py into myproject
+    shutil.copy(os.path.join(os.path.dirname(__file__), "Qt.py"),
+                os.path.join(vendor, "Qt.py"))
 
-        shutil.copy(os.path.join(dirname, "Qt.py"),
-                    os.path.join(vendor, "Qt.py"))
+    print("Testing relative import..")
+    assert subprocess.call(
+        ["python", "-c", "import myproject"],
+        cwd=self.tempdir,
+        stdout=subprocess.PIPE,    # With nose process isolation, buffer can
+        stderr=subprocess.STDOUT,  # easily get full and throw an error.
+    ) == 0
 
-        print("Testing relative import..")
-        assert subprocess.call(
-            ["python", "-c", "import myproject"],
-            cwd=tempdir,
-            env={}
-        ) == 0
+    print("Testing absolute import..")
+    assert subprocess.call(
+        ["python", "-c", "from myproject.vendor.Qt import QtWidgets"],
+        cwd=self.tempdir,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+    ) == 0
 
-        print("Testing absolute import..")
-        assert subprocess.call(
-            ["python", "-c", "from myproject.vendor.Qt import QtWidgets"],
-            cwd=tempdir,
-            env={}
-        ) == 0
-
-        print("Testing direct import..")
-        assert subprocess.call(
-            ["python", "-c", "import myproject.vendor.Qt"],
-            cwd=tempdir,
-            env={}
-        ) == 0
-
-    finally:
-        shutil.rmtree(tempdir)
+    print("Testing direct import..")
+    assert subprocess.call(
+        ["python", "-c", "import myproject.vendor.Qt"],
+        cwd=self.tempdir,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+    ) == 0
 
 
 if PYTHON == 2:
