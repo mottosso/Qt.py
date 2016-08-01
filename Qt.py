@@ -159,13 +159,12 @@ def pyside_load_ui_wrap(version):
             custom_widgets (widget): ?
 
         Usage:
-            >>> from Qt import load_ui
-            >>> class MyWindow(QtWidgets.QWidget):
-            ...     def __init__(self, parent=None):
-            ...         fname = 'my_ui.ui'
-            ...         load_ui(fname, self)
-            ...
-            >>> window = MyWindow()
+            from Qt import load_ui
+            class MyWindow(QtWidgets.QWidget):
+                def __init__(self, parent=None):
+                    fname = 'my_ui.ui'
+                    load_ui(fname, self)
+            window = MyWindow()
 
         Note:
             This function is based on the gist:
