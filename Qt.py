@@ -26,6 +26,7 @@ __version__ = "0.3.2"
 
 def _pyqt5():
     import PyQt5.Qt
+    from PyQt5 import uic
 
     # Remap
     PyQt5.QtCore.Signal = PyQt5.QtCore.pyqtSignal
@@ -37,7 +38,7 @@ def _pyqt5():
     PyQt5.__binding__ = "PyQt5"
     PyQt5.__binding_version__ = PyQt5.QtCore.PYQT_VERSION_STR
     PyQt5.__qt_version__ = PyQt5.QtCore.QT_VERSION_STR
-    PyQt5.load_ui = pyqt_load_ui_wrap(version=5)
+    PyQt5.load_ui = _pyqt_load_ui_factory(uic)
 
     return PyQt5
 
@@ -61,6 +62,7 @@ def _pyqt4():
         raise ImportError
 
     import PyQt4.Qt
+    from PyQt4 import uic
 
     # Remap
     PyQt4.QtWidgets = PyQt4.QtGui
@@ -75,14 +77,14 @@ def _pyqt4():
     PyQt4.__binding__ = "PyQt4"
     PyQt4.__binding_version__ = PyQt4.QtCore.PYQT_VERSION_STR
     PyQt4.__qt_version__ = PyQt4.QtCore.QT_VERSION_STR
-    PyQt4.load_ui = pyqt_load_ui_wrap(version=4)
+    PyQt4.load_ui = _pyqt_load_ui_factory(uic)
 
     return PyQt4
 
 
 def _pyside2():
     import PySide2
-    from PySide2 import QtGui, QtCore
+    from PySide2 import QtGui, QtCore, QtUiTools
 
     # Remap
     QtCore.QStringListModel = QtGui.QStringListModel
@@ -92,14 +94,14 @@ def _pyside2():
     PySide2.__binding__ = "PySide2"
     PySide2.__binding_version__ = PySide2.__version__
     PySide2.__qt_version__ = PySide2.QtCore.qVersion()
-    PySide2.load_ui = pyside_load_ui_wrap(version=2)
+    PySide2.load_ui = _pyside_load_ui_factory(QtUiTools.QUiLoader)
 
     return PySide2
 
 
 def _pyside():
     import PySide
-    from PySide import QtGui, QtCore
+    from PySide import QtGui, QtCore, QtUiTools
 
     # Remap
     PySide.QtWidgets = QtGui
@@ -113,90 +115,50 @@ def _pyside():
     PySide.__binding__ = "PySide"
     PySide.__binding_version__ = PySide.__version__
     PySide.__qt_version__ = PySide.QtCore.qVersion()
-    PySide.load_ui = pyside_load_ui_wrap(version=1)
+    PySide.load_ui = _pyside_load_ui_factory(QtUiTools.QUiLoader)
 
     return PySide
 
 
-def pyside_load_ui_wrap(version):
-    if version == 1:
-        from PySide import QtUiTools, QtCore
-    elif version == 2:
-        from PySide2 import QtUiTools, QtCore
+def _pyside_load_ui_factory(superclass):
+    """load_ui factory function for PySide and PySide2
 
-    class UiLoader(QtUiTools.QUiLoader):
-        def __init__(self, base_instance, custom_widgets=None):
-            QtUiTools.QUiLoader.__init__(self, base_instance)
+    Produce a load_ui function using the provided superclass
+
+    """
+
+    class UiLoader(superclass):
+        """PyQt port of loadUi
+
+        Based on: https://gist.github.com/cpbotha/1b42a20c8f3eb9bb7cb8
+
+        """
+
+        def __init__(self, base_instance):
+            super(UiLoader, self).__init__(base_instance)
             self.base_instance = base_instance
-            self.custom_widgets = custom_widgets
 
-        def createWidget(self, class_name, parent=None, name=''):
+        def createWidget(self, class_name, parent=None, name=""):
             if parent is None and self.base_instance:
                 return self.base_instance
-            else:
-                if class_name in self.availableWidgets():
-                    widget = QtUiTools.QUiLoader.createWidget(self,
-                                                              class_name,
-                                                              parent, name)
-                else:
-                    try:
-                        widget = self.custom_widgets[class_name](parent)
-                    except (TypeError, KeyError):
-                        raise Exception('No custom widget ' +
-                                        class_name +
-                                        ' found in custom_widgets' +
-                                        ' param of UiLoader __init__.')
-                if self.base_instance:
-                    setattr(self.base_instance, name, widget)
-                return widget
 
-    def pyside_load_ui(fname, base_instance=None, custom_widgets=None):
-        """Read Qt Designer .ui `fname`
+            if class_name not in self.availableWidgets():
+                raise Exception("\"%s\" not available." % class_name)
 
-        Args:
-            fname (str): Absolute path to .ui file
-            base_instance (widget, optional): Instance of the Qt base class.
-            custom_widgets (widget): ?
+            widget = super(UiLoader, self).createWidget(
+                class_name, parent, name)
 
-        Usage:
-            from Qt import load_ui
-            class MyWindow(QtWidgets.QWidget):
-                def __init__(self, parent=None):
-                    fname = 'my_ui.ui'
-                    load_ui(fname, self)
-            window = MyWindow()
+            if self.base_instance:
+                setattr(self.base_instance, name, widget)
 
-        Note:
-            This function is based on the gist:
-            https://gist.github.com/cpbotha/1b42a20c8f3eb9bb7cb8
-
-        """
-
-        def loadUi(fname, base_instance=None, custom_widgets=None):
-            loader = UiLoader(base_instance, custom_widgets)
-            widget = loader.load(fname)
-            QtCore.QMetaObject.connectSlotsByName(widget)
             return widget
 
-        return loadUi(fname, base_instance=base_instance,
-                      custom_widgets=custom_widgets)
-
-    return pyside_load_ui
-
-
-def pyqt_load_ui_wrap(version):
-    if version == 4:
-        from PyQt4 import uic
-    elif version == 5:
-        from PyQt5 import uic
-
-    def pyqt_load_ui(fname, base_instance=None, custom_widgets=None):
+    def load_ui(fname, base_instance=None):
         """Read Qt Designer .ui `fname`
 
         Args:
             fname (str): Absolute path to .ui file
             base_instance (widget, optional): Instance of the Qt base class.
-            custom_widgets (widget): ?
 
         Usage:
             from Qt import load_ui
@@ -208,16 +170,43 @@ def pyqt_load_ui_wrap(version):
 
         """
 
-        if isinstance(base_instance, type(None)) and \
-                isinstance(custom_widgets, type(None)):
-            return uic.loadUi(fname)
-        elif not isinstance(base_instance, type(None)) and \
-                isinstance(custom_widgets, type(None)):
-            return uic.loadUi(fname, base_instance)
-        else:
-            return uic.loadUi(fname, base_instance, custom_widgets)
+        from Qt import QtCore
 
-    return pyqt_load_ui
+        loader = UiLoader(base_instance)
+        widget = loader.load(fname)
+        QtCore.QMetaObject.connectSlotsByName(widget)
+        return widget
+
+    return load_ui
+
+
+def _pyqt_load_ui_factory(uic):
+    """load_ui factory function for PyQt4 and PyQt5
+
+    Produce a load_ui function using the provided module
+
+    """
+
+    def load_ui(fname, base_instance=None):
+        """Read Qt Designer .ui `fname`
+
+        Args:
+            fname (str): Absolute path to .ui file
+            base_instance (widget, optional): Instance of the Qt base class.
+
+        Usage:
+            from Qt import load_ui
+            class MyWindow(QtWidgets.QWidget):
+                def __init__(self, parent=None):
+                    fname = 'my_ui.ui'
+                    load_ui(fname, self)
+            window = MyWindow()
+
+        """
+
+        return uic.loadUi(fname, base_instance)
+
+    return load_ui
 
 
 def _log(text, verbose):
