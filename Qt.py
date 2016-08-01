@@ -123,16 +123,17 @@ def pyside_load_ui(fname, base_instance=None, custom_widgets=None):
 
     Args:
         fname (str): Absolute path to .ui file
-        base_instance (widget): Optional instance of the Qt base class.
+        base_instance (widget, optional): Instance of the Qt base class.
         custom_widgets (widget): ?
 
     Usage:
-        >> from Qt import load_ui
-        >> class MyWindow(QtWidgets.QWidget):
-        ..   fname = 'my_ui.ui'
-        ..   load_ui(fname, self)
-        ..
-        >> window = MyWindow()
+        >>> from Qt import load_ui
+        >>> class MyWindow(QtWidgets.QWidget):
+        ...     def __init__(self, parent=None):
+        ...         fname = 'my_ui.ui'
+        ...         load_ui(fname, self)
+        ...
+        >>> window = MyWindow()
 
     Note:
         This function is based on the gist:
@@ -183,16 +184,17 @@ def pyside2_load_ui(fname, base_instance=None, custom_widgets=None):
 
     Args:
         fname (str): Absolute path to .ui file
-        base_instance (widget): Optional instance of the Qt base class.
+        base_instance (widget, optional): Instance of the Qt base class.
         custom_widgets (widget): ?
 
     Usage:
-        >> from Qt import load_ui
-        >> class MyWindow(QtWidgets.QWidget):
-        ..   fname = 'my_ui.ui'
-        ..   load_ui(fname, self)
-        ..
-        >> window = MyWindow()
+        >>> from Qt import load_ui
+        >>> class MyWindow(QtWidgets.QWidget):
+        ...     def __init__(self, parent=None):
+        ...         fname = 'my_ui.ui'
+        ...         load_ui(fname, self)
+        ...
+        >>> window = MyWindow()
 
     Note:
         This function is based on the gist:
@@ -243,16 +245,17 @@ def pyqt4_load_ui(fname, base_instance=None, custom_widgets=None):
 
     Args:
         fname (str): Absolute path to .ui file
-        base_instance (widget): Optional instance of the Qt base class.
+        base_instance (widget, optional): Instance of the Qt base class.
         custom_widgets (widget): ?
 
     Usage:
-        >> from Qt import load_ui
-        >> class MyWindow(QtWidgets.QWidget):
-        ..   fname = 'my_ui.ui'
-        ..   load_ui(fname, self)
-        ..
-        >> window = MyWindow()
+        >>> from Qt import load_ui
+        >>> class MyWindow(QtWidgets.QWidget):
+        ...     def __init__(self, parent=None):
+        ...         fname = 'my_ui.ui'
+        ...         load_ui(fname, self)
+        ...
+        >>> window = MyWindow()
 
     """
 
@@ -273,16 +276,17 @@ def pyqt5_load_ui(fname, base_instance=None, custom_widgets=None):
 
     Args:
         fname (str): Absolute path to .ui file
-        base_instance (widget): Optional instance of the Qt base class.
+        base_instance (widget, optional): Instance of the Qt base class.
         custom_widgets (widget): ?
 
     Usage:
-        >> from Qt import load_ui
-        >> class MyWindow(QtWidgets.QWidget):
-        ..   fname = 'my_ui.ui'
-        ..   load_ui(fname, self)
-        ..
-        >> window = MyWindow()
+        >>> from Qt import load_ui
+        >>> class MyWindow(QtWidgets.QWidget):
+        ...     def __init__(self, parent=None):
+        ...         fname = 'my_ui.ui'
+        ...         load_ui(fname, self)
+        ...
+        >>> window = MyWindow()
 
     """
 
