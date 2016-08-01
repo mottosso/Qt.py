@@ -6,6 +6,7 @@ Usage:
 """
 
 import os
+import io
 import sys
 import imp
 import shutil
@@ -24,29 +25,9 @@ self = sys.modules[__name__]
 
 def setup():
     self.tempdir = tempfile.mkdtemp()
+    self.ui = os.path.join(self.tempdir, "temp.ui")
 
-
-def teardown():
-    shutil.rmtree(self.tempdir)
-
-
-@contextlib.contextmanager
-def pyqt4():
-    os.environ["QT_PREFERRED_BINDING"] = "PyQt4"
-    yield
-    os.environ.pop("QT_PREFERRED_BINDING")
-
-
-@contextlib.contextmanager
-def pyside():
-    os.environ["QT_PREFERRED_BINDING"] = "PySide"
-    yield
-    os.environ.pop("QT_PREFERRED_BINDING")
-
-
-@contextlib.contextmanager
-def ui():
-    source = """\
+    source = u"""\
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>Form</class>
@@ -79,13 +60,29 @@ def ui():
  <resources/>
  <connections/>
 </ui>
+
 """
 
-    with tempfile.NamedTemporaryFile(mode='w', suffix='.ui') as f:
+    with io.open(self.ui, "w", encoding="utf-8") as f:
         f.write(source)
-        f.seek(0)
 
-        yield f.name
+
+def teardown():
+    shutil.rmtree(self.tempdir)
+
+
+@contextlib.contextmanager
+def pyqt4():
+    os.environ["QT_PREFERRED_BINDING"] = "PyQt4"
+    yield
+    os.environ.pop("QT_PREFERRED_BINDING")
+
+
+@contextlib.contextmanager
+def pyside():
+    os.environ["QT_PREFERRED_BINDING"] = "PySide"
+    yield
+    os.environ.pop("QT_PREFERRED_BINDING")
 
 
 def test_environment():
@@ -226,133 +223,67 @@ def test_vendoring():
 def test_load_ui_into_self_pyside():
     """load_ui: Load widgets into self using PySide"""
 
-    with ui() as fname:
-        with pyside():
-            from Qt import QtWidgets, load_ui
+    with pyside():
+        from Qt import QtWidgets, load_ui
 
-            class MainWindow(QtWidgets.QMainWindow):
-                def __init__(self, parent=None):
-                    QtWidgets.QMainWindow.__init__(self, parent)
-                    load_ui(fname, self)
+        class MainWindow(QtWidgets.QMainWindow):
+            def __init__(self, parent=None):
+                QtWidgets.QMainWindow.__init__(self, parent)
+                load_ui(sys.modules[__name__].ui, self)
 
-            app = QtWidgets.QApplication(sys.argv)
-            window = MainWindow()
+        app = QtWidgets.QApplication(sys.argv)
+        window = MainWindow()
 
-            # Inherited from .ui file
-            assert hasattr(window, "pushButton")
-
-
-def test_load_ui_into_self_pyqt4():
-    """load_ui: Load widgets into self using PyQt4"""
-
-    with ui() as fname:
-        with pyqt4():
-            from Qt import QtWidgets, load_ui
-
-            class MainWindow(QtWidgets.QMainWindow):
-                def __init__(self, parent=None):
-                    QtWidgets.QMainWindow.__init__(self, parent)
-                    load_ui(fname, self)
-
-            app = QtWidgets.QApplication(sys.argv)
-            window = MainWindow()
-
-            # Inherited from .ui file
-            assert hasattr(window, "pushButton")
-
-
-def test_load_ui_into_custom_pyside():
-    """load_ui: Load widgets into custom using PySide"""
-
-    with ui() as fname:
-        with pyside():
-            from Qt import QtWidgets, load_ui
-
-            app = QtWidgets.QApplication(sys.argv)
-            widget = load_ui(fname)
-
-            # From .ui file
-            assert hasattr(widget, "pushButton")
-
-
-def test_load_ui_into_custom_pyqt4():
-    """load_ui: Load widgets into custom using PyQt4"""
-
-    with ui() as fname:
-        with pyqt4():
-            from Qt import QtWidgets, load_ui
-
-            app = QtWidgets.QApplication(sys.argv)
-            widget = load_ui(fname)
-
-            # From .ui file
-            assert hasattr(widget, "pushButton")
-
-
-def test_load_ui_into_self_pyside():
-    """load_ui: Load widgets into self using PySide"""
-
-    with ui() as fname:
-        with pyside():
-            from Qt import QtWidgets, load_ui
-
-            class MainWindow(QtWidgets.QMainWindow):
-                def __init__(self, parent=None):
-                    QtWidgets.QMainWindow.__init__(self, parent)
-                    load_ui(fname, self)
-
-            app = QtWidgets.QApplication(sys.argv)
-            window = MainWindow()
-
-            # Inherited from .ui file
-            assert hasattr(window, "pushButton")
+        # Inherited from .ui file
+        assert hasattr(window, "pushButton")
+        app.exit()
 
 
 def test_load_ui_into_self_pyqt4():
     """load_ui: Load widgets into self using PyQt4"""
 
-    with ui() as fname:
-        with pyqt4():
-            from Qt import QtWidgets, load_ui
+    with pyqt4():
+        from Qt import QtWidgets, load_ui
 
-            class MainWindow(QtWidgets.QMainWindow):
-                def __init__(self, parent=None):
-                    QtWidgets.QMainWindow.__init__(self, parent)
-                    load_ui(fname, self)
+        class MainWindow(QtWidgets.QMainWindow):
+            def __init__(self, parent=None):
+                QtWidgets.QMainWindow.__init__(self, parent)
+                load_ui(sys.modules[__name__].ui, self)
 
-            app = QtWidgets.QApplication(sys.argv)
-            window = MainWindow()
+        app = QtWidgets.QApplication(sys.argv)
+        window = MainWindow()
 
-            # Inherited from .ui file
-            assert hasattr(window, "pushButton")
+        # Inherited from .ui file
+        assert hasattr(window, "pushButton")
+        app.exit()
 
 
 def test_load_ui_into_custom_pyside():
     """load_ui: Load widgets into custom using PySide"""
 
-    with ui() as fname:
-        with pyside():
-            from Qt import QtWidgets, load_ui
+    with pyside():
+        from Qt import QtWidgets, load_ui
 
-            app = QtWidgets.QApplication(sys.argv)
-            widget = load_ui(fname)
+        app = QtWidgets.QApplication(sys.argv)
+        widget = load_ui(sys.modules[__name__].ui)
 
-            # From .ui file
-            assert hasattr(widget, "pushButton")
+        # From .ui file
+        assert hasattr(widget, "pushButton")
+        app.exit()
 
 
 def test_load_ui_into_custom_pyqt4():
     """load_ui: Load widgets into custom using PyQt4"""
 
-    with ui() as fname:
-        with pyqt4():
-            from Qt import QtWidgets, load_ui
+    with pyqt4():
+        from Qt import QtWidgets, load_ui
 
-            app = QtWidgets.QApplication(sys.argv)
-            widget = load_ui(fname)
+        app = QtWidgets.QApplication(sys.argv)
+        widget = load_ui(sys.modules[__name__].ui)
 
-            # From .ui file
-            assert hasattr(widget, "pushButton")
+        # From .ui file
+        assert hasattr(widget, "pushButton")
+        app.exit()
 
 
 if PYTHON == 2:
