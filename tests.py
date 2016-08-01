@@ -49,37 +49,37 @@ def ui():
     source = """\
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>MainWindow</class>
- <widget class="QMainWindow" name="MainWindow">
-  <property name="windowTitle">
-   <string>MainWindow</string>
+ <class>Form</class>
+ <widget class="QWidget" name="Form">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>300</height>
+   </rect>
   </property>
-  <widget class="QWidget" name="centralwidget">
-   <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="0">
-     <widget class="QPushButton" name="pushButton">
-      <property name="text">
-       <string>PushButton</string>
-      </property>
-     </widget>
-    </item>
-   </layout>
-  </widget>
-  <widget class="QMenuBar" name="menubar">
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <widget class="QPushButton" name="pushButton">
    <property name="geometry">
     <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>125</width>
-     <height>22</height>
+     <x>140</x>
+     <y>120</y>
+     <width>90</width>
+     <height>27</height>
     </rect>
    </property>
+   <property name="text">
+    <string>PushButton</string>
+   </property>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
  </widget>
  <resources/>
  <connections/>
-</ui>"""
+</ui>
+"""
 
     with tempfile.NamedTemporaryFile(mode='w', suffix='.ui') as f:
         f.write(source)
