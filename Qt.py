@@ -37,7 +37,7 @@ def _pyqt5():
     PyQt5.__binding__ = "PyQt5"
     PyQt5.__binding_version__ = PyQt5.QtCore.PYQT_VERSION_STR
     PyQt5.__qt_version__ = PyQt5.QtCore.QT_VERSION_STR
-    PyQt5.load_ui = pyqt5_load_ui
+    PyQt5.load_ui = pyqt_load_ui_wrap(version=5)
 
     return PyQt5
 
@@ -75,7 +75,7 @@ def _pyqt4():
     PyQt4.__binding__ = "PyQt4"
     PyQt4.__binding_version__ = PyQt4.QtCore.PYQT_VERSION_STR
     PyQt4.__qt_version__ = PyQt4.QtCore.QT_VERSION_STR
-    PyQt4.load_ui = pyqt4_load_ui
+    PyQt4.load_ui = pyqt_load_ui_wrap(version=4)
 
     return PyQt4
 
@@ -184,64 +184,40 @@ def pyside_load_ui_wrap(version):
     return pyside_load_ui
 
 
-def pyqt4_load_ui(fname, base_instance=None, custom_widgets=None):
-    """Read Qt Designer .ui `fname`
+def pyqt_load_ui_wrap(version):
+    if version == 4:
+        from PyQt4 import uic
+    elif version == 5:
+        from PyQt5 import uic
 
-    Args:
-        fname (str): Absolute path to .ui file
-        base_instance (widget, optional): Instance of the Qt base class.
-        custom_widgets (widget): ?
+    def pyqt_load_ui(fname, base_instance=None, custom_widgets=None):
+        """Read Qt Designer .ui `fname`
 
-    Usage:
-        from Qt import load_ui
-        class MyWindow(QtWidgets.QWidget):
-            def __init__(self, parent=None):
-                fname = 'my_ui.ui'
-                load_ui(fname, self)
-        window = MyWindow()
+        Args:
+            fname (str): Absolute path to .ui file
+            base_instance (widget, optional): Instance of the Qt base class.
+            custom_widgets (widget): ?
 
-    """
+        Usage:
+            from Qt import load_ui
+            class MyWindow(QtWidgets.QWidget):
+                def __init__(self, parent=None):
+                    fname = 'my_ui.ui'
+                    load_ui(fname, self)
+            window = MyWindow()
 
-    from PyQt4 import uic
+        """
 
-    if isinstance(base_instance, type(None)) and \
-            isinstance(custom_widgets, type(None)):
-        return uic.loadUi(fname)
-    elif not isinstance(base_instance, type(None)) and \
-            isinstance(custom_widgets, type(None)):
-        return uic.loadUi(fname, base_instance)
-    else:
-        return uic.loadUi(fname, base_instance, custom_widgets)
+        if isinstance(base_instance, type(None)) and \
+                isinstance(custom_widgets, type(None)):
+            return uic.loadUi(fname)
+        elif not isinstance(base_instance, type(None)) and \
+                isinstance(custom_widgets, type(None)):
+            return uic.loadUi(fname, base_instance)
+        else:
+            return uic.loadUi(fname, base_instance, custom_widgets)
 
-
-def pyqt5_load_ui(fname, base_instance=None, custom_widgets=None):
-    """Read Qt Designer .ui `fname`
-
-    Args:
-        fname (str): Absolute path to .ui file
-        base_instance (widget, optional): Instance of the Qt base class.
-        custom_widgets (widget): ?
-
-    Usage:
-        from Qt import load_ui
-        class MyWindow(QtWidgets.QWidget):
-            def __init__(self, parent=None):
-                fname = 'my_ui.ui'
-                load_ui(fname, self)
-        window = MyWindow()
-
-    """
-
-    from PyQt5 import uic
-
-    if isinstance(base_instance, type(None)) and \
-            isinstance(custom_widgets, type(None)):
-        return uic.loadUi(fname)
-    elif not isinstance(base_instance, type(None)) and \
-            isinstance(custom_widgets, type(None)):
-        return uic.loadUi(fname, base_instance)
-    else:
-        return uic.loadUi(fname, base_instance, custom_widgets)
+    return pyqt_load_ui
 
 
 def _log(text, verbose):
