@@ -128,28 +128,52 @@ def _pyside_load_ui_factory(superclass):
     """
 
     class UiLoader(superclass):
-        """PyQt port of loadUi
+        """PyQt port of uic.loadUi
 
         Based on: https://gist.github.com/cpbotha/1b42a20c8f3eb9bb7cb8
 
         """
 
         def __init__(self, base_instance):
+            """Create a loader for the given ``baseinstance``.
+
+            The user interface is created in ``baseinstance``, which
+            must be an instance of the top-level class in the user
+            interface to load, or a subclass thereof.
+
+            ``parent`` is the parent object of this loader.
+
+            """
+
             super(UiLoader, self).__init__(base_instance)
             self.base_instance = base_instance
 
         def createWidget(self, class_name, parent=None, name=""):
+            """Function that is called for each widget defined in ui
+            file, overridden here to populate baseinstance instead.
+
+            """
+
             if parent is None and self.base_instance:
+                # supposed to create the top-level widget, return the
+                # base instance instead
                 return self.base_instance
 
             if class_name not in self.availableWidgets():
                 raise Exception("\"%s\" not available." % class_name)
 
+            # create a new widget for child widgets
             widget = super(UiLoader, self).createWidget(
                 class_name, parent, name)
 
             if self.base_instance:
+                # set an attribute for the new child widget on the base
+                # instance, just like PyQt4.uic.loadUi does.
                 setattr(self.base_instance, name, widget)
+
+                # this outputs the various widget names, e.g.
+                # sampleGraphicsView, dockWidget, samplesTableView etc.
+                # print(name)
 
             return widget
 
