@@ -21,7 +21,7 @@ Usage:
 import os
 import sys
 
-__version__ = "0.3.2"
+__version__ = "0.3.3"
 
 
 def _pyqt5():
@@ -100,11 +100,12 @@ def _pyside2():
 def _pyside():
     import PySide
     from PySide import QtGui, QtCore
+    QtCore, QtGui  # bypass linter warnings
 
     # Remap
-    PySide.QtWidgets = QtGui
-    QtCore.QSortFilterProxyModel = QtGui.QSortFilterProxyModel
-    QtCore.QStringListModel = QtGui.QStringListModel
+    PySide.QtWidgets = PySide.QtGui
+    PySide.QtCore.QSortFilterProxyModel = PySide.QtGui.QSortFilterProxyModel
+    PySide.QtCore.QStringListModel = PySide.QtGui.QStringListModel
     PySide.QtCore.QItemSelection = PySide.QtGui.QItemSelection
     PySide.QtCore.QItemSelectionModel = PySide.QtGui.QItemSelectionModel
 
