@@ -99,6 +99,8 @@ def _pyside2():
 
 def _pyside():
     import PySide
+    from PySide import QtGui, QtCore
+    QtCore, QtGui  # bypass linter warnings
 
     # Remap
     PySide.QtWidgets = PySide.QtGui
