@@ -99,12 +99,11 @@ def _pyside2():
 
 def _pyside():
     import PySide
-    from PySide import QtGui, QtCore
 
     # Remap
-    PySide.QtWidgets = QtGui
-    QtCore.QSortFilterProxyModel = QtGui.QSortFilterProxyModel
-    QtCore.QStringListModel = QtGui.QStringListModel
+    PySide.QtWidgets = PySide.QtGui
+    PySide.QtCore.QSortFilterProxyModel = PySide.QtGui.QSortFilterProxyModel
+    PySide.QtCore.QStringListModel = PySide.QtGui.QStringListModel
     PySide.QtCore.QItemSelection = PySide.QtGui.QItemSelection
     PySide.QtCore.QItemSelectionModel = PySide.QtGui.QItemSelectionModel
 
