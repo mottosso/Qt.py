@@ -67,6 +67,48 @@ def setup():
     with io.open(self.ui_valid, "w", encoding="utf-8") as f:
         f.write(source_valid)
 
+    self.ui_invalid_class = os.path.join(self.tempdir, "invalid.ui")
+
+    source_invalid_class = u"""\
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
+     <widget class="QInvalidWidget" name="invalidWidget">
+      <property name="text">
+       <string>PushButton</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>125</width>
+     <height>22</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
+
+"""
+
+    with io.open(self.ui_invalid_class, "w", encoding="utf-8") as f:
+        f.write(source_invalid_class)
+
 
 def teardown():
     shutil.rmtree(self.tempdir)
@@ -296,6 +338,37 @@ def test_load_ui_into_custom_pyqt4():
         assert isinstance(widget.__class__, type(QtWidgets.QMainWindow))
         assert isinstance(widget.parent(), type(None))
         assert isinstance(widget.pushButton.__class__, type(QtWidgets.QWidget))
+        app.exit()
+
+
+def test_load_ui_invalid_class_name():
+    """load_ui: Invalid class name in .ui
+
+    ('Name:', u'MainWindow', 'Class:', u'QMainWindow', 'Parent:', None)
+    ('Name:', u'centralwidget', 'Class:', u'QWidget',
+     'Parent:', <PySide.QtGui.QMainWindow object at 0x1036d3ea8>)
+    ('Name:', u'pushButton', 'Class:', u'QPushButton',
+     'Parent:', <PySide.QtGui.QWidget object at 0x1036d3ea8>)
+    ('Name:', u'menubar', 'Class:', u'QMenuBar',
+     'Parent:', <PySide.QtGui.QMainWindow object at 0x1036d3ea8>)
+    ('Name:', u'statusbar', 'Class:', u'QStatusBar',
+     'Parent:', <PySide.QtGui.QMainWindow object at 0x1036d3ea8>)
+
+    """
+
+    with pyside():
+        from Qt import QtWidgets, load_ui
+
+        class MainWindow(QtWidgets.QMainWindow):
+            def __init__(self, parent=None):
+                QtWidgets.QMainWindow.__init__(self, parent)
+                # load_ui(sys.modules[__name__].ui_invalid_class, self)
+                assert_raises(Exception,
+                              load_ui, sys.modules[__name__].ui_invalid_class,
+                              self)
+
+        app = QtWidgets.QApplication(sys.argv)
+        window = MainWindow()
         app.exit()
 
 
