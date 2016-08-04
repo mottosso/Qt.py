@@ -25,9 +25,9 @@ self = sys.modules[__name__]
 
 def setup():
     self.tempdir = tempfile.mkdtemp()
-    self.ui = os.path.join(self.tempdir, "temp.ui")
+    self.ui_valid = os.path.join(self.tempdir, "valid.ui")
 
-    source = u"""\
+    source_valid = u"""\
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>MainWindow</class>
@@ -64,8 +64,8 @@ def setup():
 
 """
 
-    with io.open(self.ui, "w", encoding="utf-8") as f:
-        f.write(source)
+    with io.open(self.ui_valid, "w", encoding="utf-8") as f:
+        f.write(source_valid)
 
 
 def teardown():
@@ -230,13 +230,16 @@ def test_load_ui_into_self_pyside():
         class MainWindow(QtWidgets.QMainWindow):
             def __init__(self, parent=None):
                 QtWidgets.QMainWindow.__init__(self, parent)
-                load_ui(sys.modules[__name__].ui, self)
+                load_ui(sys.modules[__name__].ui_valid, self)
 
         app = QtWidgets.QApplication(sys.argv)
         window = MainWindow()
 
         # Inherited from .ui file
         assert hasattr(window, "pushButton")
+        assert isinstance(window.__class__, type(QtWidgets.QMainWindow))
+        assert isinstance(window.parent(), type(None))
+        assert isinstance(window.pushButton.__class__, type(QtWidgets.QWidget))
         app.exit()
 
 
@@ -249,13 +252,16 @@ def test_load_ui_into_self_pyqt4():
         class MainWindow(QtWidgets.QMainWindow):
             def __init__(self, parent=None):
                 QtWidgets.QMainWindow.__init__(self, parent)
-                load_ui(sys.modules[__name__].ui, self)
+                load_ui(sys.modules[__name__].ui_valid, self)
 
         app = QtWidgets.QApplication(sys.argv)
         window = MainWindow()
 
         # Inherited from .ui file
         assert hasattr(window, "pushButton")
+        assert isinstance(window.__class__, type(QtWidgets.QMainWindow))
+        assert isinstance(window.parent(), type(None))
+        assert isinstance(window.pushButton.__class__, type(QtWidgets.QWidget))
         app.exit()
 
 
@@ -266,10 +272,13 @@ def test_load_ui_into_custom_pyside():
         from Qt import QtWidgets, load_ui
 
         app = QtWidgets.QApplication(sys.argv)
-        widget = load_ui(sys.modules[__name__].ui)
+        widget = load_ui(sys.modules[__name__].ui_valid)
 
         # From .ui file
         assert hasattr(widget, "pushButton")
+        assert isinstance(widget.__class__, type(QtWidgets.QMainWindow))
+        assert isinstance(widget.parent(), type(None))
+        assert isinstance(widget.pushButton.__class__, type(QtWidgets.QWidget))
         app.exit()
 
 
@@ -280,10 +289,13 @@ def test_load_ui_into_custom_pyqt4():
         from Qt import QtWidgets, load_ui
 
         app = QtWidgets.QApplication(sys.argv)
-        widget = load_ui(sys.modules[__name__].ui)
+        widget = load_ui(sys.modules[__name__].ui_valid)
 
         # From .ui file
         assert hasattr(widget, "pushButton")
+        assert isinstance(widget.__class__, type(QtWidgets.QMainWindow))
+        assert isinstance(widget.parent(), type(None))
+        assert isinstance(widget.pushButton.__class__, type(QtWidgets.QWidget))
         app.exit()
 
 
