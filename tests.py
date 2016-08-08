@@ -25,9 +25,9 @@ self = sys.modules[__name__]
 
 def setup():
     self.tempdir = tempfile.mkdtemp()
-    self.ui_valid = os.path.join(self.tempdir, "valid.ui")
+    self.ui_simple = os.path.join(self.tempdir, "simple.ui")
 
-    source_valid = u"""\
+    source_simple = u"""\
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>MainWindow</class>
@@ -64,12 +64,12 @@ def setup():
 
 """
 
-    with io.open(self.ui_valid, "w", encoding="utf-8") as f:
-        f.write(source_valid)
+    with io.open(self.ui_simple, "w", encoding="utf-8") as f:
+        f.write(source_simple)
 
-    self.ui_invalid_class = os.path.join(self.tempdir, "invalid.ui")
+    self.ui_custom_pyqt = os.path.join(self.tempdir, "custom_widget.ui")
 
-    source_invalid_class = u"""\
+    source_custom_pyqt = u"""\
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>MainWindow</class>
@@ -78,15 +78,19 @@ def setup():
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="0">
-     <widget class="QInvalidWidget" name="invalidWidget">
-      <property name="text">
-       <string>PushButton</string>
-      </property>
-     </widget>
-    </item>
-   </layout>
+   <widget class="MyCustomWidget" name="customWidget">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>10</y>
+      <width>113</width>
+      <height>32</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>PushButton</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -100,14 +104,21 @@ def setup():
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>MyCustomWidget</class>
+   <extends>QPushButton</extends>
+   <header>MyCustomClasses</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
 
 """
 
-    with io.open(self.ui_invalid_class, "w", encoding="utf-8") as f:
-        f.write(source_invalid_class)
+    with io.open(self.ui_custom_pyqt, "w", encoding="utf-8") as f:
+        f.write(source_custom_pyqt)
 
 
 def teardown():
@@ -272,7 +283,7 @@ def test_load_ui_into_self_pyside():
         class MainWindow(QtWidgets.QMainWindow):
             def __init__(self, parent=None):
                 QtWidgets.QMainWindow.__init__(self, parent)
-                load_ui(sys.modules[__name__].ui_valid, self)
+                load_ui(sys.modules[__name__].ui_simple, self)
 
         app = QtWidgets.QApplication(sys.argv)
         window = MainWindow()
@@ -282,6 +293,7 @@ def test_load_ui_into_self_pyside():
         assert isinstance(window.__class__, type(QtWidgets.QMainWindow))
         assert isinstance(window.parent(), type(None))
         assert isinstance(window.pushButton.__class__, type(QtWidgets.QWidget))
+
         app.exit()
 
 
@@ -294,16 +306,17 @@ def test_load_ui_into_self_pyqt4():
         class MainWindow(QtWidgets.QMainWindow):
             def __init__(self, parent=None):
                 QtWidgets.QMainWindow.__init__(self, parent)
-                load_ui(sys.modules[__name__].ui_valid, self)
+                load_ui(sys.modules[__name__].ui_simple, self)
 
         app = QtWidgets.QApplication(sys.argv)
         window = MainWindow()
 
-        # Inherited from .ui file
+        # From .ui file
         assert hasattr(window, "pushButton")
         assert isinstance(window.__class__, type(QtWidgets.QMainWindow))
         assert isinstance(window.parent(), type(None))
         assert isinstance(window.pushButton.__class__, type(QtWidgets.QWidget))
+
         app.exit()
 
 
@@ -314,13 +327,14 @@ def test_load_ui_into_custom_pyside():
         from Qt import QtWidgets, load_ui
 
         app = QtWidgets.QApplication(sys.argv)
-        widget = load_ui(sys.modules[__name__].ui_valid)
+        widget = load_ui(sys.modules[__name__].ui_simple)
 
         # From .ui file
         assert hasattr(widget, "pushButton")
         assert isinstance(widget.__class__, type(QtWidgets.QMainWindow))
         assert isinstance(widget.parent(), type(None))
         assert isinstance(widget.pushButton.__class__, type(QtWidgets.QWidget))
+
         app.exit()
 
 
@@ -331,13 +345,14 @@ def test_load_ui_into_custom_pyqt4():
         from Qt import QtWidgets, load_ui
 
         app = QtWidgets.QApplication(sys.argv)
-        widget = load_ui(sys.modules[__name__].ui_valid)
+        widget = load_ui(sys.modules[__name__].ui_simple)
 
         # From .ui file
         assert hasattr(widget, "pushButton")
         assert isinstance(widget.__class__, type(QtWidgets.QMainWindow))
         assert isinstance(widget.parent(), type(None))
         assert isinstance(widget.pushButton.__class__, type(QtWidgets.QWidget))
+
         app.exit()
 
 
@@ -353,6 +368,84 @@ def test_load_ui_into_custom_pyqt4():
 #         assert_raises(Exception,
 #                       load_ui,
 #                       sys.modules[__name__].ui_invalid_class)
+
+
+def test_load_ui_custom_widget_pyside():
+    """load_ui: Load custom widget into self using PySide"""
+
+    with pyside():
+        from Qt import QtWidgets, load_ui
+        import sys
+
+        class MyCustomClasses(object):
+            class MyCustomWidget(QtWidgets.QPushButton):
+                def __init__(self, *args):
+                    QtWidgets.QPushButton.__init__(self, *args)
+                custom_attribute = True
+
+        # PySide
+        custom_widget_map = {"MyCustomWidget": MyCustomClasses.MyCustomWidget}
+
+        # PyQt
+        sys.modules['MyCustomClasses'] = MyCustomClasses
+
+        class MainWindow(QtWidgets.QMainWindow):
+            def __init__(self, parent=None):
+                QtWidgets.QMainWindow.__init__(self, parent)
+                load_ui(sys.modules[__name__].ui_custom_pyqt,
+                        self,
+                        custom_widget_map)
+
+        app = QtWidgets.QApplication(sys.argv)
+        window = MainWindow()
+
+        # From .ui file
+        assert hasattr(window, "customWidget")
+        assert hasattr(window.customWidget, "custom_attribute")
+        assert isinstance(window.__class__, type(QtWidgets.QMainWindow))
+        assert isinstance(window.parent(), type(None))
+        assert isinstance(window.customWidget.__class__, type(QtWidgets.QWidget))
+
+        app.exit()
+
+
+def test_load_ui_custom_widget_pyqt():
+    """load_ui: Load custom widget into self using PyQt4"""
+
+    with pyqt4():
+        from Qt import QtWidgets, load_ui
+        import sys
+
+        class MyCustomClasses(object):
+            class MyCustomWidget(QtWidgets.QPushButton):
+                def __init__(self, *args):
+                    QtWidgets.QPushButton.__init__(self, *args)
+                custom_attribute = True
+
+        # PySide
+        custom_widget_map = {"MyCustomWidget": MyCustomClasses.MyCustomWidget}
+
+        # PyQt
+        sys.modules['MyCustomClasses'] = MyCustomClasses
+
+        class MainWindow(QtWidgets.QMainWindow):
+            def __init__(self, parent=None):
+                QtWidgets.QMainWindow.__init__(self, parent)
+                load_ui(sys.modules[__name__].ui_custom_pyqt,
+                        self,
+                        custom_widget_map)
+
+        app = QtWidgets.QApplication(sys.argv)
+        window = MainWindow()
+
+        # From .ui file
+        assert hasattr(window, "customWidget")
+        assert hasattr(window.customWidget, "custom_attribute")
+        assert isinstance(window.__class__, type(QtWidgets.QMainWindow))
+        assert isinstance(window.parent(), type(None))
+        assert isinstance(window.customWidget.__class__, type(QtWidgets.QWidget))
+
+        app.exit()
 
 
 if PYTHON == 2:
