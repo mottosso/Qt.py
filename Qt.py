@@ -135,14 +135,14 @@ def _pyside_load_ui_factory(superclass):
 
         """
 
-        def __init__(self, base_instance, customWidgets=None):
+        def __init__(self, base_instance, custom_widgets=None):
             """Create a loader for the given ``baseinstance``.
 
             The user interface is created in ``baseinstance``, which
             must be an instance of the top-level class in the user
             interface to load, or a subclass thereof.
 
-            ``customWidgets`` is a dictionary mapping from class name to
+            ``custom_widgets`` is a dictionary mapping from class name to
             class object for widgets that you've promoted in the
             Qt Designer interface. Usually, this should be done by
             calling registerCustomWidget on the QUiLoader, but with
@@ -154,7 +154,7 @@ def _pyside_load_ui_factory(superclass):
 
             super(UiLoader, self).__init__(base_instance)
             self.base_instance = base_instance
-            self.customWidgets = customWidgets
+            self.custom_widgets = custom_widgets
 
         def createWidget(self, class_name, parent=None, name=""):
             """Function that is called for each widget defined in ui
@@ -173,7 +173,7 @@ def _pyside_load_ui_factory(superclass):
                         class_name, parent, name)
                 else:
                     try:
-                        widget = self.customWidgets[class_name](parent)
+                        widget = self.custom_widgets[class_name](parent)
                     except (TypeError, KeyError):
                         raise Exception("\"%s\" not available." % class_name)
 
@@ -184,7 +184,7 @@ def _pyside_load_ui_factory(superclass):
 
                 return widget
 
-    def load_ui(fname, base_instance=None, customWidgets=None):
+    def load_ui(fname, base_instance=None, custom_widgets=None):
         """Read Qt Designer .ui `fname`
 
         Args:
@@ -203,7 +203,7 @@ def _pyside_load_ui_factory(superclass):
 
         from Qt import QtCore
 
-        loader = UiLoader(base_instance, customWidgets)
+        loader = UiLoader(base_instance, custom_widgets)
         widget = loader.load(fname)
         QtCore.QMetaObject.connectSlotsByName(widget)
         return widget
