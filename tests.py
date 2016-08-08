@@ -409,7 +409,7 @@ def test_load_ui_custom_widget_pyside():
         app.exit()
 
 
-def test_load_ui_custom_widget_pyqt():
+def test_load_ui_custom_widget_pyqt4():
     """load_ui: Load custom widget into self using PyQt4"""
 
     with pyqt4():
@@ -444,6 +444,73 @@ def test_load_ui_custom_widget_pyqt():
         assert isinstance(window.__class__, type(QtWidgets.QMainWindow))
         assert isinstance(window.parent(), type(None))
         assert isinstance(window.customWidget.__class__, type(QtWidgets.QWidget))
+
+        app.exit()
+
+
+def test_load_ui_custom_widget_custom_pyside():
+    """load_ui: Load custom widget into custom using PySide"""
+
+    with pyside():
+        from Qt import QtWidgets, load_ui
+        import sys
+
+        class MyCustomClasses(object):
+            class MyCustomWidget(QtWidgets.QPushButton):
+                def __init__(self, *args):
+                    QtWidgets.QPushButton.__init__(self, *args)
+                custom_attribute = True
+
+        # PySide
+        custom_widget_map = {"MyCustomWidget": MyCustomClasses.MyCustomWidget}
+
+        # PyQt
+        sys.modules['MyCustomClasses'] = MyCustomClasses
+
+
+        app = QtWidgets.QApplication(sys.argv)
+        widget = load_ui(sys.modules[__name__].ui_custom_pyqt,
+                         custom_widgets=custom_widget_map)
+
+        # From .ui file
+        assert hasattr(widget, "customWidget")
+        assert hasattr(widget.customWidget, "custom_attribute")
+        assert isinstance(widget.__class__, type(QtWidgets.QMainWindow))
+        assert isinstance(widget.parent(), type(None))
+        assert isinstance(widget.customWidget.__class__, type(QtWidgets.QWidget))
+
+        app.exit()
+
+
+def test_load_ui_custom_widget_custom_pyqt4():
+    """load_ui: Load custom widget into custom using PyQt4"""
+
+    with pyqt4():
+        from Qt import QtWidgets, load_ui
+        import sys
+
+        class MyCustomClasses(object):
+            class MyCustomWidget(QtWidgets.QPushButton):
+                def __init__(self, *args):
+                    QtWidgets.QPushButton.__init__(self, *args)
+                custom_attribute = True
+
+        # PySide
+        custom_widget_map = {"MyCustomWidget": MyCustomClasses.MyCustomWidget}
+
+        # PyQt
+        sys.modules['MyCustomClasses'] = MyCustomClasses
+
+        app = QtWidgets.QApplication(sys.argv)
+        widget = load_ui(sys.modules[__name__].ui_custom_pyqt,
+                         custom_widgets=custom_widget_map)
+
+        # From .ui file
+        assert hasattr(widget, "customWidget")
+        assert hasattr(widget.customWidget, "custom_attribute")
+        assert isinstance(widget.__class__, type(QtWidgets.QMainWindow))
+        assert isinstance(widget.parent(), type(None))
+        assert isinstance(widget.customWidget.__class__, type(QtWidgets.QWidget))
 
         app.exit()
 

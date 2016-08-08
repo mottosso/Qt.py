@@ -218,7 +218,7 @@ def _pyqt_load_ui_factory(uic):
 
     """
 
-    def load_ui(fname, base_instance=None, *args):
+    def load_ui(fname, base_instance=None, *args, **kwargs):
         """Read Qt Designer .ui `fname`
 
         Args:
