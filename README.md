@@ -170,7 +170,7 @@ Using the OS path separator (`os.pathsep`) which is `:` on Unix systems and `;` 
 
 ##### Load Qt Designer .ui files
 
-The `uic.loadUi` function of PyQt4 and PyQt5 as well as the `QtUiTools.QUiLoader().load` function of PySide/PySide2 are mappend to a convenience function `load_ui`.
+The `uic.loadUi` function of PyQt4 and PyQt5 as well as the `QtUiTools.QUiLoader().load` function of PySide/PySide2 are mapped to a convenience function `load_ui`.
 
 ```python
 import sys
