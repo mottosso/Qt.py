@@ -404,7 +404,8 @@ def test_load_ui_custom_widget_pyside():
         assert hasattr(window.customWidget, "custom_attribute")
         assert isinstance(window.__class__, type(QtWidgets.QMainWindow))
         assert isinstance(window.parent(), type(None))
-        assert isinstance(window.customWidget.__class__, type(QtWidgets.QWidget))
+        assert isinstance(window.customWidget.__class__,
+                          type(QtWidgets.QWidget))
 
         app.exit()
 
@@ -443,7 +444,8 @@ def test_load_ui_custom_widget_pyqt4():
         assert hasattr(window.customWidget, "custom_attribute")
         assert isinstance(window.__class__, type(QtWidgets.QMainWindow))
         assert isinstance(window.parent(), type(None))
-        assert isinstance(window.customWidget.__class__, type(QtWidgets.QWidget))
+        assert isinstance(window.customWidget.__class__,
+                          type(QtWidgets.QWidget))
 
         app.exit()
 
@@ -467,7 +469,6 @@ def test_load_ui_custom_widget_custom_pyside():
         # PyQt
         sys.modules['MyCustomClasses'] = MyCustomClasses
 
-
         app = QtWidgets.QApplication(sys.argv)
         widget = load_ui(sys.modules[__name__].ui_custom_pyqt,
                          custom_widgets=custom_widget_map)
@@ -477,7 +478,8 @@ def test_load_ui_custom_widget_custom_pyside():
         assert hasattr(widget.customWidget, "custom_attribute")
         assert isinstance(widget.__class__, type(QtWidgets.QMainWindow))
         assert isinstance(widget.parent(), type(None))
-        assert isinstance(widget.customWidget.__class__, type(QtWidgets.QWidget))
+        assert isinstance(widget.customWidget.__class__,
+                          type(QtWidgets.QWidget))
 
         app.exit()
 
@@ -510,7 +512,8 @@ def test_load_ui_custom_widget_custom_pyqt4():
         assert hasattr(widget.customWidget, "custom_attribute")
         assert isinstance(widget.__class__, type(QtWidgets.QMainWindow))
         assert isinstance(widget.parent(), type(None))
-        assert isinstance(widget.customWidget.__class__, type(QtWidgets.QWidget))
+        assert isinstance(widget.customWidget.__class__,
+                          type(QtWidgets.QWidget))
 
         app.exit()
 
