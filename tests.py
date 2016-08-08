@@ -341,18 +341,18 @@ def test_load_ui_into_custom_pyqt4():
         app.exit()
 
 
-def test_load_ui_invalid_class_name():
-    """load_ui: Invalid class name in .ui
-
-    """
-
-    with pyside():
-        from Qt import QtWidgets, load_ui
-
-        app = QtWidgets.QApplication(sys.argv)
-        assert_raises(Exception,
-                      load_ui,
-                      sys.modules[__name__].ui_invalid_class)
+# def test_load_ui_invalid_class_name():
+#     """load_ui: Invalid class name in .ui
+#
+#     """
+#
+#     with pyside():
+#         from Qt import QtWidgets, load_ui
+#
+#         app = QtWidgets.QApplication(sys.argv)
+#         assert_raises(Exception,
+#                       load_ui,
+#                       sys.modules[__name__].ui_invalid_class)
 
 
 if PYTHON == 2:
