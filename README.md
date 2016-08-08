@@ -174,19 +174,12 @@ The `uic.loadUi` function of PyQt4 and PyQt5 as well as the `QtUiTools.QUiLoader
 
 ```python
 import sys
-from Qt import QtWidgets
-from Qt import load_ui
-
-
-class Hello(QtWidgets.QWidget):
-    def __init__(self):
-        super(Hello, self).__init__()
-        self.ui = load_ui('my_ui.ui')
+import Qt
 
 app = QtWidgets.QApplication(sys.argv)
-window = Hello()
-window.ui.show()
-sys.exit(app.exec_())
+ui = Qt.load_ui("my.ui")
+ui.show()
+app.exec_()
 ```
 
 Please note, for maximum compatibility, only pass the argument of the filename to the `load_ui` function.
