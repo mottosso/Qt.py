@@ -41,11 +41,10 @@ def _pyqt5():
     PyQt5.load_ui = pyqt5_load_ui
 
     # Monkey Patch for backward compatibility
-    class QtHeaderView(QtGui.QHeaderView):
-        def setResizeMode(self, *args, **keargs):
-            return self.setSectionResizeMode(*args, **keargs)
+    def setResizeMode(self, *args, **keargs):
+        return self.setSectionResizeMode(*args, **keargs)
 
-    PyQt5.QtGui.QHeaderView = QtHeaderView
+    PyQt5.QtGui.QHeaderView.setResizeMode = setResizeMode
 
     return PyQt5
 
@@ -87,11 +86,10 @@ def _pyqt4():
     PyQt4.load_ui = pyqt4_load_ui
 
     # Monkey Patch for forward compatibility
-    class QtHeaderView(QtGui.QHeaderView):
-        def setSectionResizeMode(self, *args, **keargs):
-            return self.setResizeMode(*args, **keargs)
+    def setSectionResizeMode(self, *args, **keargs):
+        return self.setResizeMode(*args, **keargs)
 
-    PyQt4.QtGui.QHeaderView = QtHeaderView
+    PyQt4.QtGui.QHeaderView.setSectionResizeMode = setSectionResizeMode
 
     return PyQt4
 
@@ -111,11 +109,10 @@ def _pyside2():
     PySide2.load_ui = pyside2_load_ui
 
     # Monkey Patch for backward compatibility
-    class QtHeaderView(QtGui.QHeaderView):
-        def setResizeMode(self, *args, **keargs):
-            return self.setSectionResizeMode(*args, **keargs)
+    def setResizeMode(self, *args, **keargs):
+        return self.setSectionResizeMode(*args, **keargs)
 
-    PySide2.QtGui.QHeaderView = QtHeaderView
+    PySide2.QtGui.QHeaderView.setResizeMode = setResizeMode
 
     return PySide2
 
@@ -140,11 +137,10 @@ def _pyside():
     PySide.load_ui = pyside_load_ui
 
     # Monkey Patch for forward compatibility
-    class QtHeaderView(QtGui.QHeaderView):
-        def setSectionResizeMode(self, *args, **keargs):
-            return self.setResizeMode(*args, **keargs)
+    def setSectionResizeMode(self, *args, **keargs):
+        return self.setResizeMode(*args, **keargs)
 
-    PySide.QtGui.QHeaderView = QtHeaderView
+    PySide.QtGui.QHeaderView.setSectionResizeMode = setSectionResizeMode
     return PySide
 
 
