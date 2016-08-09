@@ -188,3 +188,9 @@ if PYTHON == 2:
             import sip
             sip.setapi("QString", 1)
             assert_raises(ImportError, __import__, "Qt")
+
+
+def test_qtwebkit():
+    with pyside():
+        from Qt import QtWebKitWidgets
+        assert QtWebKitWidgets
