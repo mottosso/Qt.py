@@ -111,7 +111,7 @@ def _pyside2():
     PySide2.load_ui = pyside2_load_ui
 
     # Monkey Patch for backward compatibility
-    PySide2.QtGui.QHeaderView.setResizeMode = __setResizeMode
+    PySide2.QtWidgets.QHeaderView.setResizeMode = __setResizeMode
 
     return PySide2
 
