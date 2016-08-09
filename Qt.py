@@ -135,18 +135,12 @@ def _pyside_load_ui_factory(superclass):
 
         """
 
-        def __init__(self, base_instance, custom_widgets=None):
+        def __init__(self, base_instance):
             """Create a loader for the given ``baseinstance``.
 
             The user interface is created in ``baseinstance``, which
             must be an instance of the top-level class in the user
             interface to load, or a subclass thereof.
-
-            ``custom_widgets`` is a dictionary mapping from class name to
-            class object for widgets that you've promoted in the
-            Qt Designer interface. Usually, this should be done by
-            calling registerCustomWidget on the QUiLoader, but with
-            PySide 1.1.2 on Ubuntu 12.04 x86_64 this causes a segfault.
 
             ``parent`` is the parent object of this loader.
 
@@ -154,7 +148,6 @@ def _pyside_load_ui_factory(superclass):
 
             super(UiLoader, self).__init__(base_instance)
             self.base_instance = base_instance
-            self.custom_widgets = custom_widgets
 
         def createWidget(self, class_name, parent=None, name=""):
             """Function that is called for each widget defined in ui
@@ -166,25 +159,21 @@ def _pyside_load_ui_factory(superclass):
                 # supposed to create the top-level widget, return the
                 # base instance instead
                 return self.base_instance
-            else:
-                if class_name in self.availableWidgets():
-                    # create a new widget for child widgets
-                    widget = super(UiLoader, self).createWidget(
-                        class_name, parent, name)
-                else:
-                    try:
-                        widget = self.custom_widgets[class_name](parent)
-                    except (TypeError, KeyError):
-                        raise Exception("\"%s\" not available." % class_name)
 
-                if self.base_instance:
-                    # set an attribute for the new child widget on the base
-                    # instance, just like PyQt4.uic.loadUi does.
-                    setattr(self.base_instance, name, widget)
+            if class_name not in self.availableWidgets():
+                raise Exception("\"%s\" not available." % class_name)
 
-                return widget
+            widget = super(UiLoader, self).createWidget(
+                           class_name, parent, name)
 
-    def load_ui(fname, base_instance=None, custom_widgets=None):
+            if self.base_instance:
+                # set an attribute for the new child widget on the base
+                # instance, just like PyQt4.uic.loadUi does.
+                setattr(self.base_instance, name, widget)
+
+            return widget
+
+    def load_ui(fname, base_instance=None):
         """Read Qt Designer .ui `fname`
 
         Args:
@@ -203,7 +192,7 @@ def _pyside_load_ui_factory(superclass):
 
         from Qt import QtCore
 
-        loader = UiLoader(base_instance, custom_widgets)
+        loader = UiLoader(base_instance)
         widget = loader.load(fname)
         QtCore.QMetaObject.connectSlotsByName(widget)
         return widget
@@ -218,7 +207,7 @@ def _pyqt_load_ui_factory(uic):
 
     """
 
-    def load_ui(fname, base_instance=None, *args, **kwargs):
+    def load_ui(fname, base_instance=None):
         """Read Qt Designer .ui `fname`
 
         Args:

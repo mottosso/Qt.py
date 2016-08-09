@@ -187,7 +187,7 @@ ui.show()
 app.exec_()
 ```
 
-The `QUiLoader` class was modified to accept a base instance argument as well as custom widgets argument to become as compatible with `uic.loadUi` as possible.
+The `QUiLoader` class was modified to accept a base instance argument as well, to be more compatible with `uic.loadUi` as possible.
 
 ##### sip API v2
 
