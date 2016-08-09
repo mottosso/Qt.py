@@ -91,7 +91,7 @@ def _pyqt4():
     PyQt4.load_ui = pyqt4_load_ui
 
     # Monkey Patch for forward compatibility
-    PyQt4.QtGui.QHeaderView.setSectionResizeMode = __setSectionResizeMode
+    PyQt4.QtWidgets.QHeaderView.setSectionResizeMode = __setSectionResizeMode
 
     return PyQt4
 
@@ -136,7 +136,7 @@ def _pyside():
     PySide.load_ui = pyside_load_ui
 
     # Monkey Patch for forward compatibility
-    PySide.QtGui.QHeaderView.setSectionResizeMode = __setSectionResizeMode
+    PySide.QtWidgets.QHeaderView.setSectionResizeMode = __setSectionResizeMode
     return PySide
 
 

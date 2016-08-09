@@ -192,11 +192,11 @@ if PYTHON == 2:
 
 def test_qheaderview_pyqt4_forward_compatiblity():
     with pyqt4():
-        from Qt.QtGui import QHeaderView
-        assert QHeaderView.setSectionResizeMode
+        from Qt import QtWidgets
+        assert QtWidgets.QHeaderView.setSectionResizeMode
 
 
 def test_qheaderview_pyside_forward_compatiblity():
     with pyside():
-        from Qt.QtGui import QHeaderView
-        assert QHeaderView.setSectionResizeMode
+        from Qt import QtWidgets
+        assert QtWidgets.QHeaderView.setSectionResizeMode
