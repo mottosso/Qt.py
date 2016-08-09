@@ -190,7 +190,13 @@ if PYTHON == 2:
             assert_raises(ImportError, __import__, "Qt")
 
 
-def test_qtwebkit():
+def test_qtwebkit_pyside():
     with pyside():
+        from Qt import QtWebKitWidgets
+        assert QtWebKitWidgets
+
+
+def test_qtwebkit_pyqt4():
+    with pyqt4():
         from Qt import QtWebKitWidgets
         assert QtWebKitWidgets
