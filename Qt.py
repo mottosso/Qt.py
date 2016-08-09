@@ -26,6 +26,7 @@ __version__ = "0.3.3"
 
 def _pyqt5():
     import PyQt5.Qt
+    from PyQt5 import QtGui
 
     # Remap
     PyQt5.QtCore.Signal = PyQt5.QtCore.pyqtSignal
@@ -38,6 +39,13 @@ def _pyqt5():
     PyQt5.__binding_version__ = PyQt5.QtCore.PYQT_VERSION_STR
     PyQt5.__qt_version__ = PyQt5.QtCore.QT_VERSION_STR
     PyQt5.load_ui = pyqt5_load_ui
+
+    # Monkey Patch for backward compatibility
+    class QtHeaderView(QtGui.QHeaderView):
+        def setResizeMode(self, *args, **keargs):
+            return self.setSectionResizeMode(*args, **keargs)
+
+    PyQt5.QtGui.QHeaderView = QtHeaderView
 
     return PyQt5
 
@@ -61,6 +69,7 @@ def _pyqt4():
         raise ImportError
 
     import PyQt4.Qt
+    from PyQt4 import QtGui
 
     # Remap
     PyQt4.QtWidgets = PyQt4.QtGui
@@ -76,6 +85,13 @@ def _pyqt4():
     PyQt4.__binding_version__ = PyQt4.QtCore.PYQT_VERSION_STR
     PyQt4.__qt_version__ = PyQt4.QtCore.QT_VERSION_STR
     PyQt4.load_ui = pyqt4_load_ui
+
+    # Monkey Patch for forward compatibility
+    class QtHeaderView(QtGui.QHeaderView):
+        def setSectionResizeMode(self, *args, **keargs):
+            return self.setResizeMode(*args, **keargs)
+
+    PyQt4.QtGui.QHeaderView = QtHeaderView
 
     return PyQt4
 
@@ -93,6 +109,13 @@ def _pyside2():
     PySide2.__binding_version__ = PySide2.__version__
     PySide2.__qt_version__ = PySide2.QtCore.qVersion()
     PySide2.load_ui = pyside2_load_ui
+
+    # Monkey Patch for backward compatibility
+    class QtHeaderView(QtGui.QHeaderView):
+        def setResizeMode(self, *args, **keargs):
+            return self.setSectionResizeMode(*args, **keargs)
+
+    PySide2.QtGui.QHeaderView = QtHeaderView
 
     return PySide2
 
@@ -116,6 +139,12 @@ def _pyside():
     PySide.__qt_version__ = PySide.QtCore.qVersion()
     PySide.load_ui = pyside_load_ui
 
+    # Monkey Patch for forward compatibility
+    class QtHeaderView(QtGui.QHeaderView):
+        def setSectionResizeMode(self, *args, **keargs):
+            return self.setResizeMode(*args, **keargs)
+
+    PySide.QtGui.QHeaderView = QtHeaderView
     return PySide
 
 
