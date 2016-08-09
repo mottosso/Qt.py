@@ -26,7 +26,6 @@ __version__ = "0.3.3"
 
 def _pyqt5():
     import PyQt5.Qt
-    from PyQt5 import QtGui
 
     # Remap
     PyQt5.QtCore.Signal = PyQt5.QtCore.pyqtSignal
@@ -44,7 +43,7 @@ def _pyqt5():
     def setResizeMode(self, *args, **keargs):
         return self.setSectionResizeMode(*args, **keargs)
 
-    PyQt5.QtGui.QHeaderView.setResizeMode = setResizeMode
+    PyQt5.QtWidgets.QHeaderView.setResizeMode = setResizeMode
 
     return PyQt5
 
