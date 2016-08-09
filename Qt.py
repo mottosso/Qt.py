@@ -74,7 +74,6 @@ def _pyqt4():
         raise ImportError
 
     import PyQt4.Qt
-    from PyQt4 import QtGui
 
     # Remap
     PyQt4.QtWidgets = PyQt4.QtGui

@@ -188,3 +188,15 @@ if PYTHON == 2:
             import sip
             sip.setapi("QString", 1)
             assert_raises(ImportError, __import__, "Qt")
+
+
+def test_qheaderview_pyqt4_forward_compatiblity():
+    with pyqt4():
+        from PyQt4.QtGui import QHeaderView
+        assert hasattr(QHeaderView, 'setSectionResizeMode')
+
+
+def test_qheaderview_pyside_forward_compatiblity():
+    with pyside():
+        from PySide.QtGui import QHeaderView
+        assert hasattr(QHeaderView, 'setSectionResizeMode')
