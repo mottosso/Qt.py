@@ -42,10 +42,12 @@ def _pyqt5():
     # provide mocked UnicodeUTF8 For backward compatibility
     PyQt5.QtWidgets.QApplication.UnicodeUTF8 = None
 
-    def translate(self, context, sourceText, disambiguation, n):
-        return self.translate(context, sourceText, disambiguation)
+    old_translate_fn = PyQt5.QtWidgets.QApplication.translate
 
-    PyQt5.QtWidgets.QApplication.translate = translate
+    def translate(context, key, disambiguation=None, encoding=None, n=0):
+        return old_translate_fn(context, key, disambiguation, n)
+
+    PyQt5.QtWidgets.QApplication.translate = staticmethod(translate)
 
     return PyQt5
 
@@ -105,10 +107,14 @@ def _pyside2():
     # provide mocked UnicodeUTF8 For backward compatibility
     PySide2.QtWidgets.QApplication.UnicodeUTF8 = None
 
-    def translate(self, context, sourceText, disambiguation, n):
-        return self.translate(context, sourceText, disambiguation)
+    old_translate_fn = PySide2.QtWidgets.QApplication.translate
 
-    PySide2.QtWidgets.QApplication.translate = translate
+    def translate(context, key, disambiguation=None, encoding=None, n=0):
+        return old_translate_fn(context, key, disambiguation, n)
+
+    PySide2.QtWidgets.QApplication.translate = staticmethod(translate)
+
+    PySide2.QtWidgets.QApplication.translate = staticmethod(translate)
     return PySide2
 
 
