@@ -87,7 +87,7 @@ def _pyqt4():
     PyQt4.load_ui = pyqt4_load_ui
 
     # Monkey Patch for forward compatibility
-    from PyQt4.QtWidgets import QHeaderView as _QHeaderView
+    from PyQt4.QtGui import QHeaderView as _QHeaderView
 
     class QHeaderView(_QHeaderView):
         def setSectionResizeMode(self, *args, **kwargs):
@@ -144,14 +144,13 @@ def _pyside():
     PySide.load_ui = pyside_load_ui
 
     # Monkey Patch for forward compatibility
-    from PySide.QtWidgets import QHeaderView as _QHeaderView
+    from PySide.QtGui import QHeaderView as _QHeaderView
 
     class QHeaderView(_QHeaderView):
         def setSectionResizeMode(self, *args, **kwargs):
             return self.setResizeMode(*args, **kwargs)
 
     PySide.QtWidgets.QHeaderView = QHeaderView
-
     return PySide
 
 
