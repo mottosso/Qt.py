@@ -40,13 +40,10 @@ def _pyqt5():
     PyQt5.load_ui = pyqt5_load_ui
 
     # Monkey Patch for backward compatibility
-    from PyQt5.QtWidgets import QHeaderView as _QHeaderView
+    def setResizeMode(self, *args, **kwargs):
+        return self.setSectionResizeMode(*args, **kwargs)
 
-    class QHeaderView(_QHeaderView):
-        def setResizeMode(self, *args, **kwargs):
-            return self.setSectionResizeMode(*args, **kwargs)
-
-    PyQt5.QtWidgets.QHeaderView = QHeaderView
+    PyQt5.QtWidgets.QHeaderView.setResizeMode = setResizeMode
 
     return PyQt5
 
@@ -87,13 +84,10 @@ def _pyqt4():
     PyQt4.load_ui = pyqt4_load_ui
 
     # Monkey Patch for forward compatibility
-    from PyQt4.QtGui import QHeaderView as _QHeaderView
+    def setSectionResizeMode(self, *args, **kwargs):
+        return self.setResizeMode(*args, **kwargs)
 
-    class QHeaderView(_QHeaderView):
-        def setSectionResizeMode(self, *args, **kwargs):
-            return self.setResizeMode(*args, **kwargs)
-
-    PyQt4.QtWidgets.QHeaderView = QHeaderView
+    PyQt4.QtWidgets.QHeaderView.setSectionResizeMode = setSectionResizeMode
 
     return PyQt4
 
@@ -113,13 +107,10 @@ def _pyside2():
     PySide2.load_ui = pyside2_load_ui
 
     # Monkey Patch for backward compatibility
-    from PySide2.QtWidgets import QHeaderView as _QHeaderView
+    def setResizeMode(self, *args, **kwargs):
+        return self.setSectionResizeMode(*args, **kwargs)
 
-    class QHeaderView(_QHeaderView):
-        def setResizeMode(self, *args, **kwargs):
-            return self.setSectionResizeMode(*args, **kwargs)
-
-    PySide2.QtWidgets.QHeaderView = QHeaderView
+    PySide2.QtWidgets.QHeaderView.setResizeMode = setResizeMode
 
     return PySide2
 
@@ -144,13 +135,10 @@ def _pyside():
     PySide.load_ui = pyside_load_ui
 
     # Monkey Patch for forward compatibility
-    from PySide.QtGui import QHeaderView as _QHeaderView
+    def setSectionResizeMode(self, *args, **kwargs):
+        return self.setResizeMode(*args, **kwargs)
 
-    class QHeaderView(_QHeaderView):
-        def setSectionResizeMode(self, *args, **kwargs):
-            return self.setResizeMode(*args, **kwargs)
-
-    PySide.QtWidgets.QHeaderView = QHeaderView
+    PySide.QtWidgets.QHeaderView.setSectionResizeMode = setSectionResizeMode
     return PySide
 
 
