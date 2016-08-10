@@ -114,7 +114,6 @@ def _pyside2():
 
     PySide2.QtWidgets.QApplication.translate = staticmethod(translate)
 
-    PySide2.QtWidgets.QApplication.translate = staticmethod(translate)
     return PySide2
 
 
