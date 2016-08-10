@@ -39,6 +39,14 @@ def _pyqt5():
     PyQt5.__qt_version__ = PyQt5.QtCore.QT_VERSION_STR
     PyQt5.load_ui = pyqt5_load_ui
 
+    # provide mocked UnicodeUTF8 For backward compatibility
+    PyQt5.QtWidgets.QApplication.UnicodeUTF8 = None
+
+    def translate(self, context, sourceText, disambiguation, n):
+        return self.translate(context, sourceText, disambiguation)
+
+    PyQt5.QtWidgets.QApplication.translate = translate
+
     return PyQt5
 
 
@@ -94,6 +102,13 @@ def _pyside2():
     PySide2.__qt_version__ = PySide2.QtCore.qVersion()
     PySide2.load_ui = pyside2_load_ui
 
+    # provide mocked UnicodeUTF8 For backward compatibility
+    PySide2.QtWidgets.QApplication.UnicodeUTF8 = None
+
+    def translate(self, context, sourceText, disambiguation, n):
+        return self.translate(context, sourceText, disambiguation)
+
+    PySide2.QtWidgets.QApplication.translate = translate
     return PySide2
 
 
