@@ -24,16 +24,6 @@ import sys
 __version__ = "0.3.3"
 
 
-
-# Monkey Patch for backward compatibility
-def __setResizeMode(self, *args, **keargs):
-    return self.setSectionResizeMode(*args, **keargs)
-
-# Monkey Patch for forward compatibility
-def __setSectionResizeMode(self, *args, **keargs):
-    return self.setResizeMode(*args, **keargs)
-
-
 def _pyqt5():
     import PyQt5.Qt
 
@@ -49,8 +39,14 @@ def _pyqt5():
     PyQt5.__qt_version__ = PyQt5.QtCore.QT_VERSION_STR
     PyQt5.load_ui = pyqt5_load_ui
 
-    # Monkey Patch for backward compatibility
-    PyQt5.QtWidgets.QHeaderView.setResizeMode = __setResizeMode
+    # Monkey Patch for forward compatibility
+    from PyQt5.QtWidgets import QHeaderView as _QHeaderView
+
+    class QHeaderView(_QHeaderView):
+        def setResizeMode(self, *args, **kwargs):
+            return self.setSectionResizeMode(*args, **kwargs)
+
+    PyQt5.QtWidgets.QHeaderView = QHeaderView
 
     return PyQt5
 
@@ -91,7 +87,13 @@ def _pyqt4():
     PyQt4.load_ui = pyqt4_load_ui
 
     # Monkey Patch for forward compatibility
-    PyQt4.QtWidgets.QHeaderView.setSectionResizeMode = __setSectionResizeMode
+    from PyQt4.QtWidgets import QHeaderView as _QHeaderView
+
+    class QHeaderView(_QHeaderView):
+        def setSectionResizeMode(self, *args, **kwargs):
+            return self.setResizeMode(*args, **kwargs)
+
+    PyQt4.QtWidgets.QHeaderView = QHeaderView
 
     return PyQt4
 
@@ -110,8 +112,14 @@ def _pyside2():
     PySide2.__qt_version__ = PySide2.QtCore.qVersion()
     PySide2.load_ui = pyside2_load_ui
 
-    # Monkey Patch for backward compatibility
-    PySide2.QtWidgets.QHeaderView.setResizeMode = __setResizeMode
+    # Monkey Patch for forward compatibility
+    from PySide2.QtWidgets import QHeaderView as _QHeaderView
+
+    class QHeaderView(_QHeaderView):
+        def setResizeMode(self, *args, **kwargs):
+            return self.setSectionResizeMode(*args, **kwargs)
+
+    PySide2.QtWidgets.QHeaderView = QHeaderView
 
     return PySide2
 
@@ -136,7 +144,14 @@ def _pyside():
     PySide.load_ui = pyside_load_ui
 
     # Monkey Patch for forward compatibility
-    PySide.QtWidgets.QHeaderView.setSectionResizeMode = __setSectionResizeMode
+    from PySide.QtWidgets import QHeaderView as _QHeaderView
+
+    class QHeaderView(_QHeaderView):
+        def setSectionResizeMode(self, *args, **kwargs):
+            return self.setResizeMode(*args, **kwargs)
+
+    PySide.QtWidgets.QHeaderView = QHeaderView
+
     return PySide
 
 
