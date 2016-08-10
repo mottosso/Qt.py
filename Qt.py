@@ -39,7 +39,7 @@ def _pyqt5():
     PyQt5.__qt_version__ = PyQt5.QtCore.QT_VERSION_STR
     PyQt5.load_ui = pyqt5_load_ui
 
-    # Monkey Patch for forward compatibility
+    # Monkey Patch for backward compatibility
     from PyQt5.QtWidgets import QHeaderView as _QHeaderView
 
     class QHeaderView(_QHeaderView):
@@ -112,7 +112,7 @@ def _pyside2():
     PySide2.__qt_version__ = PySide2.QtCore.qVersion()
     PySide2.load_ui = pyside2_load_ui
 
-    # Monkey Patch for forward compatibility
+    # Monkey Patch for backward compatibility
     from PySide2.QtWidgets import QHeaderView as _QHeaderView
 
     class QHeaderView(_QHeaderView):
