@@ -33,6 +33,5 @@ setup(
     license="MIT",
     zip_safe=False,
     py_modules=["Qt"],
-    classifiers=classifiers,
-    setup_requires=['nose>=1.0']
+    classifiers=classifiers
 )
