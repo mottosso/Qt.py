@@ -128,51 +128,6 @@ def _pyside_load_ui_factory(superclass):
 
     """
 
-    class UiLoader(superclass):
-        """PyQt port of uic.loadUi
-
-        Based on: https://gist.github.com/cpbotha/1b42a20c8f3eb9bb7cb8
-
-        """
-
-        def __init__(self, base_instance):
-            """Create a loader for the given ``baseinstance``.
-
-            The user interface is created in ``baseinstance``, which
-            must be an instance of the top-level class in the user
-            interface to load, or a subclass thereof.
-
-            ``parent`` is the parent object of this loader.
-
-            """
-
-            super(UiLoader, self).__init__(base_instance)
-            self.base_instance = base_instance
-
-        def createWidget(self, class_name, parent=None, name=""):
-            """Function that is called for each widget defined in ui
-            file, overridden here to populate baseinstance instead.
-
-            """
-
-            if parent is None and self.base_instance:
-                # supposed to create the top-level widget, return the
-                # base instance instead
-                return self.base_instance
-
-            if class_name not in self.availableWidgets():
-                raise Exception("\"%s\" not available." % class_name)
-
-            widget = super(UiLoader, self).createWidget(
-                           class_name, parent, name)
-
-            if self.base_instance:
-                # set an attribute for the new child widget on the base
-                # instance, just like PyQt4.uic.loadUi does.
-                setattr(self.base_instance, name, widget)
-
-            return widget
-
     def load_ui(fname, base_instance=None):
         """Read Qt Designer .ui `fname`
 
@@ -181,21 +136,30 @@ def _pyside_load_ui_factory(superclass):
             base_instance (widget, optional): Instance of the Qt base class.
 
         Usage:
-            from Qt import load_ui
+            from Qt import QtWidgets, load_ui
             class MyWindow(QtWidgets.QWidget):
                 def __init__(self, parent=None):
                     fname = 'my_ui.ui'
                     load_ui(fname, self)
             window = MyWindow()
+            window.show()
 
         """
 
-        from Qt import QtCore
+        immutable = ('__class__', '__dict__')
+        mutable = ('__delattr__', '__doc__', '__format__', '__getattribute__',
+                   '__hash__', '__init__', '__new__', '__reduce__',
+                   '__reduce_ex__', '__repr__', '__setattr__', '__sizeof__',
+                   '__str__', '__subclasshook__')  # For reference
 
-        loader = UiLoader(base_instance)
-        widget = loader.load(fname)
-        QtCore.QMetaObject.connectSlotsByName(widget)
-        return widget
+        if base_instance:
+            ui = superclass().load(fname)
+            for member in dir(ui):
+                if member not in immutable:
+                    setattr(base_instance, member, getattr(ui, member))
+            return ui
+        else:
+            return superclass().load(fname)
 
     return load_ui
 
@@ -215,12 +179,13 @@ def _pyqt_load_ui_factory(uic):
             base_instance (widget, optional): Instance of the Qt base class.
 
         Usage:
-            from Qt import load_ui
+            from Qt import QtWidgets, load_ui
             class MyWindow(QtWidgets.QWidget):
                 def __init__(self, parent=None):
                     fname = 'my_ui.ui'
                     load_ui(fname, self)
             window = MyWindow()
+            window.show()
 
         """
 
