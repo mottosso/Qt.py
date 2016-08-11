@@ -22,7 +22,7 @@ install:
   # the registry key.
 
   - REG ADD HKCU\Software\Python\PythonCore\2.7\InstallPath /f /ve /t REG_SZ /d %PYTHON%
-  - ps: (new-object net.webclient).DownloadFile($env:PYQT, "C:\install-PyQt4.exe")
+  - ps: do{sleep 5;(New-Object Net.WebClient).DownloadFile($env:PYQT, "C:\install-PyQt4.exe")}while(!$?)
   - ps: Start-Process -FilePath C:\install-PyQt4.exe -ArgumentList "/S" -Wait -Passthru
 
   # Test install
