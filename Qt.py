@@ -150,16 +150,10 @@ def _pyside_load_ui_factory(superclass):
 
         """
 
-        immutable = ('__class__', '__dict__')
-        mutable = ('__delattr__', '__doc__', '__format__', '__getattribute__',
-                   '__hash__', '__init__', '__new__', '__reduce__',
-                   '__reduce_ex__', '__repr__', '__setattr__', '__sizeof__',
-                   '__str__', '__subclasshook__')  # For reference
-
         if base_instance:
             ui = superclass().load(fname)
             for member in dir(ui):
-                if member not in immutable:
+                if not member.startswith('__'):
                     setattr(base_instance, member, getattr(ui, member))
             return ui
         else:
