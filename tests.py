@@ -635,19 +635,6 @@ def test_load_ui_connection_pyqt4():
         my_widget = MyWidget()
         my_widget.show()
 
-# def test_load_ui_invalid_class_name():
-#     """load_ui: Invalid class name in .ui
-#
-#     """
-#
-#     with pyside():
-#         from Qt import QtWidgets, load_ui
-#
-#         app = QtWidgets.QApplication(sys.argv)
-#         assert_raises(Exception,
-#                       load_ui,
-#                       sys.modules[__name__].ui_custom_pyqt)
-
 
 if PYTHON == 2:
     def test_sip_api_already_set():
