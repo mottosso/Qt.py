@@ -187,7 +187,22 @@ ui.show()
 app.exec_()
 ```
 
-The `QUiLoader` class was modified to accept a base instance argument as well, to be more compatible with `uic.loadUi` as possible.
+This `load_ui` function accepts a second argument; the base instance into which the UI is loaded:
+
+```python
+import sys
+from Qt import QtWidgets, load_ui
+
+class MyWindow(QtWidgets.QMainWindow):
+    def __init__(self, parent=None):
+        super(MyWindow, self).__init__(parent)
+        load_ui("my.ui", self)
+
+app = QtWidgets.QApplication(sys.argv)
+window = MyWindow()
+window.show()
+app.exec_()
+```
 
 ##### sip API v2
 
