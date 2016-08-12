@@ -221,12 +221,21 @@ Send us a pull-request with your studio here.
 - Disney Animation
 - Industriromantik
 
+Presented at Siggraph 2016, BOF!
+
+![image](https://cloud.githubusercontent.com/assets/2152766/17621229/c2448db2-6089-11e6-915f-0604e5d8c7ee.png)
+
+<br>
+<br>
+<br>
+
 ### Projects using Qt.py
 
 Send us a pull-request with your project here.
 
 - https://github.com/pyblish/pyblish-lite
 - https://github.com/fredrikaverpil/pyvfx-boilerplate
+- https://gitlab.com/4degrees/riffle
 
 <br>
 <br>
@@ -236,7 +245,7 @@ Send us a pull-request with your project here.
 
 Send us a pull-request with your project here.
 
-- https://github.com/spyder-ide/qtpy/tree/master/qtpy
+- https://github.com/spyder-ide/qtpy
 - https://github.com/jupyter/qtconsole/blob/master/qtconsole/qt_loaders.py
 
 <br>
