@@ -381,7 +381,7 @@ def test_vendoring():
 
 
 def test_load_ui_into_self_qmainwindow_pyside():
-    """load_ui: Load widgets into self (QMainWindow) using PySide"""
+    """load_ui: Load UI into self (QMainWindow) using PySide"""
 
     with pyside():
         from Qt import QtWidgets, load_ui
@@ -407,7 +407,7 @@ def test_load_ui_into_self_qmainwindow_pyside():
 
 
 def test_load_ui_into_self_qwidget_pyside():
-    """load_ui: Load widgets into self (QWidget) using PySide"""
+    """load_ui: Load UI into self (QWidget) using PySide"""
 
     with pyside():
         from Qt import QtWidgets, load_ui
@@ -433,7 +433,7 @@ def test_load_ui_into_self_qwidget_pyside():
 
 
 def test_load_ui_into_self_qdialog_pyside():
-    """load_ui: Load widgets into self (QDialog) using PySide"""
+    """load_ui: Load UI into self (QDialog) using PySide"""
 
     with pyside():
         from Qt import QtWidgets, load_ui
@@ -459,7 +459,7 @@ def test_load_ui_into_self_qdialog_pyside():
 
 
 def test_load_ui_into_self_qmainwindow_pyqt4():
-    """load_ui: Load widgets into self (QMainWindow) using PyQt4"""
+    """load_ui: Load UI into self (QMainWindow) using PyQt4"""
 
     with pyqt4():
         from Qt import QtWidgets, load_ui
@@ -485,7 +485,7 @@ def test_load_ui_into_self_qmainwindow_pyqt4():
 
 
 def test_load_ui_into_self_qwidget_pyqt4():
-    """load_ui: Load widgets into self (QWidget) using PyQt4"""
+    """load_ui: Load UI into self (QWidget) using PyQt4"""
 
     with pyqt4():
         from Qt import QtWidgets, load_ui
@@ -511,7 +511,7 @@ def test_load_ui_into_self_qwidget_pyqt4():
 
 
 def test_load_ui_into_self_qdialog_pyqt4():
-    """load_ui: Load widgets into self (QWidget) using PyQt4"""
+    """load_ui: Load UI into self (QWidget) using PyQt4"""
 
     with pyqt4():
         from Qt import QtWidgets, load_ui
@@ -537,7 +537,7 @@ def test_load_ui_into_self_qdialog_pyqt4():
 
 
 def test_load_ui_into_custom_pyside():
-    """load_ui: Load widgets into widget (QMainWindow) using PySide"""
+    """load_ui: Load UI into widget (QMainWindow) using PySide"""
 
     with pyside():
         from Qt import QtWidgets, load_ui
@@ -558,7 +558,7 @@ def test_load_ui_into_custom_pyside():
 
 
 def test_load_ui_into_custom_pyqt4():
-    """load_ui: Load widgets into widget (QMainWindow) using PyQt4"""
+    """load_ui: Load UI into widget (QMainWindow) using PyQt4"""
 
     with pyqt4():
         from Qt import QtWidgets, load_ui
@@ -579,7 +579,7 @@ def test_load_ui_into_custom_pyqt4():
 
 
 def test_load_ui_connection_pyside():
-    """load_ui: Signals in PySide"""
+    """load_ui: Load UI into self, set up signals in PySide"""
 
     with pyside():
         import sys
@@ -608,7 +608,7 @@ def test_load_ui_connection_pyside():
 
 
 def test_load_ui_connection_pyqt4():
-    """load_ui: Signals in PyQt4"""
+    """load_ui: Load UI into self, set up signals in PySide"""
 
     with pyqt4():
         import sys
