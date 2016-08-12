@@ -136,13 +136,17 @@ def _pyside_load_ui_factory(superclass):
             base_instance (widget, optional): Instance of the Qt base class.
 
         Usage:
+            import sys
             from Qt import QtWidgets, load_ui
-            class MyWindow(QtWidgets.QWidget):
+            class MyWindow(QtWidgets.QMainWindow):
                 def __init__(self, parent=None):
+                    super(MyWindow, self).__init__(parent)
                     fname = 'my_ui.ui'
                     load_ui(fname, self)
+            app = QtWidgets.QApplication(sys.argv)
             window = MyWindow()
             window.show()
+            app.exec_()
 
         """
 
@@ -179,13 +183,17 @@ def _pyqt_load_ui_factory(uic):
             base_instance (widget, optional): Instance of the Qt base class.
 
         Usage:
+            import sys
             from Qt import QtWidgets, load_ui
-            class MyWindow(QtWidgets.QWidget):
+            class MyWindow(QtWidgets.QMainWindow):
                 def __init__(self, parent=None):
+                    super(MyWindow, self).__init__(parent)
                     fname = 'my_ui.ui'
                     load_ui(fname, self)
+            app = QtWidgets.QApplication(sys.argv)
             window = MyWindow()
             window.show()
+            app.exec_()
 
         """
 
