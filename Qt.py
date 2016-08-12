@@ -26,6 +26,7 @@ __version__ = "0.3.3"
 
 def _pyqt5():
     import PyQt5.Qt
+    from PyQt5 import uic
 
     # Remap
     PyQt5.QtCore.Signal = PyQt5.QtCore.pyqtSignal
@@ -37,7 +38,7 @@ def _pyqt5():
     PyQt5.__binding__ = "PyQt5"
     PyQt5.__binding_version__ = PyQt5.QtCore.PYQT_VERSION_STR
     PyQt5.__qt_version__ = PyQt5.QtCore.QT_VERSION_STR
-    PyQt5.load_ui = pyqt5_load_ui
+    PyQt5.load_ui = _pyqt_load_ui_factory(uic)
 
     return PyQt5
 
@@ -61,6 +62,7 @@ def _pyqt4():
         raise ImportError
 
     import PyQt4.Qt
+    from PyQt4 import uic
 
     # Remap
     PyQt4.QtWidgets = PyQt4.QtGui
@@ -82,14 +84,14 @@ def _pyqt4():
     PyQt4.__binding__ = "PyQt4"
     PyQt4.__binding_version__ = PyQt4.QtCore.PYQT_VERSION_STR
     PyQt4.__qt_version__ = PyQt4.QtCore.QT_VERSION_STR
-    PyQt4.load_ui = pyqt4_load_ui
+    PyQt4.load_ui = _pyqt_load_ui_factory(uic)
 
     return PyQt4
 
 
 def _pyside2():
     import PySide2
-    from PySide2 import QtGui, QtCore
+    from PySide2 import QtGui, QtCore, QtUiTools
 
     # Remap
     QtCore.QStringListModel = QtGui.QStringListModel
@@ -99,14 +101,14 @@ def _pyside2():
     PySide2.__binding__ = "PySide2"
     PySide2.__binding_version__ = PySide2.__version__
     PySide2.__qt_version__ = PySide2.QtCore.qVersion()
-    PySide2.load_ui = pyside2_load_ui
+    PySide2.load_ui = _pyside_load_ui_factory(QtUiTools.QUiLoader)
 
     return PySide2
 
 
 def _pyside():
     import PySide
-    from PySide import QtGui, QtCore
+    from PySide import QtGui, QtCore, QtUiTools
     QtCore, QtGui  # bypass linter warnings
 
     # Remap
@@ -128,65 +130,84 @@ def _pyside():
     PySide.__binding__ = "PySide"
     PySide.__binding_version__ = PySide.__version__
     PySide.__qt_version__ = PySide.QtCore.qVersion()
-    PySide.load_ui = pyside_load_ui
+    PySide.load_ui = _pyside_load_ui_factory(QtUiTools.QUiLoader)
 
     return PySide
 
 
-def pyside_load_ui(fname):
-    """Read Qt Designer .ui `fname`
+def _pyside_load_ui_factory(superclass):
+    """load_ui factory function for PySide and PySide2
 
-    Args:
-        fname (str): Absolute path to .ui file
-
-    Usage:
-        >> from Qt import load_ui
-        >> class MyWindow(QtWidgets.QWidget):
-        ..   fname = 'my_ui.ui'
-        ..   self.ui = load_ui(fname)
-        ..
-        >> window = MyWindow()
+    Produce a load_ui function using the provided superclass
 
     """
 
-    from PySide import QtUiTools
-    return QtUiTools.QUiLoader().load(fname)
+    def load_ui(fname, base_instance=None):
+        """Read Qt Designer .ui `fname`
+
+        Args:
+            fname (str): Absolute path to .ui file
+            base_instance (widget, optional): Instance of the Qt base class.
+
+        Usage:
+            import sys
+            from Qt import QtWidgets, load_ui
+            class MyWindow(QtWidgets.QMainWindow):
+                def __init__(self, parent=None):
+                    super(MyWindow, self).__init__(parent)
+                    fname = 'my_ui.ui'
+                    load_ui(fname, self)
+            app = QtWidgets.QApplication(sys.argv)
+            window = MyWindow()
+            window.show()
+            app.exec_()
+
+        """
+
+        if base_instance:
+            ui = superclass().load(fname)
+            for member in dir(ui):
+                if not member.startswith('__'):
+                    setattr(base_instance, member, getattr(ui, member))
+            return ui
+        else:
+            return superclass().load(fname)
+
+    return load_ui
 
 
-def pyside2_load_ui(fname):
-    """Read Qt Designer .ui `fname`
+def _pyqt_load_ui_factory(uic):
+    """load_ui factory function for PyQt4 and PyQt5
 
-    Args:
-        fname (str): Absolute path to .ui file
+    Produce a load_ui function using the provided module
 
     """
 
-    from PySide2 import QtUiTools
-    return QtUiTools.QUiLoader().load(fname)
+    def load_ui(fname, base_instance=None):
+        """Read Qt Designer .ui `fname`
 
+        Args:
+            fname (str): Absolute path to .ui file
+            base_instance (widget, optional): Instance of the Qt base class.
 
-def pyqt4_load_ui(fname):
-    """Read Qt Designer .ui `fname`
+        Usage:
+            import sys
+            from Qt import QtWidgets, load_ui
+            class MyWindow(QtWidgets.QMainWindow):
+                def __init__(self, parent=None):
+                    super(MyWindow, self).__init__(parent)
+                    fname = 'my_ui.ui'
+                    load_ui(fname, self)
+            app = QtWidgets.QApplication(sys.argv)
+            window = MyWindow()
+            window.show()
+            app.exec_()
 
-    Args:
-        fname (str): Absolute path to .ui file
+        """
 
-    """
+        return uic.loadUi(fname, base_instance)
 
-    from PyQt4 import uic
-    return uic.loadUi(fname)
-
-
-def pyqt5_load_ui(fname):
-    """Read Qt Designer .ui `fname`
-
-    Args:
-        fname (str): Absolute path to .ui file
-
-    """
-
-    from PyQt5 import uic
-    return uic.loadUi(fname)
+    return load_ui
 
 
 def _log(text, verbose):
@@ -204,18 +225,18 @@ def _init():
     this has executed.
 
     """
-    
+
     preferred = os.getenv("QT_PREFERRED_BINDING")
     verbose = os.getenv("QT_VERBOSE") is not None
     bindings = (_pyside2, _pyqt5, _pyside, _pyqt4)
 
     if preferred:
-        
+
         # Internal flag (used in installer)
         if preferred == "None":
             sys.modules[__name__].__wrapper_version__ = __version__
             return
-        
+
         preferred = preferred.split(os.pathsep)
         available = {
             "PySide2": _pyside2,
