@@ -578,6 +578,63 @@ def test_load_ui_into_custom_pyqt4():
         app.exit()
 
 
+def test_load_ui_connection_pyside():
+    """load_ui: Signals in PySide"""
+
+    with pyside():
+        import sys
+        from Qt import QtWidgets, load_ui
+
+        def setup_ui(base_instance=None):
+            return load_ui(sys.modules[__name__].ui_qmainwindow, base_instance)
+
+        app = QtWidgets.QApplication(sys.argv)
+        Ui = type(setup_ui())  # Get the un-instantiated class
+
+        class MyWidget(Ui):          # Inherit from it.
+            def __init__(self, parent=None):
+                super(MyWidget, self).__init__(parent)
+                setup_ui(self)
+                self.x = False
+                self.lineEdit.textChanged.connect(self.some_method)
+                self.lineEdit.setText('hello')
+                assert self.x is True
+
+            def some_method(self):
+                self.x = True
+
+        my_widget = MyWidget()
+        my_widget.show()
+
+
+def test_load_ui_connection_pyqt4():
+    """load_ui: Signals in PyQt4"""
+
+    with pyqt4():
+        import sys
+        from Qt import QtWidgets, load_ui
+
+        def setup_ui(base_instance=None):
+            return load_ui(sys.modules[__name__].ui_qmainwindow, base_instance)
+
+        app = QtWidgets.QApplication(sys.argv)
+        Ui = type(setup_ui())  # Get the un-instantiated class
+
+        class MyWidget(Ui):          # Inherit from it.
+            def __init__(self, parent=None):
+                super(MyWidget, self).__init__(parent)
+                setup_ui(self)
+                self.x = False
+                self.lineEdit.textChanged.connect(self.some_method)
+                self.lineEdit.setText('hello')
+                assert self.x is True
+
+            def some_method(self):
+                self.x = True
+
+        my_widget = MyWidget()
+        my_widget.show()
+
 # def test_load_ui_invalid_class_name():
 #     """load_ui: Invalid class name in .ui
 #
