@@ -84,7 +84,7 @@ def test_preferred_pyqt5():
 
 
 def test_preferred_pyside():
-    """Setting QT_PREFERRED_BINDING to pyside properly forces the binding"""
+    """Setting QT_PREFERRED_BINDING to PySide properly forces the binding"""
     with pyside():
         import Qt
         assert Qt.__name__ == "PySide", ("PySide should have been picked, "
