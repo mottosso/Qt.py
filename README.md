@@ -2,7 +2,7 @@
 
 ### Qt.py
 
-Qt.py enables you to write software that dynamically chooses the most desireable bindings based on what's available, including PySide, PySide2, PyQt4 and PyQt5.
+Qt.py enables you to write software that dynamically chooses the most desireable bindings based on what's available, including PySide2, PyQt5, PySide and PyQt4; in that (configurable) order (see below).
 
 <br>
 <br>
