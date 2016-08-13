@@ -11,7 +11,7 @@ services:
   - docker
 
 install:
-  - docker -f .docker/Dockerfile-py$TRAVIS_PYTHON_VERSION build -t mottosso/qt.py .
+  - docker -f .docker/Dockerfile-py${TRAVIS_PYTHON_VERSION} build -t mottosso/qt.py .
 
 # Enable virtual framebuffer, this way we can instantiate
 # a QApplication and create widgets.
