@@ -1,3 +1,4 @@
+import io
 import re
 import sys
 
@@ -11,7 +12,7 @@ def parse(fname):
     """
 
     blocks = list()
-    with open(fname) as f:
+    with io.open(fname, "r", encoding="utf-8") as f:
         in_block = False
         current_block = None
         current_header = ""
