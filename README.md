@@ -262,7 +262,6 @@ Assuming you have Docker already setup.
 
 ```bash
 # Build image (see Dockerfile for specifics)
-# Re-run this command to pull latest version of image
 cd Qt.py
 docker build -t mottosso/qt.py27 -f Dockerfile-py2.7 .
 docker build -t mottosso/qt.py35 -f Dockerfile-py3.5 .
