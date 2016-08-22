@@ -210,6 +210,38 @@ if PYTHON == 2:
             assert_raises(ImportError, __import__, "Qt")
 
 
+def test_translate_and_UnicodeUTF8_in_pyside():
+    with pyside:
+        from Qt import QtWidgets
+
+        # this does exist in PySide
+        assert QtWidgets.QApplication.UnicodeUTF8 is not None
+
+        # use patched method with old arguments
+        QtWidgets.QApplication.translate(
+            'Href_Gui',
+            'Text',
+            0,
+            QtWidgets.QApplication.UnicodeUTF8
+        )
+
+
+def test_translate_and_UnicodeUTF8_in_pyqt4():
+    with pyqt4:
+        from Qt import QtWidgets
+
+        # this does exist in PyQt4
+        assert QtWidgets.QApplication.UnicodeUTF8 is not None
+
+        # use patched method with old arguments
+        QtWidgets.QApplication.translate(
+            'Href_Gui',
+            'Text',
+            0,
+            QtWidgets.QApplication.UnicodeUTF8
+        )
+
+
 def test_translate_and_UnicodeUTF8_in_pyside2():
     with pyside2:
         from Qt import QtWidgets
