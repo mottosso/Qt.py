@@ -26,6 +26,7 @@ __version__ = "0.3.3"
 
 def _pyqt5():
     import PyQt5.Qt
+    from PyQt5 import QtWidgets
 
     # Remap
     PyQt5.QtCore.Signal = PyQt5.QtCore.pyqtSignal
@@ -38,6 +39,12 @@ def _pyqt5():
     PyQt5.__binding_version__ = PyQt5.QtCore.PYQT_VERSION_STR
     PyQt5.__qt_version__ = PyQt5.QtCore.QT_VERSION_STR
     PyQt5.load_ui = pyqt5_load_ui
+
+    # Monkey Patch for backward compatibility
+    def setResizeMode(self, *args, **kwargs):
+        return self.setSectionResizeMode(*args, **kwargs)
+
+    QtWidgets.QHeaderView.setResizeMode = setResizeMode
 
     return PyQt5
 
@@ -84,12 +91,18 @@ def _pyqt4():
     PyQt4.__qt_version__ = PyQt4.QtCore.QT_VERSION_STR
     PyQt4.load_ui = pyqt4_load_ui
 
+    # Monkey Patch for forward compatibility
+    def setSectionResizeMode(self, *args, **kwargs):
+        return self.setResizeMode(*args, **kwargs)
+
+    PyQt4.QtWidgets.QHeaderView.setSectionResizeMode = setSectionResizeMode
+
     return PyQt4
 
 
 def _pyside2():
     import PySide2
-    from PySide2 import QtGui, QtCore
+    from PySide2 import QtGui, QtCore, QtWidgets
 
     # Remap
     QtCore.QStringListModel = QtGui.QStringListModel
@@ -100,6 +113,12 @@ def _pyside2():
     PySide2.__binding_version__ = PySide2.__version__
     PySide2.__qt_version__ = PySide2.QtCore.qVersion()
     PySide2.load_ui = pyside2_load_ui
+
+    # Monkey Patch for backward compatibility
+    def setResizeMode(self, *args, **kwargs):
+        return self.setSectionResizeMode(*args, **kwargs)
+
+    QtWidgets.QHeaderView.setResizeMode = setResizeMode
 
     return PySide2
 
@@ -130,6 +149,11 @@ def _pyside():
     PySide.__qt_version__ = PySide.QtCore.qVersion()
     PySide.load_ui = pyside_load_ui
 
+    # Monkey Patch for forward compatibility
+    def setSectionResizeMode(self, *args, **kwargs):
+        return self.setResizeMode(*args, **kwargs)
+
+    PySide.QtWidgets.QHeaderView.setSectionResizeMode = setSectionResizeMode
     return PySide
 
 

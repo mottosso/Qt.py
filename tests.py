@@ -208,3 +208,37 @@ if PYTHON == 2:
             import sip
             sip.setapi("QString", 1)
             assert_raises(ImportError, __import__, "Qt")
+
+
+def test_qheaderview_pyqt4_forward_compatiblity():
+    with pyqt4():
+        from Qt import QtWidgets
+        from Qt import QtGui
+        assert QtWidgets.QHeaderView.setSectionResizeMode
+        assert QtWidgets.QHeaderView.setResizeMode
+        assert QtGui.QHeaderView.setSectionResizeMode
+        assert QtGui.QHeaderView.setResizeMode
+
+
+def test_qheaderview_pyside_forward_compatiblity():
+    with pyside():
+        from Qt import QtWidgets
+        from Qt import QtGui
+        assert QtWidgets.QHeaderView.setSectionResizeMode
+        assert QtWidgets.QHeaderView.setResizeMode
+        assert QtGui.QHeaderView.setSectionResizeMode
+        assert QtGui.QHeaderView.setResizeMode
+
+
+def test_qheaderview_pyqt5_forward_compatiblity():
+    with pyqt5():
+        from Qt import QtWidgets
+        assert QtWidgets.QHeaderView.setSectionResizeMode
+        assert QtWidgets.QHeaderView.setResizeMode
+
+
+def test_qheaderview_pyside2_forward_compatiblity():
+    with pyside2():
+        from Qt import QtWidgets
+        assert QtWidgets.QHeaderView.setSectionResizeMode
+        assert QtWidgets.QHeaderView.setResizeMode
