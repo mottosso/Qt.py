@@ -208,3 +208,49 @@ if PYTHON == 2:
             import sip
             sip.setapi("QString", 1)
             assert_raises(ImportError, __import__, "Qt")
+
+
+def test_translate_and_UnicodeUTF8_in_pyside2():
+    with pyside2:
+        from Qt import QtWidgets
+
+        # this does not exist in PySide2
+        assert QtWidgets.QApplication.UnicodeUTF8 is None
+
+        # use patched method with old arguments
+        QtWidgets.QApplication.translate(
+            'Href_Gui',
+            'Text',
+            0,
+            QtWidgets.QApplication.UnicodeUTF8
+        )
+
+        # use patched method with new arguments
+        QtWidgets.QApplication.translate(
+            'SomeText',
+            'Form',
+            0,
+        )
+
+
+def test_translate_and_UnicodeUTF8_in_PyQt5():
+    with pyqt5:
+        from Qt import QtWidgets
+
+        # this does not exist in PyQt5
+        assert QtWidgets.QApplication.UnicodeUTF8 is None
+
+        # use patched method with old arguments
+        QtWidgets.QApplication.translate(
+            'SomeText',
+            'Form',
+            None,
+            QtWidgets.QApplication.UnicodeUTF8
+        )
+
+        # use patched method with new arguments
+        QtWidgets.QApplication.translate(
+            'SomeText',
+            'Form',
+            None,
+        )
