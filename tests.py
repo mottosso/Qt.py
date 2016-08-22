@@ -247,7 +247,7 @@ def test_translate_and_UnicodeUTF8_in_pyside2():
         from Qt import QtWidgets
 
         # this does not exist in PySide2 by default
-        assert QtWidgets.QApplication.UnicodeUTF8 is None
+        assert QtWidgets.QApplication.UnicodeUTF8 is 0
 
         # use patched method with old arguments
         QtWidgets.QApplication.translate(
@@ -270,7 +270,7 @@ def test_translate_and_UnicodeUTF8_in_PyQt5():
         from Qt import QtWidgets
 
         # this does not exist in PyQt5 by default
-        assert QtWidgets.QApplication.UnicodeUTF8 is None
+        assert QtWidgets.QApplication.UnicodeUTF8 is 0
 
         # use patched method with old arguments
         QtWidgets.QApplication.translate(
