@@ -219,9 +219,9 @@ def test_translate_and_UnicodeUTF8_in_pyside():
 
         # use patched method with old arguments
         QtWidgets.QApplication.translate(
-            'Href_Gui',
-            'Text',
-            None,
+            u'Href_Gui',
+            u'Text',
+            u'None',
             QtWidgets.QApplication.UnicodeUTF8
         )
 
@@ -235,9 +235,9 @@ def test_translate_and_UnicodeUTF8_in_pyqt4():
 
         # use patched method with old arguments
         QtWidgets.QApplication.translate(
-            'Href_Gui',
-            'Text',
-            None,
+            u'Href_Gui',
+            u'Text',
+            u'None',
             QtWidgets.QApplication.UnicodeUTF8
         )
 
@@ -247,21 +247,21 @@ def test_translate_and_UnicodeUTF8_in_pyside2():
         from Qt import QtWidgets
 
         # this does not exist in PySide2 by default
-        assert QtWidgets.QApplication.UnicodeUTF8 is None
+        assert QtWidgets.QApplication.UnicodeUTF8 is -1
 
         # use patched method with old arguments
         QtWidgets.QApplication.translate(
-            'Href_Gui',
-            'Text',
-            None,
+            u'Href_Gui',
+            u'Text',
+            u'None',
             QtWidgets.QApplication.UnicodeUTF8
         )
 
         # use patched method with new arguments
         QtWidgets.QApplication.translate(
-            'SomeText',
-            'Form',
-            None
+            u'SomeText',
+            u'Form',
+            u'None'
         )
 
 
@@ -270,19 +270,19 @@ def test_translate_and_UnicodeUTF8_in_PyQt5():
         from Qt import QtWidgets
 
         # this does not exist in PyQt5 by default
-        assert QtWidgets.QApplication.UnicodeUTF8 is None
+        assert QtWidgets.QApplication.UnicodeUTF8 is -1
 
         # use patched method with old arguments
         QtWidgets.QApplication.translate(
-            'SomeText',
-            'Form',
-            None,
+            u'SomeText',
+            u'Form',
+            u'None',
             QtWidgets.QApplication.UnicodeUTF8
         )
 
         # use patched method with new arguments
         QtWidgets.QApplication.translate(
-            'SomeText',
-            'Form',
-            None
+            u'SomeText',
+            u'Form',
+            u'None'
         )

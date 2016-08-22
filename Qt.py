@@ -41,7 +41,7 @@ def _pyqt5():
     PyQt5.load_ui = pyqt5_load_ui
 
     # provide mocked UnicodeUTF8 For backward compatibility
-    QtWidgets.QApplication.UnicodeUTF8 = None
+    QtWidgets.QApplication.UnicodeUTF8 = -1
 
     old_translate_fn = QtWidgets.QApplication.translate
 
@@ -113,7 +113,7 @@ def _pyside2():
     PySide2.load_ui = pyside2_load_ui
 
     # provide mocked UnicodeUTF8 For backward compatibility
-    QtWidgets.QApplication.UnicodeUTF8 = None
+    QtWidgets.QApplication.UnicodeUTF8 = -1
 
     old_translate_fn = QtWidgets.QApplication.translate
 
