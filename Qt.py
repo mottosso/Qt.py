@@ -40,11 +40,11 @@ def _pyqt5():
     PyQt5.load_ui = pyqt5_load_ui
 
     # provide mocked UnicodeUTF8 For backward compatibility
-    PyQt5.QtWidgets.QApplication.UnicodeUTF8 = None
+    PyQt5.QtWidgets.QApplication.UnicodeUTF8 = 0
 
     old_translate_fn = PyQt5.QtWidgets.QApplication.translate
 
-    def translate(context, key, disambiguation=None, encoding=None, n=0):
+    def translate(context, key, disambiguation=None, encoding=0, n=0):
         return old_translate_fn(context, key, disambiguation, n)
 
     PyQt5.QtWidgets.QApplication.translate = staticmethod(translate)
@@ -79,7 +79,7 @@ def _pyqt4():
     PyQt4.QtCore.Property = PyQt4.QtCore.pyqtProperty
     PyQt4.QtCore.QItemSelection = PyQt4.QtGui.QItemSelection
     PyQt4.QtCore.QItemSelectionModel = PyQt4.QtGui.QItemSelectionModel
-
+    
     try:
         from PyQt4 import QtWebKit
         PyQt4.QtWebKitWidgets = QtWebKit
@@ -112,11 +112,11 @@ def _pyside2():
     PySide2.load_ui = pyside2_load_ui
 
     # provide mocked UnicodeUTF8 For backward compatibility
-    PySide2.QtWidgets.QApplication.UnicodeUTF8 = None
+    PySide2.QtWidgets.QApplication.UnicodeUTF8 = 0
 
     old_translate_fn = PySide2.QtWidgets.QApplication.translate
 
-    def translate(context, key, disambiguation=None, encoding=None, n=0):
+    def translate(context, key, disambiguation=None, encoding=0, n=0):
         return old_translate_fn(context, key, disambiguation, n)
 
     PySide2.QtWidgets.QApplication.translate = staticmethod(translate)
@@ -224,18 +224,18 @@ def _init():
     this has executed.
 
     """
-
+    
     preferred = os.getenv("QT_PREFERRED_BINDING")
     verbose = os.getenv("QT_VERBOSE") is not None
     bindings = (_pyside2, _pyqt5, _pyside, _pyqt4)
 
     if preferred:
-
+        
         # Internal flag (used in installer)
         if preferred == "None":
             sys.modules[__name__].__wrapper_version__ = __version__
             return
-
+        
         preferred = preferred.split(os.pathsep)
         available = {
             "PySide2": _pyside2,
