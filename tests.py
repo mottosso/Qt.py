@@ -211,7 +211,7 @@ if PYTHON == 2:
 
 
 def test_translate_and_UnicodeUTF8_in_pyside():
-    with pyside:
+    with pyside():
         from Qt import QtWidgets
 
         # this does exist in PySide
@@ -227,7 +227,7 @@ def test_translate_and_UnicodeUTF8_in_pyside():
 
 
 def test_translate_and_UnicodeUTF8_in_pyqt4():
-    with pyqt4:
+    with pyqt4():
         from Qt import QtWidgets
 
         # this does exist in PyQt4
@@ -243,7 +243,7 @@ def test_translate_and_UnicodeUTF8_in_pyqt4():
 
 
 def test_translate_and_UnicodeUTF8_in_pyside2():
-    with pyside2:
+    with pyside2():
         from Qt import QtWidgets
 
         # this does not exist in PySide2
@@ -266,7 +266,7 @@ def test_translate_and_UnicodeUTF8_in_pyside2():
 
 
 def test_translate_and_UnicodeUTF8_in_PyQt5():
-    with pyqt5:
+    with pyqt5():
         from Qt import QtWidgets
 
         # this does not exist in PyQt5
