@@ -221,7 +221,7 @@ def test_translate_and_UnicodeUTF8_in_pyside():
         QtWidgets.QApplication.translate(
             'Href_Gui',
             'Text',
-            0,
+            None,
             QtWidgets.QApplication.UnicodeUTF8
         )
 
@@ -237,7 +237,7 @@ def test_translate_and_UnicodeUTF8_in_pyqt4():
         QtWidgets.QApplication.translate(
             'Href_Gui',
             'Text',
-            0,
+            None,
             QtWidgets.QApplication.UnicodeUTF8
         )
 
@@ -253,7 +253,7 @@ def test_translate_and_UnicodeUTF8_in_pyside2():
         QtWidgets.QApplication.translate(
             'Href_Gui',
             'Text',
-            0,
+            None,
             QtWidgets.QApplication.UnicodeUTF8
         )
 
@@ -261,7 +261,7 @@ def test_translate_and_UnicodeUTF8_in_pyside2():
         QtWidgets.QApplication.translate(
             'SomeText',
             'Form',
-            0,
+            None
         )
 
 
@@ -284,5 +284,5 @@ def test_translate_and_UnicodeUTF8_in_PyQt5():
         QtWidgets.QApplication.translate(
             'SomeText',
             'Form',
-            None,
+            None
         )
