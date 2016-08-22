@@ -76,6 +76,13 @@ def _pyqt4():
     PyQt4.QtCore.QItemSelection = PyQt4.QtGui.QItemSelection
     PyQt4.QtCore.QItemSelectionModel = PyQt4.QtGui.QItemSelectionModel
 
+    try:
+        from PyQt4 import QtWebKit
+        PyQt4.QtWebKitWidgets = QtWebKit
+    except ImportError:
+        # QtWebkit is optional in Qt , therefore might not be available
+        pass
+
     # Add
     PyQt4.__wrapper_version__ = __version__
     PyQt4.__binding__ = "PyQt4"
@@ -126,6 +133,13 @@ def _pyside():
     PySide.QtCore.QStringListModel = PySide.QtGui.QStringListModel
     PySide.QtCore.QItemSelection = PySide.QtGui.QItemSelection
     PySide.QtCore.QItemSelectionModel = PySide.QtGui.QItemSelectionModel
+
+    try:
+        from PySide import QtWebKit
+        PySide.QtWebKitWidgets = QtWebKit
+    except ImportError:
+        # QtWebkit is optional in Qt , therefore might not be available
+        pass
 
     # Add
     PySide.__wrapper_version__ = __version__
@@ -213,18 +227,18 @@ def _init():
     this has executed.
 
     """
-    
+
     preferred = os.getenv("QT_PREFERRED_BINDING")
     verbose = os.getenv("QT_VERBOSE") is not None
     bindings = (_pyside2, _pyqt5, _pyside, _pyqt4)
 
     if preferred:
-        
+
         # Internal flag (used in installer)
         if preferred == "None":
             sys.modules[__name__].__wrapper_version__ = __version__
             return
-        
+
         preferred = preferred.split(os.pathsep)
         available = {
             "PySide2": _pyside2,

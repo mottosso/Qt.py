@@ -72,14 +72,14 @@ I had been using the id as an index into a list. But the unexpected return value
 PySide has the `QItemSelection.isEmpty` and `QItemSelection.empty` attributes while PyQt4 only has the `QItemSelection.isEmpty` attribute.
 
 ```python
-# PySide
+# PySide2
 >>> from Qt import QtCore
 >>> func = QtCore.QItemSelection.isEmpty
 >>> func = QtCore.QItemSelection.empty
 ```
 
 ```python
-# PyQt4
+# PyQt5
 >>> from Qt import QtCore
 >>> func = QtCore.QItemSelection.isEmpty
 >>> func = QtCore.QItemSelection.empty
