@@ -211,6 +211,10 @@ if PYTHON == 2:
 
 
 def test_translate_and_UnicodeUTF8_in_pyside():
+    _str_ = str
+    if PYTHON == 2:
+        _str_ = basestring
+
     with pyside():
         from Qt import QtWidgets
 
@@ -218,15 +222,20 @@ def test_translate_and_UnicodeUTF8_in_pyside():
         assert QtWidgets.QApplication.UnicodeUTF8 is not None
 
         # use patched method with old arguments
-        QtWidgets.QApplication.translate(
+        result = QtWidgets.QApplication.translate(
             u'Href_Gui',
             u'Text',
             u'None',
             QtWidgets.QApplication.UnicodeUTF8
         )
+        assert isinstance(result, _str_)
 
 
 def test_translate_and_UnicodeUTF8_in_pyqt4():
+    _str_ = str
+    if PYTHON == 2:
+        _str_ = basestring
+
     with pyqt4():
         from Qt import QtWidgets
 
@@ -234,15 +243,21 @@ def test_translate_and_UnicodeUTF8_in_pyqt4():
         assert QtWidgets.QApplication.UnicodeUTF8 is not None
 
         # use patched method with old arguments
-        QtWidgets.QApplication.translate(
+        result = QtWidgets.QApplication.translate(
             u'Href_Gui',
             u'Text',
             u'None',
             QtWidgets.QApplication.UnicodeUTF8
         )
 
+        assert isinstance(result, _str_)
+
 
 def test_translate_and_UnicodeUTF8_in_pyside2():
+    _str_ = str
+    if PYTHON == 2:
+        _str_ = basestring
+
     with pyside2():
         from Qt import QtWidgets
 
@@ -250,22 +265,28 @@ def test_translate_and_UnicodeUTF8_in_pyside2():
         assert QtWidgets.QApplication.UnicodeUTF8 is -1
 
         # use patched method with old arguments
-        QtWidgets.QApplication.translate(
+        result = QtWidgets.QApplication.translate(
             u'Href_Gui',
             u'Text',
             u'None',
             QtWidgets.QApplication.UnicodeUTF8
         )
+        assert isinstance(result, _str_)
 
         # use patched method with new arguments
-        QtWidgets.QApplication.translate(
+        result = QtWidgets.QApplication.translate(
             u'SomeText',
             u'Form',
             u'None'
         )
+        assert isinstance(result, _str_)
 
 
 def test_translate_and_UnicodeUTF8_in_PyQt5():
+    _str_ = str
+    if PYTHON == 2:
+        _str_ = basestring
+
     with pyqt5():
         from Qt import QtWidgets
 
@@ -273,16 +294,18 @@ def test_translate_and_UnicodeUTF8_in_PyQt5():
         assert QtWidgets.QApplication.UnicodeUTF8 is -1
 
         # use patched method with old arguments
-        QtWidgets.QApplication.translate(
+        result = QtWidgets.QApplication.translate(
             u'SomeText',
             u'Form',
             u'None',
             QtWidgets.QApplication.UnicodeUTF8
         )
+        assert isinstance(result, _str_)
 
         # use patched method with new arguments
-        QtWidgets.QApplication.translate(
+        result = QtWidgets.QApplication.translate(
             u'SomeText',
             u'Form',
             u'None'
         )
+        assert isinstance(result, _str_)
