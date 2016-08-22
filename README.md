@@ -2,7 +2,7 @@
 
 ### Qt.py
 
-Qt.py enables you to write software that dynamically chooses the most desireable bindings based on what's available, including PySide, PySide2, PyQt4 and PyQt5.
+Qt.py enables you to write software that dynamically chooses the most desireable bindings based on what's available, including PySide2, PyQt5, PySide and PyQt4; in that (configurable) order (see below).
 
 <br>
 <br>
@@ -221,12 +221,21 @@ Send us a pull-request with your studio here.
 - Disney Animation
 - Industriromantik
 
+Presented at Siggraph 2016, BOF!
+
+![image](https://cloud.githubusercontent.com/assets/2152766/17621229/c2448db2-6089-11e6-915f-0604e5d8c7ee.png)
+
+<br>
+<br>
+<br>
+
 ### Projects using Qt.py
 
 Send us a pull-request with your project here.
 
 - https://github.com/pyblish/pyblish-lite
 - https://github.com/fredrikaverpil/pyvfx-boilerplate
+- https://gitlab.com/4degrees/riffle
 
 <br>
 <br>
@@ -236,7 +245,7 @@ Send us a pull-request with your project here.
 
 Send us a pull-request with your project here.
 
-- https://github.com/spyder-ide/qtpy/tree/master/qtpy
+- https://github.com/spyder-ide/qtpy
 - https://github.com/jupyter/qtconsole/blob/master/qtconsole/qt_loaders.py
 
 <br>
@@ -253,22 +262,24 @@ Assuming you have Docker already setup.
 
 ```bash
 # Build image (see Dockerfile for specifics)
-# Re-run this command to pull latest version of image
-docker build -t mottosso/qt.py https://github.com/mottosso/Qt.py.git
+cd Qt.py
+docker build -t mottosso/qt.py27 -f Dockerfile-py2.7 .
+docker build -t mottosso/qt.py35 -f Dockerfile-py3.5 .
 
 # Run nosetests
 # Explanation of flags:
 # --rm 	delete the container on exit
 # -v 	mount local path to container path
-cd Qt.py
-docker run --rm -v $(pwd):/Qt.py mottosso/qt.py
+docker run --rm -v $(pwd):/Qt.py mottosso/qt.py27
+docker run --rm -v $(pwd):/Qt.py mottosso/qt.py35
 
-# Tests require PySide and PyQt4 bindings to be installed ... ok
-# Setting QT_PREFERRED_BINDING properly forces a particular binding ... ok
-# Preferring None shouldn't import anything ... ok
-# 
+# Doctest: test_caveats.test_1_qtgui_qabstractitemmodel_createindex ... ok
+# Doctest: test_caveats.test_2_qtgui_qabstractitemmodel_createindex ... ok
+# Doctest: test_caveats.test_3_qtcore_qitemselection ... ok
+# ...
+#
 # ----------------------------------------------------------------------
-# Ran 3 tests in 0.530s
+# Ran 21 tests in 7.799s
 # 
 # OK
 ```
