@@ -131,19 +131,6 @@ All members of `Qt` stem directly from those available via PySide2, along with t
 | `__wrapper_version__`   | `str`  | Version of this project
 | `load_ui()`             | `func` | Minimal wrapper of PyQt4.loadUi and PySide equivalent
 
-**Examples**
-
-```python
-import Qt
-
-if Qt.__binding__ in ('PyQt5', 'PySide2'):
-    # Do Qt 5 things.
-
-Qt.__qt_version__ == '5.6.1'
-Qt.__binding_version__ == '1.2.6'
-Qt.__wrapper_version__ == '1.0.0'
-```
-
 ##### Branch binding-specific code
 
 Some bindings offer features not available in others, you can use `__binding__` to capture those.
