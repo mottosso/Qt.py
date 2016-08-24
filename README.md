@@ -123,19 +123,24 @@ There are cases where Qt.py is not handling incompatibility issues. Please see [
 
 All members of `Qt` stem directly from those available via PySide2, along with these additional members.
 
+| Attribute               | Type   | Value
+|:------------------------|:-------|:------------
+| `__binding__`           | `str`  | A string reference to binding currently in use
+| `__qt_version__`        | `str`  | Reference to version of Qt, such as Qt 5.6.1
+| `__binding_version__`   | `str`  | Reference to version of binding, such as PySide 1.2.6
+| `__wrapper_version__`   | `str`  | Version of this project
+| `load_ui()`             | `func` | Minimal wrapper of PyQt4.loadUi and PySide equivalent
+
+**Examples**
+
 ```python
 import Qt
 
-# A string reference to binding currently in use
-Qt.__binding__ == 'PyQt5'
+if Qt.__binding__ in ('PyQt5', 'PySide2'):
+    # Do Qt 5 things.
 
-# Reference to version of Qt, such as Qt 5.6.1
 Qt.__qt_version__ == '5.6.1'
-
-# Reference to version of binding, such as PySide 1.2.6
 Qt.__binding_version__ == '1.2.6'
-
-# Version of this project
 Qt.__wrapper_version__ == '1.0.0'
 ```
 
