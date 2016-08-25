@@ -231,7 +231,7 @@ TypeError: ...
 >>> header.setResizeMode(QtWidgets.QHeaderView.Fixed)
 Traceback (most recent call last):
 ...
-AttributeError: type object 'QHeaderView' has no attribute 'setResizeMode'
+AttributeError: 'PySide2.QtWidgets.QHeaderView' object has no attribute 'setResizeMode'
 ```
 
 ```python
@@ -243,7 +243,7 @@ AttributeError: type object 'QHeaderView' has no attribute 'setResizeMode'
 >>> header.setSectionResizeMode(QtWidgets.QHeaderView.Fixed)
 Traceback (most recent call last):
 ...
-AttributeError: type object 'QHeaderView' has no attribute 'setSectionResizeMode'
+AttributeError: 'PySide.QtWidgets.QHeaderView' object has no attribute 'setSectionResizeMode'
 ```
 
 ##### Workaround
@@ -252,7 +252,7 @@ Use a conditional.
 
 ```python
 # PySide2
->>> from Qt import QtWidgets, __qt__version__
+>>> from Qt import QtWidgets, __binding__
 >>> app = QtWidgets.QApplication(sys.argv)
 >>> view = QtWidgets.QTreeWidget()
 >>> header = view.header()
