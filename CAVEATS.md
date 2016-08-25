@@ -243,7 +243,7 @@ AttributeError: 'PySide2.QtWidgets.QHeaderView' object has no attribute 'setResi
 >>> header.setSectionResizeMode(QtWidgets.QHeaderView.Fixed)
 Traceback (most recent call last):
 ...
-AttributeError: 'PySide.QtWidgets.QHeaderView' object has no attribute 'setSectionResizeMode'
+AttributeError: 'PySide.QtGui.QHeaderView' object has no attribute 'setSectionResizeMode'
 ```
 
 ##### Workaround
@@ -257,8 +257,8 @@ Use a conditional.
 >>> view = QtWidgets.QTreeWidget()
 >>> header = view.header()
 >>> if __binding__ in ("PyQt4", "PySide"):
-...   header.setSectionResizeMode(QtWidgets.QHeaderView.Fixed)
-... else:
 ...   header.setResizeMode(QtWidgets.QHeaderView.Fixed)
+... else:
+...   header.setSectionResizeMode(QtWidgets.QHeaderView.Fixed)
 ```
 
