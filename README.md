@@ -131,6 +131,8 @@ All members of `Qt` stem directly from those available via PySide2, along with t
 | `__wrapper_version__`   | `str`  | Version of this project
 | `load_ui()`             | `func` | Minimal wrapper of PyQt4.loadUi and PySide equivalent
 
+<br>
+
 ##### Branch binding-specific code
 
 Some bindings offer features not available in others, you can use `__binding__` to capture those.
@@ -139,6 +141,8 @@ Some bindings offer features not available in others, you can use `__binding__` 
 if "PySide" in Qt.__binding__:
   do_pyside_stuff()
 ```
+
+<br>
 
 ##### Override preferred choice
 
@@ -165,6 +169,8 @@ $ export QT_PREFERRED_BINDING=PyQt:PySide
 
 Using the OS path separator (`os.pathsep`) which is `:` on Unix systems and `;` on Windows.
 
+<br>
+
 ##### Load Qt Designer .ui files
 
 The `uic.loadUi` function of PyQt4 and PyQt5 as well as the `QtUiTools.QUiLoader().load` function of PySide/PySide2 are mapped to a convenience function `load_ui`.
@@ -180,6 +186,8 @@ app.exec_()
 ```
 
 Please note, for maximum compatibility, only pass the argument of the filename to the `load_ui` function.
+
+<br>
 
 ##### sip API v2
 
