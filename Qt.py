@@ -80,7 +80,7 @@ def _pyqt4():
     PyQt4.QtCore.Property = PyQt4.QtCore.pyqtProperty
     PyQt4.QtCore.QItemSelection = PyQt4.QtGui.QItemSelection
     PyQt4.QtCore.QItemSelectionModel = PyQt4.QtGui.QItemSelectionModel
-    
+
     try:
         from PyQt4 import QtWebKit
         PyQt4.QtWebKitWidgets = QtWebKit
@@ -225,18 +225,16 @@ def _init():
     this has executed.
 
     """
-    
     preferred = os.getenv("QT_PREFERRED_BINDING")
     verbose = os.getenv("QT_VERBOSE") is not None
     bindings = (_pyside2, _pyqt5, _pyside, _pyqt4)
 
     if preferred:
-        
         # Internal flag (used in installer)
         if preferred == "None":
             sys.modules[__name__].__wrapper_version__ = __version__
             return
-        
+
         preferred = preferred.split(os.pathsep)
         available = {
             "PySide2": _pyside2,
