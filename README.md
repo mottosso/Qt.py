@@ -5,6 +5,21 @@
 Qt.py enables you to write software that dynamically chooses the most desireable bindings based on what's available, including PySide2, PyQt5, PySide and PyQt4; in that (configurable) order (see below).
 
 <br>
+
+**Table of contents**
+
+- [Install](#install)
+- [Usage](#usage)
+- [Documentation](#documentation)
+- [Rules](#rules)
+- [How it works](#how-it-works)
+- [Known problems](#known-problems)
+- [Who's using Qt.py?](#whos-using-qtpy)
+- [Projects using Qt.py](#projects-using-qtpy)
+- [Projects similar to Qt.py](#projects-similar-to-qtpy)
+- [Developer guide](#developer-guide)
+
+<br>
 <br>
 <br>
 
@@ -40,80 +55,6 @@ app.exec_()
 
 - [Dealing with Maya 2017 and PySide2](https://fredrikaverpil.github.io/2016/07/25/dealing-with-maya-2017-and-pyside2/)
 - [Developing with Qt.py](https://fredrikaverpil.github.io/2016/07/25/developing-with-qt-py/)
-
-<br>
-<br>
-<br>
-
-### How it works
-
-Once you import Qt.py, Qt.py replaces itself with the most desirable binding on your platform, or throws an `ImportError` if none are available.
-
-```python
->>> import Qt
->>> print(Qt)
-<module 'PyQt5' from 'C:\Python27\lib\site-packages\PyQt5\__init__.pyc'>
-```
-
-Here's an example of how this works.
-
-**Qt.py**
-
-```python
-import sys
-import PyQt5
-
-# Replace myself PyQt5
-sys.modules["Qt"] = PyQt5
-```
-
-Once imported, it is as though your application was importing whichever binding was chosen and Qt.py never existed.
-
-<br>
-<br>
-<br>
-
-### Rules
-
-The PyQt and PySide bindings are similar, but not identical. Where there is ambiguity, there must to be a clear direction on which path to take.
-
-**Governing API**
-
-The official [Qt 5 documentation](http://doc.qt.io/qt-5/classes.html) is always right. Where the documentation lacks answers, PySide2 is right.
-
-For example.
-
-```python
-# PyQt5 adheres to PySide2 signals and slots
-PyQt5.Signal = PyQt5.pyqtSignal
-PyQt5.Slot = PyQt5.pyqtSlot
-
-# PySide2 adheres to the official documentation
-PySide2.QtCore.QStringListModel = PySide2.QtGui.QStringListModel
-```
-
-**Portability**
-
-Qt.py does not hide members from the original binding. This can be problematic if, for example, you accidentally use a member that only exists PyQt5 and later try running your software with a different binding.
-
-```python
-from Qt import QtCore
-
-# Incompatible with PySide
-signal = QtCore.pyqtSignal()
-```
-
-But it enables use of Qt.py as a helper library, in conjunction with an existing binding, simplifying the transition of an existing project from a particular binding.
-
-```python
-# This is ok
-from Qt import QtCore
-from PyQt4 import QtGui
-```
-
-**Caveats**
-
-There are cases where Qt.py is not handling incompatibility issues. Please see [`CAVEATS.md`](CAVEATS.md) for more information.
 
 <br>
 <br>
@@ -199,6 +140,80 @@ If you're using PyQt4, `sip` attempts to set its API to version 2 for the follow
 - `QTextStream`
 - `QTime`
 - `QUrl`
+
+<br>
+<br>
+<br>
+
+### Rules
+
+The PyQt and PySide bindings are similar, but not identical. Where there is ambiguity, there must to be a clear direction on which path to take.
+
+**Governing API**
+
+The official [Qt 5 documentation](http://doc.qt.io/qt-5/classes.html) is always right. Where the documentation lacks answers, PySide2 is right.
+
+For example.
+
+```python
+# PyQt5 adheres to PySide2 signals and slots
+PyQt5.Signal = PyQt5.pyqtSignal
+PyQt5.Slot = PyQt5.pyqtSlot
+
+# PySide2 adheres to the official documentation
+PySide2.QtCore.QStringListModel = PySide2.QtGui.QStringListModel
+```
+
+**Portability**
+
+Qt.py does not hide members from the original binding. This can be problematic if, for example, you accidentally use a member that only exists PyQt5 and later try running your software with a different binding.
+
+```python
+from Qt import QtCore
+
+# Incompatible with PySide
+signal = QtCore.pyqtSignal()
+```
+
+But it enables use of Qt.py as a helper library, in conjunction with an existing binding, simplifying the transition of an existing project from a particular binding.
+
+```python
+# This is ok
+from Qt import QtCore
+from PyQt4 import QtGui
+```
+
+**Caveats**
+
+There are cases where Qt.py is not handling incompatibility issues. Please see [`CAVEATS.md`](CAVEATS.md) for more information.
+
+<br>
+<br>
+<br>
+
+### How it works
+
+Once you import Qt.py, Qt.py replaces itself with the most desirable binding on your platform, or throws an `ImportError` if none are available.
+
+```python
+>>> import Qt
+>>> print(Qt)
+<module 'PyQt5' from 'C:\Python27\lib\site-packages\PyQt5\__init__.pyc'>
+```
+
+Here's an example of how this works.
+
+**Qt.py**
+
+```python
+import sys
+import PyQt5
+
+# Replace myself PyQt5
+sys.modules["Qt"] = PyQt5
+```
+
+Once imported, it is as though your application was importing whichever binding was chosen and Qt.py never existed.
 
 <br>
 <br>
