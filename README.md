@@ -23,6 +23,15 @@ Qt.py enables you to write software that dynamically chooses the most desireable
 <br>
 <br>
 
+### Development goals
+
+- Simplicity. Simple to read, simple to grok, simple to maintain.
+- No bugs. What you get is what each binding provides equally and documentation of inequalities.
+
+<br>
+<br>
+<br>
+
 ### Install
 
 Qt.py is a single file and can either be downloaded as-is or installed via PyPI.
