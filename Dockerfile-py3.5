@@ -11,7 +11,8 @@ RUN apt-get update && \
         python3-pyqt4 \
         python3-pyqt5 \
         python3-pyside \
-        python3-pyside2
+        python3-pyside2 \
+        xvfb
 
 # Nose is the Python test-runner
 RUN pip3 install nose nosepipe
@@ -19,9 +20,14 @@ RUN pip3 install nose nosepipe
 # Enable additional output from Qt.py
 ENV QT_VERBOSE true
 
+# Xvfb
+ENV DISPLAY :99
+
 WORKDIR /workspace/Qt.py
 ENTRYPOINT cp -r /Qt.py /workspace && \
     python3 build_caveats_tests.py && \
+	Xvfb :99 -screen 0 1024x768x16 2>/dev/null & \
+	sleep 3 && \
     nosetests \
         --verbose \
         --with-process-isolation \

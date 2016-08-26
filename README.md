@@ -5,6 +5,30 @@
 Qt.py enables you to write software that dynamically chooses the most desireable bindings based on what's available, including PySide2, PyQt5, PySide and PyQt4; in that (configurable) order (see below).
 
 <br>
+
+**Table of contents**
+
+- [Install](#install)
+- [Usage](#usage)
+- [Documentation](#documentation)
+- [Rules](#rules)
+- [How it works](#how-it-works)
+- [Known problems](#known-problems)
+- [Who's using Qt.py?](#whos-using-qtpy)
+- [Projects using Qt.py](#projects-using-qtpy)
+- [Projects similar to Qt.py](#projects-similar-to-qtpy)
+- [Developer guide](#developer-guide)
+
+<br>
+<br>
+<br>
+
+### Development goals
+
+- Simplicity. Simple to read, simple to grok, simple to maintain.
+- No bugs. What you get is what each binding provides equally and documentation of inequalities.
+
+<br>
 <br>
 <br>
 
@@ -45,29 +69,86 @@ app.exec_()
 <br>
 <br>
 
-### How it works
+### Documentation
 
-Once you import Qt.py, Qt.py replaces itself with the most desirable binding on your platform, or throws an `ImportError` if none are available.
+All members of `Qt` stem directly from those available via PySide2, along with these additional members.
+
+| Attribute               | Type   | Value
+|:------------------------|:-------|:------------
+| `__binding__`           | `str`  | A string reference to binding currently in use
+| `__qt_version__`        | `str`  | Reference to version of Qt, such as Qt 5.6.1
+| `__binding_version__`   | `str`  | Reference to version of binding, such as PySide 1.2.6
+| `__wrapper_version__`   | `str`  | Version of this project
+| `load_ui()`             | `func` | Minimal wrapper of PyQt4.loadUi and PySide equivalent
+
+<br>
+
+##### Branch binding-specific code
+
+Some bindings offer features not available in others, you can use `__binding__` to capture those.
 
 ```python
->>> import Qt
->>> print(Qt)
-<module 'PyQt5' from 'C:\Python27\lib\site-packages\PyQt5\__init__.pyc'>
+if "PySide" in Qt.__binding__:
+  do_pyside_stuff()
 ```
 
-Here's an example of how this works.
+<br>
 
-**Qt.py**
+##### Override preferred choice
+
+If your system has multiple choices where one or more is preferred, you can override the preference and order in which they are tried with this environment variable.
+
+```bash
+# Windows
+$ set QT_PREFERRED_BINDING=PyQt5
+$ python -c "import Qt;print(Qt.__binding__)"
+PyQt5
+
+# Unix/OSX
+$ export QT_PREFERRED_BINDING=PyQt5
+$ python -c "import Qt;print(Qt.__binding__)"
+PyQt5
+```
+
+Constrain available choices and order of discovery by supplying multiple values.
+
+```bash
+# Try PyQt first and then PySide, but nothing else.
+$ export QT_PREFERRED_BINDING=PyQt:PySide
+```
+
+Using the OS path separator (`os.pathsep`) which is `:` on Unix systems and `;` on Windows.
+
+<br>
+
+##### Load Qt Designer .ui files
+
+The `uic.loadUi` function of PyQt4 and PyQt5 as well as the `QtUiTools.QUiLoader().load` function of PySide/PySide2 are mapped to a convenience function `load_ui`.
 
 ```python
 import sys
-import PyQt5
+import Qt
 
-# Replace myself PyQt5
-sys.modules["Qt"] = PyQt5
+app = QtWidgets.QApplication(sys.argv)
+ui = Qt.load_ui("my.ui")
+ui.show()
+app.exec_()
 ```
 
-Once imported, it is as though your application was importing whichever binding was chosen and Qt.py never existed.
+Please note, for maximum compatibility, only pass the argument of the filename to the `load_ui` function.
+
+<br>
+
+##### sip API v2
+
+If you're using PyQt4, `sip` attempts to set its API to version 2 for the following:
+- `QString`
+- `QVariant`
+- `QDate`
+- `QDateTime`
+- `QTextStream`
+- `QTime`
+- `QUrl`
 
 <br>
 <br>
@@ -119,86 +200,29 @@ There are cases where Qt.py is not handling incompatibility issues. Please see [
 <br>
 <br>
 
-### Documentation
+### How it works
 
-All members of `Qt` stem directly from those available via PySide2, along with these additional members.
-
-```python
-import Qt
-
-# A string reference to binding currently in use
-Qt.__binding__ == 'PyQt5'
-
-# Reference to version of Qt, such as Qt 5.6.1
-Qt.__qt_version__ == '5.6.1'
-
-# Reference to version of binding, such as PySide 1.2.6
-Qt.__binding_version__ == '1.2.6'
-
-# Version of this project
-Qt.__wrapper_version__ == '1.0.0'
-```
-
-##### Branch binding-specific code
-
-Some bindings offer features not available in others, you can use `__binding__` to capture those.
+Once you import Qt.py, Qt.py replaces itself with the most desirable binding on your platform, or throws an `ImportError` if none are available.
 
 ```python
-if "PySide" in Qt.__binding__:
-  do_pyside_stuff()
+>>> import Qt
+>>> print(Qt)
+<module 'PyQt5' from 'C:\Python27\lib\site-packages\PyQt5\__init__.pyc'>
 ```
 
-##### Override preferred choice
+Here's an example of how this works.
 
-If your system has multiple choices where one or more is preferred, you can override the preference and order in which they are tried with this environment variable.
-
-```bash
-# Windows
-$ set QT_PREFERRED_BINDING=PyQt5
-$ python -c "import Qt;print(Qt.__binding__)"
-PyQt5
-
-# Unix/OSX
-$ export QT_PREFERRED_BINDING=PyQt5
-$ python -c "import Qt;print(Qt.__binding__)"
-PyQt5
-```
-
-Constrain available choices and order of discovery by supplying multiple values.
-
-```bash
-# Try PyQt first and then PySide, but nothing else.
-$ export QT_PREFERRED_BINDING=PyQt:PySide
-```
-
-Using the OS path separator (`os.pathsep`) which is `:` on Unix systems and `;` on Windows.
-
-##### Load Qt Designer .ui files
-
-The `uic.loadUi` function of PyQt4 and PyQt5 as well as the `QtUiTools.QUiLoader().load` function of PySide/PySide2 are mapped to a convenience function `load_ui`.
+**Qt.py**
 
 ```python
 import sys
-import Qt
+import PyQt5
 
-app = QtWidgets.QApplication(sys.argv)
-ui = Qt.load_ui("my.ui")
-ui.show()
-app.exec_()
+# Replace myself PyQt5
+sys.modules["Qt"] = PyQt5
 ```
 
-Please note, for maximum compatibility, only pass the argument of the filename to the `load_ui` function.
-
-##### sip API v2
-
-If you're using PyQt4, `sip` attempts to set its API to version 2 for the following:
-- `QString`
-- `QVariant`
-- `QDate`
-- `QDateTime`
-- `QTextStream`
-- `QTime`
-- `QUrl`
+Once imported, it is as though your application was importing whichever binding was chosen and Qt.py never existed.
 
 <br>
 <br>
