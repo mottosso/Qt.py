@@ -272,12 +272,12 @@ Send us a pull-request with your project here.
 
 Comparison matrix.
 
-| Project       | Audience      | Reference binding | License   | Standalone | PyPI   | Co-existence
-|:--------------|:--------------|:------------------|:----------|------------|--------|--------------
-| Qt.py         | Film          | PySide2           | MIT       | X          | X      | X
-| [jupyter][]   | Scientific    | N/A               | N/A       |            |        |
-| [QtPy][]      | Scientific    | N/A               | MIT       | X          | X      |
-| [pyqode.qt][] | Scientific    | PyQt5             | MIT       |            | X      |
+| Project       | Audience      | Reference binding | License   | PEP8 |Standalone | PyPI   | Co-existence
+|:--------------|:--------------|:------------------|:----------|------|:----------|--------|--------------
+| Qt.py         | Film          | PySide2           | MIT       | X    | X         | X      | X
+| [jupyter][]   | Scientific    | N/A               | N/A       | X    |           |        |
+| [QtPy][]      | Scientific    | N/A               | MIT       |      | X         | X      |
+| [pyqode.qt][] | Scientific    | PyQt5             | MIT       | X    |           | X      |
 
 Also worth mentioning, [pyqt4topyqt5](https://github.com/rferrazz/pyqt4topyqt5); a good starting point for transitioning to Qt.py.
 
