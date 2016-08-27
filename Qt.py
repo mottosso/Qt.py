@@ -69,8 +69,12 @@ def _pyqt4():
     PyQt4.QtCore.Property = PyQt4.QtCore.pyqtProperty
     PyQt4.QtCore.QItemSelection = PyQt4.QtGui.QItemSelection
     PyQt4.QtCore.QItemSelectionModel = PyQt4.QtGui.QItemSelectionModel
-    PyQt4.QtWidgets.QHeaderView.setSectionResizeMode = \
-        PyQt4.QtWidgets.QHeaderView.setResizeMode
+
+    class QHeaderView(PyQt4.QtGui.QHeaderView):
+        def setSectionResizeMode(self, *args, **kwargs):
+            return self.setResizeMode(*args, **kwargs)
+
+    PyQt4.QtWidgets.QHeaderView = QHeaderView
 
     try:
         from PyQt4 import QtWebKit
@@ -117,8 +121,12 @@ def _pyside():
     PySide.QtCore.QStringListModel = PySide.QtGui.QStringListModel
     PySide.QtCore.QItemSelection = PySide.QtGui.QItemSelection
     PySide.QtCore.QItemSelectionModel = PySide.QtGui.QItemSelectionModel
-    PySide.QtWidgets.QHeaderView.setSectionResizeMode = \
-        PySide.QtWidgets.QHeaderView.setResizeMode
+
+    class QHeaderView(PySide.QtGui.QHeaderView):
+        def setSectionResizeMode(self, *args, **kwargs):
+            return self.setResizeMode(*args, **kwargs)
+
+    PySide.QtWidgets.QHeaderView = QHeaderView
 
     try:
         from PySide import QtWebKit
