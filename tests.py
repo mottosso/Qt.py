@@ -203,11 +203,6 @@ def test_qheaderview_setsectionresizemode():
     """setResizeMode was renamed setSectionResizeMode in Qt 5"""
 
     with pyside():
-        from PySide import QtGui
-
-        # Qt.py doesn't replace an existing member.
-        assert not hasattr(QtGui.QHeaderView, "setSectionResizeMode")
-
         import sys
         from Qt import QtWidgets
         app = QtWidgets.QApplication(sys.argv)
