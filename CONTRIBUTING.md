@@ -17,6 +17,10 @@ Qt.py was born to address the growing needs in these industries for the developm
   - [Suggesting Enhancements](#suggesting-enhancements)
   - [Your First Code Contribution](#your-first-code-contribution)
   - [Pull Requests](#pull-requests)
+- [Style](#style)
+  - [Commits](#commits)
+  - [Version bumping](#version-bumping)
+  - [Making a release](#making-a-release)
 
 <br>
 
@@ -94,7 +98,7 @@ QtWidgets.QWidget = QtGui.QWidget  # No bugs
 
 Contribution comes in many flavours, some of which is simply notifying us of problems or successes, so we know what to change and not to change.
 
-### Reporting bugs.
+### Reporting bugs
 
 Bugreports must include:
 
@@ -122,5 +126,56 @@ Code contributions are made by (1) forking this project and (2) making a modific
 The parent project ever only contains a single branch, a branch containing the latest working version of the project.
 
 We understand and recognise that "forking" and "pull-requests" can be a daunting aspect for a beginner, so don't hesitate to ask. A pull-request should normally follow an issue where you elaborate on your desires; this is also a good place to ask about these things.
+
+## Style
+
+Here's how we expect your code to look and feel like.
+
+### Commits
+
+Commits should be well contained, as small as possible (but no smaller) and its messages should be in present-tense, imperative-style.
+
+E.g.
+
+```bash
+# No
+Changed this and did that
+
+# No
+Changes this and does that
+
+# Yes
+Change this and do that
+```
+
+The reason is that, each commit is like an action. An event. And it is perfectly possible to "cherry-pick" a commit onto any given branch. In this style, it makes more sense what exactly the commit will do to your code.
+
+- Cherry pick "Add this and remove that"
+- Cherry pick "Remove X and replace with Y"
+
+### Version bumping
+
+This project uses [semantic versioning](http://semver.org/) and is updated *after* a new release has been made.
+
+For example, if the project had 100 commits at the time of the latest release and has 103 commits now, then it's time to increment. If however you modify the project and it has not yet been released, then your changes are included in the overall next release.
+
+The goal is to make a new release per increment.
+
+### Making a Release
+
+Once the project has gained features, had bugs sorted out and is in a relatively stable state, it's time to make a new release.
+
+- https://github.com/mottosso/Qt.py/releases
+
+Each release should come with:
+
+- An short summary of what has changed.
+- A full changelog, including links to resolved issues.
+ 
+The release is then automatically uploaded to PyPI.
+
+```bash
+$ pip install Qt.py
+```
 
 Good luck and see you soon!

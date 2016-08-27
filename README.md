@@ -270,10 +270,22 @@ Send us a pull-request with your project here.
 
 ### Projects similar to Qt.py
 
+Comparison matrix.
+
+| Project       | Audience      | Reference binding | License   | Standalone | PyPI   | Co-existence
+|:--------------|:--------------|:------------------|:----------|------------|--------|--------------
+| Qt.py         | Film          | PySide2           | MIT       | X          | X      | X
+| [jupyter][]   | Scientific    | N/A               | N/A       |            |        |
+| [QtPy][]      | Scientific    | N/A               | MIT       | X          | X      |
+| [pyqode.qt][] | Scientific    | PyQt5             | MIT       |            | X      |
+
+Also worth mentioning, [pyqt4topyqt5](https://github.com/rferrazz/pyqt4topyqt5); a good starting point for transitioning to Qt.py.
+
 Send us a pull-request with your project here.
 
-- https://github.com/spyder-ide/qtpy
-- https://github.com/jupyter/qtconsole/blob/master/qtconsole/qt_loaders.py
+[QtPy]: https://github.com/spyder-ide/qtpy
+[jupyter]: https://github.com/jupyter/qtconsole/blob/master/qtconsole/qt_loaders.py
+[pyqode.qt]: https://github.com/pyQode/pyqode.qt
 
 <br>
 <br>
@@ -283,20 +295,15 @@ Send us a pull-request with your project here.
 
 Due to the nature of multiple bindings and multiple interpreter support, setting up a development environment in which to properly test your contraptions can be challenging. So here is a guide for how to do just that using **Docker**.
 
-This project uses Travis for continuous integration and Travis uses Ubuntu 14.04. For an ideal development environment, we'd better stick with it. There is one more advantage to using the same environment, which I will show you.
-
-Assuming you have Docker already setup.
+With Docker setup, here's what you do.
 
 ```bash
-# Build image (see Dockerfile for specifics)
+# Build image
 cd Qt.py
 docker build -t mottosso/qt.py27 -f Dockerfile-py2.7 .
 docker build -t mottosso/qt.py35 -f Dockerfile-py3.5 .
 
 # Run nosetests
-# Explanation of flags:
-# --rm 	delete the container on exit
-# -v 	mount local path to container path
 docker run --rm -v $(pwd):/Qt.py mottosso/qt.py27
 docker run --rm -v $(pwd):/Qt.py mottosso/qt.py35
 
@@ -311,51 +318,6 @@ docker run --rm -v $(pwd):/Qt.py mottosso/qt.py35
 # OK
 ```
 
-The dependencies, and OS, can and should be identical to those found in [`.travis.yml`](https://github.com/mottosso/Qt.py/blob/master/.travis.yml). That way, both you and Travis are operating on the same assumptions which means that when the tests pass on your machine, they pass on Travis. And everybody wins!
+Now both you and Travis are operating on the same assumptions which means that when the tests pass on your machine, they pass on Travis. And everybody wins!
 
-**Commits**
-
-Commits should be well contained, as small as possible (but no smaller) and its messages should be in present-tense, imperative-style.
-
-E.g.
-
-```bash
-# No
-Changed this and did that
-
-# No
-Changes this and does that
-
-# Yes
-Change this and do that
-```
-
-The reason is that, each commit is like an action. An event. And it is perfectly possible to "cherry-pick" a commit onto any given branch. In this style, it makes more sense what exactly the commit will do to your code.
-
-- Cherry pick "Add this and remove that"
-- Cherry pick "Remove X and replace with Y"
-
-**Version bumping**
-
-This project uses [semantic versioning](http://semver.org/) and is updated *after* a new release has been made.
-
-For example, if the project had 100 commits at the time of the latest release and has 103 commits now, then it's time to increment. If however you modify the project and it has not yet been released, then your changes are included in the overall next release.
-
-The goal is to make a new release per increment.
-
-**Making a Release**
-
-Once the project has gained features, had bugs sorted out and is in a relatively stable state, it's time to make a new release.
-
-- https://github.com/mottosso/Qt.py/releases
-
-Each release should come with:
-
-- An short summary of what has changed.
-- A full changelog, including links to resolved issues.
- 
-The release is then automatically uploaded to PyPI.
-
-```bash
-$ pip install Qt.py
-```
+See [`CONTRIBUTING.md`](blob/master/CONTRIBUTING.md) for more of the good stuff.
