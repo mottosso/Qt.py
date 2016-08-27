@@ -4,7 +4,10 @@
 
 Qt.py enables you to write software that dynamically chooses the most desireable bindings based on what's available, including PySide2, PyQt5, PySide and PyQt4; in that (configurable) order (see below).
 
-<br>
+**Guides**
+
+- [Developing with Qt.py](https://fredrikaverpil.github.io/2016/07/25/developing-with-qt-py/)
+- [Dealing with Maya 2017 and PySide2](https://fredrikaverpil.github.io/2016/07/25/dealing-with-maya-2017-and-pyside2/)
 
 **Table of contents**
 
@@ -25,8 +28,13 @@ Qt.py enables you to write software that dynamically chooses the most desireable
 
 ### Development goals
 
-- Simplicity. Simple to read, simple to grok, simple to maintain.
-- No bugs. What you get is what each binding provides equally and documentation of inequalities.
+Qt.py was born in the film and visual effects industry to address the growing needs for the development of software capable of running with more than one flavour of the Qt bindings for Python - PySide, PySide2, PyQt4 and PyQt5.
+
+1. **Support co-existence** - Qt.py should not affect other bindings running in same interpreter session.
+1. **Don't get smart** - One file, copy/paste installation, keep it simple.
+1. **No bugs** - No implementations = No bugs.
+
+See [`CONTRIBUTING.md`](blob/master/CONTRIBUTING.md) for more details.
 
 <br>
 <br>
@@ -34,7 +42,7 @@ Qt.py enables you to write software that dynamically chooses the most desireable
 
 ### Install
 
-Qt.py is a single file and can either be downloaded as-is or installed via PyPI.
+Qt.py is a single file and can either be [copy/pasted](https://raw.githubusercontent.com/mottosso/Qt.py/master/Qt.py) into your project, [downloaded](https://github.com/mottosso/Qt.py/archive/master.zip) as-is or installed via PyPI.
 
 ```bash
 $ pip install Qt.py
@@ -59,11 +67,6 @@ button = QtWidgets.QPushButton("Hello World")
 button.show()
 app.exec_()
 ```
-
-**Guides**
-
-- [Dealing with Maya 2017 and PySide2](https://fredrikaverpil.github.io/2016/07/25/dealing-with-maya-2017-and-pyside2/)
-- [Developing with Qt.py](https://fredrikaverpil.github.io/2016/07/25/developing-with-qt-py/)
 
 <br>
 <br>
