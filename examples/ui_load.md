@@ -1,5 +1,7 @@
 ## `load_ui` examples
 
+### Providing a base instance
+
 The `uic.loadUi` function of PyQt4 and PyQt5 as well as the `QtUiTools.QUiLoader().load` function of PySide/PySide2 are mapped to a convenience function in Qt.py called `load_ui`.
 
 This document outlines advanced usage of `load_ui`.
