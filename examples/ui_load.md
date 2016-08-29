@@ -13,10 +13,10 @@ This document outlines advanced usage of `load_ui`.
 
 A popular approach is to provide a base instance argument to PyQt's `uic.loadUi`, into which all widgets are loaded:
 
-```python
-uic.loadUi('uifile.ui', self)
-self.my_widget
-```
+
+    uic.loadUi('uifile.ui', self)
+    self.my_widget
+
 
 PySide does not support this out of the box, but it can be implemented in various ways. In the example below, a support function `setup_ui` is defined which wraps `load_ui` and provides this second base instance argument.
 
