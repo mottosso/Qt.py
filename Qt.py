@@ -69,6 +69,7 @@ def _pyqt4():
     PyQt4.QtCore.Property = PyQt4.QtCore.pyqtProperty
     PyQt4.QtCore.QItemSelection = PyQt4.QtGui.QItemSelection
     PyQt4.QtCore.QItemSelectionModel = PyQt4.QtGui.QItemSelectionModel
+    PyQt4.QtCore.QAbstractProxyModel = PyQt4.QtGui.QAbstractProxyModel
 
     try:
         from PyQt4 import QtWebKit
@@ -115,6 +116,7 @@ def _pyside():
     PySide.QtCore.QStringListModel = PySide.QtGui.QStringListModel
     PySide.QtCore.QItemSelection = PySide.QtGui.QItemSelection
     PySide.QtCore.QItemSelectionModel = PySide.QtGui.QItemSelectionModel
+    PySide.QtCore.QAbstractProxyModel = PySide.QtGui.QAbstractProxyModel
 
     try:
         from PySide import QtWebKit
