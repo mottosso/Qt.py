@@ -2,7 +2,7 @@ import sys
 import os
 
 # Set preferred binding
-os.environ["QT_PREFERRED_BINDING"] = "PySide:PyQt4"
+os.environ["QT_PREFERRED_BINDING"] = "PyQt4"
 
 from Qt import QtWidgets
 from Qt import __binding__
