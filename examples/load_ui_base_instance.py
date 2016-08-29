@@ -1,7 +1,9 @@
 import sys
 import os
 
-os.environ["QT_PREFERRED_BINDING"] = "PySide"
+# Set preferred binding
+# os.environ["QT_PREFERRED_BINDING"] = "PySide"
+
 from Qt import QtWidgets, load_ui
 
 
@@ -30,9 +32,9 @@ def test_load_ui_setup_ui_wrapper():
     window = MainWindow()
 
     # Tests
-    assert isinstance(window.__class__, type(QtWidgets.QWidget))
+    assert isinstance(window.__class__, QtWidgets.QWidget.__class__)
     assert isinstance(window.parent(), type(None))
-    assert isinstance(window.lineEdit.__class__, type(QtWidgets.QWidget))
+    assert isinstance(window.lineEdit.__class__, QtWidgets.QWidget.__class__)
     assert window.lineEdit.text() == ''
     window.lineEdit.setText('Hello')
     assert window.lineEdit.text() == 'Hello'
