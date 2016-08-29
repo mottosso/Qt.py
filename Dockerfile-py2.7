@@ -27,7 +27,6 @@ WORKDIR /workspace/Qt.py
 ENTRYPOINT cp -r /Qt.py /workspace && \
     python build_caveats_tests.py && \
     python build_examples_tests.py && \
-    ls -alh && \
 	Xvfb :99 -screen 0 1024x768x16 2>/dev/null & \
 	sleep 5 && \
     nosetests \
