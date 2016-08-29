@@ -37,7 +37,7 @@ Qt.py was born in the film and visual effects industry to address the growing ne
 | *Explicit is better than implicit* | Differences between bindings should be visible to you.
 | *Support co-existence* | Qt.py should not affect other bindings running in same interpreter session.
 
-See [`CONTRIBUTING.md`](blob/master/CONTRIBUTING.md) for more details.
+See [`CONTRIBUTING.md`](CONTRIBUTING.md) for more details.
 
 <br>
 <br>
@@ -323,4 +323,4 @@ docker run --rm -v $(pwd):/Qt.py mottosso/qt.py35
 
 Now both you and Travis are operating on the same assumptions which means that when the tests pass on your machine, they pass on Travis. And everybody wins!
 
-See [`CONTRIBUTING.md`](blob/master/CONTRIBUTING.md) for more of the good stuff.
+See [`CONTRIBUTING.md`](CONTRIBUTING.md) for more of the good stuff.
