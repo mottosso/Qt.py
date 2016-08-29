@@ -70,6 +70,9 @@ def _pyqt4():
     PyQt4.QtCore.QItemSelection = PyQt4.QtGui.QItemSelection
     PyQt4.QtCore.QItemSelectionModel = PyQt4.QtGui.QItemSelectionModel
 
+    PyQt4.QtWidgets.QHeaderView = introduce_renamed_methods_qheaderview(
+        PyQt4.QtWidgets.QHeaderView)
+
     try:
         from PyQt4 import QtWebKit
         PyQt4.QtWebKitWidgets = QtWebKit
@@ -115,6 +118,9 @@ def _pyside():
     PySide.QtCore.QStringListModel = PySide.QtGui.QStringListModel
     PySide.QtCore.QItemSelection = PySide.QtGui.QItemSelection
     PySide.QtCore.QItemSelectionModel = PySide.QtGui.QItemSelectionModel
+
+    PySide.QtWidgets.QHeaderView = introduce_renamed_methods_qheaderview(
+        PySide.QtWidgets.QHeaderView)
 
     try:
         from PySide import QtWebKit
@@ -192,6 +198,89 @@ def pyqt5_load_ui(fname):
 def _log(text, verbose):
     if verbose:
         sys.stdout.write(text)
+
+
+def introduce_renamed_methods_qheaderview(QHeaderView):
+
+    _isClickable = QHeaderView.isClickable
+    def sectionsClickable(self):
+        """
+        QHeaderView.sectionsClickable() -> bool
+        """
+        return _isClickable(self)
+    QHeaderView.sectionsClickable = sectionsClickable
+    def isClickable(self):
+        raise Exception('isClickable is only available in Qt4. Use '
+                        'sectionsClickable instead.')
+    QHeaderView.isClickable = isClickable
+
+
+    _isMovable = QHeaderView.isMovable
+    def sectionsMovable(self):
+        """
+        QHeaderView.sectionsMovable() -> bool
+        """
+        return _isMovable(self)
+    QHeaderView.sectionsMovable = sectionsMovable
+    def isMovable(self):
+        raise Exception('isMovable is only available in Qt4. Use '
+                        'sectionsMovable instead.')
+    QHeaderView.isMovable = isMovable
+
+
+    _resizeMode = QHeaderView.resizeMode
+    def sectionResizeMode(self, logicalIndex):
+        """
+        QHeaderView.sectionResizeMode(int) -> QHeaderView.ResizeMode
+        """
+        return _resizeMode(self, logicalIndex)
+    QHeaderView.sectionResizeMode = sectionResizeMode
+    def resizeMode(self, logicalIndex):
+        raise Exception('resizeMode is only available in Qt4. Use '
+                        'sectionResizeMode instead.')
+    QHeaderView.resizeMode = resizeMode
+
+    _setClickable = QHeaderView.setClickable
+    def setSectionsClickable(self, clickable):
+        """
+        QHeaderView.setSectionsClickable(bool)
+        """
+        return _setClickable(self, clickable)
+    QHeaderView.setSectionsClickable = setSectionsClickable
+    def setClickable(self, clickable):
+        raise Exception('setClickable is only available in Qt4. Use '
+                        'setSectionsClickable instead.')
+    QHeaderView.setClickable = setClickable
+
+
+    _setMovable = QHeaderView.setMovable
+    def setSectionsMovable(self, movable):
+        """
+        QHeaderView.setSectionsMovable(bool)
+        """
+        return _setMovable(self, movable)
+    QHeaderView.setSectionsMovable = setSectionsMovable
+    def setMovable(self, movable):
+        raise Exception('setMovable is only available in Qt4. Use '
+                        'setSectionsMovable instead.')
+    QHeaderView.setMovable = setMovable
+
+
+    _setResizeMode = QHeaderView.setResizeMode
+    def setSectionResizeMode(self, *args):
+        """
+        QHeaderView.setSectionResizeMode(QHeaderView.ResizeMode)
+        QHeaderView.setSectionResizeMode(int, QHeaderView.ResizeMode)
+        """
+        _setResizeMode(self, *args)
+    QHeaderView.setSectionResizeMode = setSectionResizeMode
+    def setResizeMode(self, *args):
+        raise Exception('setResizeMode is only available in Qt4. Use '
+                        'setSectionResizeMode instead.')
+    QHeaderView.setResizeMode = setResizeMode
+
+
+
 
 
 def _init():

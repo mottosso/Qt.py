@@ -199,6 +199,27 @@ def test_vendoring():
     ) == 0
 
 
+def test_qheaderview_setsectionresizemode():
+    """setResizeMode was renamed setSectionResizeMode in Qt 5"""
+
+    with pyside():
+        from PySide import QtGui
+
+        # Qt.py doesn't replace an existing member.
+        assert not hasattr(QtGui.QHeaderView, "setSectionResizeMode")
+
+        import sys
+        from Qt import QtWidgets
+        app = QtWidgets.QApplication(sys.argv)
+        widget = QtWidgets.QTreeView()
+        qheaderview = widget.header()
+
+        # This does not raise an AttributeError
+        qheaderview.setSectionResizeMode(qheaderview.Fixed)
+
+        app.quit()
+
+
 if PYTHON == 2:
     def test_sip_api_already_set():
         """Raise ImportError if sip API v1 was already set (Python 2.x only)"""
