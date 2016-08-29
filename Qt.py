@@ -69,6 +69,7 @@ def _pyqt4():
     PyQt4.QtCore.Property = PyQt4.QtCore.pyqtProperty
     PyQt4.QtCore.QItemSelection = PyQt4.QtGui.QItemSelection
     PyQt4.QtCore.QItemSelectionModel = PyQt4.QtGui.QItemSelectionModel
+    PyQt4.QtCore.QSortFilterProxyModel = PyQt4.QtGui.QSortFilterProxyModel
 
     try:
         from PyQt4 import QtWebKit
