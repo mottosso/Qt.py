@@ -32,9 +32,9 @@ def test_load_ui_setup_ui_wrapper():
     window = MainWindow()
 
     # Tests
-    assert isinstance(window.__class__, QtWidgets.QWidget.__class__)
+    assert isinstance(window, QtWidgets.QWidget)
     assert isinstance(window.parent(), type(None))
-    assert isinstance(window.lineEdit.__class__, QtWidgets.QWidget.__class__)
+    assert isinstance(window.lineEdit, QtWidgets.QWidget)
     assert window.lineEdit.text() == ''
     window.lineEdit.setText('Hello')
     assert window.lineEdit.text() == 'Hello'
