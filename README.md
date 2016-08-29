@@ -31,7 +31,7 @@ Qt.py enables you to write software that dynamically chooses the most desireable
 Qt.py was born in the film and visual effects industry to address the growing needs for the development of software capable of running with more than one flavour of the Qt bindings for Python - PySide, PySide2, PyQt4 and PyQt5.
 
 1. **Support co-existence** - Qt.py should not affect other bindings running in same interpreter session.
-1. **Don't get smart** - One file, copy/paste installation, keep it simple.
+1. **Keep it simple** - One file, copy/paste installation, PEP08.
 1. **No bugs** - No implementations = No bugs.
 
 See [`CONTRIBUTING.md`](blob/master/CONTRIBUTING.md) for more details.
