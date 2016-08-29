@@ -1,4 +1,7 @@
 import sys
+import os
+
+os.environ["QT_PREFERRED_BINDING"] = "PySide"
 from Qt import QtWidgets, load_ui
 
 
@@ -20,7 +23,7 @@ class MainWindow(QtWidgets.QWidget):
         setup_ui('examples/load_ui_qwidget.ui', self)
 
 
-def test_load_ui():
+def test_load_ui_setup_ui_wrapper():
     """Example: load_ui with setup_ui wrapper
     """
     app = QtWidgets.QApplication(sys.argv)
@@ -35,7 +38,3 @@ def test_load_ui():
     assert window.lineEdit.text() == 'Hello'
 
     app.exit()
-
-
-if __name__ == '__main__':
-    test_load_ui()
