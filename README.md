@@ -2,7 +2,39 @@
 
 ### Qt.py
 
-Qt.py enables you to write software that dynamically chooses the most desireable bindings based on what's available, including PySide, PySide2, PyQt4 and PyQt5.
+Qt.py enables you to write software that dynamically chooses the most desireable bindings based on what's available, including PySide2, PyQt5, PySide and PyQt4; in that (configurable) order (see below).
+
+**Guides**
+
+- [Developing with Qt.py](https://fredrikaverpil.github.io/2016/07/25/developing-with-qt-py/)
+- [Dealing with Maya 2017 and PySide2](https://fredrikaverpil.github.io/2016/07/25/dealing-with-maya-2017-and-pyside2/)
+
+**Table of contents**
+
+- [Install](#install)
+- [Usage](#usage)
+- [Documentation](#documentation)
+- [Rules](#rules)
+- [How it works](#how-it-works)
+- [Known problems](#known-problems)
+- [Who's using Qt.py?](#whos-using-qtpy)
+- [Projects using Qt.py](#projects-using-qtpy)
+- [Projects similar to Qt.py](#projects-similar-to-qtpy)
+- [Developer guide](#developer-guide)
+
+<br>
+<br>
+<br>
+
+### Development goals
+
+Qt.py was born in the film and visual effects industry to address the growing needs for the development of software capable of running with more than one flavour of the Qt bindings for Python - PySide, PySide2, PyQt4 and PyQt5.
+
+1. **Support co-existence** - Qt.py should not affect other bindings running in same interpreter session.
+1. **Don't get smart** - One file, copy/paste installation, keep it simple.
+1. **No bugs** - No implementations = No bugs.
+
+See [`CONTRIBUTING.md`](blob/master/CONTRIBUTING.md) for more details.
 
 <br>
 <br>
@@ -10,7 +42,7 @@ Qt.py enables you to write software that dynamically chooses the most desireable
 
 ### Install
 
-Qt.py is a single file and can either be downloaded as-is or installed via PyPI.
+Qt.py is a single file and can either be [copy/pasted](https://raw.githubusercontent.com/mottosso/Qt.py/master/Qt.py) into your project, [downloaded](https://github.com/mottosso/Qt.py/archive/master.zip) as-is or installed via PyPI.
 
 ```bash
 $ pip install Qt.py
@@ -36,38 +68,90 @@ button.show()
 app.exec_()
 ```
 
-**Guides**
-
-- [Dealing with Maya 2017 and PySide2](https://fredrikaverpil.github.io/2016/07/25/dealing-with-maya-2017-and-pyside2/)
-- [Developing with Qt.py](https://fredrikaverpil.github.io/2016/07/25/developing-with-qt-py/)
-
 <br>
 <br>
 <br>
 
-### How it works
+### Documentation
 
-Once you import Qt.py, Qt.py replaces itself with the most desirable binding on your platform, or throws an `ImportError` if none are available.
+All members of `Qt` stem directly from those available via PySide2, along with these additional members.
+
+| Attribute               | Type   | Value
+|:------------------------|:-------|:------------
+| `__binding__`           | `str`  | A string reference to binding currently in use
+| `__qt_version__`        | `str`  | Reference to version of Qt, such as Qt 5.6.1
+| `__binding_version__`   | `str`  | Reference to version of binding, such as PySide 1.2.6
+| `__wrapper_version__`   | `str`  | Version of this project
+| `load_ui()`             | `func` | Minimal wrapper of PyQt4.loadUi and PySide equivalent
+
+<br>
+
+##### Branch binding-specific code
+
+Some bindings offer features not available in others, you can use `__binding__` to capture those.
 
 ```python
->>> import Qt
->>> print(Qt)
-<module 'PyQt5' from 'C:\Python27\lib\site-packages\PyQt5\__init__.pyc'>
+if "PySide" in Qt.__binding__:
+  do_pyside_stuff()
 ```
 
-Here's an example of how this works.
+<br>
 
-**Qt.py**
+##### Override preferred choice
+
+If your system has multiple choices where one or more is preferred, you can override the preference and order in which they are tried with this environment variable.
+
+```bash
+# Windows
+$ set QT_PREFERRED_BINDING=PyQt5
+$ python -c "import Qt;print(Qt.__binding__)"
+PyQt5
+
+# Unix/OSX
+$ export QT_PREFERRED_BINDING=PyQt5
+$ python -c "import Qt;print(Qt.__binding__)"
+PyQt5
+```
+
+Constrain available choices and order of discovery by supplying multiple values.
+
+```bash
+# Try PyQt first and then PySide, but nothing else.
+$ export QT_PREFERRED_BINDING=PyQt:PySide
+```
+
+Using the OS path separator (`os.pathsep`) which is `:` on Unix systems and `;` on Windows.
+
+<br>
+
+##### Load Qt Designer .ui files
+
+The `uic.loadUi` function of PyQt4 and PyQt5 as well as the `QtUiTools.QUiLoader().load` function of PySide/PySide2 are mapped to a convenience function `load_ui`.
 
 ```python
 import sys
-import PyQt5
+import Qt
 
-# Replace myself PyQt5
-sys.modules["Qt"] = PyQt5
+app = QtWidgets.QApplication(sys.argv)
+ui = Qt.load_ui("my.ui")
+ui.show()
+app.exec_()
 ```
 
-Once imported, it is as though your application was importing whichever binding was chosen and Qt.py never existed.
+Please note, for maximum compatibility, only pass the argument of the filename to the `load_ui` function.
+
+<br>
+
+##### sip API v2
+
+If you're using PyQt4, `sip` attempts to set its API to version 2 for the following:
+- `QString`
+- `QVariant`
+- `QDate`
+- `QDateTime`
+- `QTextStream`
+- `QTime`
+- `QUrl`
 
 <br>
 <br>
@@ -119,86 +203,29 @@ There are cases where Qt.py is not handling incompatibility issues. Please see [
 <br>
 <br>
 
-### Documentation
+### How it works
 
-All members of `Qt` stem directly from those available via PySide2, along with these additional members.
-
-```python
-import Qt
-
-# A string reference to binding currently in use
-Qt.__binding__ == 'PyQt5'
-
-# Reference to version of Qt, such as Qt 5.6.1
-Qt.__qt_version__ == '5.6.1'
-
-# Reference to version of binding, such as PySide 1.2.6
-Qt.__binding_version__ == '1.2.6'
-
-# Version of this project
-Qt.__wrapper_version__ == '1.0.0'
-```
-
-##### Branch binding-specific code
-
-Some bindings offer features not available in others, you can use `__binding__` to capture those.
+Once you import Qt.py, Qt.py replaces itself with the most desirable binding on your platform, or throws an `ImportError` if none are available.
 
 ```python
-if "PySide" in Qt.__binding__:
-  do_pyside_stuff()
+>>> import Qt
+>>> print(Qt)
+<module 'PyQt5' from 'C:\Python27\lib\site-packages\PyQt5\__init__.pyc'>
 ```
 
-##### Override preferred choice
+Here's an example of how this works.
 
-If your system has multiple choices where one or more is preferred, you can override the preference and order in which they are tried with this environment variable.
-
-```bash
-# Windows
-$ set QT_PREFERRED_BINDING=PyQt5
-$ python -c "import Qt;print(Qt.__binding__)"
-PyQt5
-
-# Unix/OSX
-$ export QT_PREFERRED_BINDING=PyQt5
-$ python -c "import Qt;print(Qt.__binding__)"
-PyQt5
-```
-
-Constrain available choices and order of discovery by supplying multiple values.
-
-```bash
-# Try PyQt first and then PySide, but nothing else.
-$ export QT_PREFERRED_BINDING=PyQt:PySide
-```
-
-Using the OS path separator (`os.pathsep`) which is `:` on Unix systems and `;` on Windows.
-
-##### Load Qt Designer .ui files
-
-The `uic.loadUi` function of PyQt4 and PyQt5 as well as the `QtUiTools.QUiLoader().load` function of PySide/PySide2 are mapped to a convenience function `load_ui`.
+**Qt.py**
 
 ```python
 import sys
-import Qt
+import PyQt5
 
-app = QtWidgets.QApplication(sys.argv)
-ui = Qt.load_ui("my.ui")
-ui.show()
-app.exec_()
+# Replace myself PyQt5
+sys.modules["Qt"] = PyQt5
 ```
 
-Please note, for maximum compatibility, only pass the argument of the filename to the `load_ui` function.
-
-##### sip API v2
-
-If you're using PyQt4, `sip` attempts to set its API to version 2 for the following:
-- `QString`
-- `QVariant`
-- `QDate`
-- `QDateTime`
-- `QTextStream`
-- `QTime`
-- `QUrl`
+Once imported, it is as though your application was importing whichever binding was chosen and Qt.py never existed.
 
 <br>
 <br>
@@ -221,12 +248,21 @@ Send us a pull-request with your studio here.
 - Disney Animation
 - Industriromantik
 
+Presented at Siggraph 2016, BOF!
+
+![image](https://cloud.githubusercontent.com/assets/2152766/17621229/c2448db2-6089-11e6-915f-0604e5d8c7ee.png)
+
+<br>
+<br>
+<br>
+
 ### Projects using Qt.py
 
 Send us a pull-request with your project here.
 
 - https://github.com/pyblish/pyblish-lite
 - https://github.com/fredrikaverpil/pyvfx-boilerplate
+- https://gitlab.com/4degrees/riffle
 
 <br>
 <br>
@@ -236,7 +272,7 @@ Send us a pull-request with your project here.
 
 Send us a pull-request with your project here.
 
-- https://github.com/spyder-ide/qtpy/tree/master/qtpy
+- https://github.com/spyder-ide/qtpy
 - https://github.com/jupyter/qtconsole/blob/master/qtconsole/qt_loaders.py
 
 <br>
@@ -253,22 +289,24 @@ Assuming you have Docker already setup.
 
 ```bash
 # Build image (see Dockerfile for specifics)
-# Re-run this command to pull latest version of image
-docker build -t mottosso/qt.py https://github.com/mottosso/Qt.py.git
+cd Qt.py
+docker build -t mottosso/qt.py27 -f Dockerfile-py2.7 .
+docker build -t mottosso/qt.py35 -f Dockerfile-py3.5 .
 
 # Run nosetests
 # Explanation of flags:
 # --rm 	delete the container on exit
 # -v 	mount local path to container path
-cd Qt.py
-docker run --rm -v $(pwd):/Qt.py mottosso/qt.py
+docker run --rm -v $(pwd):/Qt.py mottosso/qt.py27
+docker run --rm -v $(pwd):/Qt.py mottosso/qt.py35
 
-# Tests require PySide and PyQt4 bindings to be installed ... ok
-# Setting QT_PREFERRED_BINDING properly forces a particular binding ... ok
-# Preferring None shouldn't import anything ... ok
-# 
+# Doctest: test_caveats.test_1_qtgui_qabstractitemmodel_createindex ... ok
+# Doctest: test_caveats.test_2_qtgui_qabstractitemmodel_createindex ... ok
+# Doctest: test_caveats.test_3_qtcore_qitemselection ... ok
+# ...
+#
 # ----------------------------------------------------------------------
-# Ran 3 tests in 0.530s
+# Ran 21 tests in 7.799s
 # 
 # OK
 ```

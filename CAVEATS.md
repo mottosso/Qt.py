@@ -72,14 +72,14 @@ I had been using the id as an index into a list. But the unexpected return value
 PySide has the `QItemSelection.isEmpty` and `QItemSelection.empty` attributes while PyQt4 only has the `QItemSelection.isEmpty` attribute.
 
 ```python
-# PySide
+# PySide2
 >>> from Qt import QtCore
 >>> func = QtCore.QItemSelection.isEmpty
 >>> func = QtCore.QItemSelection.empty
 ```
 
 ```python
-# PyQt4
+# PyQt5
 >>> from Qt import QtCore
 >>> func = QtCore.QItemSelection.isEmpty
 >>> func = QtCore.QItemSelection.empty
@@ -216,3 +216,49 @@ Traceback (most recent call last):
 ...
 TypeError: ...
 ```
+
+
+#### QtWidgets.QHeaderView.setResizeMode
+
+`setResizeMode` was [renamed](http://doc.qt.io/qt-5/qheaderview.html#setSectionResizeMode) `setSectionResizeMode` in Qt 5.
+
+```python
+# PySide2
+>>> from Qt import QtWidgets
+>>> app = QtWidgets.QApplication(sys.argv)
+>>> view = QtWidgets.QTreeWidget()
+>>> header = view.header()
+>>> header.setResizeMode(QtWidgets.QHeaderView.Fixed)
+Traceback (most recent call last):
+...
+AttributeError: 'PySide2.QtWidgets.QHeaderView' object has no attribute 'setResizeMode'
+```
+
+```python
+# PySide
+>>> from Qt import QtWidgets
+>>> app = QtWidgets.QApplication(sys.argv)
+>>> view = QtWidgets.QTreeWidget()
+>>> header = view.header()
+>>> header.setSectionResizeMode(QtWidgets.QHeaderView.Fixed)
+Traceback (most recent call last):
+...
+AttributeError: 'PySide.QtGui.QHeaderView' object has no attribute 'setSectionResizeMode'
+```
+
+##### Workaround
+
+Use a conditional.
+
+```python
+# PySide2
+>>> from Qt import QtWidgets, __binding__
+>>> app = QtWidgets.QApplication(sys.argv)
+>>> view = QtWidgets.QTreeWidget()
+>>> header = view.header()
+>>> if __binding__ in ("PyQt4", "PySide"):
+...   header.setResizeMode(QtWidgets.QHeaderView.Fixed)
+... else:
+...   header.setSectionResizeMode(QtWidgets.QHeaderView.Fixed)
+```
+

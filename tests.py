@@ -38,56 +38,76 @@ def pyqt4():
 
 
 @contextlib.contextmanager
+def pyqt5():
+    os.environ["QT_PREFERRED_BINDING"] = "PyQt5"
+    yield
+    os.environ.pop("QT_PREFERRED_BINDING")
+
+
+@contextlib.contextmanager
 def pyside():
     os.environ["QT_PREFERRED_BINDING"] = "PySide"
     yield
     os.environ.pop("QT_PREFERRED_BINDING")
 
 
+@contextlib.contextmanager
+def pyside2():
+    os.environ["QT_PREFERRED_BINDING"] = "PySide2"
+    yield
+    os.environ.pop("QT_PREFERRED_BINDING")
+
+
 def test_environment():
-    """Tests require PySide and PyQt4 bindings to be installed"""
+    """Tests require all bindings to be installed"""
 
     imp.find_module("PySide")
+    imp.find_module("PySide2")
     imp.find_module("PyQt4")
-
-    # These should *not* be available
-    assert_raises(ImportError, imp.find_module, "PySide2")
-    assert_raises(ImportError, imp.find_module, "PyQt5")
+    imp.find_module("PyQt5")
 
 
-def test_preferred():
-    """Setting QT_PREFERRED_BINDING properly forces a particular binding"""
-    import Qt
+def test_preferred_pyqt4():
+    """Setting QT_PREFERRED_BINDING to PyQt4 properly forces the binding"""
+    with pyqt4():
+        import Qt
+        assert Qt.__name__ == "PyQt4", ("PyQt4 should have been picked, "
+                                        "instead got %s" % Qt)
 
-    # PySide is the more desirable binding
-    assert Qt.__name__ != "PyQt4", ("PySide should have been picked, "
-                                    "instead got %s" % Qt)
 
-    # Try again
-    sys.modules.pop("Qt")
+def test_preferred_pyqt5():
+    """Setting QT_PREFERRED_BINDING to PyQt5 properly forces the binding"""
+    with pyqt5():
+        import Qt
+        assert Qt.__name__ == "PyQt5", ("PyQt5 should have been picked, "
+                                        "instead got %s" % Qt)
 
+
+def test_preferred_pyside():
+    """Setting QT_PREFERRED_BINDING to PySide properly forces the binding"""
     with pyside():
         import Qt
         assert Qt.__name__ == "PySide", ("PySide should have been picked, "
                                          "instead got %s" % Qt)
 
 
+def test_preferred_pyside2():
+    """Setting QT_PREFERRED_BINDING to PySide2 properly forces the binding"""
+    with pyside2():
+        import Qt
+        assert Qt.__name__ == "PySide2", ("PySide2 should have been picked, "
+                                          "instead got %s" % Qt)
+
+
 def test_multiple_preferred():
-    """Setting QT_PREFERRED_BINDING to more than one binding excludes others
-
-    PyQt5 is not available on this system, and PySide is preferred over PyQt4,
-    however this tests should prove that it should still pick up PyQt4
-    when preferred.
-
-    """
-
-    # However
-    os.environ["QT_PREFERRED_BINDING"] = os.pathsep.join(["PyQt5", "PyQt4"])
-    import Qt
+    """Setting QT_PREFERRED_BINDING to more than one binding excludes others"""
 
     # PySide is the more desirable binding
-    assert Qt.__name__ == "PyQt4", ("PyQt4 should have been picked, "
-                                    "instead got %s" % Qt)
+    os.environ["QT_PREFERRED_BINDING"] = os.pathsep.join(["PySide", "PySide2"])
+
+    import Qt
+    assert Qt.__name__ == "PySide", ("PySide should have been picked, "
+                                     "instead got %s" % Qt)
 
 
 def test_preferred_none():
@@ -156,7 +176,7 @@ def test_vendoring():
 
     print("Testing relative import..")
     assert subprocess.call(
-        ["python", "-c", "import myproject"],
+        [sys.executable, "-c", "import myproject"],
         cwd=self.tempdir,
         stdout=subprocess.PIPE,    # With nose process isolation, buffer can
         stderr=subprocess.STDOUT,  # easily get full and throw an error.
@@ -164,7 +184,7 @@ def test_vendoring():
 
     print("Testing absolute import..")
     assert subprocess.call(
-        ["python", "-c", "from myproject.vendor.Qt import QtWidgets"],
+        [sys.executable, "-c", "from myproject.vendor.Qt import QtWidgets"],
         cwd=self.tempdir,
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
@@ -172,7 +192,7 @@ def test_vendoring():
 
     print("Testing direct import..")
     assert subprocess.call(
-        ["python", "-c", "import myproject.vendor.Qt"],
+        [sys.executable, "-c", "import myproject.vendor.Qt"],
         cwd=self.tempdir,
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
