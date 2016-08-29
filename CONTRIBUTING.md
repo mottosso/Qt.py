@@ -26,17 +26,19 @@ Qt.py was born to address the growing needs in these industries for the developm
 
 ### Development Goals
 
-The goal for us developers, in a nutshell, is this.
+Qt.py was born in the film and visual effects industry to address the growing needs for the development of software capable of running with more than one flavor of the Qt bindings for Python - PySide, PySide2, PyQt4 and PyQt5.
 
-1. **Support co-existence** - Qt.py should not affect other bindings running in same interpreter session.
-1. **Don't get smart** - One file, copy/paste installation, keep it simple.
-1. **No bugs** - No implementations == No bugs.
+| Goal                      | Description
+|:--------------------------|:---------------
+| *Support co-existence* | Qt.py should not affect other bindings running in same interpreter session.
+| *Keep it simple* | One file, copy/paste installation, PEP08.
+| *No bugs* | No implementations = No bugs.
 
 Each of these deserve some explanation and rationale.
 
 <br>
 
-##### Support co-existance
+##### Support co-existence
 
 Importing or otherwise using Qt.py *cannot* break other bindings. The reason being that our user-base frequently runs multiple applications, some of them using the original binding, in the same interpreter session.
 

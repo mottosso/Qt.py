@@ -26,13 +26,16 @@ Qt.py enables you to write software that dynamically chooses the most desireable
 <br>
 <br>
 
-### Development goals
+### Project goals
+
 
 Qt.py was born in the film and visual effects industry to address the growing needs for the development of software capable of running with more than one flavour of the Qt bindings for Python - PySide, PySide2, PyQt4 and PyQt5.
 
-1. **Support co-existence** - Qt.py should not affect other bindings running in same interpreter session.
-1. **Keep it simple** - One file, copy/paste installation, PEP08.
-1. **No bugs** - No implementations = No bugs.
+| Goal                                 | Description
+|:-------------------------------------|:---------------
+| *Build for one, run with all* | You code written with Qt.py should run on any binding.
+| *Explicit is better than implicit* | Differences between bindings should be visible to you.
+| *Support co-existence* | Qt.py should not affect other bindings running in same interpreter session.
 
 See [`CONTRIBUTING.md`](blob/master/CONTRIBUTING.md) for more details.
 
