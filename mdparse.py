@@ -7,7 +7,7 @@ def parse(fname):
     """Return blocks of code as list of dicts
 
     Arguments:
-        fname (str): Relative name of caveats file
+        fname (str): Relative name of markdown file
 
     """
 
