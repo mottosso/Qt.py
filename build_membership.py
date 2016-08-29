@@ -10,7 +10,7 @@ from PySide2 import *
 
 # Serialise members
 members = {}
-for name, module in locals().items():
+for name, module in locals().copy().items():
     if name.startswith("_"):
         continue
 
@@ -25,8 +25,9 @@ with open("reference_members.json", "w") as f:
 
 
 def build_test():
-    boilerplate = """\
+    header = """\
 import os
+import sys
 import json
 
 with open("reference_members.json") as f:
@@ -39,8 +40,10 @@ with open("reference_members.json") as f:
 def test_{binding}_members():
     os.environ["QT_PREFERRED_BINDING"] = "{binding}"
 
+    from Qt import *
+
     target_members = dict()
-    for name, module in locals().items():
+    for name, module in locals().copy().items():
         if name.startswith("_"):
             continue
 
@@ -68,7 +71,7 @@ def test_{binding}_members():
                                  "PySide"])
 
     with open("test_membership.py", "w") as f:
-        contents = boilerplate + "\n".join(tests)
+        contents = header + "\n".join(tests)
         print(contents)  # Preview content during tests
         f.write(contents)
 
