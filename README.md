@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/mottosso/Qt.py.svg?branch=master)](https://travis-ci.org/mottosso/Qt.py)
+[![Build Status](https://travis-ci.org/mottosso/Qt.py.svg?branch=master)](https://travis-ci.org/mottosso/Qt.py) [![PyPI version](https://badge.fury.io/py/Qt.py.svg)](https://pypi.python.org/pypi/Qt.py)
 
 ### Qt.py
 
