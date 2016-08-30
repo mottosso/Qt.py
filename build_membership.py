@@ -16,6 +16,23 @@ def build_membership():
     __all__.remove("QtSql")
     __all__.remove("QtSvg")
 
+    # These should be present in PySide2,
+    # but are not as of this writing.
+    for missing in ("QtWidgets",
+                    "QtXml",
+                    "QtHelp",
+                    "QtPrintSupport"):
+        __all__.append(missing)
+
+    # Why `import *`?
+    #
+    # PySide, and PyQt, perform magic that triggers via Python's
+    # import mechanism. If we try and sidestep it in any way, say
+    # by using `imp.load_module` or `__import__`, the mechanism
+    # will not trigger and the compiled libraries will not get loaded.
+    #
+    # Wildcard was the only way I could think of to import everything,
+    # without hardcoding the members, such as QtCore into the function.
     from PySide2 import *
 
     # Serialise members
@@ -24,10 +41,11 @@ def build_membership():
         if name.startswith("_"):
             continue
 
-        if name in ("json", "members"):
+        if name in ("json", "members", "missing"):
             continue
 
-        members[name] = dir(module)
+        members[name] = list(member for member in dir(module)
+                             if not member.startswith("_"))
 
     # Write to disk
     with open("reference_members.json", "w") as f:
@@ -48,7 +66,6 @@ def build_tests():
 #
 
 import os
-import sys
 import json
 
 with open("reference_members.json") as f:
@@ -80,6 +97,13 @@ def test_{binding}_members():
             __all__.append(missing)
 
     from Qt import *
+
+    if "PySide" == "{Binding}":
+        # Qt 4 bindings do not include QtWidgets
+        # in their __all__ list. And who knows what else.
+        #
+        # TODO: This needs a more robust implementation.
+        from Qt import QtWidgets
 
     target_members = dict()
     for name, module in locals().copy().items():
@@ -121,7 +145,7 @@ def test_{binding}_members():
         f.write(contents)
 
 
-# Don't consider these members.
+# Do not consider these members.
 #
 # Some of these are either:
 # 1. Unique to a particular binding
@@ -154,8 +178,8 @@ excluded = {
         "QT_TRANSLATE_NOOP3",
         "QT_TRANSLATE_NOOP_UTF8",
         "__moduleShutdown",
-        "__version__",  # unique to PyQt
-        "__version_info__",  # unique to PyQt
+        "__version__",  # (2) unique to PyQt
+        "__version_info__",  # (2) unique to PyQt
         "qAcos",
         "qAsin",
         "qAtan",
@@ -175,12 +199,12 @@ excluded = {
 
     "QtGui": [
         # missing from PySide
-        "QGuiApplication",  # unique to Qt 5
+        "QGuiApplication",  # (2) unique to Qt 5
         "QPagedPaintDevice",
         "QSurface",
         "QSurfaceFormat",
         "QTouchDevice",
-        "QWindow",  # unique to Qt 5
+        "QWindow",  # (2) unique to Qt 5
 
         # missing from PyQt4
         "QAccessibleEvent",
@@ -230,6 +254,78 @@ excluded = {
         # missing from PyQt4
         "QIPv6Address",
     ],
+
+    "QtPrintSupport": [
+        # PyQt4
+        "QAbstractPrintDialog",
+        "QPageSetupDialog",
+        "QPrintDialog",
+        "QPrintEngine",
+        "QPrintPreviewDialog",
+        "QPrintPreviewWidget",
+        "QPrinter",
+        "QPrinterInfo",
+    ],
+
+    "QtWidgets": [
+        # PyQt4
+        "QTileRules",
+
+        # PyQt5
+        "QGraphicsItemAnimation",
+        "QTileRules",
+    ],
+
+    "QtHelp": [
+        # PySide
+        "QHelpContentItem",
+        "QHelpContentModel",
+        "QHelpContentWidget",
+        "QHelpEngine",
+        "QHelpEngineCore",
+        "QHelpIndexModel",
+        "QHelpIndexWidget",
+        "QHelpSearchEngine",
+        "QHelpSearchQuery",
+        "QHelpSearchQueryWidget",
+        "QHelpSearchResultWidget",
+    ],
+
+    "QtXml": [
+        # PySide
+        "QDomAttr",
+        "QDomCDATASection",
+        "QDomCharacterData",
+        "QDomComment",
+        "QDomDocument",
+        "QDomDocumentFragment",
+        "QDomDocumentType",
+        "QDomElement",
+        "QDomEntity",
+        "QDomEntityReference",
+        "QDomImplementation",
+        "QDomNamedNodeMap",
+        "QDomNode",
+        "QDomNodeList",
+        "QDomNotation",
+        "QDomProcessingInstruction",
+        "QDomText",
+        "QXmlAttributes",
+        "QXmlContentHandler",
+        "QXmlDTDHandler",
+        "QXmlDeclHandler",
+        "QXmlDefaultHandler",
+        "QXmlEntityResolver",
+        "QXmlErrorHandler",
+        "QXmlInputSource",
+        "QXmlLexicalHandler",
+        "QXmlLocator",
+        "QXmlNamespaceSupport",
+        "QXmlParseException",
+        "QXmlReader",
+        "QXmlSimpleReader",
+    ],
+
 }
 
 if __name__ == '__main__':
