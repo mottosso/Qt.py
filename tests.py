@@ -174,11 +174,40 @@ def test_sip_api_qtpy():
                                             % sip.getapi("QString"))
 
 
-def test_load_ui_returntype():
-    """load_ui returns an instance of QObject"""
-    from Qt import QtCore, load_ui
-    obj = load_ui(self.ui_qwidget)
-    assert isinstance(obj, QtCore.QObject)
+def test_pyside_load_ui_returntype():
+    """load_ui returns an instance of QObject with PySide"""
+    
+    with pyside():
+        from Qt import QtCore, load_ui
+        obj = load_ui(self.ui_qwidget)
+        assert isinstance(obj, QtCore.QObject)
+
+
+def test_pyqt4_load_ui_returntype():
+    """load_ui returns an instance of QObject with PyQt4"""
+    
+    with pyqt4():
+        from Qt import QtCore, load_ui
+        obj = load_ui(self.ui_qwidget)
+        assert isinstance(obj, QtCore.QObject)
+
+
+def test_pyside2_load_ui_returntype():
+    """load_ui returns an instance of QObject with PySide2"""
+    
+    with pyside2():
+        from Qt import QtCore, load_ui
+        obj = load_ui(self.ui_qwidget)
+        assert isinstance(obj, QtCore.QObject)
+
+
+def test_pyqt5_load_ui_returntype():
+    """load_ui returns an instance of QObject with PyQt5"""
+    
+    with pyqt5():
+        from Qt import QtCore, load_ui
+        obj = load_ui(self.ui_qwidget)
+        assert isinstance(obj, QtCore.QObject)
 
 
 def test_vendoring():
