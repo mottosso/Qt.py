@@ -79,13 +79,13 @@ app.exec_()
 
 All members of `Qt` stem directly from those available via PySide2, along with these additional members.
 
-| Attribute               | Type   | Value
-|:------------------------|:-------|:------------
-| `__binding__`           | `str`  | A string reference to binding currently in use
-| `__qt_version__`        | `str`  | Reference to version of Qt, such as Qt 5.6.1
-| `__binding_version__`   | `str`  | Reference to version of binding, such as PySide 1.2.6
-| `__wrapper_version__`   | `str`  | Version of this project
-| `load_ui()`             | `func` | Minimal wrapper of PyQt4.loadUi and PySide equivalent
+| Attribute               | Returns   | Description
+|:------------------------|:----------|:------------
+| `__binding__`           | `str`     | A string reference to binding currently in use
+| `__qt_version__`        | `str`     | Reference to version of Qt, such as Qt 5.6.1
+| `__binding_version__`   | `str`     | Reference to version of binding, such as PySide 1.2.6
+| `__wrapper_version__`   | `str`     | Version of this project
+| `load_ui(fname=str)`    | `QObject` | Minimal wrapper of PyQt4.loadUi and PySide equivalent
 
 <br>
 
@@ -136,12 +136,12 @@ import sys
 import Qt
 
 app = QtWidgets.QApplication(sys.argv)
-ui = Qt.load_ui("my.ui")
+ui = Qt.load_ui(fname="my.ui")
 ui.show()
 app.exec_()
 ```
 
-Please note, for maximum compatibility, only pass the argument of the filename to the `load_ui` function.
+Please note, `load_ui` has only one argument, whereas the PyQt and PySide equivalent has more. See [here](https://github.com/mottosso/Qt.py/pull/81) for details - in a nutshell, those arguments differ between PyQt and PySide in incompatible ways.
 
 <br>
 
