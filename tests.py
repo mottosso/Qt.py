@@ -91,6 +91,7 @@ def binding(binding):
         return
 
     if os.environ.get("QT_PREFERRED_BINDING") == binding:
+        print("Skipping test..")
         raise SkipTest
 
     os.environ["QT_PREFERRED_BINDING"] = binding
