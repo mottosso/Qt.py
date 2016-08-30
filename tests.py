@@ -17,6 +17,9 @@ import contextlib
 from nose.tools import (
     assert_raises,
 )
+from nose.plugins.skip import (
+    SkipTest
+)
 
 PYTHON = sys.version_info[0]  # e.g. 2 or 3
 
@@ -84,10 +87,11 @@ def binding(binding):
     """
 
     if binding == "all":
+        yield
         return
 
     if os.environ.get("QT_PREFERRED_BINDING") == binding:
-        quit(0)
+        raise SkipTest
 
     os.environ["QT_PREFERRED_BINDING"] = binding
     yield
