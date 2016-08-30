@@ -22,7 +22,7 @@ def setup_ui(uifile, base_instance=None):
 class MainWindow(QtWidgets.QWidget):
     def __init__(self, parent=None):
         QtWidgets.QWidget.__init__(self, parent)
-        setup_ui('examples/load_ui_qwidget.ui', self)
+        setup_ui('examples/load_ui/qwidget.ui', self)
 
 
 def test_load_ui_setup_ui_wrapper():

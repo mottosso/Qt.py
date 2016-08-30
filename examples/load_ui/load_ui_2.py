@@ -66,10 +66,10 @@ class MainWindow(QtWidgets.QWidget):
     def __init__(self, parent=None):
         QtWidgets.QWidget.__init__(self, parent)
         if 'PySide' in __binding__:
-            loadUi('examples/load_ui_qwidget.ui', self)
+            loadUi('examples/load_ui/qwidget.ui', self)
         elif 'PyQt' in __binding__:
             from Qt import uic
-            uic.loadUi('examples/load_ui_qwidget.ui', self)
+            uic.loadUi('examples/load_ui/qwidget.ui', self)
 
 
 def test_load_ui_setup_ui_wrapper():
