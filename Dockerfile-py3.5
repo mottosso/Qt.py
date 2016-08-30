@@ -25,11 +25,13 @@ ENV DISPLAY :99
 
 WORKDIR /workspace/Qt.py
 ENTRYPOINT cp -r /Qt.py /workspace && \
-    python3 build_caveats_tests.py && \
+    python3 build_caveats.py && \
 	Xvfb :99 -screen 0 1024x768x16 2>/dev/null & \
 	sleep 3 && \
     nosetests \
         --verbose \
         --with-process-isolation \
         --with-doctest \
-        --exe 
+        --exe \
+            test_caveats.py \
+            tests.py
