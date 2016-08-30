@@ -1,3 +1,4 @@
+import json
 
 
 def build_membership():
@@ -7,7 +8,6 @@ def build_membership():
     # In it's __all__ module is a module, `QtOpenGL`
     # that does no exists. This causes `import *` to fail.
 
-    import json
     from PySide2 import __all__
     __all__.remove("QtOpenGL")
 
@@ -50,136 +50,30 @@ import json
 with open("reference_members.json") as f:
     reference_members = json.load(f)
 
-excluded = {
+excluded = {excluded}
 
-    "QtCore": [
-        #
-        # From PySide
-        #
-        "Connection",
-        "QBasicMutex",
-        "QFileDevice",
-        "QItemSelectionRange",
-        "QJsonArray",
-        "QJsonDocument",
-        "QJsonParseError",
-        "QJsonValue",
-        "QMessageLogContext",
-        "QtInfoMsg",
-        "qInstallMessageHandler",
-
-        #
-        # From PyQt4
-        #
-        "ClassInfo",
-        "MetaFunction",
-        "QFactoryInterface",
-        "QSortFilterProxyModel",
-        "QStringListModel",
-        "QT_TRANSLATE_NOOP3",
-        "QT_TRANSLATE_NOOP_UTF8",
-        "__moduleShutdown",
-        "__version__",
-        "__version_info__",
-        "qAcos",
-        "qAsin",
-        "qAtan",
-        "qAtan2",
-        "qExp",
-        "qFabs",
-        "qFastCos",
-        "qFastSin",
-        "qFuzzyIsNull",
-        "qTan",
-        "qtTrId",
-
-        #
-        # From PyQt5
-        #
-        "SIGNAL",
-        "SLOT",
-    ],
-
-    "QtGui": [
-        #
-        # From PySide
-        #
-        "QGuiApplication",
-        "QPagedPaintDevice",
-        "QSurface",
-        "QSurfaceFormat",
-        "QTouchDevice",
-        "QWindow",
-
-        #
-        #  From PyQt4
-        #
-        "QAccessibleEvent",
-        "QToolBarChangeEvent",
-
-        #
-        #  From PyQt5
-        #
-        "QMatrix",
-        "QPyTextObject",
-        "QStringListModel",
-    ],
-
-    "QtWebKit": [
-        #
-        # From PyQt4
-        #
-        "WebCore",
-
-        #
-        # From PyQt5
-        #
-        "__doc__",
-        "__file__",
-        "__name__",
-        "__package__",
-    ],
-
-    "QtScript": [
-        #
-        # From PyQt4
-        #
-        "QScriptExtensionInterface",
-        "QScriptExtensionPlugin",
-        "QScriptProgram",
-        "QScriptable",
-
-        #
-        # From PyQt5
-        #
-        "QScriptClass",
-        "QScriptClassPropertyIterator",
-        "QScriptContext",
-        "QScriptContextInfo",
-        "QScriptEngine",
-        "QScriptEngineAgent",
-        "QScriptString",
-        "QScriptValue",
-        "QScriptValueIterator",
-        "__doc__",
-        "__file__",
-        "__name__",
-        "__package__",
-    ],
-
-    "QtNetwork": [
-        #
-        # PyQt4
-        #
-        "QIPv6Address",
-    ],
-}
-
-"""
+""".format(excluded=json.dumps(excluded, indent=4))
 
     test = """\
 def test_{binding}_members():
     os.environ["QT_PREFERRED_BINDING"] = "{Binding}"
+
+    if "PyQt" in "{Binding}":
+        # PyQt4 and 5 performs some magic here
+        # that must take place before attempting
+        # to import with wildcard.
+        from Qt import Qt as _
+
+    if "PySide2" == "{Binding}":
+        # PySide2, as of this writing, doesn't include
+        # these modules in it's __all__ list; leaving
+        # the wildcard import below untrue.
+        from Qt import __all__
+        for missing in ("QtWidgets",
+                        "QtXml",
+                        "QtHelp",
+                        "QtPrintSupport"):
+            __all__.append(missing)
 
     from Qt import *
 
@@ -211,7 +105,8 @@ def test_{binding}_members():
 
 """
 
-    tests = list(test.format(Binding=binding, binding=binding.lower())
+    tests = list(test.format(Binding=binding,
+                             binding=binding.lower())
                  for binding in ["PyQt5",
                                  "PyQt4",
                                  "PySide"])
@@ -221,6 +116,109 @@ def test_{binding}_members():
         print(contents)  # Preview content during tests
         f.write(contents)
 
+
+# Don't consider these members
+excluded = {
+    "QtCore": [
+        # PySide
+        "Connection",
+        "QBasicMutex",
+        "QFileDevice",
+        "QItemSelectionRange",
+        "QJsonArray",
+        "QJsonDocument",
+        "QJsonParseError",
+        "QJsonValue",
+        "QMessageLogContext",
+        "QtInfoMsg",
+        "qInstallMessageHandler",
+
+        # PyQt4
+        "ClassInfo",
+        "MetaFunction",
+        "QFactoryInterface",
+        "QSortFilterProxyModel",
+        "QStringListModel",
+        "QT_TRANSLATE_NOOP3",
+        "QT_TRANSLATE_NOOP_UTF8",
+        "__moduleShutdown",
+        "__version__",
+        "__version_info__",
+        "qAcos",
+        "qAsin",
+        "qAtan",
+        "qAtan2",
+        "qExp",
+        "qFabs",
+        "qFastCos",
+        "qFastSin",
+        "qFuzzyIsNull",
+        "qTan",
+        "qtTrId",
+
+        # PyQt5
+        "SIGNAL",
+        "SLOT",
+    ],
+
+    "QtGui": [
+        # PySide
+        "QGuiApplication",  # Qt 5-only
+        "QPagedPaintDevice",
+        "QSurface",
+        "QSurfaceFormat",
+        "QTouchDevice",
+        "QWindow",  # Qt 5-only
+
+        # PyQt4
+        "QAccessibleEvent",
+        "QToolBarChangeEvent",
+
+        # PyQt5
+        "QMatrix",
+        "QPyTextObject",
+        "QStringListModel",
+    ],
+
+    "QtWebKit": [
+        # PyQt4
+        "WebCore",
+
+        # PyQt5
+        "__doc__",
+        "__file__",
+        "__name__",
+        "__package__",
+    ],
+
+    "QtScript": [
+        # PyQt4
+        "QScriptExtensionInterface",
+        "QScriptExtensionPlugin",
+        "QScriptProgram",
+        "QScriptable",
+
+        # PyQt5
+        "QScriptClass",
+        "QScriptClassPropertyIterator",
+        "QScriptContext",
+        "QScriptContextInfo",
+        "QScriptEngine",
+        "QScriptEngineAgent",
+        "QScriptString",
+        "QScriptValue",
+        "QScriptValueIterator",
+        "__doc__",
+        "__file__",
+        "__name__",
+        "__package__",
+    ],
+
+    "QtNetwork": [
+        # PyQt4
+        "QIPv6Address",
+    ],
+}
 
 if __name__ == '__main__':
     build_membership()
