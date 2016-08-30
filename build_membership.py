@@ -43,6 +43,10 @@ def build_tests():
     """
 
     header = """\
+#
+# AUTOMATICALLY GENERATED MEMBERSHIP TEST, DO NOT MODIFY
+#
+
 import os
 import sys
 import json
@@ -117,10 +121,18 @@ def test_{binding}_members():
         f.write(contents)
 
 
-# Don't consider these members
+# Don't consider these members.
+#
+# Some of these are either:
+# 1. Unique to a particular binding
+# 2. Unique to Qt 5
+# 3. Not yet included in PySide2
+#
+# TODO: Clearly mark which are which. (3) should
+#   eventually be removed from this dictionary.
 excluded = {
     "QtCore": [
-        # PySide
+        # missing from PySide
         "Connection",
         "QBasicMutex",
         "QFileDevice",
@@ -133,7 +145,7 @@ excluded = {
         "QtInfoMsg",
         "qInstallMessageHandler",
 
-        # PyQt4
+        # missing from PyQt4
         "ClassInfo",
         "MetaFunction",
         "QFactoryInterface",
@@ -142,8 +154,8 @@ excluded = {
         "QT_TRANSLATE_NOOP3",
         "QT_TRANSLATE_NOOP_UTF8",
         "__moduleShutdown",
-        "__version__",
-        "__version_info__",
+        "__version__",  # unique to PyQt
+        "__version_info__",  # unique to PyQt
         "qAcos",
         "qAsin",
         "qAtan",
@@ -156,35 +168,35 @@ excluded = {
         "qTan",
         "qtTrId",
 
-        # PyQt5
+        # missing from PyQt5
         "SIGNAL",
         "SLOT",
     ],
 
     "QtGui": [
-        # PySide
-        "QGuiApplication",  # Qt 5-only
+        # missing from PySide
+        "QGuiApplication",  # unique to Qt 5
         "QPagedPaintDevice",
         "QSurface",
         "QSurfaceFormat",
         "QTouchDevice",
-        "QWindow",  # Qt 5-only
+        "QWindow",  # unique to Qt 5
 
-        # PyQt4
+        # missing from PyQt4
         "QAccessibleEvent",
         "QToolBarChangeEvent",
 
-        # PyQt5
+        # missing from PyQt5
         "QMatrix",
         "QPyTextObject",
         "QStringListModel",
     ],
 
     "QtWebKit": [
-        # PyQt4
+        # missing from PyQt4
         "WebCore",
 
-        # PyQt5
+        # missing from PyQt5
         "__doc__",
         "__file__",
         "__name__",
@@ -192,13 +204,13 @@ excluded = {
     ],
 
     "QtScript": [
-        # PyQt4
+        # missing from PyQt4
         "QScriptExtensionInterface",
         "QScriptExtensionPlugin",
         "QScriptProgram",
         "QScriptable",
 
-        # PyQt5
+        # missing from PyQt5
         "QScriptClass",
         "QScriptClassPropertyIterator",
         "QScriptContext",
@@ -215,7 +227,7 @@ excluded = {
     ],
 
     "QtNetwork": [
-        # PyQt4
+        # missing from PyQt4
         "QIPv6Address",
     ],
 }
