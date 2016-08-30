@@ -1,17 +1,15 @@
 ## Examples
 
-#### `load_ui` with a base instance as argument
+#### Purpose
 
-The `uic.loadUi` function of PyQt4 and PyQt5 as well as the `QtUiTools.QUiLoader().load` function of PySide/PySide2 are mapped to a convenience function in Qt.py called `load_ui`. This function only accepts the filename argument of the .ui file.
+Sometimes a pull request or a feature request doesn't make it into Qt.py because it doesn't fit [the contribution guidelines](https://github.com/mottosso/Qt.py/blob/master/CONTRIBUTING.md). This is hopefully a good thing for the end product in the long term perspective, but we're always sad to see good code drift into oblivion and disappear when a pull request is turned down and closed.
 
-A popular approach is to provide a base instance argument to PyQt's `uic.loadUi`, into which all widgets are loaded:
+This part of the Qt.py project is a more loosely maintained (although tested) space, where we welcome example use of Qt.py to be shown off especially if it solves a problem Qt.py by itself doesn't solve out of the box.
 
-```python
-# PyQt4, PyQt5
-class MainWindow(QtWidgets.QWidget):
-    def __init__(self, parent=None):
-        QtWidgets.QWidget.__init__(self, parent)
-        uic.loadUi('uifile.ui', self)  # Loads all widgets of uifile.ui into self
-```
+If you wish to contribute, make a pull request. Please put your example files in a sub-folder of `/examples`. If you also wish to have your example included in testing, make sure the function you wish to be executed during testing is named in such a way that it starts with `test`. For a working example of examples :wink:, see the `/examples/load_ui` folder.
 
-PySide does not support this out of the box, but it can be implemented in various ways. In the example in `load_ui_base_instance.py`, a support function `setup_ui` is defined which wraps `load_ui` and provides this second base instance argument. In `load_ui_base_instance_pysideuic.py`, another approach is used where `pysideuic` is required for PySide/PySide2 and `uic` is required for PyQt4/PyQt5.
+<br>
+
+#### List of examples   
+
+* [`load_ui`](https://github.com/mottosso/Qt.py/blob/master/examples/load_ui/README.md) - add base instance argument
