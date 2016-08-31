@@ -14,4 +14,4 @@ class MainWindow(QtWidgets.QWidget):
         uic.loadUi('uifile.ui', self)  # Loads all widgets of uifile.ui into self
 ```
 
-PySide does not support this out of the box, but it can be implemented in various ways. In the example in `load_ui_1.py`, a support function `setup_ui` is defined which wraps `load_ui` and provides this second base instance argument. In `load_ui_2.py`, another approach is used where `pysideuic` is required for PySide/PySide2 and `uic` is required for PyQt4/PyQt5.
+PySide does not support this out of the box, but it can be implemented in various ways. In the example in `baseinstance1.py`, a support function `setup_ui` is defined which wraps `load_ui` and provides this second base instance argument. In `baseinstance2.py`, another approach is used where `pysideuic` is required for PySide/PySide2 and `uic` is required for PyQt4/PyQt5.
