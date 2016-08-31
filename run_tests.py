@@ -32,7 +32,7 @@ if __name__ == "__main__":
         "--exe",
     ]
 
-    argv.extend(sys.argv[1:])
+    # argv.extend(sys.argv[1:])
 
     # Running each test independently via subprocess
     # enables tests to filter out from tests.py before
@@ -48,5 +48,4 @@ if __name__ == "__main__":
         subprocess.call(argv)
 
     with binding("PySide2"):
-        argv.append("--with-doctest")  # Run doctests once
         subprocess.call(argv)

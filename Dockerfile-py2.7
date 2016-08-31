@@ -19,21 +19,29 @@ RUN pip install nose nosepipe
 
 # Enable additional output from Qt.py
 ENV QT_VERBOSE true
-
 # Xvfb
 ENV DISPLAY :99
 
+# Warnings are exceptions
+ENV PYTHONWARNINGS="ignore"
+
 WORKDIR /workspace/Qt.py
 ENTRYPOINT cp -r /Qt.py /workspace && \
-    python build_caveats.py && \
-    python build_membership.py && \
     Xvfb :99 -screen 0 1024x768x16 2>/dev/null & \
     while ! ps aux | grep -q '[0]:00 Xvfb :99 -screen 0 1024x768x16'; \
         do echo "Waiting for Xvfb..."; sleep 1; done && \
-    nosetests \
-        --verbose \
-        --with-process-isolation \
-        --with-doctest \
-        --exe \
-            test*.py \
-            examples/*/*.py
+    echo "#\n# Testing implementation.." && \
+        python -u run_tests.py && \
+    echo "#\n# Testing caveats..\n#"  && \
+        python build_caveats.py && \
+        nosetests \
+            --verbose \
+            --with-doctest \
+            --with-process-isolation \
+            test_caveats.py && \
+    echo "#\n# Testing membership..\n#" && \
+        python build_membership.py && \
+        nosetests \
+            --verbose \
+            test_membership.py && \
+    echo Done
