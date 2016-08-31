@@ -2,7 +2,10 @@ import os
 import glob
 import shutil
 
-
-for filepath in glob.glob('examples/*/*.py'):
+# Copy example files into current working directory
+for filepath in glob.glob('examples/*/*'):
     filename = os.path.basename(filepath)
-    shutil.copyfile(filepath, 'test_'+filename)
+    if filepath.endswith('.py'):
+        shutil.copyfile(filepath, 'test_'+filename)  # Prepend 'test' to *.py
+    else:
+        shutil.copyfile(filepath, filename)
