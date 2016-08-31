@@ -28,7 +28,9 @@ ENTRYPOINT cp -r /Qt.py /workspace && \
     python build_caveats.py && \
     python build_membership.py && \
     Xvfb :99 -screen 0 1024x768x16 2>/dev/null & \
-    while ! ps aux | grep -q '[0]:00 Xvfb :99 -screen 0 1024x768x16'; do echo "Waiting for Xvfb..."; sleep 1; done && \
+    while ! ps aux | grep -q '[0]:00 Xvfb :99 -screen 0 1024x768x16'; \
+        do echo "Waiting for Xvfb..."; sleep 1; done && \
+    ps aux | grep Xvfb && \
     nosetests \
         --verbose \
         --with-process-isolation \
