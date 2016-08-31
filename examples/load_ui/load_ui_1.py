@@ -2,13 +2,23 @@ import sys
 import os
 
 # Set preferred binding
-os.environ["QT_PREFERRED_BINDING"] = "PySide:PyQt4"
+os.environ['QT_PREFERRED_BINDING'] = os.pathsep.join(['PySide', 'PyQt4'])
 
 from Qt import QtWidgets, load_ui
 
 
 def setup_ui(uifile, base_instance=None):
-    ui = load_ui(uifile)
+    """Load a Qt Designer .ui file and returns an instance of the user interface
+
+    Args:
+        uifile (str): Absolute path to .ui file
+        base_instance (QWidget): The widget into which UI widgets are loaded
+
+    Returns:
+        QWidget: the base instance
+
+    """
+    ui = load_ui(uifile)  # Qt.py mapped function
     if not base_instance:
         return ui
     else:
@@ -20,20 +30,21 @@ def setup_ui(uifile, base_instance=None):
 
 
 class MainWindow(QtWidgets.QWidget):
+    """Load .ui file example, using setattr/getattr approach"""
     def __init__(self, parent=None):
         QtWidgets.QWidget.__init__(self, parent)
-        setup_ui('examples/load_ui/qwidget.ui', self)
+        self.base_instance = setup_ui('qwidget.ui', self)
 
 
-def test_load_ui_setup_ui_wrapper():
-    """Example: load_ui with setup_ui wrapper
-    """
+def test():
+    """Example: load_ui with setup_ui wrapper"""
     app = QtWidgets.QApplication(sys.argv)
     window = MainWindow()
 
     # Tests
     assert isinstance(window, QtWidgets.QWidget)
     assert isinstance(window.parent(), type(None))
+    assert isinstance(window.base_instance, QtWidgets.QWidget)
     assert isinstance(window.lineEdit, QtWidgets.QWidget)
     assert window.lineEdit.text() == ''
     window.lineEdit.setText('Hello')
