@@ -141,7 +141,6 @@ def test_{binding}_members():
 
     with open("test_membership.py", "w") as f:
         contents = header + "\n".join(tests)
-        print(contents)  # Preview content during tests
         f.write(contents)
 
 
