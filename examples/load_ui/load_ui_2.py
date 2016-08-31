@@ -117,6 +117,9 @@ class MainWindow(QtWidgets.QWidget):
 
 def test():
     """Example: load_ui with custom uic.loadUi-like wrapper"""
+    working_directory = os.path.dirname(__file__)
+    os.chdir(working_directory)
+
     app = QtWidgets.QApplication(sys.argv)
     window = MainWindow()
 

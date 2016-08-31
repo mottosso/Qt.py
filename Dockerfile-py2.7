@@ -26,7 +26,6 @@ ENV DISPLAY :99
 WORKDIR /workspace/Qt.py
 ENTRYPOINT cp -r /Qt.py /workspace && \
     python build_caveats.py && \
-    python build_examples.py && \
     python build_membership.py && \
 	Xvfb :99 -screen 0 1024x768x16 2>/dev/null & \
 	sleep 10 && \
@@ -35,4 +34,5 @@ ENTRYPOINT cp -r /Qt.py /workspace && \
         --with-process-isolation \
         --with-doctest \
         --exe \
-            test*.py
+            test*.py \
+            examples/*/*.py

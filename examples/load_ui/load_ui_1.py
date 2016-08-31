@@ -38,6 +38,9 @@ class MainWindow(QtWidgets.QWidget):
 
 def test():
     """Example: load_ui with setup_ui wrapper"""
+    working_directory = os.path.dirname(__file__)
+    os.chdir(working_directory)
+
     app = QtWidgets.QApplication(sys.argv)
     window = MainWindow()
 
