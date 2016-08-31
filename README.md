@@ -26,15 +26,18 @@ Qt.py enables you to write software that dynamically chooses the most desireable
 <br>
 <br>
 
-### Development goals
+### Project goals
+
 
 Qt.py was born in the film and visual effects industry to address the growing needs for the development of software capable of running with more than one flavour of the Qt bindings for Python - PySide, PySide2, PyQt4 and PyQt5.
 
-1. **Support co-existence** - Qt.py should not affect other bindings running in same interpreter session.
-1. **Don't get smart** - One file, copy/paste installation, keep it simple.
-1. **No bugs** - No implementations = No bugs.
+| Goal                                 | Description
+|:-------------------------------------|:---------------
+| *Build for one, run with all* | You code written with Qt.py should run on any binding.
+| *Explicit is better than implicit* | Differences between bindings should be visible to you.
+| *Support co-existence* | Qt.py should not affect other bindings running in same interpreter session.
 
-See [`CONTRIBUTING.md`](blob/master/CONTRIBUTING.md) for more details.
+See [`CONTRIBUTING.md`](CONTRIBUTING.md) for more details.
 
 <br>
 <br>
@@ -76,13 +79,13 @@ app.exec_()
 
 All members of `Qt` stem directly from those available via PySide2, along with these additional members.
 
-| Attribute               | Type   | Value
-|:------------------------|:-------|:------------
-| `__binding__`           | `str`  | A string reference to binding currently in use
-| `__qt_version__`        | `str`  | Reference to version of Qt, such as Qt 5.6.1
-| `__binding_version__`   | `str`  | Reference to version of binding, such as PySide 1.2.6
-| `__wrapper_version__`   | `str`  | Version of this project
-| `load_ui()`             | `func` | Minimal wrapper of PyQt4.loadUi and PySide equivalent
+| Attribute               | Returns   | Description
+|:------------------------|:----------|:------------
+| `__binding__`           | `str`     | A string reference to binding currently in use
+| `__qt_version__`        | `str`     | Reference to version of Qt, such as Qt 5.6.1
+| `__binding_version__`   | `str`     | Reference to version of binding, such as PySide 1.2.6
+| `__wrapper_version__`   | `str`     | Version of this project
+| `load_ui(fname=str)`    | `QObject` | Minimal wrapper of PyQt4.loadUi and PySide equivalent
 
 <br>
 
@@ -133,12 +136,12 @@ import sys
 import Qt
 
 app = QtWidgets.QApplication(sys.argv)
-ui = Qt.load_ui("my.ui")
+ui = Qt.load_ui(fname="my.ui")
 ui.show()
 app.exec_()
 ```
 
-Please note, for maximum compatibility, only pass the argument of the filename to the `load_ui` function.
+Please note, `load_ui` has only one argument, whereas the PyQt and PySide equivalent has more. See [here](https://github.com/mottosso/Qt.py/pull/81) for details - in a nutshell, those arguments differ between PyQt and PySide in incompatible ways.
 
 <br>
 
@@ -270,10 +273,22 @@ Send us a pull-request with your project here.
 
 ### Projects similar to Qt.py
 
+Comparison matrix.
+
+| Project       | Audience      | Reference binding | License   | PEP8 |Standalone | PyPI   | Co-existence
+|:--------------|:--------------|:------------------|:----------|------|:----------|--------|--------------
+| Qt.py         | Film          | PySide2           | MIT       | X    | X         | X      | X
+| [jupyter][]   | Scientific    | N/A               | N/A       | X    |           |        |
+| [QtPy][]      | Scientific    | N/A               | MIT       |      | X         | X      |
+| [pyqode.qt][] | Scientific    | PyQt5             | MIT       | X    |           | X      |
+
+Also worth mentioning, [pyqt4topyqt5](https://github.com/rferrazz/pyqt4topyqt5); a good starting point for transitioning to Qt.py.
+
 Send us a pull-request with your project here.
 
-- https://github.com/spyder-ide/qtpy
-- https://github.com/jupyter/qtconsole/blob/master/qtconsole/qt_loaders.py
+[QtPy]: https://github.com/spyder-ide/qtpy
+[jupyter]: https://github.com/jupyter/qtconsole/blob/master/qtconsole/qt_loaders.py
+[pyqode.qt]: https://github.com/pyQode/pyqode.qt
 
 <br>
 <br>
@@ -283,20 +298,15 @@ Send us a pull-request with your project here.
 
 Due to the nature of multiple bindings and multiple interpreter support, setting up a development environment in which to properly test your contraptions can be challenging. So here is a guide for how to do just that using **Docker**.
 
-This project uses Travis for continuous integration and Travis uses Ubuntu 14.04. For an ideal development environment, we'd better stick with it. There is one more advantage to using the same environment, which I will show you.
-
-Assuming you have Docker already setup.
+With Docker setup, here's what you do.
 
 ```bash
-# Build image (see Dockerfile for specifics)
+# Build image
 cd Qt.py
 docker build -t mottosso/qt.py27 -f Dockerfile-py2.7 .
 docker build -t mottosso/qt.py35 -f Dockerfile-py3.5 .
 
 # Run nosetests
-# Explanation of flags:
-# --rm 	delete the container on exit
-# -v 	mount local path to container path
 docker run --rm -v $(pwd):/Qt.py mottosso/qt.py27
 docker run --rm -v $(pwd):/Qt.py mottosso/qt.py35
 
@@ -311,51 +321,6 @@ docker run --rm -v $(pwd):/Qt.py mottosso/qt.py35
 # OK
 ```
 
-The dependencies, and OS, can and should be identical to those found in [`.travis.yml`](https://github.com/mottosso/Qt.py/blob/master/.travis.yml). That way, both you and Travis are operating on the same assumptions which means that when the tests pass on your machine, they pass on Travis. And everybody wins!
+Now both you and Travis are operating on the same assumptions which means that when the tests pass on your machine, they pass on Travis. And everybody wins!
 
-**Commits**
-
-Commits should be well contained, as small as possible (but no smaller) and its messages should be in present-tense, imperative-style.
-
-E.g.
-
-```bash
-# No
-Changed this and did that
-
-# No
-Changes this and does that
-
-# Yes
-Change this and do that
-```
-
-The reason is that, each commit is like an action. An event. And it is perfectly possible to "cherry-pick" a commit onto any given branch. In this style, it makes more sense what exactly the commit will do to your code.
-
-- Cherry pick "Add this and remove that"
-- Cherry pick "Remove X and replace with Y"
-
-**Version bumping**
-
-This project uses [semantic versioning](http://semver.org/) and is updated *after* a new release has been made.
-
-For example, if the project had 100 commits at the time of the latest release and has 103 commits now, then it's time to increment. If however you modify the project and it has not yet been released, then your changes are included in the overall next release.
-
-The goal is to make a new release per increment.
-
-**Making a Release**
-
-Once the project has gained features, had bugs sorted out and is in a relatively stable state, it's time to make a new release.
-
-- https://github.com/mottosso/Qt.py/releases
-
-Each release should come with:
-
-- An short summary of what has changed.
-- A full changelog, including links to resolved issues.
- 
-The release is then automatically uploaded to PyPI.
-
-```bash
-$ pip install Qt.py
-```
+See [`CONTRIBUTING.md`](CONTRIBUTING.md) for more of the good stuff.

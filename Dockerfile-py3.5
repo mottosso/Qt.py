@@ -25,11 +25,14 @@ ENV DISPLAY :99
 
 WORKDIR /workspace/Qt.py
 ENTRYPOINT cp -r /Qt.py /workspace && \
-    python3 build_caveats_tests.py && \
-	Xvfb :99 -screen 0 1024x768x16 2>/dev/null & \
-	sleep 3 && \
+    python3 build_caveats.py && \
+    Xvfb :99 -screen 0 1024x768x16 2>/dev/null & \
+    while ! ps aux | grep -q '[0]:00 Xvfb :99 -screen 0 1024x768x16'; \
+        do echo "Waiting for Xvfb..."; sleep 1; done && \
     nosetests \
         --verbose \
         --with-process-isolation \
         --with-doctest \
-        --exe 
+        --exe \
+            test*.py \
+            examples/*/*.py

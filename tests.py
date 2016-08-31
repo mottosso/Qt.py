@@ -6,6 +6,7 @@ Usage:
 """
 
 import os
+import io
 import sys
 import imp
 import shutil
@@ -24,6 +25,36 @@ self = sys.modules[__name__]
 
 def setup():
     self.tempdir = tempfile.mkdtemp()
+    self.ui_qwidget = os.path.join(self.tempdir, "qwidget.ui")
+
+    with io.open(self.ui_qwidget, "w", encoding="utf-8") as f:
+        f.write(u"""\
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Form</class>
+ <widget class="QWidget" name="Form">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>235</width>
+    <height>149</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0">
+    <widget class="QLineEdit" name="lineEdit"/>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
+"""
+)
 
 
 def teardown():
@@ -141,6 +172,50 @@ def test_sip_api_qtpy():
         assert sip.getapi("QString") == 2, ("PyQt4 API version should be 2, "
                                             "instead is %s"
                                             % sip.getapi("QString"))
+
+
+def test_pyside_load_ui_returntype():
+    """load_ui returns an instance of QObject with PySide"""
+    
+    with pyside():
+        import sys
+        from Qt import QtWidgets, QtCore, load_ui
+        app = QtWidgets.QApplication(sys.argv)
+        obj = load_ui(self.ui_qwidget)
+        assert isinstance(obj, QtCore.QObject)
+
+
+def test_pyqt4_load_ui_returntype():
+    """load_ui returns an instance of QObject with PyQt4"""
+    
+    with pyqt4():
+        import sys
+        from Qt import QtWidgets, QtCore, load_ui
+        app = QtWidgets.QApplication(sys.argv)
+        obj = load_ui(self.ui_qwidget)
+        assert isinstance(obj, QtCore.QObject)
+
+
+def test_pyside2_load_ui_returntype():
+    """load_ui returns an instance of QObject with PySide2"""
+    
+    with pyside2():
+        import sys
+        from Qt import QtWidgets, QtCore, load_ui
+        app = QtWidgets.QApplication(sys.argv)
+        obj = load_ui(self.ui_qwidget)
+        assert isinstance(obj, QtCore.QObject)
+
+
+def test_pyqt5_load_ui_returntype():
+    """load_ui returns an instance of QObject with PyQt5"""
+    
+    with pyqt5():
+        import sys
+        from Qt import QtWidgets, QtCore, load_ui
+        app = QtWidgets.QApplication(sys.argv)
+        obj = load_ui(self.ui_qwidget)
+        assert isinstance(obj, QtCore.QObject)
 
 
 def test_vendoring():
