@@ -26,6 +26,7 @@ __version__ = "0.3.4"
 
 def _pyqt5():
     import PyQt5.Qt
+    from PyQt5 import QtWidgets
 
     # Remap
     PyQt5.QtCore.Signal = PyQt5.QtCore.pyqtSignal
@@ -38,6 +39,16 @@ def _pyqt5():
     PyQt5.__binding_version__ = PyQt5.QtCore.PYQT_VERSION_STR
     PyQt5.__qt_version__ = PyQt5.QtCore.QT_VERSION_STR
     PyQt5.load_ui = pyqt5_load_ui
+
+    # provide mocked UnicodeUTF8 For backward compatibility
+    QtWidgets.QApplication.UnicodeUTF8 = -1
+
+    old_translate_fn = QtWidgets.QApplication.translate
+
+    def translate(context, key, disambiguation=None, encoding=None, n=0):
+        return old_translate_fn(context, key, disambiguation, n)
+
+    QtWidgets.QApplication.translate = staticmethod(translate)
 
     return PyQt5
 
@@ -92,7 +103,7 @@ def _pyqt4():
 
 def _pyside2():
     import PySide2
-    from PySide2 import QtGui, QtCore
+    from PySide2 import QtGui, QtCore, QtWidgets
 
     # Remap
     QtCore.QStringListModel = QtGui.QStringListModel
@@ -103,6 +114,16 @@ def _pyside2():
     PySide2.__binding_version__ = PySide2.__version__
     PySide2.__qt_version__ = PySide2.QtCore.qVersion()
     PySide2.load_ui = pyside2_load_ui
+
+    # provide mocked UnicodeUTF8 For backward compatibility
+    QtWidgets.QApplication.UnicodeUTF8 = -1
+
+    old_translate_fn = QtWidgets.QApplication.translate
+
+    def translate(context, key, disambiguation=None, encoding=None, n=0):
+        return old_translate_fn(context, key, disambiguation, n)
+
+    QtWidgets.QApplication.translate = staticmethod(translate)
 
     return PySide2
 
@@ -208,13 +229,11 @@ def _init():
     this has executed.
 
     """
-
     preferred = os.getenv("QT_PREFERRED_BINDING")
     verbose = os.getenv("QT_VERBOSE") is not None
     bindings = (_pyside2, _pyqt5, _pyside, _pyqt4)
 
     if preferred:
-
         # Internal flag (used in installer)
         if preferred == "None":
             sys.modules[__name__].__wrapper_version__ = __version__
