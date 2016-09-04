@@ -37,4 +37,11 @@ ENTRYPOINT cp -r /Qt.py /workspace && \
             --with-doctest \
             --with-process-isolation \
             test_caveats.py && \
+    echo "#\n# Testing examples..\n#" && \
+        nosetests \
+        --verbose \
+        --with-process-isolation \
+        --with-doctest \
+        --exe \
+            examples/*/*.py && \
     echo Done

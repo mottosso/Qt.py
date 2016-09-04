@@ -44,4 +44,11 @@ ENTRYPOINT cp -r /Qt.py /workspace && \
         nosetests \
             --verbose \
             test_membership.py && \
+    echo "#\n# Testing examples..\n#" && \
+        nosetests \
+        --verbose \
+        --with-process-isolation \
+        --with-doctest \
+        --exe \
+            examples/*/*.py && \
     echo Done
