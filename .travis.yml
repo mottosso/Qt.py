@@ -13,14 +13,6 @@ services:
 install:
   - docker build -f Dockerfile-py${TRAVIS_PYTHON_VERSION} -t mottosso/qt.py .
 
-# Enable virtual framebuffer, this way we can instantiate
-# a QApplication and create widgets.
-# https://docs.travis-ci.com/user/gui-and-headless-browsers/
-before_script:
-  - "export DISPLAY=:99.0"
-  - "sh -e /etc/init.d/xvfb start"
-  - sleep 3 # give xvfb some time to start
-
 script:
   - docker run --rm -v $(pwd):/Qt.py mottosso/qt.py
 

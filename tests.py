@@ -1,18 +1,12 @@
-"""Nose tests
+"""Tests that run once"""
 
-Usage:
-    $ nosetests .
-
-"""
-
-import os
 import io
+import os
 import sys
 import imp
 import shutil
 import tempfile
 import subprocess
-import contextlib
 
 from nose.tools import (
     assert_raises,
@@ -20,10 +14,18 @@ from nose.tools import (
 
 PYTHON = sys.version_info[0]  # e.g. 2 or 3
 
+
 self = sys.modules[__name__]
 
 
 def setup():
+    """Module-wide initialisation
+
+    This function runs once, followed by teardown() below once
+    all tests have completed.
+
+    """
+
     self.tempdir = tempfile.mkdtemp()
     self.ui_qwidget = os.path.join(self.tempdir, "qwidget.ui")
 
@@ -53,40 +55,24 @@ def setup():
  <resources/>
  <connections/>
 </ui>
-"""
-)
+""")
 
 
 def teardown():
     shutil.rmtree(self.tempdir)
 
 
-@contextlib.contextmanager
-def pyqt4():
-    os.environ["QT_PREFERRED_BINDING"] = "PyQt4"
-    yield
-    os.environ.pop("QT_PREFERRED_BINDING")
+def binding(binding):
+    """Isolate test to a particular binding
 
+    When used, tests inside the if-statement are run independently
+    with the given binding.
 
-@contextlib.contextmanager
-def pyqt5():
-    os.environ["QT_PREFERRED_BINDING"] = "PyQt5"
-    yield
-    os.environ.pop("QT_PREFERRED_BINDING")
+    Without this function, a test is run once for each binding.
 
+    """
 
-@contextlib.contextmanager
-def pyside():
-    os.environ["QT_PREFERRED_BINDING"] = "PySide"
-    yield
-    os.environ.pop("QT_PREFERRED_BINDING")
-
-
-@contextlib.contextmanager
-def pyside2():
-    os.environ["QT_PREFERRED_BINDING"] = "PySide2"
-    yield
-    os.environ.pop("QT_PREFERRED_BINDING")
+    return os.getenv("QT_PREFERRED_BINDING") == binding
 
 
 def test_environment():
@@ -98,47 +84,15 @@ def test_environment():
     imp.find_module("PyQt5")
 
 
-def test_preferred_pyqt4():
-    """Setting QT_PREFERRED_BINDING to PyQt4 properly forces the binding"""
-    with pyqt4():
-        import Qt
-        assert Qt.__name__ == "PyQt4", ("PyQt4 should have been picked, "
-                                        "instead got %s" % Qt)
+def test_load_ui_returntype():
+    """load_ui returns an instance of QObject"""
 
-
-def test_preferred_pyqt5():
-    """Setting QT_PREFERRED_BINDING to PyQt5 properly forces the binding"""
-    with pyqt5():
-        import Qt
-        assert Qt.__name__ == "PyQt5", ("PyQt5 should have been picked, "
-                                        "instead got %s" % Qt)
-
-
-def test_preferred_pyside():
-    """Setting QT_PREFERRED_BINDING to PySide properly forces the binding"""
-    with pyside():
-        import Qt
-        assert Qt.__name__ == "PySide", ("PySide should have been picked, "
-                                         "instead got %s" % Qt)
-
-
-def test_preferred_pyside2():
-    """Setting QT_PREFERRED_BINDING to PySide2 properly forces the binding"""
-    with pyside2():
-        import Qt
-        assert Qt.__name__ == "PySide2", ("PySide2 should have been picked, "
-                                          "instead got %s" % Qt)
-
-
-def test_multiple_preferred():
-    """Setting QT_PREFERRED_BINDING to more than one binding excludes others"""
-
-    # PySide is the more desirable binding
-    os.environ["QT_PREFERRED_BINDING"] = os.pathsep.join(["PySide", "PySide2"])
-
-    import Qt
-    assert Qt.__name__ == "PySide", ("PySide should have been picked, "
-                                     "instead got %s" % Qt)
+    import sys
+    from Qt import QtWidgets, QtCore, load_ui
+    app = QtWidgets.QApplication(sys.argv)
+    obj = load_ui(self.ui_qwidget)
+    assert isinstance(obj, QtCore.QObject)
+    app.exit()
 
 
 def test_preferred_none():
@@ -147,75 +101,6 @@ def test_preferred_none():
     os.environ["QT_PREFERRED_BINDING"] = "None"
     import Qt
     assert Qt.__name__ == "Qt", Qt
-
-
-def test_coexistence():
-    """Qt.py may be use alongside the actual binding"""
-
-    with pyside():
-        from Qt import QtCore
-        import PySide.QtGui
-
-        # Qt remaps QStringListModel
-        assert QtCore.QStringListModel
-
-        # But does not delete the original
-        assert PySide.QtGui.QStringListModel
-
-
-def test_sip_api_qtpy():
-    """Preferred binding PyQt4 should have sip version 2"""
-
-    with pyqt4():
-        __import__("Qt")  # Bypass linter warning
-        import sip
-        assert sip.getapi("QString") == 2, ("PyQt4 API version should be 2, "
-                                            "instead is %s"
-                                            % sip.getapi("QString"))
-
-
-def test_pyside_load_ui_returntype():
-    """load_ui returns an instance of QObject with PySide"""
-    
-    with pyside():
-        import sys
-        from Qt import QtWidgets, QtCore, load_ui
-        app = QtWidgets.QApplication(sys.argv)
-        obj = load_ui(self.ui_qwidget)
-        assert isinstance(obj, QtCore.QObject)
-
-
-def test_pyqt4_load_ui_returntype():
-    """load_ui returns an instance of QObject with PyQt4"""
-    
-    with pyqt4():
-        import sys
-        from Qt import QtWidgets, QtCore, load_ui
-        app = QtWidgets.QApplication(sys.argv)
-        obj = load_ui(self.ui_qwidget)
-        assert isinstance(obj, QtCore.QObject)
-
-
-def test_pyside2_load_ui_returntype():
-    """load_ui returns an instance of QObject with PySide2"""
-    
-    with pyside2():
-        import sys
-        from Qt import QtWidgets, QtCore, load_ui
-        app = QtWidgets.QApplication(sys.argv)
-        obj = load_ui(self.ui_qwidget)
-        assert isinstance(obj, QtCore.QObject)
-
-
-def test_pyqt5_load_ui_returntype():
-    """load_ui returns an instance of QObject with PyQt5"""
-    
-    with pyqt5():
-        import sys
-        from Qt import QtWidgets, QtCore, load_ui
-        app = QtWidgets.QApplication(sys.argv)
-        obj = load_ui(self.ui_qwidget)
-        assert isinstance(obj, QtCore.QObject)
 
 
 def test_vendoring():
@@ -274,12 +159,76 @@ def test_vendoring():
     ) == 0
 
 
-if PYTHON == 2:
-    def test_sip_api_already_set():
-        """Raise ImportError if sip API v1 was already set (Python 2.x only)"""
+if binding("PyQt4"):
+    def test_preferred_pyqt4():
+        """QT_PREFERRED_BINDING = PyQt4 properly forces the binding"""
+        import Qt
+        assert Qt.__name__ == "PyQt4", ("PyQt4 should have been picked, "
+                                        "instead got %s" % Qt)
 
-        with pyqt4():
+    def test_sip_api_qtpy():
+        """Preferred binding PyQt4 should have sip version 2"""
+
+        __import__("Qt")  # Bypass linter warning
+        import sip
+        assert sip.getapi("QString") == 2, ("PyQt4 API version should be 2, "
+                                            "instead is %s"
+                                            % sip.getapi("QString"))
+
+    if PYTHON == 2:
+        def test_sip_api_already_set():
+            """Raise ImportError if sip API v1 was already set"""
+
             __import__("PyQt4.QtCore")  # Bypass linter warning
             import sip
             sip.setapi("QString", 1)
             assert_raises(ImportError, __import__, "Qt")
+
+
+if binding("PyQt5"):
+    def test_preferred_pyqt5():
+        """QT_PREFERRED_BINDING = PyQt5 properly forces the binding"""
+        import Qt
+        assert Qt.__name__ == "PyQt5", ("PyQt5 should have been picked, "
+                                        "instead got %s" % Qt)
+
+
+if binding("PySide"):
+    def test_preferred_pyside():
+        """QT_PREFERRED_BINDING = PySide properly forces the binding"""
+        import Qt
+        assert Qt.__name__ == "PySide", ("PySide should have been picked, "
+                                         "instead got %s" % Qt)
+
+
+if binding("PySide2"):
+    def test_preferred_pyside2():
+        """QT_PREFERRED_BINDING = PySide2 properly forces the binding"""
+        import Qt
+        assert Qt.__name__ == "PySide2", ("PySide2 should have been picked, "
+                                          "instead got %s" % Qt)
+
+    def test_coexistence():
+        """Qt.py may be use alongside the actual binding"""
+
+        from Qt import QtCore
+        import PySide.QtGui
+
+        # Qt remaps QStringListModel
+        assert QtCore.QStringListModel
+
+        # But does not delete the original
+        assert PySide.QtGui.QStringListModel
+
+
+if binding("PySide") or binding("PySide2"):
+    def test_multiple_preferred():
+        """QT_PREFERRED_BINDING = more than one binding excludes others"""
+
+        # PySide is the more desirable binding
+        os.environ["QT_PREFERRED_BINDING"] = os.pathsep.join(
+            ["PySide", "PySide2"])
+
+        import Qt
+        assert Qt.__name__ == "PySide", ("PySide should have been picked, "
+                                         "instead got %s" % Qt)
