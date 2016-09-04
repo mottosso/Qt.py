@@ -29,7 +29,7 @@ Qt.py enables you to write software that dynamically chooses the most desireable
 ### Project goals
 
 
-Qt.py was born in the film and visual effects industry to address the growing needs for the development of software capable of running with more than one flavour of the Qt bindings for Python - PySide, PySide2, PyQt4 and PyQt5.
+Qt.py was born in the film and visual effects industry to address the growing need for the development of software capable of running with more than one flavour of the Qt bindings for Python - PySide, PySide2, PyQt4 and PyQt5.
 
 | Goal                                 | Description
 |:-------------------------------------|:---------------
