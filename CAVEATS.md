@@ -2,11 +2,12 @@
 
 There are cases where Qt.py is not handling incompatibility issues.
 
-- [QtCore.QAbstractItemModel.createIndex](CAVEATS.md#qtcoreqabstractmodelcreateindex)
-- [QtCore.QItemSelection](CAVEATS.md#qtcoreqitemselection)
-- [QtCore.Slot](CAVEATS.md#qtcoreslot)
-- [QtWidgets.QAction.triggered](CAVEATS.md#qtwidgetsqactiontriggered)
-- [QtGui.QRegExpValidator](CAVEATS.md#qtguiqregexpvalidator)
+- [QtCore.QAbstractItemModel.createIndex](#qtcoreqabstractmodelcreateindex)
+- [QtCore.QItemSelection](#qtcoreqitemselection)
+- [QtCore.Slot](#qtcoreslot)
+- [QtWidgets.QAction.triggered](#qtwidgetsqactiontriggered)
+- [QtGui.QRegExpValidator](#qtguiqregexpvalidator)
+- [QtWidgets.QHeaderView.setResizeMode](#qtwidgetsqheaderviewsetresizemode)
 
 <br>
 <br>
@@ -216,6 +217,11 @@ Traceback (most recent call last):
 ...
 TypeError: ...
 ```
+
+
+<br>
+<br>
+<br>
 
 
 #### QtWidgets.QHeaderView.setResizeMode
