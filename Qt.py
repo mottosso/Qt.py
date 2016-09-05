@@ -48,9 +48,16 @@ def remap(object, name, value, safe=True):
 
     """
 
-    if safe and hasattr(object, name):
-        raise AttributeError("Cannot override existing name: "
-                             "%s.%s" % (object.__name__, name))
+    if safe:
+        # Cannot alter original binding.
+        if hasattr(object, name):
+            raise AttributeError("Cannot override existing name: "
+                                 "%s.%s" % (object.__name__, name))
+
+        # Cannot alter classes of functions
+        if type(object).__name__ != "module":
+            raise AttributeError("%s != 'module': Cannot alter "
+                                 "anything but modules" % object)
 
     setattr(object, name, value)
 
