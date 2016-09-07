@@ -2,7 +2,17 @@
 
 This module replaces itself with the most desirable binding.
 
-Resolution order:
+Project goals:
+    Qt.py was born in the film and visual effects industry to address
+    the growing need for the development of software capable of running
+    with more than one flavour of the Qt bindings for Python - PySide,
+    PySide2, PyQt4 and PyQt5.
+
+    1. Build for one, run with all
+    2. Explicit is better than implicit
+    3. Support co-existence
+
+Default resolution order:
     - PySide2
     - PyQt5
     - PySide
@@ -21,28 +31,74 @@ Usage:
 import os
 import sys
 
-__version__ = "0.3.4"
+__version__ = "0.4.0"
+
+# All unique members of Qt.py
+__added__ = list()
+
+# Members copied from elsewhere, such as QtGui -> QtWidgets
+__remapped__ = list()
+
+# Existing members modified in some way
+__modified__ = list()
 
 
-def _pyqt5():
+def remap(object, name, value, safe=True):
+    """Prevent accidental assignment of existing members
+
+    Arguments:
+        object (object): Parent of new attribute
+        name (str): Name of new attribute
+        value (object): Value of new attribute
+        safe (bool): Whether or not to guarantee that
+            the new attribute was not overwritten.
+            Can be set to False under condition that
+            it is superseded by extensive testing.
+
+    """
+
+    if safe:
+        # Cannot alter original binding.
+        if hasattr(object, name):
+            raise AttributeError("Cannot override existing name: "
+                                 "%s.%s" % (object.__name__, name))
+
+        # Cannot alter classes of functions
+        if type(object).__name__ != "module":
+            raise AttributeError("%s != 'module': Cannot alter "
+                                 "anything but modules" % object)
+
+    __remapped__.append(name)
+    setattr(object, name, value)
+
+
+def add(object, name, value):
+    """Identical to :func:`remap` and provided for readability only"""
+    __added__.append(name)
+    remap(object, name, value)
+
+
+def pyqt5():
     import PyQt5.Qt
+    from PyQt5 import QtCore, uic
 
-    # Remap
-    PyQt5.QtCore.Signal = PyQt5.QtCore.pyqtSignal
-    PyQt5.QtCore.Slot = PyQt5.QtCore.pyqtSlot
-    PyQt5.QtCore.Property = PyQt5.QtCore.pyqtProperty
+    remap(QtCore, "Signal", QtCore.pyqtSignal)
+    remap(QtCore, "Slot", QtCore.pyqtSlot)
+    remap(QtCore, "Property", QtCore.pyqtProperty)
 
-    # Add
-    PyQt5.__wrapper_version__ = __version__
-    PyQt5.__binding__ = "PyQt5"
-    PyQt5.__binding_version__ = PyQt5.QtCore.PYQT_VERSION_STR
-    PyQt5.__qt_version__ = PyQt5.QtCore.QT_VERSION_STR
-    PyQt5.load_ui = pyqt5_load_ui
+    add(PyQt5, "__wrapper_version__", __version__)
+    add(PyQt5, "__binding__", "PyQt5")
+    add(PyQt5, "__binding_version__", QtCore.PYQT_VERSION_STR)
+    add(PyQt5, "__qt_version__", QtCore.QT_VERSION_STR)
+    add(PyQt5, "__added__", __added__)
+    add(PyQt5, "__remapped__", __remapped__)
+    add(PyQt5, "__modified__", __modified__)
+    add(PyQt5, "load_ui", lambda fname: uic.loadUi(fname))
 
     return PyQt5
 
 
-def _pyqt4():
+def pyqt4():
     # Attempt to set sip API v2 (must be done prior to importing PyQt4)
     import sip
     try:
@@ -61,144 +117,91 @@ def _pyqt4():
         raise ImportError
 
     import PyQt4.Qt
+    from PyQt4 import QtCore, QtGui, uic
 
-    # Remap
-    PyQt4.QtWidgets = PyQt4.QtGui
-    PyQt4.QtCore.Signal = PyQt4.QtCore.pyqtSignal
-    PyQt4.QtCore.Slot = PyQt4.QtCore.pyqtSlot
-    PyQt4.QtCore.Property = PyQt4.QtCore.pyqtProperty
-    PyQt4.QtCore.QItemSelection = PyQt4.QtGui.QItemSelection
-    PyQt4.QtCore.QStringListModel = PyQt4.QtGui.QStringListModel
-    PyQt4.QtCore.QItemSelectionModel = PyQt4.QtGui.QItemSelectionModel
-    PyQt4.QtCore.QSortFilterProxyModel = PyQt4.QtGui.QSortFilterProxyModel
-    PyQt4.QtCore.QAbstractProxyModel = PyQt4.QtGui.QAbstractProxyModel
+    remap(PyQt4, "QtWidgets", QtGui)
+    remap(QtCore, "Signal", QtCore.pyqtSignal)
+    remap(QtCore, "Slot", QtCore.pyqtSlot)
+    remap(QtCore, "Property", QtCore.pyqtProperty)
+    remap(QtCore, "QItemSelection", QtGui.QItemSelection)
+    remap(QtCore, "QStringListModel", QtGui.QStringListModel)
+    remap(QtCore, "QItemSelectionModel", QtGui.QItemSelectionModel)
+    remap(QtCore, "QSortFilterProxyModel", QtGui.QSortFilterProxyModel)
+    remap(QtCore, "QAbstractProxyModel", QtGui.QAbstractProxyModel)
 
     try:
         from PyQt4 import QtWebKit
-        PyQt4.QtWebKitWidgets = QtWebKit
+        remap(PyQt4, "QtWebKitWidgets", QtWebKit)
     except ImportError:
         # QtWebkit is optional in Qt , therefore might not be available
         pass
 
-    # Add
-    PyQt4.__wrapper_version__ = __version__
-    PyQt4.__binding__ = "PyQt4"
-    PyQt4.__binding_version__ = PyQt4.QtCore.PYQT_VERSION_STR
-    PyQt4.__qt_version__ = PyQt4.QtCore.QT_VERSION_STR
-    PyQt4.load_ui = pyqt4_load_ui
+    add(PyQt4, "__wrapper_version__", __version__)
+    add(PyQt4, "__binding__", "PyQt4")
+    add(PyQt4, "__binding_version__", QtCore.PYQT_VERSION_STR)
+    add(PyQt4, "__qt_version__", QtCore.QT_VERSION_STR)
+    add(PyQt4, "__added__", __added__)
+    add(PyQt4, "__remapped__", __remapped__)
+    add(PyQt4, "__modified__", __modified__)
+    add(PyQt4, "load_ui", lambda fname: uic.loadUi(fname))
 
     return PyQt4
 
 
-def _pyside2():
+def pyside2():
     import PySide2
-    from PySide2 import QtGui, QtCore
+    from PySide2 import QtGui, QtCore, QtUiTools
 
-    # Remap
-    QtCore.QStringListModel = QtGui.QStringListModel
+    remap(QtCore, "QStringListModel", QtGui.QStringListModel)
 
-    # Add
-    PySide2.__wrapper_version__ = __version__
-    PySide2.__binding__ = "PySide2"
-    PySide2.__binding_version__ = PySide2.__version__
-    PySide2.__qt_version__ = PySide2.QtCore.qVersion()
-    PySide2.load_ui = pyside2_load_ui
+    add(PySide2, "__wrapper_version__", __version__)
+    add(PySide2, "__binding__", "PySide2")
+    add(PySide2, "__binding_version__", PySide2.__version__)
+    add(PySide2, "__qt_version__", PySide2.QtCore.qVersion())
+    add(PySide2, "__added__", __added__)
+    add(PySide2, "__remapped__", __remapped__)
+    add(PySide2, "__modified__", __modified__)
+    add(PySide2, "load_ui", lambda fname: QtUiTools.QUiLoader().load(fname))
 
     return PySide2
 
 
-def _pyside():
+def pyside():
     import PySide
-    from PySide import QtGui, QtCore
-    QtCore, QtGui  # bypass linter warnings
+    from PySide import QtGui, QtCore, QtUiTools
 
-    # Remap
-    PySide.QtWidgets = PySide.QtGui
-    PySide.QtCore.QSortFilterProxyModel = PySide.QtGui.QSortFilterProxyModel
-    PySide.QtCore.QStringListModel = PySide.QtGui.QStringListModel
-    PySide.QtCore.QItemSelection = PySide.QtGui.QItemSelection
-    PySide.QtCore.QItemSelectionModel = PySide.QtGui.QItemSelectionModel
-    PySide.QtCore.QAbstractProxyModel = PySide.QtGui.QAbstractProxyModel
+    remap(PySide, "QtWidgets", QtGui)
+    remap(QtCore, "QSortFilterProxyModel", QtGui.QSortFilterProxyModel)
+    remap(QtCore, "QStringListModel", QtGui.QStringListModel)
+    remap(QtCore, "QItemSelection", QtGui.QItemSelection)
+    remap(QtCore, "QItemSelectionModel", QtGui.QItemSelectionModel)
+    remap(QtCore, "QAbstractProxyModel", QtGui.QAbstractProxyModel)
 
     try:
         from PySide import QtWebKit
-        PySide.QtWebKitWidgets = QtWebKit
+        remap(PySide, "QtWebKitWidgets", QtWebKit)
     except ImportError:
         # QtWebkit is optional in Qt , therefore might not be available
         pass
 
-    # Add
-    PySide.__wrapper_version__ = __version__
-    PySide.__binding__ = "PySide"
-    PySide.__binding_version__ = PySide.__version__
-    PySide.__qt_version__ = PySide.QtCore.qVersion()
-    PySide.load_ui = pyside_load_ui
+    add(PySide, "__wrapper_version__", __version__)
+    add(PySide, "__binding__", "PySide")
+    add(PySide, "__binding_version__", PySide.__version__)
+    add(PySide, "__qt_version__", PySide.QtCore.qVersion())
+    add(PySide, "__added__", __added__)
+    add(PySide, "__remapped__", __remapped__)
+    add(PySide, "__modified__", __modified__)
+    add(PySide, "load_ui", lambda fname: QtUiTools.QUiLoader().load(fname))
 
     return PySide
 
 
-def pyside_load_ui(fname):
-    """Read Qt Designer .ui `fname`
-
-    Args:
-        fname (str): Absolute path to .ui file
-
-    Usage:
-        >> from Qt import load_ui
-        >> class MyWindow(QtWidgets.QWidget):
-        ..   fname = 'my_ui.ui'
-        ..   self.ui = load_ui(fname)
-        ..
-        >> window = MyWindow()
-
-    """
-
-    from PySide import QtUiTools
-    return QtUiTools.QUiLoader().load(fname)
-
-
-def pyside2_load_ui(fname):
-    """Read Qt Designer .ui `fname`
-
-    Args:
-        fname (str): Absolute path to .ui file
-
-    """
-
-    from PySide2 import QtUiTools
-    return QtUiTools.QUiLoader().load(fname)
-
-
-def pyqt4_load_ui(fname):
-    """Read Qt Designer .ui `fname`
-
-    Args:
-        fname (str): Absolute path to .ui file
-
-    """
-
-    from PyQt4 import uic
-    return uic.loadUi(fname)
-
-
-def pyqt5_load_ui(fname):
-    """Read Qt Designer .ui `fname`
-
-    Args:
-        fname (str): Absolute path to .ui file
-
-    """
-
-    from PyQt5 import uic
-    return uic.loadUi(fname)
-
-
-def _log(text, verbose):
+def log(text, verbose):
     if verbose:
         sys.stdout.write(text)
 
 
-def _init():
+def init():
     """Try loading each binding in turn
 
     Please note: the entire Qt module is replaced with this code:
@@ -211,10 +214,9 @@ def _init():
 
     preferred = os.getenv("QT_PREFERRED_BINDING")
     verbose = os.getenv("QT_VERBOSE") is not None
-    bindings = (_pyside2, _pyqt5, _pyside, _pyqt4)
+    bindings = (pyside2, pyqt5, pyside, pyqt4)
 
     if preferred:
-
         # Internal flag (used in installer)
         if preferred == "None":
             sys.modules[__name__].__wrapper_version__ = __version__
@@ -222,10 +224,10 @@ def _init():
 
         preferred = preferred.split(os.pathsep)
         available = {
-            "PySide2": _pyside2,
-            "PyQt5": _pyqt5,
-            "PySide": _pyside,
-            "PyQt4": _pyqt4
+            "PySide2": pyside2,
+            "PyQt5": pyqt5,
+            "PySide": pyside,
+            "PyQt4": pyqt4
         }
 
         try:
@@ -237,14 +239,14 @@ def _init():
             )
 
     for binding in bindings:
-        _log("Trying %s" % binding.__name__[1:], verbose)
+        log("Trying %s" % binding.__name__[1:], verbose)
 
         try:
             sys.modules[__name__] = binding()
             return
 
         except ImportError as e:
-            _log(" - ImportError(\"%s\")\n" % e, verbose)
+            log(" - ImportError(\"%s\")\n" % e, verbose)
 
             continue
 
@@ -252,4 +254,4 @@ def _init():
     raise ImportError("No Qt binding were found.")
 
 
-_init()
+init()
