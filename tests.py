@@ -159,6 +159,36 @@ def test_vendoring():
     ) == 0
 
 
+def test_convert_simple():
+    """python -m Qt --convert works in general"""
+    before = """\
+from PySide2 import QtCore, QtGui, QtWidgets
+
+class Ui_uic(object):
+    def setupUi(self, uic):
+        self.retranslateUi(uic)
+
+    def retranslateUi(self, uic):
+        self.pushButton_2.setText(
+            QtWidgets.QApplication.translate("uic", "NOT Ok", None, -1))
+"""
+
+    after = """\
+from Qt import QtCore, QtGui, QtWidgets
+
+class Ui_uic(object):
+    def setupUi(self, uic):
+        self.retranslateUi(uic)
+
+    def retranslateUi(self, uic):
+        self.pushButton_2.setText(
+            Qt.translate("uic", "NOT Ok", None, -1))
+"""
+
+    import Qt
+    assert Qt.convert(before) == after, after
+
+
 if binding("PyQt4"):
     def test_preferred_pyqt4():
         """QT_PREFERRED_BINDING = PyQt4 properly forces the binding"""

@@ -19,12 +19,12 @@ Default resolution order:
     - PyQt4
 
 Usage:
-    >>> import sys
-    >>> from Qt import QtWidgets
-    >>> app = QtWidgets.QApplication(sys.argv)
-    >>> button = QtWidgets.QPushButton("Hello World")
-    >>> button.show()
-    >>> app.exec_()
+    >> import sys
+    >> from Qt import QtWidgets
+    >> app = QtWidgets.QApplication(sys.argv)
+    >> button = QtWidgets.QPushButton("Hello World")
+    >> button.show()
+    >> app.exec_()
 
 """
 
@@ -78,6 +78,31 @@ def add(object, name, value):
     remap(object, name, value)
 
 
+def convert(content):
+    """Convert compiled .ui file from PySide2 to Qt.py
+
+    Arguments:
+        content (str): Contents of .ui file
+
+    Usage:
+        >> with open("myui.py") as f:
+        ..   content = convert(f.read())
+
+    """
+
+    def parse(line):
+        line = line.replace("PySide2", "Qt")
+        line = line.replace("QtWidgets.QApplication.translate", "Qt.translate")
+        return line
+
+    parsed = list()
+    for line in content.split("\n"):
+        line = parse(line)
+        parsed.append(line)
+
+    return "\n".join(parsed)
+
+
 def pyqt5():
     import PyQt5.Qt
     from PyQt5 import QtCore, uic
@@ -94,6 +119,10 @@ def pyqt5():
     add(PyQt5, "__remapped__", __remapped__)
     add(PyQt5, "__modified__", __modified__)
     add(PyQt5, "load_ui", lambda fname: uic.loadUi(fname))
+    add(PyQt5, "convert", convert)
+    add(PyQt5, "translate", lambda
+        context, sourceText, disambiguation, n: QtCore.QCoreApplication(
+            context, sourceText, disambiguation, n))
 
     return PyQt5
 
@@ -144,6 +173,10 @@ def pyqt4():
     add(PyQt4, "__remapped__", __remapped__)
     add(PyQt4, "__modified__", __modified__)
     add(PyQt4, "load_ui", lambda fname: uic.loadUi(fname))
+    add(PyQt4, "convert", convert)
+    add(PyQt4, "translate", lambda
+        context, sourceText, disambiguation, n: QtCore.QCoreApplication(
+            context, sourceText, disambiguation, None, n))
 
     return PyQt4
 
@@ -162,6 +195,10 @@ def pyside2():
     add(PySide2, "__remapped__", __remapped__)
     add(PySide2, "__modified__", __modified__)
     add(PySide2, "load_ui", lambda fname: QtUiTools.QUiLoader().load(fname))
+    add(PySide2, "convert", convert)
+    add(PySide2, "translate", lambda
+        context, sourceText, disambiguation, n: QtCore.QCoreApplication(
+            context, sourceText, disambiguation, n))
 
     return PySide2
 
@@ -192,6 +229,10 @@ def pyside():
     add(PySide, "__remapped__", __remapped__)
     add(PySide, "__modified__", __modified__)
     add(PySide, "load_ui", lambda fname: QtUiTools.QUiLoader().load(fname))
+    add(PySide, "convert", convert)
+    add(PySide, "translate", lambda
+        context, sourceText, disambiguation, n: QtCore.QCoreApplication(
+            context, sourceText, disambiguation, None, n))
 
     return PySide
 
@@ -199,6 +240,30 @@ def pyside():
 def log(text, verbose):
     if verbose:
         sys.stdout.write(text)
+
+
+def cli():
+    """Qt.py command-line interface"""
+    import argparse
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--convert",
+                        help="Path to compiled Python module, e.g. my_ui.py")
+    parser.add_argument("--stdout",
+                        help="Write to stdout instead of file",
+                        action="store_true")
+
+    args = parser.parse_args()
+
+    if args.stdout:
+        raise NotImplementedError("--stdout")
+
+    if args.convert:
+        with open(args.convert) as f:
+            content = convert(f.read())
+
+        with open(args.convert + "_", "w") as f:
+            f.write(content)
 
 
 def init():
@@ -254,4 +319,4 @@ def init():
     raise ImportError("No Qt binding were found.")
 
 
-init()
+cli() if __name__ == "__main__" else init()
