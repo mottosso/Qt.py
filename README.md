@@ -79,13 +79,16 @@ app.exec_()
 
 All members of `Qt` stem directly from those available via PySide2, along with these additional members.
 
-| Attribute               | Returns   | Description
-|:------------------------|:----------|:------------
-| `__binding__`           | `str`     | A string reference to binding currently in use
-| `__qt_version__`        | `str`     | Reference to version of Qt, such as Qt 5.6.1
-| `__binding_version__`   | `str`     | Reference to version of binding, such as PySide 1.2.6
-| `__wrapper_version__`   | `str`     | Version of this project
-| `load_ui(fname=str)`    | `QObject` | Minimal wrapper of PyQt4.loadUi and PySide equivalent
+| Attribute               | Returns     | Description
+|:------------------------|:------------|:------------
+| `__binding__`           | `str`       | A string reference to binding currently in use
+| `__qt_version__`        | `str`       | Reference to version of Qt, such as Qt 5.6.1
+| `__binding_version__`   | `str`       | Reference to version of binding, such as PySide 1.2.6
+| `__wrapper_version__`   | `str`       | Version of this project
+| `__added__`             | `list(str)` | All unique members of Qt.py
+| `__remapped__`          | `list(str)` | Members copied from elsewhere, such as QtGui -> QtWidgets
+| `__modified__`          | `list(str)` | Existing members modified in some way
+| `load_ui(fname=str)`    | `QObject`   | Minimal wrapper of PyQt4.loadUi and PySide equivalent
 
 <br>
 

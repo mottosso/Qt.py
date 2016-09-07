@@ -33,6 +33,15 @@ import sys
 
 __version__ = "0.4.0"
 
+# All unique members of Qt.py
+__added__ = list()
+
+# Members copied from elsewhere, such as QtGui -> QtWidgets
+__remapped__ = list()
+
+# Existing members modified in some way
+__modified__ = list()
+
 
 def remap(object, name, value, safe=True):
     """Prevent accidental assignment of existing members
@@ -59,11 +68,13 @@ def remap(object, name, value, safe=True):
             raise AttributeError("%s != 'module': Cannot alter "
                                  "anything but modules" % object)
 
+    __remapped__.append(name)
     setattr(object, name, value)
 
 
 def add(object, name, value):
     """Identical to :func:`remap` and provided for readability only"""
+    __added__.append(name)
     remap(object, name, value)
 
 
@@ -79,6 +90,9 @@ def pyqt5():
     add(PyQt5, "__binding__", "PyQt5")
     add(PyQt5, "__binding_version__", QtCore.PYQT_VERSION_STR)
     add(PyQt5, "__qt_version__", QtCore.QT_VERSION_STR)
+    add(PyQt5, "__added__", __added__)
+    add(PyQt5, "__remapped__", __remapped__)
+    add(PyQt5, "__modified__", __modified__)
     add(PyQt5, "load_ui", lambda fname: uic.loadUi(fname))
 
     return PyQt5
@@ -126,6 +140,9 @@ def pyqt4():
     add(PyQt4, "__binding__", "PyQt4")
     add(PyQt4, "__binding_version__", QtCore.PYQT_VERSION_STR)
     add(PyQt4, "__qt_version__", QtCore.QT_VERSION_STR)
+    add(PyQt4, "__added__", __added__)
+    add(PyQt4, "__remapped__", __remapped__)
+    add(PyQt4, "__modified__", __modified__)
     add(PyQt4, "load_ui", lambda fname: uic.loadUi(fname))
 
     return PyQt4
@@ -141,6 +158,9 @@ def pyside2():
     add(PySide2, "__binding__", "PySide2")
     add(PySide2, "__binding_version__", PySide2.__version__)
     add(PySide2, "__qt_version__", PySide2.QtCore.qVersion())
+    add(PySide2, "__added__", __added__)
+    add(PySide2, "__remapped__", __remapped__)
+    add(PySide2, "__modified__", __modified__)
     add(PySide2, "load_ui", lambda fname: QtUiTools.QUiLoader().load(fname))
 
     return PySide2
@@ -168,6 +188,9 @@ def pyside():
     add(PySide, "__binding__", "PySide")
     add(PySide, "__binding_version__", PySide.__version__)
     add(PySide, "__qt_version__", PySide.QtCore.qVersion())
+    add(PySide, "__added__", __added__)
+    add(PySide, "__remapped__", __remapped__)
+    add(PySide, "__modified__", __modified__)
     add(PySide, "load_ui", lambda fname: QtUiTools.QUiLoader().load(fname))
 
     return PySide
@@ -194,7 +217,6 @@ def init():
     bindings = (pyside2, pyqt5, pyside, pyqt4)
 
     if preferred:
-
         # Internal flag (used in installer)
         if preferred == "None":
             sys.modules[__name__].__wrapper_version__ = __version__
