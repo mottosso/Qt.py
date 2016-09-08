@@ -159,6 +159,12 @@ def test_vendoring():
     ) == 0
 
 
+def test_import_from_qtwidgets():
+    """Fix #133, `from Qt.QtWidgets import XXX` works"""
+    from Qt.QtWidgets import QPushButton
+    assert QPushButton.__name__ == "QPushButton", QPushButton
+
+
 if binding("PyQt4"):
     def test_preferred_pyqt4():
         """QT_PREFERRED_BINDING = PyQt4 properly forces the binding"""
