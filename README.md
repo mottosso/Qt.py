@@ -253,6 +253,8 @@ Send us a pull-request with your studio here.
 - Weta Digital
 - Disney Animation
 - Industriromantik
+- Psyop
+- ftrack
 
 Presented at Siggraph 2016, BOF!
 
@@ -284,6 +286,7 @@ Comparison matrix.
 | [jupyter][]   | Scientific    | N/A               | N/A       | X    |           |        |
 | [QtPy][]      | Scientific    | N/A               | MIT       |      | X         | X      |
 | [pyqode.qt][] | Scientific    | PyQt5             | MIT       | X    |           | X      |
+| [QtExt][]     | Film          | N/A               | N/A       |      | X         |        |
 
 Also worth mentioning, [pyqt4topyqt5](https://github.com/rferrazz/pyqt4topyqt5); a good starting point for transitioning to Qt.py.
 
@@ -292,6 +295,7 @@ Send us a pull-request with your project here.
 [QtPy]: https://github.com/spyder-ide/qtpy
 [jupyter]: https://github.com/jupyter/qtconsole/blob/master/qtconsole/qt_loaders.py
 [pyqode.qt]: https://github.com/pyQode/pyqode.qt
+[QtExt]: https://bitbucket.org/efestolab/qtext
 
 <br>
 <br>
