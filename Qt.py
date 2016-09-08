@@ -31,7 +31,7 @@ Usage:
 import os
 import sys
 
-__version__ = "0.4.0"
+__version__ = "0.4.1"
 
 # All unique members of Qt.py
 __added__ = list()
@@ -239,10 +239,18 @@ def init():
             )
 
     for binding in bindings:
-        log("Trying %s" % binding.__name__[1:], verbose)
+        log("Trying %s" % binding.__name__, verbose)
 
         try:
-            sys.modules[__name__] = binding()
+            binding = binding()
+
+            sys.modules.update({
+                __name__: binding,
+
+                # Fix #133, `from Qt.QtWidgets import QPushButton`
+                __name__ + ".QtWidgets": binding.QtWidgets
+            })
+
             return
 
         except ImportError as e:
