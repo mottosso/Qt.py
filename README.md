@@ -271,6 +271,7 @@ Send us a pull-request with your project here.
 - https://github.com/pyblish/pyblish-lite
 - https://github.com/fredrikaverpil/pyvfx-boilerplate
 - https://gitlab.com/4degrees/riffle
+- https://github.com/chadmv/cmt
 
 <br>
 <br>
