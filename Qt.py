@@ -31,7 +31,7 @@ Usage:
 import os
 import sys
 
-__version__ = "0.4.1"
+__version__ = "0.4.2"
 
 # All unique members of Qt.py
 __added__ = list()
@@ -72,10 +72,10 @@ def remap(object, name, value, safe=True):
     setattr(object, name, value)
 
 
-def add(object, name, value):
+def add(object, name, value, safe=True):
     """Identical to :func:`remap` and provided for readability only"""
     __added__.append(name)
-    remap(object, name, value)
+    remap(object, name, value, safe)
 
 
 def pyqt5():
@@ -89,7 +89,7 @@ def pyqt5():
     add(PyQt5, "__wrapper_version__", __version__)
     add(PyQt5, "__binding__", "PyQt5")
     add(PyQt5, "__binding_version__", QtCore.PYQT_VERSION_STR)
-    add(PyQt5, "__qt_version__", QtCore.QT_VERSION_STR)
+    add(PyQt5, "__qt_version__", QtCore.QT_VERSION_STR, safe=False)
     add(PyQt5, "__added__", __added__)
     add(PyQt5, "__remapped__", __remapped__)
     add(PyQt5, "__modified__", __modified__)
