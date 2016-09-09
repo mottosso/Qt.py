@@ -68,7 +68,13 @@ def remap(object, name, value, safe=True):
             raise AttributeError("%s != 'module': Cannot alter "
                                  "anything but modules" % object)
 
-    __remapped__.append(name)
+    elif hasattr(object, name):
+        # Keep track of modifications
+        __modified__.append(name)
+
+    if name not in __added__:
+        __remapped__.append(name)
+
     setattr(object, name, value)
 
 
@@ -244,19 +250,23 @@ def init():
         try:
             binding = binding()
 
+        except ImportError as e:
+            log(" - ImportError(\"%s\")\n" % e, verbose)
+            continue
+
+        else:
+            # Reference to this module
+            binding.__shim__ = sys.modules[__name__]
+
             sys.modules.update({
                 __name__: binding,
 
                 # Fix #133, `from Qt.QtWidgets import QPushButton`
                 __name__ + ".QtWidgets": binding.QtWidgets
+
             })
 
             return
-
-        except ImportError as e:
-            log(" - ImportError(\"%s\")\n" % e, verbose)
-
-            continue
 
     # If not binding were found, throw this error
     raise ImportError("No Qt binding were found.")

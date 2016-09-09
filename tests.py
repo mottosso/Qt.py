@@ -159,6 +159,61 @@ def test_vendoring():
     ) == 0
 
 
+def test_meta_add():
+    """Qt.add() appends to __added__"""
+    import types
+    import Qt
+
+    module = imp.new_module("QtMock")
+
+    Qt.__shim__.add(module, "MyAttr", None)
+
+    assert "MyAttr" in Qt.__added__, Qt.__added__
+    assert "MyAttr" not in Qt.__remapped__
+    assert "MyAttr" not in Qt.__modified__
+
+def test_meta_remap():
+    """Qt.remap() appends to __modified__"""
+    import types
+    import Qt
+
+    module = imp.new_module("QtMock")
+
+    Qt.__shim__.remap(module, "MyAttr", None)
+
+    assert "MyAttr" not in Qt.__added__, Qt.__added__
+    assert "MyAttr" in Qt.__remapped__
+    assert "MyAttr" not in Qt.__modified__
+
+
+
+def test_meta_add_existing():
+    """Qt.add() appends to __added__"""
+    import types
+    import Qt
+
+    module = imp.new_module("QtMock")
+    module.MyAttr = None
+
+    assert_raises(AttributeError, Qt.__shim__.add, module, "MyAttr", None)
+
+
+def test_meta_force_add_existing():
+    """Unsafe Qt.add() of existing member adds to modified"""
+    import types
+    import Qt
+
+    module = imp.new_module("QtMock")
+    module.MyAttr = 123
+
+    Qt.__shim__.add(module, "MyAttr", None, safe=False)
+
+    assert "MyAttr" in Qt.__added__, Qt.__added__
+    assert "MyAttr" not in Qt.__remapped__
+    assert "MyAttr" in Qt.__modified__
+    assert module.MyAttr is None, module.MyAttr
+
+
 def test_import_from_qtwidgets():
     """Fix #133, `from Qt.QtWidgets import XXX` works"""
     from Qt.QtWidgets import QPushButton
