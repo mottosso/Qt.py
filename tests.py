@@ -171,6 +171,36 @@ class Ui_uic(object):
     def retranslateUi(self, uic):
         self.pushButton_2.setText(
             QtWidgets.QApplication.translate("uic", "NOT Ok", None, -1))
+""".split("\n")
+
+    after = """\
+from Qt import QtCore, QtGui, QtWidgets
+
+class Ui_uic(object):
+    def setupUi(self, uic):
+        self.retranslateUi(uic)
+
+    def retranslateUi(self, uic):
+        self.pushButton_2.setText(
+            Qt.translate("uic", "NOT Ok", None, -1))
+""".split("\n")
+
+    import Qt
+    assert Qt.convert(before) == after, after
+
+
+def test_convert_idempotency():
+    """Converting a converted file produces an identical file"""
+    before = """\
+from PySide2 import QtCore, QtGui, QtWidgets
+
+class Ui_uic(object):
+    def setupUi(self, uic):
+        self.retranslateUi(uic)
+
+    def retranslateUi(self, uic):
+        self.pushButton_2.setText(
+            QtWidgets.QApplication.translate("uic", "NOT Ok", None, -1))
 """
 
     after = """\
@@ -185,8 +215,33 @@ class Ui_uic(object):
             Qt.translate("uic", "NOT Ok", None, -1))
 """
 
+    fname = os.path.join(self.tempdir, "idempotency.py")
+    with open(fname, "w") as f:
+        f.write(before)
+
     import Qt
-    assert Qt.convert(before) == after, after
+    Qt.__shim__.cli(args=[fname])
+
+    with open(fname) as f:
+        assert f.read() == after
+
+    Qt.__shim__.cli(args=[fname])
+
+    with open(fname) as f:
+        assert f.read() == after
+
+
+def test_convert_backup():
+    """Converting produces a backup"""
+
+    fname = os.path.join(self.tempdir, "idempotency.py")
+    with open(fname, "w") as f:
+        f.write("")
+
+    import Qt
+    Qt.__shim__.cli(args=[fname])
+
+    assert os.path.exists("%s_backup%s" % os.path.splitext(fname))
 
 
 if binding("PyQt4"):

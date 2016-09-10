@@ -30,6 +30,7 @@ Usage:
 
 import os
 import sys
+import shutil
 
 __version__ = "0.4.0"
 
@@ -78,29 +79,29 @@ def add(object, name, value):
     remap(object, name, value)
 
 
-def convert(content):
+def convert(lines):
     """Convert compiled .ui file from PySide2 to Qt.py
 
     Arguments:
-        content (str): Contents of .ui file
+        lines (list): Each line of of .ui file
 
     Usage:
         >> with open("myui.py") as f:
-        ..   content = convert(f.read())
+        ..   lines = convert(f.readlines())
 
     """
 
     def parse(line):
-        line = line.replace("PySide2", "Qt")
+        line = line.replace("from PySide2 import", "from Qt import")
         line = line.replace("QtWidgets.QApplication.translate", "Qt.translate")
         return line
 
     parsed = list()
-    for line in content.split("\n"):
+    for line in lines:
         line = parse(line)
         parsed.append(line)
 
-    return "\n".join(parsed)
+    return parsed
 
 
 def pyqt5():
@@ -242,28 +243,46 @@ def log(text, verbose):
         sys.stdout.write(text)
 
 
-def cli():
+def cli(args):
     """Qt.py command-line interface"""
     import argparse
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--convert",
                         help="Path to compiled Python module, e.g. my_ui.py")
+    parser.add_argument("--compile",
+                        help="Accept raw .ui file and compile with native "
+                             "PySide2 compiler.")
     parser.add_argument("--stdout",
                         help="Write to stdout instead of file",
                         action="store_true")
 
-    args = parser.parse_args()
+    args = parser.parse_args(args)
 
     if args.stdout:
         raise NotImplementedError("--stdout")
 
-    if args.convert:
-        with open(args.convert) as f:
-            content = convert(f.read())
+    if args.compile:
+        raise NotImplementedError("--compile")
 
-        with open(args.convert + "_", "w") as f:
-            f.write(content)
+    if args.convert:
+        sys.stdout.write("#\n"
+                         "# WARNING: --convert is an ALPHA feature.\n#\n"
+                         "# See https://github.com/mottosso/Qt.py/pull/132\n"
+                         "# for details.\n"
+                         "#\n")
+
+        with open(args.convert) as f:
+            lines = convert(f.readlines())
+
+        backup = "%s_backup%s" % os.path.splitext(args.convert)
+        sys.stdout.write("Creating \"%s\"..\n" % backup)
+        shutil.copy(args.convert, backup)
+
+        with open(args.convert, "w") as f:
+            f.write("".join(lines))
+
+        sys.stdout.write("Successfully converted \"%s\"\n" % args.convert)
 
 
 def init():
@@ -319,4 +338,4 @@ def init():
     raise ImportError("No Qt binding were found.")
 
 
-cli() if __name__ == "__main__" else init()
+cli(sys.argv[1:]) if __name__ == "__main__" else init()
