@@ -88,6 +88,7 @@ All members of `Qt` stem directly from those available via PySide2, along with t
 | `__added__`             | `list(str)` | All unique members of Qt.py
 | `__remapped__`          | `list(str)` | Members copied from elsewhere, such as QtGui -> QtWidgets
 | `__modified__`          | `list(str)` | Existing members modified in some way
+| `__shim__`              | `str`       | Reference to original Qt.py Python module
 | `load_ui(fname=str)`    | `QObject`   | Minimal wrapper of PyQt4.loadUi and PySide equivalent
 
 <br>
