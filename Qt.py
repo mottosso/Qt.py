@@ -32,7 +32,7 @@ import os
 import sys
 import shutil
 
-__version__ = "0.4.0"
+__version__ = "0.4.2"
 
 # All unique members of Qt.py
 __added__ = list()
@@ -69,14 +69,20 @@ def remap(object, name, value, safe=True):
             raise AttributeError("%s != 'module': Cannot alter "
                                  "anything but modules" % object)
 
-    __remapped__.append(name)
+    elif hasattr(object, name):
+        # Keep track of modifications
+        __modified__.append(name)
+
+    if name not in __added__:
+        __remapped__.append(name)
+
     setattr(object, name, value)
 
 
-def add(object, name, value):
+def add(object, name, value, safe=True):
     """Identical to :func:`remap` and provided for readability only"""
     __added__.append(name)
-    remap(object, name, value)
+    remap(object, name, value, safe)
 
 
 def convert(lines):
@@ -115,7 +121,7 @@ def pyqt5():
     add(PyQt5, "__wrapper_version__", __version__)
     add(PyQt5, "__binding__", "PyQt5")
     add(PyQt5, "__binding_version__", QtCore.PYQT_VERSION_STR)
-    add(PyQt5, "__qt_version__", QtCore.QT_VERSION_STR)
+    add(PyQt5, "__qt_version__", QtCore.QT_VERSION_STR, safe=False)
     add(PyQt5, "__added__", __added__)
     add(PyQt5, "__remapped__", __remapped__)
     add(PyQt5, "__modified__", __modified__)
@@ -323,16 +329,28 @@ def init():
             )
 
     for binding in bindings:
-        log("Trying %s" % binding.__name__[1:], verbose)
+        log("Trying %s" % binding.__name__, verbose)
 
         try:
-            sys.modules[__name__] = binding()
-            return
+            binding = binding()
 
         except ImportError as e:
             log(" - ImportError(\"%s\")\n" % e, verbose)
-
             continue
+
+        else:
+            # Reference to this module
+            binding.__shim__ = sys.modules[__name__]
+
+            sys.modules.update({
+                __name__: binding,
+
+                # Fix #133, `from Qt.QtWidgets import QPushButton`
+                __name__ + ".QtWidgets": binding.QtWidgets
+
+            })
+
+            return
 
     # If not binding were found, throw this error
     raise ImportError("No Qt binding were found.")

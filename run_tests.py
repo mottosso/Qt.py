@@ -32,20 +32,23 @@ if __name__ == "__main__":
         "--exe",
     ]
 
-    # argv.extend(sys.argv[1:])
+    errors = 0
 
     # Running each test independently via subprocess
     # enables tests to filter out from tests.py before
     # being split into individual processes via the
     # --with-process-isolation feature of nose.
     with binding("PyQt4"):
-        subprocess.call(argv)
+        errors += subprocess.call(argv)
 
     with binding("PySide"):
-        subprocess.call(argv)
+        errors += subprocess.call(argv)
 
     with binding("PyQt5"):
-        subprocess.call(argv)
+        errors += subprocess.call(argv)
 
     with binding("PySide2"):
-        subprocess.call(argv)
+        errors += subprocess.call(argv)
+
+    if errors:
+        raise Exception("%i binding(s) failed." % errors)

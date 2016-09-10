@@ -51,6 +51,8 @@ Qt.py is a single file and can either be [copy/pasted](https://raw.githubusercon
 $ pip install Qt.py
 ```
 
+- Pro tip: Supports vendoring
+
 <br>
 <br>
 <br>
@@ -71,6 +73,8 @@ button.show()
 app.exec_()
 ```
 
+- Also see [/examples](examples)
+
 <br>
 <br>
 <br>
@@ -88,6 +92,7 @@ All members of `Qt` stem directly from those available via PySide2, along with t
 | `__added__`             | `list(str)` | All unique members of Qt.py
 | `__remapped__`          | `list(str)` | Members copied from elsewhere, such as QtGui -> QtWidgets
 | `__modified__`          | `list(str)` | Existing members modified in some way
+| `__shim__`              | `str`       | Reference to original Qt.py Python module
 | `load_ui(fname=str)`    | `QObject`   | Minimal wrapper of PyQt4.loadUi and PySide equivalent
 
 <br>
@@ -253,6 +258,8 @@ Send us a pull-request with your studio here.
 - Weta Digital
 - Disney Animation
 - Industriromantik
+- Psyop
+- ftrack
 
 Presented at Siggraph 2016, BOF!
 
@@ -269,6 +276,7 @@ Send us a pull-request with your project here.
 - https://github.com/pyblish/pyblish-lite
 - https://github.com/fredrikaverpil/pyvfx-boilerplate
 - https://gitlab.com/4degrees/riffle
+- https://github.com/chadmv/cmt
 
 <br>
 <br>
@@ -284,6 +292,7 @@ Comparison matrix.
 | [jupyter][]   | Scientific    | N/A               | N/A       | X    |           |        |
 | [QtPy][]      | Scientific    | N/A               | MIT       |      | X         | X      |
 | [pyqode.qt][] | Scientific    | PyQt5             | MIT       | X    |           | X      |
+| [QtExt][]     | Film          | N/A               | N/A       |      | X         |        |
 
 Also worth mentioning, [pyqt4topyqt5](https://github.com/rferrazz/pyqt4topyqt5); a good starting point for transitioning to Qt.py.
 
@@ -292,6 +301,7 @@ Send us a pull-request with your project here.
 [QtPy]: https://github.com/spyder-ide/qtpy
 [jupyter]: https://github.com/jupyter/qtconsole/blob/master/qtconsole/qt_loaders.py
 [pyqode.qt]: https://github.com/pyQode/pyqode.qt
+[QtExt]: https://bitbucket.org/efestolab/qtext
 
 <br>
 <br>
