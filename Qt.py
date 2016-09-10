@@ -284,6 +284,9 @@ def cli(args):
                          "# for details.\n"
                          "#\n")
 
+        #
+        # ------> Read
+        #
         with open(args.convert) as f:
             lines = convert(f.readlines())
 
@@ -291,6 +294,9 @@ def cli(args):
         sys.stdout.write("Creating \"%s\"..\n" % backup)
         shutil.copy(args.convert, backup)
 
+        #
+        # <------ Write
+        #
         with open(args.convert, "w") as f:
             f.write("".join(lines))
 
