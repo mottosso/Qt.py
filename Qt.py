@@ -32,7 +32,7 @@ import os
 import sys
 import shutil
 
-__version__ = "0.4.2"
+__version__ = "0.5.0"
 
 # All unique members of Qt.py
 __added__ = list()
