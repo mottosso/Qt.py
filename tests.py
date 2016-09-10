@@ -220,12 +220,14 @@ class Ui_uic(object):
         f.write(before)
 
     import Qt
-    Qt.__shim__.cli(args=[fname])
+
+    os.chdir(self.tempdir)
+    Qt.__shim__.cli(args=["--convert", "idempotency.py"])
 
     with open(fname) as f:
         assert f.read() == after
 
-    Qt.__shim__.cli(args=[fname])
+    Qt.__shim__.cli(args=["--convert", "idempotency.py"])
 
     with open(fname) as f:
         assert f.read() == after
@@ -239,9 +241,13 @@ def test_convert_backup():
         f.write("")
 
     import Qt
-    Qt.__shim__.cli(args=[fname])
 
-    assert os.path.exists("%s_backup%s" % os.path.splitext(fname))
+    os.chdir(self.tempdir)
+    Qt.__shim__.cli(args=["--convert", "idempotency.py"])
+
+    assert os.path.exists(
+        os.path.join(self.tempdir, "%s_backup%s" % os.path.splitext(fname))
+    )
 
 
 def test_meta_add():
