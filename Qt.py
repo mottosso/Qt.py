@@ -262,11 +262,17 @@ def cli(args):
     parser.add_argument("--stdout",
                         help="Write to stdout instead of file",
                         action="store_true")
+    parser.add_argument("--stdin",
+                        help="Read from stdin instead of file",
+                        action="store_true")
 
     args = parser.parse_args(args)
 
     if args.stdout:
         raise NotImplementedError("--stdout")
+
+    if args.stdin:
+        raise NotImplementedError("--stdin")
 
     if args.compile:
         raise NotImplementedError("--compile")
@@ -299,6 +305,9 @@ def init():
 
     This means no functions or variables can be called after
     this has executed.
+
+    For debugging and testing, this module may be accessed
+    through `Qt.__shim__`.
 
     """
 
