@@ -51,6 +51,8 @@ Qt.py is a single file and can either be [copy/pasted](https://raw.githubusercon
 $ pip install Qt.py
 ```
 
+- Pro tip: Supports vendoring
+
 <br>
 <br>
 <br>
@@ -70,6 +72,8 @@ button = QtWidgets.QPushButton("Hello World")
 button.show()
 app.exec_()
 ```
+
+- Also see [/examples](examples)
 
 <br>
 <br>
