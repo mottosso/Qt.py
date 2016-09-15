@@ -19,6 +19,8 @@ RUN pip install nose nosepipe
 
 # Enable additional output from Qt.py
 ENV QT_VERBOSE true
+ENV QT_IGNORE_OVERRIDES true
+
 # Xvfb
 ENV DISPLAY :99
 
