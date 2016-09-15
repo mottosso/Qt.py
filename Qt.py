@@ -31,7 +31,7 @@ Usage:
 import os
 import sys
 
-__version__ = "0.4.2"
+__version__ = "0.4.3"
 
 # All unique members of Qt.py
 __added__ = list()
