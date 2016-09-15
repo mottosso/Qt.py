@@ -57,7 +57,7 @@ def remap(object, name, value, safe=True):
 
     """
 
-    if safe:
+    if os.getenv("QT_TESTING") is not None and safe:
         # Cannot alter original binding.
         if hasattr(object, name):
             raise AttributeError("Cannot override existing name: "
