@@ -254,6 +254,7 @@ None yet.
 
 Send us a pull-request with your studio here.
 
+- Method Studios
 - Framestore
 - Weta Digital
 - Disney Animation
