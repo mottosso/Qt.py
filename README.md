@@ -135,7 +135,27 @@ Using the OS path separator (`os.pathsep`) which is `:` on Unix systems and `;` 
 
 <br>
 
-##### Load Qt Designer .ui files
+##### Compile Qt Designer files
+
+> WARNING - ALPHA FUNCTIONALITY<br>
+> See [#132](https://github.com/mottosso/Qt.py/pull/132) for details.
+
+`.ui` files compiled via `pyside2-uic` inherently contain traces of PySide2 - e.g. the line `from PySide2 import QtGui`.
+
+In order to use these with Qt.py, or any other binding, one must first erase such traces and replace them with cross-compatible code.
+
+```bash
+$ pyside2-uic my_ui.ui -o my_ui.py
+$ python -m Qt --convert my_ui.py
+# Creating "my_ui_backup.py"..
+# Successfully converted "my_ui.py"
+```
+
+Now you may use the file as you normally would, with Qt.py
+
+<br>
+
+##### Load Qt Designer files
 
 The `uic.loadUi` function of PyQt4 and PyQt5 as well as the `QtUiTools.QUiLoader().load` function of PySide/PySide2 are mapped to a convenience function `load_ui`.
 

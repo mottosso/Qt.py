@@ -159,6 +159,97 @@ def test_vendoring():
     ) == 0
 
 
+def test_convert_simple():
+    """python -m Qt --convert works in general"""
+    before = """\
+from PySide2 import QtCore, QtGui, QtWidgets
+
+class Ui_uic(object):
+    def setupUi(self, uic):
+        self.retranslateUi(uic)
+
+    def retranslateUi(self, uic):
+        self.pushButton_2.setText(
+            QtWidgets.QApplication.translate("uic", "NOT Ok", None, -1))
+""".split("\n")
+
+    after = """\
+from Qt import QtCore, QtGui, QtWidgets
+
+class Ui_uic(object):
+    def setupUi(self, uic):
+        self.retranslateUi(uic)
+
+    def retranslateUi(self, uic):
+        self.pushButton_2.setText(
+            Qt.translate("uic", "NOT Ok", None, -1))
+""".split("\n")
+
+    import Qt
+    assert Qt.convert(before) == after, after
+
+
+def test_convert_idempotency():
+    """Converting a converted file produces an identical file"""
+    before = """\
+from PySide2 import QtCore, QtGui, QtWidgets
+
+class Ui_uic(object):
+    def setupUi(self, uic):
+        self.retranslateUi(uic)
+
+    def retranslateUi(self, uic):
+        self.pushButton_2.setText(
+            QtWidgets.QApplication.translate("uic", "NOT Ok", None, -1))
+"""
+
+    after = """\
+from Qt import QtCore, QtGui, QtWidgets
+
+class Ui_uic(object):
+    def setupUi(self, uic):
+        self.retranslateUi(uic)
+
+    def retranslateUi(self, uic):
+        self.pushButton_2.setText(
+            Qt.translate("uic", "NOT Ok", None, -1))
+"""
+
+    fname = os.path.join(self.tempdir, "idempotency.py")
+    with open(fname, "w") as f:
+        f.write(before)
+
+    import Qt
+
+    os.chdir(self.tempdir)
+    Qt.__shim__.cli(args=["--convert", "idempotency.py"])
+
+    with open(fname) as f:
+        assert f.read() == after
+
+    Qt.__shim__.cli(args=["--convert", "idempotency.py"])
+
+    with open(fname) as f:
+        assert f.read() == after
+
+
+def test_convert_backup():
+    """Converting produces a backup"""
+
+    fname = os.path.join(self.tempdir, "idempotency.py")
+    with open(fname, "w") as f:
+        f.write("")
+
+    import Qt
+
+    os.chdir(self.tempdir)
+    Qt.__shim__.cli(args=["--convert", "idempotency.py"])
+
+    assert os.path.exists(
+        os.path.join(self.tempdir, "%s_backup%s" % os.path.splitext(fname))
+    )
+
+
 def test_meta_add():
     """Qt.add() appends to __added__"""
     import types
