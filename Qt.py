@@ -31,7 +31,7 @@ Usage:
 import os
 import sys
 
-__version__ = "0.4.2"
+__version__ = "0.4.3"
 
 # All unique members of Qt.py
 __added__ = list()
@@ -57,7 +57,7 @@ def remap(object, name, value, safe=True):
 
     """
 
-    if safe:
+    if os.getenv("QT_TESTING") is not None and safe:
         # Cannot alter original binding.
         if hasattr(object, name):
             raise AttributeError("Cannot override existing name: "
