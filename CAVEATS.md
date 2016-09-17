@@ -254,10 +254,21 @@ AttributeError: 'PySide.QtGui.QHeaderView' object has no attribute 'setSectionRe
 
 ##### Workaround
 
-Use a conditional.
+Use compatibility wrapper.
 
 ```python
 # PySide2
+>>> from Qt import QtWidgets, QtShim
+>>> app = QtWidgets.QApplication(sys.argv)
+>>> view = QtWidgets.QTreeWidget()
+>>> header = view.header()
+>>> QtShim.setSectionResizeMode(header, QtWidgets.QHeaderView.Fixed)
+```
+
+Or a conditional.
+
+```python
+# PyQt5
 >>> from Qt import QtWidgets, __binding__
 >>> app = QtWidgets.QApplication(sys.argv)
 >>> view = QtWidgets.QTreeWidget()
@@ -267,4 +278,3 @@ Use a conditional.
 ... else:
 ...   header.setSectionResizeMode(QtWidgets.QHeaderView.Fixed)
 ```
-
