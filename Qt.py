@@ -19,19 +19,20 @@ Default resolution order:
     - PyQt4
 
 Usage:
-    >>> import sys
-    >>> from Qt import QtWidgets
-    >>> app = QtWidgets.QApplication(sys.argv)
-    >>> button = QtWidgets.QPushButton("Hello World")
-    >>> button.show()
-    >>> app.exec_()
+    >> import sys
+    >> from Qt import QtWidgets
+    >> app = QtWidgets.QApplication(sys.argv)
+    >> button = QtWidgets.QPushButton("Hello World")
+    >> button.show()
+    >> app.exec_()
 
 """
 
 import os
 import sys
+import shutil
 
-__version__ = "0.4.3"
+__version__ = "0.5.0"
 
 # All unique members of Qt.py
 __added__ = list()
@@ -84,6 +85,31 @@ def add(object, name, value, safe=True):
     remap(object, name, value, safe)
 
 
+def convert(lines):
+    """Convert compiled .ui file from PySide2 to Qt.py
+
+    Arguments:
+        lines (list): Each line of of .ui file
+
+    Usage:
+        >> with open("myui.py") as f:
+        ..   lines = convert(f.readlines())
+
+    """
+
+    def parse(line):
+        line = line.replace("from PySide2 import", "from Qt import")
+        line = line.replace("QtWidgets.QApplication.translate", "Qt.translate")
+        return line
+
+    parsed = list()
+    for line in lines:
+        line = parse(line)
+        parsed.append(line)
+
+    return parsed
+
+
 def pyqt5():
     import PyQt5.Qt
     from PyQt5 import QtCore, uic
@@ -100,6 +126,10 @@ def pyqt5():
     add(PyQt5, "__remapped__", __remapped__)
     add(PyQt5, "__modified__", __modified__)
     add(PyQt5, "load_ui", lambda fname: uic.loadUi(fname))
+    add(PyQt5, "convert", convert)
+    add(PyQt5, "translate", lambda
+        context, sourceText, disambiguation, n: QtCore.QCoreApplication(
+            context, sourceText, disambiguation, n))
 
     return PyQt5
 
@@ -150,6 +180,10 @@ def pyqt4():
     add(PyQt4, "__remapped__", __remapped__)
     add(PyQt4, "__modified__", __modified__)
     add(PyQt4, "load_ui", lambda fname: uic.loadUi(fname))
+    add(PyQt4, "convert", convert)
+    add(PyQt4, "translate", lambda
+        context, sourceText, disambiguation, n: QtCore.QCoreApplication(
+            context, sourceText, disambiguation, None, n))
 
     return PyQt4
 
@@ -168,6 +202,10 @@ def pyside2():
     add(PySide2, "__remapped__", __remapped__)
     add(PySide2, "__modified__", __modified__)
     add(PySide2, "load_ui", lambda fname: QtUiTools.QUiLoader().load(fname))
+    add(PySide2, "convert", convert)
+    add(PySide2, "translate", lambda
+        context, sourceText, disambiguation, n: QtCore.QCoreApplication(
+            context, sourceText, disambiguation, n))
 
     return PySide2
 
@@ -198,6 +236,10 @@ def pyside():
     add(PySide, "__remapped__", __remapped__)
     add(PySide, "__modified__", __modified__)
     add(PySide, "load_ui", lambda fname: QtUiTools.QUiLoader().load(fname))
+    add(PySide, "convert", convert)
+    add(PySide, "translate", lambda
+        context, sourceText, disambiguation, n: QtCore.QCoreApplication(
+            context, sourceText, disambiguation, None, n))
 
     return PySide
 
@@ -205,6 +247,60 @@ def pyside():
 def log(text, verbose):
     if verbose:
         sys.stdout.write(text)
+
+
+def cli(args):
+    """Qt.py command-line interface"""
+    import argparse
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--convert",
+                        help="Path to compiled Python module, e.g. my_ui.py")
+    parser.add_argument("--compile",
+                        help="Accept raw .ui file and compile with native "
+                             "PySide2 compiler.")
+    parser.add_argument("--stdout",
+                        help="Write to stdout instead of file",
+                        action="store_true")
+    parser.add_argument("--stdin",
+                        help="Read from stdin instead of file",
+                        action="store_true")
+
+    args = parser.parse_args(args)
+
+    if args.stdout:
+        raise NotImplementedError("--stdout")
+
+    if args.stdin:
+        raise NotImplementedError("--stdin")
+
+    if args.compile:
+        raise NotImplementedError("--compile")
+
+    if args.convert:
+        sys.stdout.write("#\n"
+                         "# WARNING: --convert is an ALPHA feature.\n#\n"
+                         "# See https://github.com/mottosso/Qt.py/pull/132\n"
+                         "# for details.\n"
+                         "#\n")
+
+        #
+        # ------> Read
+        #
+        with open(args.convert) as f:
+            lines = convert(f.readlines())
+
+        backup = "%s_backup%s" % os.path.splitext(args.convert)
+        sys.stdout.write("Creating \"%s\"..\n" % backup)
+        shutil.copy(args.convert, backup)
+
+        #
+        # <------ Write
+        #
+        with open(args.convert, "w") as f:
+            f.write("".join(lines))
+
+        sys.stdout.write("Successfully converted \"%s\"\n" % args.convert)
 
 
 def init():
@@ -215,6 +311,9 @@ def init():
 
     This means no functions or variables can be called after
     this has executed.
+
+    For debugging and testing, this module may be accessed
+    through `Qt.__shim__`.
 
     """
 
@@ -272,4 +371,4 @@ def init():
     raise ImportError("No Qt binding were found.")
 
 
-init()
+cli(sys.argv[1:]) if __name__ == "__main__" else init()
