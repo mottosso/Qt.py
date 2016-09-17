@@ -375,6 +375,7 @@ def _maintain_backwards_compatibility(binding):
 
     for member in ("__binding__",
                    "__binding_version__",
+                   "__qt_version__",
                    "__added__",
                    "__remapped__",
                    "__modified__",
@@ -386,10 +387,6 @@ def _maintain_backwards_compatibility(binding):
 
     setattr(binding, "__wrapper_version__", self.__version__)
     self.__added__.append("__wrapper_version__")
-
-    # Related to compatibility with python-qt. See issue #135
-    setattr(binding, "__qt_version__", self.__qt_version__)
-    self.__added__.append("__qt_version__")
 
 
 cli(sys.argv[1:]) if __name__ == "__main__" else init()
