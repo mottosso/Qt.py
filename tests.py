@@ -321,15 +321,15 @@ def test_pyside2uic():
         # Read compiled UI into string
         pyfile_output = StringIO()
         pyside2uic.compileUi(ui_file, pyfile_output, indent=0)
-        print(pyfile_output.getvalue())
-        exec pyfile_output.getvalue()
+        # print(pyfile_output.getvalue())
+        # exec pyfile_output.getvalue()  # Execute Python code
 
         # Write compiled ui into Python file
         py_filename = 'output.py'
         with open(py_filename, 'w') as py_file:
             pyside2uic.compileUi(ui_file, py_file, indent=0)
             import output
-            ui_form = output.Ui_Form()  # Create object
+            # ui_form = output.Ui_Form()  # Create object
         os.remove(py_filename)
 
 
