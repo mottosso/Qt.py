@@ -263,6 +263,7 @@ def test_meta_add():
     assert "MyAttr" not in Qt.__remapped__
     assert "MyAttr" not in Qt.__modified__
 
+
 def test_meta_remap():
     """Qt.remap() appends to __modified__"""
     import types
@@ -275,7 +276,6 @@ def test_meta_remap():
     assert "MyAttr" not in Qt.__added__, Qt.__added__
     assert "MyAttr" in Qt.__remapped__
     assert "MyAttr" not in Qt.__modified__
-
 
 
 def test_meta_add_existing():
