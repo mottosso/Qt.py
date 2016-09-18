@@ -311,11 +311,10 @@ def test_import_from_qtwidgets():
     assert QPushButton.__name__ == "QPushButton", QPushButton
 
 
-def test_pyside2uic_py2():
-    """pyside2-uic, Python 2"""
+def test_pyside2uic():
+    """pyside2-uic"""
 
     import pyside2uic
-    from cStringIO import StringIO
 
     with open(self.ui_qwidget, 'r') as ui_file:
         py_filename = 'output.py'
