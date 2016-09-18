@@ -315,8 +315,16 @@ def test_pyside2uic():
     """pyside2-uic"""
 
     import pyside2uic
+    from cStringIO import StringIO
 
     with open(self.ui_qwidget, 'r') as ui_file:
+        # Read compiled UI into string
+        pyfile_output = StringIO()
+        pyside2uic.compileUi(ui_file, pyfile_output, indent=0)
+        print(pyfile_output.getvalue())
+        exec pyfile_output.getvalue()
+
+        # Write compiled ui into Python file
         py_filename = 'output.py'
         with open(py_filename, 'w') as py_file:
             pyside2uic.compileUi(ui_file, py_file, indent=0)
