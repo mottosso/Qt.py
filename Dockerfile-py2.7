@@ -1,5 +1,8 @@
 FROM ubuntu:16.04
 
+# Needed to install pyside2-tools without issues
+ENV DEBIAN_FRONTEND noninteractive
+
 RUN apt-get update && \
     apt-get install -y \
         software-properties-common && \
@@ -12,7 +15,11 @@ RUN apt-get update && \
         python-pyqt5 \
         python-pyside \
         python-pyside2 \
+        pyside2-tools \
         xvfb
+
+# Make pyside2uic availble for Python 2.x
+RUN cp -avr /usr/lib/python3/dist-packages/pyside2uic /usr/local/lib/python2.7/dist-packages
 
 # Nose is the Python test-runner
 RUN pip install nose nosepipe

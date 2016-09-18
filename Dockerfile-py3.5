@@ -1,5 +1,8 @@
 FROM ubuntu:16.04
 
+# Needed to install pyside2-tools without issues
+ENV DEBIAN_FRONTEND noninteractive
+
 RUN apt-get update && \
     apt-get install -y \
         software-properties-common && \
@@ -12,6 +15,7 @@ RUN apt-get update && \
         python3-pyqt5 \
         python3-pyside \
         python3-pyside2 \
+        pyside2-tools \
         xvfb
 
 # Nose is the Python test-runner
