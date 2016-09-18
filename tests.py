@@ -327,7 +327,7 @@ def test_pyside2uic():
         # Write compiled ui into Python file
         py_filename = 'output.py'
         with open(py_filename, 'w') as py_file:
-            pyside2uic.compileUi(ui_file, py_file, indent=0)
+            pyside2uic.compileUi(ui_file, py_file)
             import output
             # ui_form = output.Ui_Form()  # Create object
         os.remove(py_filename)
