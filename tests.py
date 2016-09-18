@@ -311,6 +311,21 @@ def test_import_from_qtwidgets():
     assert QPushButton.__name__ == "QPushButton", QPushButton
 
 
+def test_pyside2uic_py2():
+    """pyside2-uic, Python 2"""
+
+    import pyside2uic
+    from cStringIO import StringIO
+
+    with open(self.ui_qwidget, 'r') as ui_file:
+        py_filename = 'output.py'
+        with open(py_filename, 'w') as py_file:
+            pyside2uic.compileUi(ui_file, py_file, indent=0)
+            import output
+            ui_form = output.Ui_Form()  # Create object
+        os.remove(py_filename)
+
+
 if binding("PyQt4"):
     def test_preferred_pyqt4():
         """QT_PREFERRED_BINDING = PyQt4 properly forces the binding"""
