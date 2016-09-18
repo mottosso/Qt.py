@@ -319,8 +319,8 @@ def test_pyside2uic():
 
     with open(self.ui_qwidget, 'r') as ui_file:
         # Read compiled UI into string
-        pyfile_output = StringIO()
-        pyside2uic.compileUi(ui_file, pyfile_output, indent=0)
+        # pyfile_output = StringIO()
+        # pyside2uic.compileUi(ui_file, pyfile_output, indent=0)
         # print(pyfile_output.getvalue())
         # exec pyfile_output.getvalue()  # Execute Python code
 
