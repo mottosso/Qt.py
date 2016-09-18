@@ -312,16 +312,15 @@ def test_import_from_qtwidgets():
 
 
 def test_pyside2uic():
-    """pyside2-uic"""
+    """Test pyside2uic (copied from Python 3.x dist-packages)"""
 
     import pyside2uic
 
-    expected_output = """\
-# -*- coding: utf-8 -*-
+    expected_output = """# -*- coding: utf-8 -*-
 
 # Form implementation generated from reading ui file 'diggi.ui'
 #
-# Created: Sun Sep 18 13:57:29 2016
+# Created: Sun Sep 18 14:21:02 2016
 #      by: pyside2-uic  running on PySide2 2.0.0~alpha0
 #
 # WARNING! All changes made in this file will be lost!
@@ -354,13 +353,14 @@ class Ui_Form(object):
         # print(pyfile_output.getvalue())
         # exec pyfile_output.getvalue()  # Execute Python code
 
-        # Write compiled ui into Python file
         py_filename = 'output.py'
-        with open(py_filename, 'w') as py_file:
-            pyside2uic.compileUi(ui_file, py_file)
-            # import output
-            # ui_form = output.Ui_Form()  # Create object
+        with open(ui_file, 'r') as ui_file:
+            with open(py_filename, 'w') as py_file:
+                pyside2uic.compileUi(ui_file, py_file)
+
+        with open(py_filename, 'r') as py_file:
             assert expected_output == py_file.read()
+
         os.remove(py_filename)
 
 
