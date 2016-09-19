@@ -324,7 +324,7 @@ Send us a pull-request with your project here.
 [QtPy]: https://github.com/spyder-ide/qtpy
 [jupyter]: https://github.com/jupyter/qtconsole/blob/master/qtconsole/qt_loaders.py
 [pyqode.qt]: https://github.com/pyQode/pyqode.qt
-[QtExt]: https://bitbucket.org/efestolab/qtext
+[QtExt]: https://bitbucket.org/ftrack/qtext
 
 <br>
 <br>
