@@ -354,6 +354,8 @@ Each of these are run under..
 
 ..once for each binding or under a specific binding only.
 
+Each test is run within it's own isolated process, so as to allow an `import` to occur independently from other tests. Process isolation is handled via [nosepipe](https://pypi.python.org/pypi/nosepipe).
+
 Tests that are written at module level are run four times - once per binding - whereas tests written under a specific if-statement are run only for this particular binding.
 
 ```python
