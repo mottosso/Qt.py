@@ -219,15 +219,15 @@ class Ui_uic(object):
     with open(fname, "w") as f:
         f.write(before)
 
-    from Qt import QtShim
+    from Qt import QtCompat
 
     os.chdir(self.tempdir)
-    QtShim.cli(args=["--convert", "idempotency.py"])
+    QtCompat.cli(args=["--convert", "idempotency.py"])
 
     with open(fname) as f:
         assert f.read() == after
 
-    QtShim.cli(args=["--convert", "idempotency.py"])
+    QtCompat.cli(args=["--convert", "idempotency.py"])
 
     with open(fname) as f:
         assert f.read() == after
@@ -240,10 +240,10 @@ def test_convert_backup():
     with open(fname, "w") as f:
         f.write("")
 
-    from Qt import QtShim
+    from Qt import QtCompat
 
     os.chdir(self.tempdir)
-    QtShim.cli(args=["--convert", "idempotency.py"])
+    QtCompat.cli(args=["--convert", "idempotency.py"])
 
     assert os.path.exists(
         os.path.join(self.tempdir, "%s_backup%s" % os.path.splitext(fname))
@@ -252,52 +252,52 @@ def test_convert_backup():
 
 def test_meta_add():
     """Qt._add() appends to __added__"""
-    from Qt import QtShim
+    from Qt import QtCompat
 
     module = imp.new_module("QtMock")
 
-    QtShim._add(module, "MyAttr", None)
+    QtCompat._add(module, "MyAttr", None)
 
-    assert "MyAttr" in QtShim.__added__, QtShim.__added__
-    assert "MyAttr" not in QtShim.__remapped__
-    assert "MyAttr" not in QtShim.__modified__
+    assert "MyAttr" in QtCompat.__added__, QtCompat.__added__
+    assert "MyAttr" not in QtCompat.__remapped__
+    assert "MyAttr" not in QtCompat.__modified__
 
 
 def test_meta_remap():
     """Qt._remap() appends to __modified__"""
-    from Qt import QtShim
+    from Qt import QtCompat
 
     module = imp.new_module("QtMock")
 
-    QtShim._remap(module, "MyAttr", None)
+    QtCompat._remap(module, "MyAttr", None)
 
-    assert "MyAttr" not in QtShim.__added__, QtShim.__added__
-    assert "MyAttr" in QtShim.__remapped__
-    assert "MyAttr" not in QtShim.__modified__
+    assert "MyAttr" not in QtCompat.__added__, QtCompat.__added__
+    assert "MyAttr" in QtCompat.__remapped__
+    assert "MyAttr" not in QtCompat.__modified__
 
 
 def test_meta_remap_existing():
     """Qt._remap() of existing member throws an exception"""
-    from Qt import QtShim
+    from Qt import QtCompat
 
     module = imp.new_module("QtMock")
     module.MyAttr = None
 
-    assert_raises(AttributeError, QtShim._remap, module, "MyAttr", None)
+    assert_raises(AttributeError, QtCompat._remap, module, "MyAttr", None)
 
 
 def test_meta_force_remap_existing():
     """Unsafe Qt._remap() of existing member adds to modified"""
-    from Qt import QtShim
+    from Qt import QtCompat
 
     module = imp.new_module("QtMock")
     module.MyAttr = 123
 
-    QtShim._remap(module, "MyAttr", None, safe=False)
+    QtCompat._remap(module, "MyAttr", None, safe=False)
 
-    assert "MyAttr" in QtShim.__remapped__, QtShim.__remapped__
-    assert "MyAttr" not in QtShim.__added__
-    assert "MyAttr" in QtShim.__modified__
+    assert "MyAttr" in QtCompat.__remapped__, QtCompat.__remapped__
+    assert "MyAttr" not in QtCompat.__added__
+    assert "MyAttr" in QtCompat.__modified__
     assert module.MyAttr is None, module.MyAttr
 
 

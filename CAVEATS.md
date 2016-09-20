@@ -258,11 +258,11 @@ Use compatibility wrapper.
 
 ```python
 # PySide2
->>> from Qt import QtWidgets, QtShim
+>>> from Qt import QtWidgets, QtCompat
 >>> app = QtWidgets.QApplication(sys.argv)
 >>> view = QtWidgets.QTreeWidget()
 >>> header = view.header()
->>> QtShim.setSectionResizeMode(header, QtWidgets.QHeaderView.Fixed)
+>>> QtCompat.setSectionResizeMode(header, QtWidgets.QHeaderView.Fixed)
 ```
 
 Or a conditional.

@@ -81,7 +81,7 @@ app.exec_()
 
 ### Documentation
 
-All members of `Qt` stem directly from those available via PySide2, along with these additional members, accessible via `Qt.QtShim`.
+All members of `Qt` stem directly from those available via PySide2, along with these additional members, accessible via `Qt.QtCompat`.
 
 | Attribute               | Returns     | Description
 |:------------------------|:------------|:------------
@@ -103,8 +103,8 @@ All members of `Qt` stem directly from those available via PySide2, along with t
 **Example**
 
 ```python
->>> from Qt import QtShim
->>> QtShim.__binding__
+>>> from Qt import QtCompat
+>>> QtCompat.__binding__
 'PyQt5'
 ```
 
@@ -115,7 +115,7 @@ All members of `Qt` stem directly from those available via PySide2, along with t
 Some bindings offer features not available in others, you can use `__binding__` to capture those.
 
 ```python
-if "PySide" in QtShim.__binding__:
+if "PySide" in QtCompat.__binding__:
   do_pyside_stuff()
 ```
 
@@ -128,7 +128,7 @@ If your system has multiple choices where one or more is preferred, you can over
 ```bash
 $ set QT_PREFERRED_BINDING=PyQt5  # Windows
 $ export QT_PREFERRED_BINDING=PyQt5  # Unix/OSX
-$ python -c "from Qt import QtShim;print(QtShim.__binding__)"
+$ python -c "from Qt import QtCompat;print(QtCompat.__binding__)"
 PyQt5
 ```
 
@@ -169,10 +169,10 @@ The `uic.loadUi` function of PyQt4 and PyQt5 as well as the `QtUiTools.QUiLoader
 
 ```python
 import sys
-from Qt import QtShim
+from Qt import QtCompat
 
 app = QtWidgets.QApplication(sys.argv)
-ui = QtShim.load_ui(fname="my.ui")
+ui = QtCompat.load_ui(fname="my.ui")
 ui.show()
 app.exec_()
 ```
@@ -339,6 +339,30 @@ Send us a pull-request with your project here.
 <br>
 
 ### Developer Guide
+
+Tests are performed on each aspect of the shim.
+
+- [Functional](tests.py)
+- [Caveats](build_caveats.py)
+- [Examples](examples)
+- [Membership](build_membership.py)
+
+Each of these are run under..
+
+- Python 2.7
+- Python 3.4
+
+..once for each binding or under a specific binding only.
+
+Tests that are written at module level are run four times - once per binding - whereas tests written under a specific if-statement are run only for this particular binding.
+
+```python
+if binding("PyQt4"):
+	def test_something_related_to_pyqt4():
+		pass
+```
+
+**Running tests**
 
 Due to the nature of multiple bindings and multiple interpreter support, setting up a development environment in which to properly test your contraptions can be challenging. So here is a guide for how to do just that using **Docker**.
 

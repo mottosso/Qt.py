@@ -109,7 +109,7 @@ def _remap(object, name, value, safe=True):
 
 
 def _add(object, name, value):
-    """Append to self, accessible via Qt.QtShim"""
+    """Append to self, accessible via Qt.QtCompat"""
     self.__added__.append(name)
     setattr(self, name, value)
 
@@ -174,7 +174,7 @@ def _pyqt4():
         # QtWebkit is optional in Qt , therefore might not be available
         pass
 
-    _add(PyQt4, "QtShim", self)
+    _add(PyQt4, "QtCompat", self)
     _add(PyQt4, "__binding__", PyQt4.__name__)
     _add(PyQt4, "load_ui", lambda fname: uic.loadUi(fname))
     _add(PyQt4, "translate", lambda context, sourceText, disambiguation, n: (
@@ -349,7 +349,7 @@ def init():
         else:
             # Reference to this module
             binding.__shim__ = self
-            binding.QtShim = self
+            binding.QtCompat = self
 
             sys.modules.update({
                 __name__: binding,
