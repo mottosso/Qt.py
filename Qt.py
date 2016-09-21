@@ -32,57 +32,21 @@ import os
 import sys
 import shutil
 
-__version__ = "0.5.0"
+self = sys.modules[__name__]
 
-# All unique members of Qt.py
-__added__ = list()
+self.__version__ = "0.6.0"
 
-# Members copied from elsewhere, such as QtGui -> QtWidgets
-__remapped__ = list()
+self.__added__ = list()     # All unique members of Qt.py
+self.__remapped__ = list()  # Members copied from elsewhere
+self.__modified__ = list()  # Existing members modified in some way
 
-# Existing members modified in some way
-__modified__ = list()
-
-
-def remap(object, name, value, safe=True):
-    """Prevent accidental assignment of existing members
-
-    Arguments:
-        object (object): Parent of new attribute
-        name (str): Name of new attribute
-        value (object): Value of new attribute
-        safe (bool): Whether or not to guarantee that
-            the new attribute was not overwritten.
-            Can be set to False under condition that
-            it is superseded by extensive testing.
-
-    """
-
-    if os.getenv("QT_TESTING") is not None and safe:
-        # Cannot alter original binding.
-        if hasattr(object, name):
-            raise AttributeError("Cannot override existing name: "
-                                 "%s.%s" % (object.__name__, name))
-
-        # Cannot alter classes of functions
-        if type(object).__name__ != "module":
-            raise AttributeError("%s != 'module': Cannot alter "
-                                 "anything but modules" % object)
-
-    elif hasattr(object, name):
-        # Keep track of modifications
-        __modified__.append(name)
-
-    if name not in __added__:
-        __remapped__.append(name)
-
-    setattr(object, name, value)
-
-
-def add(object, name, value, safe=True):
-    """Identical to :func:`remap` and provided for readability only"""
-    __added__.append(name)
-    remap(object, name, value, safe)
+# Below members are set dynamically on import relative the original binding.
+self.__qt_version__ = "0.0.0"
+self.__binding__ = "None"
+self.__binding_version__ = "0.0.0"
+self.load_ui = lambda fname: None
+self.translate = lambda context, sourceText, disambiguation, n: None
+self.setSectionResizeMode = lambda *args, **kwargs: None
 
 
 def convert(lines):
@@ -110,31 +74,69 @@ def convert(lines):
     return parsed
 
 
-def pyqt5():
+def _remap(object, name, value, safe=True):
+    """Prevent accidental assignment of existing members
+
+    Arguments:
+        object (object): Parent of new attribute
+        name (str): Name of new attribute
+        value (object): Value of new attribute
+        safe (bool): Whether or not to guarantee that
+            the new attribute was not overwritten.
+            Can be set to False under condition that
+            it is superseded by extensive testing.
+
+    """
+
+    if os.getenv("QT_TESTING") is not None and safe:
+        # Cannot alter original binding.
+        if hasattr(object, name):
+            raise AttributeError("Cannot override existing name: "
+                                 "%s.%s" % (object.__name__, name))
+
+        # Cannot alter classes of functions
+        if type(object).__name__ != "module":
+            raise AttributeError("%s != 'module': Cannot alter "
+                                 "anything but modules" % object)
+
+    elif hasattr(object, name):
+        # Keep track of modifications
+        self.__modified__.append(name)
+
+    self.__remapped__.append(name)
+
+    setattr(object, name, value)
+
+
+def _add(object, name, value):
+    """Append to self, accessible via Qt.QtCompat"""
+    self.__added__.append(name)
+    setattr(self, name, value)
+
+
+def _pyqt5():
     import PyQt5.Qt
-    from PyQt5 import QtCore, uic
+    from PyQt5 import QtCore, QtWidgets, uic
 
-    remap(QtCore, "Signal", QtCore.pyqtSignal)
-    remap(QtCore, "Slot", QtCore.pyqtSlot)
-    remap(QtCore, "Property", QtCore.pyqtProperty)
+    _remap(QtCore, "Signal", QtCore.pyqtSignal)
+    _remap(QtCore, "Slot", QtCore.pyqtSlot)
+    _remap(QtCore, "Property", QtCore.pyqtProperty)
 
-    add(PyQt5, "__wrapper_version__", __version__)
-    add(PyQt5, "__binding__", "PyQt5")
-    add(PyQt5, "__binding_version__", QtCore.PYQT_VERSION_STR)
-    add(PyQt5, "__qt_version__", QtCore.QT_VERSION_STR, safe=False)
-    add(PyQt5, "__added__", __added__)
-    add(PyQt5, "__remapped__", __remapped__)
-    add(PyQt5, "__modified__", __modified__)
-    add(PyQt5, "load_ui", lambda fname: uic.loadUi(fname))
-    add(PyQt5, "convert", convert)
-    add(PyQt5, "translate", lambda
-        context, sourceText, disambiguation, n: QtCore.QCoreApplication(
-            context, sourceText, disambiguation, n))
+    _add(PyQt5, "__binding__", PyQt5.__name__)
+    _add(PyQt5, "load_ui", lambda fname: uic.loadUi(fname))
+    _add(PyQt5, "translate", lambda context, sourceText, disambiguation, n: (
+        QtCore.QCoreApplication(context, sourceText,
+                                disambiguation, n)))
+    _add(PyQt5,
+         "setSectionResizeMode",
+         QtWidgets.QHeaderView.setSectionResizeMode)
+
+    _maintain_backwards_compatibility(PyQt5)
 
     return PyQt5
 
 
-def pyqt4():
+def _pyqt4():
     # Attempt to set sip API v2 (must be done prior to importing PyQt4)
     import sip
     try:
@@ -155,98 +157,89 @@ def pyqt4():
     import PyQt4.Qt
     from PyQt4 import QtCore, QtGui, uic
 
-    remap(PyQt4, "QtWidgets", QtGui)
-    remap(QtCore, "Signal", QtCore.pyqtSignal)
-    remap(QtCore, "Slot", QtCore.pyqtSlot)
-    remap(QtCore, "Property", QtCore.pyqtProperty)
-    remap(QtCore, "QItemSelection", QtGui.QItemSelection)
-    remap(QtCore, "QStringListModel", QtGui.QStringListModel)
-    remap(QtCore, "QItemSelectionModel", QtGui.QItemSelectionModel)
-    remap(QtCore, "QSortFilterProxyModel", QtGui.QSortFilterProxyModel)
-    remap(QtCore, "QAbstractProxyModel", QtGui.QAbstractProxyModel)
+    _remap(PyQt4, "QtWidgets", QtGui)
+    _remap(QtCore, "Signal", QtCore.pyqtSignal)
+    _remap(QtCore, "Slot", QtCore.pyqtSlot)
+    _remap(QtCore, "Property", QtCore.pyqtProperty)
+    _remap(QtCore, "QItemSelection", QtGui.QItemSelection)
+    _remap(QtCore, "QStringListModel", QtGui.QStringListModel)
+    _remap(QtCore, "QItemSelectionModel", QtGui.QItemSelectionModel)
+    _remap(QtCore, "QSortFilterProxyModel", QtGui.QSortFilterProxyModel)
+    _remap(QtCore, "QAbstractProxyModel", QtGui.QAbstractProxyModel)
 
     try:
         from PyQt4 import QtWebKit
-        remap(PyQt4, "QtWebKitWidgets", QtWebKit)
+        _remap(PyQt4, "QtWebKitWidgets", QtWebKit)
     except ImportError:
         # QtWebkit is optional in Qt , therefore might not be available
         pass
 
-    add(PyQt4, "__wrapper_version__", __version__)
-    add(PyQt4, "__binding__", "PyQt4")
-    add(PyQt4, "__binding_version__", QtCore.PYQT_VERSION_STR)
-    add(PyQt4, "__qt_version__", QtCore.QT_VERSION_STR)
-    add(PyQt4, "__added__", __added__)
-    add(PyQt4, "__remapped__", __remapped__)
-    add(PyQt4, "__modified__", __modified__)
-    add(PyQt4, "load_ui", lambda fname: uic.loadUi(fname))
-    add(PyQt4, "convert", convert)
-    add(PyQt4, "translate", lambda
-        context, sourceText, disambiguation, n: QtCore.QCoreApplication(
-            context, sourceText, disambiguation, None, n))
+    _add(PyQt4, "QtCompat", self)
+    _add(PyQt4, "__binding__", PyQt4.__name__)
+    _add(PyQt4, "load_ui", lambda fname: uic.loadUi(fname))
+    _add(PyQt4, "translate", lambda context, sourceText, disambiguation, n: (
+        QtCore.QCoreApplication(context, sourceText,
+                                disambiguation, None, n)))
+    _add(PyQt4, "setSectionResizeMode", QtGui.QHeaderView.setResizeMode)
+
+    _maintain_backwards_compatibility(PyQt4)
 
     return PyQt4
 
 
-def pyside2():
+def _pyside2():
     import PySide2
-    from PySide2 import QtGui, QtCore, QtUiTools
+    from PySide2 import QtGui, QtWidgets, QtCore, QtUiTools
 
-    remap(QtCore, "QStringListModel", QtGui.QStringListModel)
+    _remap(QtCore, "QStringListModel", QtGui.QStringListModel)
 
-    add(PySide2, "__wrapper_version__", __version__)
-    add(PySide2, "__binding__", "PySide2")
-    add(PySide2, "__binding_version__", PySide2.__version__)
-    add(PySide2, "__qt_version__", PySide2.QtCore.qVersion())
-    add(PySide2, "__added__", __added__)
-    add(PySide2, "__remapped__", __remapped__)
-    add(PySide2, "__modified__", __modified__)
-    add(PySide2, "load_ui", lambda fname: QtUiTools.QUiLoader().load(fname))
-    add(PySide2, "convert", convert)
-    add(PySide2, "translate", lambda
-        context, sourceText, disambiguation, n: QtCore.QCoreApplication(
-            context, sourceText, disambiguation, n))
+    _add(PySide2, "__binding__", PySide2.__name__)
+    _add(PySide2, "load_ui", lambda fname: QtUiTools.QUiLoader().load(fname))
+    _add(PySide2, "translate", lambda context, sourceText, disambiguation, n: (
+        QtCore.QCoreApplication(context, sourceText,
+                                disambiguation, None, n)))
+    _add(PySide2,
+         "setSectionResizeMode",
+         QtWidgets.QHeaderView.setSectionResizeMode)
+
+    _maintain_backwards_compatibility(PySide2)
 
     return PySide2
 
 
-def pyside():
+def _pyside():
     import PySide
     from PySide import QtGui, QtCore, QtUiTools
 
-    remap(PySide, "QtWidgets", QtGui)
-    remap(QtCore, "QSortFilterProxyModel", QtGui.QSortFilterProxyModel)
-    remap(QtCore, "QStringListModel", QtGui.QStringListModel)
-    remap(QtCore, "QItemSelection", QtGui.QItemSelection)
-    remap(QtCore, "QItemSelectionModel", QtGui.QItemSelectionModel)
-    remap(QtCore, "QAbstractProxyModel", QtGui.QAbstractProxyModel)
+    _remap(PySide, "QtWidgets", QtGui)
+    _remap(QtCore, "QSortFilterProxyModel", QtGui.QSortFilterProxyModel)
+    _remap(QtCore, "QStringListModel", QtGui.QStringListModel)
+    _remap(QtCore, "QItemSelection", QtGui.QItemSelection)
+    _remap(QtCore, "QItemSelectionModel", QtGui.QItemSelectionModel)
+    _remap(QtCore, "QAbstractProxyModel", QtGui.QAbstractProxyModel)
 
     try:
         from PySide import QtWebKit
-        remap(PySide, "QtWebKitWidgets", QtWebKit)
+        _remap(PySide, "QtWebKitWidgets", QtWebKit)
     except ImportError:
-        # QtWebkit is optional in Qt , therefore might not be available
+        # QtWebkit is optional in Qt, therefore might not be available
         pass
 
-    add(PySide, "__wrapper_version__", __version__)
-    add(PySide, "__binding__", "PySide")
-    add(PySide, "__binding_version__", PySide.__version__)
-    add(PySide, "__qt_version__", PySide.QtCore.qVersion())
-    add(PySide, "__added__", __added__)
-    add(PySide, "__remapped__", __remapped__)
-    add(PySide, "__modified__", __modified__)
-    add(PySide, "load_ui", lambda fname: QtUiTools.QUiLoader().load(fname))
-    add(PySide, "convert", convert)
-    add(PySide, "translate", lambda
-        context, sourceText, disambiguation, n: QtCore.QCoreApplication(
-            context, sourceText, disambiguation, None, n))
+    _add(PySide, "__binding__", PySide.__name__)
+    _add(PySide, "load_ui", lambda fname: QtUiTools.QUiLoader().load(fname))
+    _add(PySide, "translate", lambda context, sourceText, disambiguation, n: (
+        QtCore.QCoreApplication(context, sourceText,
+                                disambiguation, None, n)))
+    _add(PySide, "setSectionResizeMode", QtGui.QHeaderView.setResizeMode)
+
+    _maintain_backwards_compatibility(PySide)
 
     return PySide
 
 
-def log(text, verbose):
+def _log(text, verbose):
     if verbose:
-        sys.stdout.write(text)
+        sys.stdout.write(text + "\n")
 
 
 def cli(args):
@@ -319,20 +312,20 @@ def init():
 
     preferred = os.getenv("QT_PREFERRED_BINDING")
     verbose = os.getenv("QT_VERBOSE") is not None
-    bindings = (pyside2, pyqt5, pyside, pyqt4)
+    bindings = (_pyside2, _pyqt5, _pyside, _pyqt4)
 
     if preferred:
         # Internal flag (used in installer)
         if preferred == "None":
-            sys.modules[__name__].__wrapper_version__ = __version__
+            self.__wrapper_version__ = self.__version__
             return
 
         preferred = preferred.split(os.pathsep)
         available = {
-            "PySide2": pyside2,
-            "PyQt5": pyqt5,
-            "PySide": pyside,
-            "PyQt4": pyqt4
+            "PySide2": _pyside2,
+            "PyQt5": _pyqt5,
+            "PySide": _pyside,
+            "PyQt4": _pyqt4
         }
 
         try:
@@ -344,18 +337,19 @@ def init():
             )
 
     for binding in bindings:
-        log("Trying %s" % binding.__name__, verbose)
+        _log("Trying %s" % binding.__name__, verbose)
 
         try:
             binding = binding()
 
         except ImportError as e:
-            log(" - ImportError(\"%s\")\n" % e, verbose)
+            _log(" - ImportError(\"%s\")" % e, verbose)
             continue
 
         else:
             # Reference to this module
-            binding.__shim__ = sys.modules[__name__]
+            binding.__shim__ = self
+            binding.QtCompat = self
 
             sys.modules.update({
                 __name__: binding,
@@ -369,6 +363,30 @@ def init():
 
     # If not binding were found, throw this error
     raise ImportError("No Qt binding were found.")
+
+
+def _maintain_backwards_compatibility(binding):
+    """Add members found in prior versions up till the next major release
+
+    These members are to be considered deprecated. When a new major
+    release is made, these members are removed.
+
+    """
+
+    for member in ("__binding__",
+                   "__binding_version__",
+                   "__qt_version__",
+                   "__added__",
+                   "__remapped__",
+                   "__modified__",
+                   "convert",
+                   "load_ui",
+                   "translate"):
+        setattr(binding, member, getattr(self, member))
+        self.__added__.append(member)
+
+    setattr(binding, "__wrapper_version__", self.__version__)
+    self.__added__.append("__wrapper_version__")
 
 
 cli(sys.argv[1:]) if __name__ == "__main__" else init()

@@ -81,7 +81,7 @@ app.exec_()
 
 ### Documentation
 
-All members of `Qt` stem directly from those available via PySide2, along with these additional members.
+All members of `Qt` stem directly from those available via PySide2, along with these additional members, accessible via `Qt.QtCompat`.
 
 | Attribute               | Returns     | Description
 |:------------------------|:------------|:------------
@@ -92,8 +92,21 @@ All members of `Qt` stem directly from those available via PySide2, along with t
 | `__added__`             | `list(str)` | All unique members of Qt.py
 | `__remapped__`          | `list(str)` | Members copied from elsewhere, such as QtGui -> QtWidgets
 | `__modified__`          | `list(str)` | Existing members modified in some way
-| `__shim__`              | `str`       | Reference to original Qt.py Python module
+| `__shim__`              | `module`    | Reference to original Qt.py Python module
 | `load_ui(fname=str)`    | `QObject`   | Minimal wrapper of PyQt4.loadUi and PySide equivalent
+| `translate(...)`        | `function`  | Compatibility wrapper around [QCoreApplication.translate][]
+| `setSectionResizeMode()`| `method`    | Compatibility wrapper around [QAbstractItemView.setSectionResizeMode][]
+
+[QCoreApplication.translate]: https://doc.qt.io/qt-5/qcoreapplication.html#translate
+[QAbstractItemView.setSectionResizeMode]: https://doc.qt.io/qt-5/qheaderview.html#setSectionResizeMode
+
+**Example**
+
+```python
+>>> from Qt import QtCompat
+>>> QtCompat.__binding__
+'PyQt5'
+```
 
 <br>
 
@@ -102,7 +115,7 @@ All members of `Qt` stem directly from those available via PySide2, along with t
 Some bindings offer features not available in others, you can use `__binding__` to capture those.
 
 ```python
-if "PySide" in Qt.__binding__:
+if "PySide" in QtCompat.__binding__:
   do_pyside_stuff()
 ```
 
@@ -113,14 +126,9 @@ if "PySide" in Qt.__binding__:
 If your system has multiple choices where one or more is preferred, you can override the preference and order in which they are tried with this environment variable.
 
 ```bash
-# Windows
-$ set QT_PREFERRED_BINDING=PyQt5
-$ python -c "import Qt;print(Qt.__binding__)"
-PyQt5
-
-# Unix/OSX
-$ export QT_PREFERRED_BINDING=PyQt5
-$ python -c "import Qt;print(Qt.__binding__)"
+$ set QT_PREFERRED_BINDING=PyQt5  # Windows
+$ export QT_PREFERRED_BINDING=PyQt5  # Unix/OSX
+$ python -c "from Qt import QtCompat;print(QtCompat.__binding__)"
 PyQt5
 ```
 
@@ -161,10 +169,10 @@ The `uic.loadUi` function of PyQt4 and PyQt5 as well as the `QtUiTools.QUiLoader
 
 ```python
 import sys
-import Qt
+from Qt import QtCompat
 
 app = QtWidgets.QApplication(sys.argv)
-ui = Qt.load_ui(fname="my.ui")
+ui = QtCompat.load_ui(fname="my.ui")
 ui.show()
 app.exec_()
 ```
@@ -331,6 +339,32 @@ Send us a pull-request with your project here.
 <br>
 
 ### Developer Guide
+
+Tests are performed on each aspect of the shim.
+
+- [Functional](tests.py)
+- [Caveats](build_caveats.py)
+- [Examples](examples)
+- [Membership](build_membership.py)
+
+Each of these are run under..
+
+- Python 2.7
+- Python 3.4
+
+..once for each binding or under a specific binding only.
+
+Each test is run within it's own isolated process, so as to allow an `import` to occur independently from other tests. Process isolation is handled via [nosepipe](https://pypi.python.org/pypi/nosepipe).
+
+Tests that are written at module level are run four times - once per binding - whereas tests written under a specific if-statement are run only for this particular binding.
+
+```python
+if binding("PyQt4"):
+	def test_something_related_to_pyqt4():
+		pass
+```
+
+**Running tests**
 
 Due to the nature of multiple bindings and multiple interpreter support, setting up a development environment in which to properly test your contraptions can be challenging. So here is a guide for how to do just that using **Docker**.
 
