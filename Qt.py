@@ -63,7 +63,8 @@ def convert(lines):
 
     def parse(line):
         line = line.replace("from PySide2 import", "from Qt import")
-        line = line.replace("QtWidgets.QApplication.translate", "Qt.translate")
+        line = line.replace("QtWidgets.QApplication.translate",
+                            "Qt.QtCompat.translate")
         return line
 
     parsed = list()

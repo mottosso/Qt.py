@@ -182,7 +182,7 @@ class Ui_uic(object):
 
     def retranslateUi(self, uic):
         self.pushButton_2.setText(
-            Qt.translate("uic", "NOT Ok", None, -1))
+            Qt.QtCompat.translate("uic", "NOT Ok", None, -1))
 """.split("\n")
 
     import Qt
@@ -212,7 +212,7 @@ class Ui_uic(object):
 
     def retranslateUi(self, uic):
         self.pushButton_2.setText(
-            Qt.translate("uic", "NOT Ok", None, -1))
+            Qt.QtCompat.translate("uic", "NOT Ok", None, -1))
 """
 
     fname = os.path.join(self.tempdir, "idempotency.py")
