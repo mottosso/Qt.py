@@ -282,14 +282,17 @@ None yet.
 
 Send us a pull-request with your studio here.
 
-- Colorbleed
-- Method Studios
-- Framestore
-- Weta Digital
-- Disney Animation
-- Industriromantik
-- Psyop
-- ftrack
+- [Industrial Brothers](http://industrialbrothers.com/)
+- [Moonbot Studios](http://moonbotstudios.com/)
+- [Sony Pictures Imageworks](http://www.imageworks.com/)
+- [Colorbleed](http://www.colorbleed.nl/)
+- [Method Studios](http://www.methodstudios.com/)
+- [Framestore](https://framestore.com)
+- [Weta Digital](https://www.wetafx.co.nz/)
+- [Disney Animation](https://www.disneyanimation.com/)
+- [Industriromantik](http://www.industriromantik.se/)
+- [Psyop](http://www.psyop.com/)
+- [ftrack](https://www.ftrack.com/)
 
 Presented at Siggraph 2016, BOF!
 
