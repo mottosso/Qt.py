@@ -272,7 +272,9 @@ Once imported, it is as though your application was importing whichever binding 
 
 ### Known Problems
 
-None yet.
+Send us a pull-request with known problems here!
+
+- [Maya and incompatible bindings on PYTHONPATH](https://github.com/mottosso/Qt.py/issues/146)
 
 <br>
 <br>
