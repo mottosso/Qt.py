@@ -1,5 +1,4 @@
 import os
-import sys
 from setuptools import setup
 
 os.environ["QT_PREFERRED_BINDING"] = "None"

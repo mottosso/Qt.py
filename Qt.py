@@ -34,7 +34,7 @@ import shutil
 
 self = sys.modules[__name__]
 
-self.__version__ = "0.6.0"
+self.__version__ = "0.6.1"
 
 self.__added__ = list()     # All unique members of Qt.py
 self.__remapped__ = list()  # Members copied from elsewhere
