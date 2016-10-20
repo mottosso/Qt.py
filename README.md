@@ -284,6 +284,7 @@ Send us a pull-request with known problems here!
 
 Send us a pull-request with your studio here.
 
+- [Atomic Fiction](http://www.atomicfiction.com/)
 - [Industrial Brothers](http://industrialbrothers.com/)
 - [Moonbot Studios](http://moonbotstudios.com/)
 - [Sony Pictures Imageworks](http://www.imageworks.com/)
