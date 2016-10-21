@@ -29,6 +29,7 @@ Usage:
 """
 
 import os
+import re
 import sys
 import shutil
 
@@ -195,7 +196,7 @@ def _pyside2():
     _remap(QtCore, "QStringListModel", QtGui.QStringListModel)
 
     _add(PySide2, "__binding__", PySide2.__name__)
-    _add(PySide2, "load_ui", lambda fname: QtUiTools.QUiLoader().load(fname))
+    _add(PySide2, "load_ui", _pyside_loadui)
     _add(PySide2, "translate", lambda context, sourceText, disambiguation, n: (
         QtCore.QCoreApplication(context, sourceText,
                                 disambiguation, None, n)))
@@ -227,7 +228,7 @@ def _pyside():
         pass
 
     _add(PySide, "__binding__", PySide.__name__)
-    _add(PySide, "load_ui", lambda fname: QtUiTools.QUiLoader().load(fname))
+    _add(PySide, "load_ui", _pyside_loadui)
     _add(PySide, "translate", lambda context, sourceText, disambiguation, n: (
         QtCore.QCoreApplication(context, sourceText,
                                 disambiguation, None, n)))
@@ -236,6 +237,28 @@ def _pyside():
     _maintain_backwards_compatibility(PySide)
 
     return PySide
+
+
+def _pyside_loadui(fname):
+    '''
+    this function is for PySide load_ui bug when there are custom widgets in the ui file
+    '''
+    import PySide.QtUiTools as QtUiTools
+    import importlib
+    loader = QtUiTools.QUiLoader()
+    # get custom_widget
+    with open(fname) as ui_file:
+        all_xml = ui_file.read()
+        custom_wgt_xmls = re.findall(r'<customwidget>.*?</customwidget>', all_xml, re.S)
+        for cus_wgt_xml in custom_wgt_xmls:
+            class_search = re.search(r"<class>(.*?)</class>", cus_wgt_xml, re.S)
+            class_name = class_search.group(1)
+            module_search = re.search(r"<header.*>(.*?)</header>", cus_wgt_xml, re.S)
+            module_name = module_search.group(1).replace("/", ".")
+            # import and register
+            module = importlib.import_module(module_name)
+            loader.registerCustomWidget(getattr(module, class_name))
+    return loader.load(fname)
 
 
 def _log(text, verbose):
