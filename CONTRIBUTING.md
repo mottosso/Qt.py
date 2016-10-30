@@ -11,7 +11,7 @@ Qt.py was born to address the growing needs in these industries for the developm
 - [Development goals](#development-goals)
   - [Support co-existence](#support-co-existence)
   - [Keep it simple](#keep-it-simple)
-  - [No bugs](#no-bugs)
+  - [No wrappers](#no-wrappers)
 - [How can I contribute?](#how-can-i-contribute)
   - [Reporting Bugs](#reporting-bugs)
   - [Suggesting Enhancements](#suggesting-enhancements)
@@ -28,11 +28,11 @@ Qt.py was born to address the growing needs in these industries for the developm
 
 Qt.py was born in the film and visual effects industry to address the growing needs for the development of software capable of running with more than one flavor of the Qt bindings for Python - PySide, PySide2, PyQt4 and PyQt5.
 
-| Goal                      | Description
-|:--------------------------|:---------------
-| *Support co-existence* | Qt.py should not affect other bindings running in same interpreter session.
-| *Keep it simple* | One file, copy/paste installation, PEP08.
-| *No bugs* | No implementations = No bugs.
+| Goal                       | Description
+|:---------------------------|:---------------
+| [*Support co-existence*](#support-coexistence) | Qt.py should not affect other bindings running in same interpreter session.
+| [*Keep it simple*](#keep-it-simple)       | One file, copy/paste installation, PEP08.
+| [*No wrappers*](#no-wrappers)          | Don't attempt to fill in for missing functionality in a binding.
 
 Each of these deserve some explanation and rationale.
 
@@ -55,8 +55,7 @@ QtWidgets.QApplication.translate = staticmethod(translate)
 
 ```python
 # Right
-...
-QtWidgets.QApplication.translate_ = staticmethod(translate)
+QtCompat.translate = translate
 ```
 
 <br>
@@ -64,6 +63,20 @@ QtWidgets.QApplication.translate_ = staticmethod(translate)
 ##### Keep it simple
 
 At the end of the day, Qt.py is a middle-man. It delegates requests you make to the appropriate receiver, such as PySide2. Try and keep it that way without the added overhead of complexity.
+
+<br>
+
+#### No wrappers
+
+One approach at bridging two different implementations is by implementing missing functionality yourself.
+
+A [common example](https://gist.github.com/cpbotha/1b42a20c8f3eb9bb7cb8) of this is the differing argument signature in `loadUi` from PyQt4 versus PySide.
+
+One problem with this approach is that bindings are already wrapping an original implementation and carries a large surface area for bugs with it. By wrapping it once more, we multiply this surface area, resulting in potential for even more obscure bugs that may take years to experience and filter out.
+
+By instead limiting the argument signature to ones they both share, we both (1) reduce the surface area (2) avoid introducing additional bugs.
+
+We believe neither approach is right or wrong - this is simply the approach taken here that turns out to be the easier and more robust rule to follow consistently as a team.
 
 <br>
 

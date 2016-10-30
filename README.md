@@ -28,14 +28,15 @@ Qt.py enables you to write software that dynamically chooses the most desireable
 
 ### Project goals
 
+Write for PySide2, run in any binding.
 
-Qt.py was born in the film and visual effects industry to address the growing need for the development of software capable of running with more than one flavour of the Qt bindings for Python - PySide, PySide2, PyQt4 and PyQt5.
+Qt.py was born in the film and visual effects industry to address the growing need for software capable of running with more than one flavor of the Qt bindings for Python - PySide, PySide2, PyQt4 and PyQt5.
 
 | Goal                                 | Description
 |:-------------------------------------|:---------------
-| *Build for one, run with all* | You code written with Qt.py should run on any binding.
-| *Explicit is better than implicit* | Differences between bindings should be visible to you.
 | *Support co-existence* | Qt.py should not affect other bindings running in same interpreter session.
+| *Build for one, run with all* | Code written with Qt.py should run on any binding.
+| *Explicit is better than implicit* | Differences between bindings should be visible to you.
 
 See [`CONTRIBUTING.md`](CONTRIBUTING.md) for more details.
 
@@ -45,7 +46,7 @@ See [`CONTRIBUTING.md`](CONTRIBUTING.md) for more details.
 
 ### Install
 
-Qt.py is a single file and can either be [copy/pasted](https://raw.githubusercontent.com/mottosso/Qt.py/master/Qt.py) into your project, [downloaded](https://github.com/mottosso/Qt.py/archive/master.zip) as-is or installed via PyPI.
+Qt.py is a single file and can either be [copy/pasted](https://raw.githubusercontent.com/mottosso/Qt.py/master/Qt.py) into your project, [downloaded](https://github.com/mottosso/Qt.py/archive/master.zip) as-is, cloned as-is or installed via PyPI.
 
 ```bash
 $ pip install Qt.py
