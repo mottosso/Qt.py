@@ -32,21 +32,32 @@ import os
 import sys
 import shutil
 
+# Flags from environment variables
+QT_VERBOSE = bool(os.getenv("QT_VERBOSE"))                # Extra output
+QT_TESTING = bool(os.getenv("QT_TESTING"))                # Extra constraints
+QT_PREFERRED_BINDING = os.getenv("QT_PREFERRED_BINDING")  # Override default
+
 self = sys.modules[__name__]
 
-self.__version__ = "0.6.1"
-
-self.__added__ = list()     # All unique members of Qt.py
+# Internal members, may be used externally for debugging
+self.__added__ = list()     # All members added to QtCompat
 self.__remapped__ = list()  # Members copied from elsewhere
 self.__modified__ = list()  # Existing members modified in some way
 
 # Below members are set dynamically on import relative the original binding.
+self.__version__ = "0.6.2"
 self.__qt_version__ = "0.0.0"
 self.__binding__ = "None"
 self.__binding_version__ = "0.0.0"
+
 self.load_ui = lambda fname: None
 self.translate = lambda context, sourceText, disambiguation, n: None
-self.setSectionResizeMode = lambda *args, **kwargs: None
+self.setSectionResizeMode = lambda logicalIndex, hide: None
+
+# All members of this module is directly accessible via QtCompat
+# Take care not to access any "private" members; i.e. those with
+# a leading underscore.
+QtCompat = self
 
 
 def convert(lines):
@@ -89,7 +100,7 @@ def _remap(object, name, value, safe=True):
 
     """
 
-    if os.getenv("QT_TESTING") is not None and safe:
+    if QT_TESTING is not None and safe:
         # Cannot alter original binding.
         if hasattr(object, name):
             raise AttributeError("Cannot override existing name: "
@@ -112,7 +123,7 @@ def _remap(object, name, value, safe=True):
 def _add(object, name, value):
     """Append to self, accessible via Qt.QtCompat"""
     self.__added__.append(name)
-    setattr(self, name, value)
+    setattr(object, name, value)
 
 
 def _pyqt5():
@@ -123,13 +134,10 @@ def _pyqt5():
     _remap(QtCore, "Slot", QtCore.pyqtSlot)
     _remap(QtCore, "Property", QtCore.pyqtProperty)
 
-    _add(PyQt5, "__binding__", PyQt5.__name__)
-    _add(PyQt5, "load_ui", lambda fname: uic.loadUi(fname))
-    _add(PyQt5, "translate", lambda context, sourceText, disambiguation, n: (
-        QtCore.QCoreApplication(context, sourceText,
-                                disambiguation, n)))
-    _add(PyQt5,
-         "setSectionResizeMode",
+    _add(QtCompat, "__binding__", PyQt5.__name__)
+    _add(QtCompat, "load_ui", lambda fname: uic.loadUi(fname))
+    _add(QtCompat, "translate", QtCore.QCoreApplication.translate)
+    _add(QtCompat, "setSectionResizeMode",
          QtWidgets.QHeaderView.setSectionResizeMode)
 
     _maintain_backwards_compatibility(PyQt5)
@@ -172,16 +180,27 @@ def _pyqt4():
         from PyQt4 import QtWebKit
         _remap(PyQt4, "QtWebKitWidgets", QtWebKit)
     except ImportError:
-        # QtWebkit is optional in Qt , therefore might not be available
-        pass
+        "QtWebkit is optional in Qt , therefore might not be available"
 
-    _add(PyQt4, "QtCompat", self)
-    _add(PyQt4, "__binding__", PyQt4.__name__)
-    _add(PyQt4, "load_ui", lambda fname: uic.loadUi(fname))
-    _add(PyQt4, "translate", lambda context, sourceText, disambiguation, n: (
-        QtCore.QCoreApplication(context, sourceText,
-                                disambiguation, None, n)))
-    _add(PyQt4, "setSectionResizeMode", QtGui.QHeaderView.setResizeMode)
+    _add(QtCompat, "__binding__", PyQt4.__name__)
+    _add(QtCompat, "load_ui", lambda fname: uic.loadUi(fname))
+
+    # The second argument - hide - does not apply to Qt4
+    _add(QtCompat, "setSectionResizeMode",
+         lambda logicalIndex, hide:
+         QtGui.QHeaderView.setResizeMode(logicalIndex))
+
+    # PySide2 differs from Qt4 in that Qt4 has one extra argument
+    # which is always `None`. The lambda arguments represents the PySide2
+    # interface, whereas the arguments passed to `.translate` represent
+    # those expected of a Qt4 binding.
+    _add(QtCompat, "translate",
+         lambda context, sourceText, disambiguation, n:
+         QtCore.QCoreApplication.translate(context,
+                                           sourceText,
+                                           disambiguation,
+                                           None,
+                                           n))
 
     _maintain_backwards_compatibility(PyQt4)
 
@@ -194,14 +213,19 @@ def _pyside2():
 
     _remap(QtCore, "QStringListModel", QtGui.QStringListModel)
 
-    _add(PySide2, "__binding__", PySide2.__name__)
-    _add(PySide2, "load_ui", lambda fname: QtUiTools.QUiLoader().load(fname))
-    _add(PySide2, "translate", lambda context, sourceText, disambiguation, n: (
-        QtCore.QCoreApplication(context, sourceText,
-                                disambiguation, None, n)))
-    _add(PySide2,
-         "setSectionResizeMode",
+    _add(QtCompat, "__binding__", PySide2.__name__)
+    _add(QtCompat, "load_ui", lambda fname: QtUiTools.QUiLoader().load(fname))
+
+    _add(QtCompat, "setSectionResizeMode",
          QtWidgets.QHeaderView.setSectionResizeMode)
+
+    _add(QtCompat, "translate",
+         lambda context, sourceText, disambiguation, n:
+         QtCore.QCoreApplication.translate(context,
+                                           sourceText,
+                                           disambiguation,
+                                           None,
+                                           n))
 
     _maintain_backwards_compatibility(PySide2)
 
@@ -223,15 +247,22 @@ def _pyside():
         from PySide import QtWebKit
         _remap(PySide, "QtWebKitWidgets", QtWebKit)
     except ImportError:
-        # QtWebkit is optional in Qt, therefore might not be available
-        pass
+        "QtWebkit is optional in Qt, therefore might not be available"
 
-    _add(PySide, "__binding__", PySide.__name__)
-    _add(PySide, "load_ui", lambda fname: QtUiTools.QUiLoader().load(fname))
-    _add(PySide, "translate", lambda context, sourceText, disambiguation, n: (
-        QtCore.QCoreApplication(context, sourceText,
-                                disambiguation, None, n)))
-    _add(PySide, "setSectionResizeMode", QtGui.QHeaderView.setResizeMode)
+    _add(QtCompat, "__binding__", PySide.__name__)
+    _add(QtCompat, "load_ui", lambda fname: QtUiTools.QUiLoader().load(fname))
+
+    _add(QtCompat, "setSectionResizeMode",
+         lambda logicalIndex, hide:
+         QtGui.QHeaderView.setResizeMode(logicalIndex))
+
+    _add(QtCompat, "translate",
+         lambda context, sourceText, disambiguation, n:
+         QtCore.QCoreApplication.translate(context,
+                                           sourceText,
+                                           disambiguation,
+                                           None,
+                                           n))
 
     _maintain_backwards_compatibility(PySide)
 
@@ -311,17 +342,15 @@ def init():
 
     """
 
-    preferred = os.getenv("QT_PREFERRED_BINDING")
-    verbose = os.getenv("QT_VERBOSE") is not None
     bindings = (_pyside2, _pyqt5, _pyside, _pyqt4)
 
-    if preferred:
+    if QT_PREFERRED_BINDING:
         # Internal flag (used in installer)
-        if preferred == "None":
+        if QT_PREFERRED_BINDING == "None":
             self.__wrapper_version__ = self.__version__
             return
 
-        preferred = preferred.split(os.pathsep)
+        preferred = QT_PREFERRED_BINDING.split(os.pathsep)
         available = {
             "PySide2": _pyside2,
             "PyQt5": _pyqt5,
@@ -338,19 +367,19 @@ def init():
             )
 
     for binding in bindings:
-        _log("Trying %s" % binding.__name__, verbose)
+        _log("Trying %s" % binding.__name__, QT_VERBOSE)
 
         try:
             binding = binding()
 
         except ImportError as e:
-            _log(" - ImportError(\"%s\")" % e, verbose)
+            _log(" - ImportError(\"%s\")" % e, QT_VERBOSE)
             continue
 
         else:
             # Reference to this module
-            binding.__shim__ = self
             binding.QtCompat = self
+            binding.__shim__ = self  # DEPRECATED
 
             sys.modules.update({
                 __name__: binding,
