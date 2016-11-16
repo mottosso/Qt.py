@@ -285,7 +285,7 @@ def _pyside():
          QtCore.QCoreApplication.translate(context,
                                            sourceText,
                                            disambiguation,
-                                           None,
+                                           QtCore.QCoreApplication.CodecForTr,
                                            n))
 
     _maintain_backwards_compatibility(PySide)
