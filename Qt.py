@@ -223,7 +223,7 @@ def _pyqt4():
          QtCore.QCoreApplication.translate(context,
                                            sourceText,
                                            disambiguation,
-                                           None,
+                                           QtCore.QCoreApplication.CodecForTr,
                                            n))
 
     _maintain_backwards_compatibility(PyQt4)
@@ -248,7 +248,7 @@ def _pyside2():
          QtCore.QCoreApplication.translate(context,
                                            sourceText,
                                            disambiguation,
-                                           None,
+                                           QtCore.QCoreApplication.CodecForTr,
                                            n))
 
     _maintain_backwards_compatibility(PySide2)
