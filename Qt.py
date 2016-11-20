@@ -243,13 +243,7 @@ def _pyside2():
     _add(QtCompat, "setSectionResizeMode",
          QtWidgets.QHeaderView.setSectionResizeMode)
 
-    _add(QtCompat, "translate",
-         lambda context, sourceText, disambiguation, n:
-         QtCore.QCoreApplication.translate(context,
-                                           sourceText,
-                                           disambiguation,
-                                           QtCore.QCoreApplication.CodecForTr,
-                                           n))
+    _add(QtCompat, "translate", QtCore.QCoreApplication.translate)
 
     _maintain_backwards_compatibility(PySide2)
 
