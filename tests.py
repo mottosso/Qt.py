@@ -319,10 +319,10 @@ def test_translate_arguments():
     import Qt
     
     # This will run on each binding
-    result = Qt.QtCompat.translate(context="CustomDialog",
-                                   sourceText="Status",
-                                   disambiguation=None,
-                                   n=-1)
+    result = Qt.QtCompat.translate("CustomDialog",  # context
+                                   "Status",        # sourceText
+                                   None,            # disambiguation
+                                   -1)              # n
     assert result == u'Status', result
 
 
