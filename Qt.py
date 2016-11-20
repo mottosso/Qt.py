@@ -69,7 +69,7 @@ self.__remapped__ = list()  # Members copied from elsewhere
 self.__modified__ = list()  # Existing members modified in some way
 
 # Below members are set dynamically on import relative the original binding.
-self.__version__ = "0.6.3"
+self.__version__ = "0.6.4"
 self.__qt_version__ = "0.0.0"
 self.__binding__ = "None"
 self.__binding_version__ = "0.0.0"
@@ -223,7 +223,7 @@ def _pyqt4():
          QtCore.QCoreApplication.translate(context,
                                            sourceText,
                                            disambiguation,
-                                           None,
+                                           QtCore.QCoreApplication.CodecForTr,
                                            n))
 
     _maintain_backwards_compatibility(PyQt4)
@@ -243,13 +243,7 @@ def _pyside2():
     _add(QtCompat, "setSectionResizeMode",
          QtWidgets.QHeaderView.setSectionResizeMode)
 
-    _add(QtCompat, "translate",
-         lambda context, sourceText, disambiguation, n:
-         QtCore.QCoreApplication.translate(context,
-                                           sourceText,
-                                           disambiguation,
-                                           None,
-                                           n))
+    _add(QtCompat, "translate", QtCore.QCoreApplication.translate)
 
     _maintain_backwards_compatibility(PySide2)
 
@@ -285,7 +279,7 @@ def _pyside():
          QtCore.QCoreApplication.translate(context,
                                            sourceText,
                                            disambiguation,
-                                           None,
+                                           QtCore.QCoreApplication.CodecForTr,
                                            n))
 
     _maintain_backwards_compatibility(PySide)
