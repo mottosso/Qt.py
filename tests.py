@@ -307,6 +307,25 @@ def test_import_from_qtwidgets():
     assert QPushButton.__name__ == "QPushButton", QPushButton
 
 
+def test_translate_arguments():
+    """Arguments of QtCompat.translate are correct
+    
+    QtCompat.translate is a shim over the PySide, PyQt4 and PyQt5
+    equivalent with an interface like the one found in PySide2.
+    
+    Reference: https://doc.qt.io/qt-5/qcoreapplication.html#translate
+    """
+    
+    import Qt
+    
+    # This will run on each binding
+    result = Qt.QtCompat.translate(context="CustomDialog",
+                                   sourceText="Status",
+                                   disambiguation=None,
+                                   n=-1)
+    assert result == u'Status', result
+
+
 if binding("PyQt4"):
     def test_preferred_pyqt4():
         """QT_PREFERRED_BINDING = PyQt4 properly forces the binding"""
