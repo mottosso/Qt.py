@@ -307,17 +307,28 @@ def test_import_from_qtwidgets():
     assert QPushButton.__name__ == "QPushButton", QPushButton
 
 
+def test_i158_qtcore_direct_import():
+    """import Qt.QtCore works on all bindings
+
+    This addresses issue #158
+
+    """
+
+    import Qt.QtCore
+    assert hasattr(Qt.QtCore, "Signal")
+
+
 def test_translate_arguments():
     """Arguments of QtCompat.translate are correct
-    
+
     QtCompat.translate is a shim over the PySide, PyQt4 and PyQt5
     equivalent with an interface like the one found in PySide2.
-    
+
     Reference: https://doc.qt.io/qt-5/qcoreapplication.html#translate
     """
-    
+
     import Qt
-    
+
     # This will run on each binding
     result = Qt.QtCompat.translate("CustomDialog",  # context
                                    "Status",        # sourceText

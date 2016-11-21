@@ -189,6 +189,7 @@ def _pyqt4():
 
     import PyQt4.Qt
     from PyQt4 import QtCore, QtGui, uic
+    
 
     _remap(PyQt4, "QtWidgets", QtGui)
     _remap(QtCore, "Signal", QtCore.pyqtSignal)
@@ -403,7 +404,11 @@ def init():
                 __name__: binding,
 
                 # Fix #133, `from Qt.QtWidgets import QPushButton`
-                __name__ + ".QtWidgets": binding.QtWidgets
+                __name__ + ".QtWidgets": binding.QtWidgets,
+
+                # Fix #158 `import Qt.QtCore;Qt.QtCore.Signal`
+                __name__ + ".QtCore": binding.QtCore,
+                __name__ + ".QtGui": binding.QtGui,
 
             })
 
