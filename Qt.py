@@ -69,7 +69,7 @@ self.__remapped__ = list()  # Members copied from elsewhere
 self.__modified__ = list()  # Existing members modified in some way
 
 # Below members are set dynamically on import relative the original binding.
-self.__version__ = "0.6.4"
+self.__version__ = "0.6.5"
 self.__qt_version__ = "0.0.0"
 self.__binding__ = "None"
 self.__binding_version__ = "0.0.0"
@@ -189,6 +189,7 @@ def _pyqt4():
 
     import PyQt4.Qt
     from PyQt4 import QtCore, QtGui, uic
+    
 
     _remap(PyQt4, "QtWidgets", QtGui)
     _remap(QtCore, "Signal", QtCore.pyqtSignal)
@@ -403,7 +404,11 @@ def init():
                 __name__: binding,
 
                 # Fix #133, `from Qt.QtWidgets import QPushButton`
-                __name__ + ".QtWidgets": binding.QtWidgets
+                __name__ + ".QtWidgets": binding.QtWidgets,
+
+                # Fix #158 `import Qt.QtCore;Qt.QtCore.Signal`
+                __name__ + ".QtCore": binding.QtCore,
+                __name__ + ".QtGui": binding.QtGui,
 
             })
 
