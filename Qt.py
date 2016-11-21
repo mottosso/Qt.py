@@ -209,11 +209,7 @@ def _pyqt4():
 
     _add(QtCompat, "__binding__", PyQt4.__name__)
     _add(QtCompat, "load_ui", lambda fname: uic.loadUi(fname))
-
-    # The second argument - hide - does not apply to Qt4
-    _add(QtCompat, "setSectionResizeMode",
-         lambda logicalIndex, hide:
-         QtGui.QHeaderView.setResizeMode(logicalIndex))
+    _add(QtCompat, "setSectionResizeMode", QtGui.QHeaderView.setResizeMode)
 
     # PySide2 differs from Qt4 in that Qt4 has one extra argument
     # which is always `None`. The lambda arguments represents the PySide2
@@ -270,10 +266,7 @@ def _pyside():
 
     _add(QtCompat, "__binding__", PySide.__name__)
     _add(QtCompat, "load_ui", lambda fname: QtUiTools.QUiLoader().load(fname))
-
-    _add(QtCompat, "setSectionResizeMode",
-         lambda logicalIndex, hide:
-         QtGui.QHeaderView.setResizeMode(logicalIndex))
+    _add(QtCompat, "setSectionResizeMode", QtGui.QHeaderView.setResizeMode)
 
     _add(QtCompat, "translate",
          lambda context, sourceText, disambiguation, n:
