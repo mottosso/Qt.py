@@ -69,7 +69,7 @@ self.__remapped__ = list()  # Members copied from elsewhere
 self.__modified__ = list()  # Existing members modified in some way
 
 # Below members are set dynamically on import relative the original binding.
-self.__version__ = "0.6.4"
+self.__version__ = "0.6.5"
 self.__qt_version__ = "0.0.0"
 self.__binding__ = "None"
 self.__binding_version__ = "0.0.0"
