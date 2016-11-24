@@ -342,9 +342,9 @@ def test_binding_and_qt_version():
 
     from Qt import QtCompat
 
-    assert Qt.__binding_version__ != "0.0.0", ("Binding version was not "
-                                               "populated")
-    assert Qt.__qt_version__ != "0.0.0", ("Qt version was not populated")
+    assert QtCompat.__binding_version__ != "0.0.0", ("Binding version was not "
+                                                     "populated")
+    assert QtCompat.__qt_version__ != "0.0.0", ("Qt version was not populated")
 
 
 if binding("PyQt4"):
