@@ -159,6 +159,8 @@ def _pyqt5():
     _remap(QtCore, "Property", QtCore.pyqtProperty)
 
     _add(QtCompat, "__binding__", PyQt5.__name__)
+    _add(QtCompat, "__binding_version__", PyQt5.QtCore.PYQT_VERSION_STR)
+    _add(QtCompat, "__qt_version__", PyQt5.QtCore.QT_VERSION_STR)
     _add(QtCompat, "load_ui", lambda fname: uic.loadUi(fname))
     _add(QtCompat, "translate", QtCore.QCoreApplication.translate)
     _add(QtCompat, "setSectionResizeMode",
@@ -208,6 +210,8 @@ def _pyqt4():
         "QtWebkit is optional in Qt , therefore might not be available"
 
     _add(QtCompat, "__binding__", PyQt4.__name__)
+    _add(QtCompat, "__binding_version__", PyQt4.QtCore.PYQT_VERSION_STR)
+    _add(QtCompat, "__qt_version__", PyQt4.QtCore.QT_VERSION_STR)
     _add(QtCompat, "load_ui", lambda fname: uic.loadUi(fname))
     _add(QtCompat, "setSectionResizeMode", QtGui.QHeaderView.setResizeMode)
 
@@ -235,6 +239,8 @@ def _pyside2():
     _remap(QtCore, "QStringListModel", QtGui.QStringListModel)
 
     _add(QtCompat, "__binding__", PySide2.__name__)
+    _add(QtCompat, "__binding_version__", PySide2.__version__)
+    _add(QtCompat, "__qt_version__", PySide2.QtCore.qVersion())
     _add(QtCompat, "load_ui", lambda fname: QtUiTools.QUiLoader().load(fname))
 
     _add(QtCompat, "setSectionResizeMode",
@@ -265,6 +271,8 @@ def _pyside():
         "QtWebkit is optional in Qt, therefore might not be available"
 
     _add(QtCompat, "__binding__", PySide.__name__)
+    _add(QtCompat, "__binding_version__", PySide.__version__)
+    _add(QtCompat, "__qt_version__", PySide.QtCore.qVersion())
     _add(QtCompat, "load_ui", lambda fname: QtUiTools.QUiLoader().load(fname))
     _add(QtCompat, "setSectionResizeMode", QtGui.QHeaderView.setResizeMode)
 
