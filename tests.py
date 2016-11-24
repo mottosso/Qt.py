@@ -337,6 +337,16 @@ def test_translate_arguments():
     assert result == u'Status', result
 
 
+def test_binding_and_qt_version():
+    """QtCompat's __binding_version__ and __qt_version__ populated"""
+
+    from Qt import QtCompat
+
+    assert QtCompat.__binding_version__ != "0.0.0", ("Binding version was not "
+                                                     "populated")
+    assert QtCompat.__qt_version__ != "0.0.0", ("Qt version was not populated")
+
+
 if binding("PyQt4"):
     def test_preferred_pyqt4():
         """QT_PREFERRED_BINDING = PyQt4 properly forces the binding"""
