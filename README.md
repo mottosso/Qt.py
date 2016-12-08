@@ -9,6 +9,9 @@ Qt.py enables you to write software that dynamically chooses the most desireable
 - [Developing with Qt.py](https://fredrikaverpil.github.io/2016/07/25/developing-with-qt-py/)
 - [Dealing with Maya 2017 and PySide2](https://fredrikaverpil.github.io/2016/07/25/dealing-with-maya-2017-and-pyside2/)
 
+**Mentions**
+- [Qt.py: A portable wrapper for Qt](https://www.udemy.com/python-for-maya/learn/v4/t/lecture/6027394) (Udemy course, registration required)
+
 **Table of contents**
 
 - [Install](#install)
@@ -394,7 +397,7 @@ docker run --rm -v $(pwd):/Qt.py mottosso/qt.py35
 #
 # ----------------------------------------------------------------------
 # Ran 21 tests in 7.799s
-# 
+#
 # OK
 ```
 
