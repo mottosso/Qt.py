@@ -313,12 +313,13 @@ Presented at Siggraph 2016, BOF!
 
 Send us a pull-request with your project here.
 
-- https://github.com/BigRoy/maya-capture-gui
-- https://github.com/pyblish/pyblish-lite
-- https://github.com/fredrikaverpil/pyvfx-boilerplate
-- https://gitlab.com/4degrees/riffle
-- https://github.com/chadmv/cmt
-- https://github.com/dgovil/PythonForMayaSamples
+- [maya-capture-gui](https://github.com/BigRoy/maya-capture-gui)
+- [pyblish-lite](https://github.com/pyblish/pyblish-lite)
+- [pyvfx-boilerplate](https://github.com/fredrikaverpil/pyvfx-boilerplate)
+- [riffle](https://gitlab.com/4degrees/riffle)
+- [cmt](https://github.com/chadmv/cmt)
+- [PythonForMayaSamples](https://github.com/dgovil/PythonForMayaSamples)
+- [Kraken](https://github.com/fabric-engine/Kraken)
 
 <br>
 <br>
