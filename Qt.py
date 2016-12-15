@@ -124,7 +124,7 @@ def _remap(object, name, value, safe=True):
 
     """
 
-    if QT_TESTING is not None and safe:
+    if QT_TESTING and safe:
         # Cannot alter original binding.
         if hasattr(object, name):
             raise AttributeError("Cannot override existing name: "
