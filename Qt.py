@@ -69,7 +69,7 @@ self.__remapped__ = list()  # Members copied from elsewhere
 self.__modified__ = list()  # Existing members modified in some way
 
 # Below members are set dynamically on import relative the original binding.
-self.__version__ = "0.6.8"
+self.__version__ = "0.6.9"
 self.__qt_version__ = "0.0.0"
 self.__binding__ = "None"
 self.__binding_version__ = "0.0.0"
@@ -124,7 +124,7 @@ def _remap(object, name, value, safe=True):
 
     """
 
-    if QT_TESTING is not None and safe:
+    if QT_TESTING and safe:
         # Cannot alter original binding.
         if hasattr(object, name):
             raise AttributeError("Cannot override existing name: "
