@@ -300,6 +300,8 @@ Send us a pull-request with your studio here.
 - [Industriromantik](http://www.industriromantik.se/)
 - [Psyop](http://www.psyop.com/)
 - [ftrack](https://www.ftrack.com/)
+- [Fido](http://fido.se/)
+- [Bläck](http://www.blackstudios.se/)
 
 Presented at Siggraph 2016, BOF!
 
