@@ -390,9 +390,13 @@ cd Qt.py
 docker build -t mottosso/qt.py27 -f Dockerfile-py2.7 .
 docker build -t mottosso/qt.py35 -f Dockerfile-py3.5 .
 
-# Run nosetests
+# Run nosetests (Linux/OSX)
 docker run --rm -v $(pwd):/Qt.py mottosso/qt.py27
 docker run --rm -v $(pwd):/Qt.py mottosso/qt.py35
+
+# Run nosetests (Windows)
+docker run --rm -v %CD%:/Qt.py mottosso/qt.py27
+docker run --rm -v %CD%:/Qt.py mottosso/qt.py35
 
 # Doctest: test_caveats.test_1_qtgui_qabstractitemmodel_createindex ... ok
 # Doctest: test_caveats.test_2_qtgui_qabstractitemmodel_createindex ... ok
