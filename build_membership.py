@@ -83,7 +83,7 @@ def test_{binding}_members():
         # PyQt4 and 5 performs some magic here
         # that must take place before attempting
         # to import with wildcard.
-        from Qt import Qt as _
+        from {Binding} import Qt as _
 
     if "PySide2" == "{Binding}":
         # PySide2, as of this writing, doesn't include
@@ -167,6 +167,9 @@ excluded = {
         "QMessageLogContext",
         "QtInfoMsg",
         "qInstallMessageHandler",
+        "QT_TRANSLATE_NOOP",
+        "QT_TR_NOOP",
+        "QT_TR_NOOP_UTF8",
 
         # missing from PyQt4
         "ClassInfo",
@@ -204,6 +207,8 @@ excluded = {
         "QSurfaceFormat",
         "QTouchDevice",
         "QWindow",  # (2) unique to Qt 5
+        "QTouchEvent",  # (2) unique to Qt 5
+        "qRgba",  # (2) unique to Qt 5
 
         # missing from PyQt4
         "QAccessibleEvent",
@@ -252,6 +257,34 @@ excluded = {
     "QtNetwork": [
         # missing from PyQt4
         "QIPv6Address",
+
+        # missing from PySide
+        "QAbstractNetworkCache",
+        "QAbstractSocket",
+        "QAuthenticator",
+        "QHostAddress",
+        "QHostInfo",
+        "QLocalServer",
+        "QLocalSocket",
+        "QNetworkAccessManager",
+        "QNetworkAddressEntry",
+        "QNetworkCacheMetaData",
+        "QNetworkConfiguration",
+        "QNetworkConfigurationManager",
+        "QNetworkCookie",
+        "QNetworkCookieJar",
+        "QNetworkDiskCache",
+        "QNetworkInterface",
+        "QNetworkProxy",
+        "QNetworkProxyFactory",
+        "QNetworkProxyQuery",
+        "QNetworkReply",
+        "QNetworkRequest",
+        "QNetworkSession",
+        "QSsl",
+        "QTcpServer",
+        "QTcpSocket",
+        "QUdpSocket",
     ],
 
     "QtPrintSupport": [
@@ -325,6 +358,10 @@ excluded = {
         "QXmlSimpleReader",
     ],
 
+    "QtTest": [
+        # missing from PySide
+        "QTest",
+    ],
 }
 
 if __name__ == '__main__':

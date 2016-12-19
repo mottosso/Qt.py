@@ -121,15 +121,15 @@ PySide allows for a `result=None` keyword param to set the return type. PyQt4 cr
 
 ```python
 # PySide
->>> from Qt import QtCore, QtGui
->>> slot = QtCore.Slot(QtGui.QWidget, result=None)
+>>> from Qt import QtCore, QtWidgets
+>>> slot = QtCore.Slot(QtWidgets.QWidget, result=None)
 ```
 
 ```python
 # PyQt4, Python2
->>> from Qt import QtCore, QtGui
->>> slot = QtCore.Slot(QtGui.QWidget)
->>> slot = QtCore.Slot(QtGui.QWidget, result=None)
+>>> from Qt import QtCore, QtWidgets
+>>> slot = QtCore.Slot(QtWidgets.QWidget)
+>>> slot = QtCore.Slot(QtWidgets.QWidget, result=None)
 Traceback (most recent call last):
 ...
 TypeError: string or ASCII unicode expected not 'NoneType'
@@ -137,9 +137,9 @@ TypeError: string or ASCII unicode expected not 'NoneType'
 
 ```python
 # PyQt4, Python3
->>> from Qt import QtCore, QtGui
->>> slot = QtCore.Slot(QtGui.QWidget)
->>> slot = QtCore.Slot(QtGui.QWidget, result=None)
+>>> from Qt import QtCore, QtWidgets
+>>> slot = QtCore.Slot(QtWidgets.QWidget)
+>>> slot = QtCore.Slot(QtWidgets.QWidget, result=None)
 Traceback (most recent call last):
 ...
 TypeError: bytes or ASCII string expected not 'NoneType'
@@ -269,11 +269,11 @@ Or a conditional.
 
 ```python
 # PyQt5
->>> from Qt import QtWidgets, __binding__
+>>> from Qt import QtWidgets, QtCompat
 >>> app = QtWidgets.QApplication(sys.argv)
 >>> view = QtWidgets.QTreeWidget()
 >>> header = view.header()
->>> if __binding__ in ("PyQt4", "PySide"):
+>>> if QtCompat.__binding__ in ("PyQt4", "PySide"):
 ...   header.setResizeMode(QtWidgets.QHeaderView.Fixed)
 ... else:
 ...   header.setSectionResizeMode(QtWidgets.QHeaderView.Fixed)

@@ -88,9 +88,9 @@ def test_load_ui_returntype():
     """load_ui returns an instance of QObject"""
 
     import sys
-    from Qt import QtWidgets, QtCore, load_ui
+    from Qt import QtWidgets, QtCore, QtCompat
     app = QtWidgets.QApplication(sys.argv)
-    obj = load_ui(self.ui_qwidget)
+    obj = QtCompat.load_ui(self.ui_qwidget)
     assert isinstance(obj, QtCore.QObject)
     app.exit()
 
@@ -350,18 +350,19 @@ def test_binding_and_qt_version():
 if binding("PyQt4"):
     def test_preferred_pyqt4():
         """QT_PREFERRED_BINDING = PyQt4 properly forces the binding"""
-        import Qt
-        assert Qt.__name__ == "PyQt4", ("PyQt4 should have been picked, "
-                                        "instead got %s" % Qt)
+        from Qt import QtCompat
+        assert QtCompat.__binding__ == "PyQt4", (
+            "PyQt4 should have been picked, "
+            "instead got %s" % QtCompat.__binding__)
 
     def test_sip_api_qtpy():
         """Preferred binding PyQt4 should have sip version 2"""
 
         __import__("Qt")  # Bypass linter warning
         import sip
-        assert sip.getapi("QString") == 2, ("PyQt4 API version should be 2, "
-                                            "instead is %s"
-                                            % sip.getapi("QString"))
+        assert sip.getapi("QString") == 2, (
+            "PyQt4 API version should be 2, "
+            "instead is %s" % sip.getapi("QString"))
 
     if PYTHON == 2:
         def test_sip_api_already_set():
@@ -376,25 +377,28 @@ if binding("PyQt4"):
 if binding("PyQt5"):
     def test_preferred_pyqt5():
         """QT_PREFERRED_BINDING = PyQt5 properly forces the binding"""
-        import Qt
-        assert Qt.__name__ == "PyQt5", ("PyQt5 should have been picked, "
-                                        "instead got %s" % Qt)
+        from Qt import QtCompat
+        assert QtCompat.__binding__ == "PyQt5", (
+            "PyQt5 should have been picked, "
+            "instead got %s" % QtCompat.__binding__)
 
 
 if binding("PySide"):
     def test_preferred_pyside():
         """QT_PREFERRED_BINDING = PySide properly forces the binding"""
-        import Qt
-        assert Qt.__name__ == "PySide", ("PySide should have been picked, "
-                                         "instead got %s" % Qt)
+        from Qt import QtCompat
+        assert QtCompat.__binding__ == "PySide", (
+            "PySide should have been picked, "
+            "instead got %s" % QtCompat.__binding__)
 
 
 if binding("PySide2"):
     def test_preferred_pyside2():
         """QT_PREFERRED_BINDING = PySide2 properly forces the binding"""
-        import Qt
-        assert Qt.__name__ == "PySide2", ("PySide2 should have been picked, "
-                                          "instead got %s" % Qt)
+        from Qt import QtCompat
+        assert QtCompat.__binding__ == "PySide2", (
+            "PySide2 should have been picked, "
+            "instead got %s" % QtCompat.__binding__)
 
     def test_coexistence():
         """Qt.py may be use alongside the actual binding"""
@@ -417,6 +421,7 @@ if binding("PySide") or binding("PySide2"):
         os.environ["QT_PREFERRED_BINDING"] = os.pathsep.join(
             ["PySide", "PySide2"])
 
-        import Qt
-        assert Qt.__name__ == "PySide", ("PySide should have been picked, "
-                                         "instead got %s" % Qt)
+        from Qt import QtCompat
+        assert QtCompat.__binding__ == "PySide", (
+            "PySide should have been picked, "
+            "instead got %s" % QtCompat.__binding__)
