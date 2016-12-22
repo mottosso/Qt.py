@@ -130,7 +130,7 @@ Use this to ensure that your program will run identically on all bindings.
 
 When enabling `QT_STRICT`, Qt.py becomes a subset of PySide2. All members are guaranteed to exist across all bindings, meaning many will be missing. Including QtQml and QtQuick modules.
 
-Strict mode follows the [VFX Platform](http://www.vfxplatform.com/) to determine which version of PySide2 to use for reference. Currently version if 2.0.0.
+Strict mode follows the [VFX Platform](http://www.vfxplatform.com/) to determine which version of PySide2 to use for reference. Currently version is 2.0.0.
 
 <br>
 
