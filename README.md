@@ -89,14 +89,10 @@ All members of `Qt` stem directly from those available via PySide2, along with t
 
 | Attribute               | Returns     | Description
 |:------------------------|:------------|:------------
+| `__version__`           | `str`       | Version of this project
 | `__binding__`           | `str`       | A string reference to binding currently in use
 | `__qt_version__`        | `str`       | Reference to version of Qt, such as Qt 5.6.1
 | `__binding_version__`   | `str`       | Reference to version of binding, such as PySide 1.2.6
-| `__wrapper_version__`   | `str`       | Version of this project
-| `__added__`             | `list(str)` | All unique members of Qt.py
-| `__remapped__`          | `list(str)` | Members copied from elsewhere, such as QtGui -> QtWidgets
-| `__modified__`          | `list(str)` | Existing members modified in some way
-| `__shim__`              | `module`    | Reference to original Qt.py Python module
 | `load_ui(fname=str)`    | `QObject`   | Minimal wrapper of PyQt4.loadUi and PySide equivalent
 | `translate(...)`        | `function`  | Compatibility wrapper around [QCoreApplication.translate][]
 | `setSectionResizeMode()`| `method`    | Compatibility wrapper around [QAbstractItemView.setSectionResizeMode][]
@@ -111,6 +107,28 @@ All members of `Qt` stem directly from those available via PySide2, along with t
 >>> QtCompat.__binding__
 'PyQt5'
 ```
+
+<br>
+
+##### Environment Variables
+
+These are the publicly facing environment variables that in one way or another affect the way Qt.py is run.
+
+| Variable             | Type  | Description
+|:---------------------|:------|:----------
+| QT_PREFFERED_BINDING | str   | Override order and content of binding to try.
+| QT_STRICT            | bool  | Enforce compatibility with other bindings.
+| QT_VERBOSE           | bool  | Be a little more chatty when importing Qt
+
+<br>
+
+##### Strict Mode
+
+Enforce compatibility with all bindings.
+
+Use this to ensure that your program will run identically on all bindings.
+
+When enabling `QT_STRICT`, Qt.py becomes a subset of PySide2. All members are guaranteed to exist across all bindings, meaning many will be missing. Including QtQml and QtQuick modules.
 
 <br>
 
@@ -221,7 +239,9 @@ PySide2.QtCore.QStringListModel = PySide2.QtGui.QStringListModel
 
 **Portability**
 
-Qt.py does not hide members from the original binding. This can be problematic if, for example, you accidentally use a member that only exists PyQt5 and later try running your software with a different binding.
+Qt.py has two modes - loose and strict.
+
+Loose means Qt.py does not hide members from the original binding. This can be problematic if, for example, you accidentally use a member that only exists PyQt5 and later try running your software with a different binding.
 
 ```python
 from Qt import QtCore
@@ -238,37 +258,16 @@ from Qt import QtCore
 from PyQt4 import QtGui
 ```
 
+Strict on the other hand only exposes members that are guaranteed to work identically across all bindings. This mode is ideal if you are looking for the most cross-compatible experience and you would like your software to run on all bindings.
+
+```python
+from Qt import QtGui
+assert not hasattr(QtGui, "QWidget")
+```
+
 **Caveats**
 
 There are cases where Qt.py is not handling incompatibility issues. Please see [`CAVEATS.md`](CAVEATS.md) for more information.
-
-<br>
-<br>
-<br>
-
-### How it works
-
-Once you import Qt.py, Qt.py replaces itself with the most desirable binding on your platform, or throws an `ImportError` if none are available.
-
-```python
->>> import Qt
->>> print(Qt)
-<module 'PyQt5' from 'C:\Python27\lib\site-packages\PyQt5\__init__.pyc'>
-```
-
-Here's an example of how this works.
-
-**Qt.py**
-
-```python
-import sys
-import PyQt5
-
-# Replace myself PyQt5
-sys.modules["Qt"] = PyQt5
-```
-
-Once imported, it is as though your application was importing whichever binding was chosen and Qt.py never existed.
 
 <br>
 <br>
