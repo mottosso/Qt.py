@@ -68,8 +68,13 @@ def build_tests():
 import os
 import json
 
+
 with open("reference_members.json") as f:
     reference_members = json.load(f)
+
+# Only bother checking strict mode, as it is
+# the only mode that modifies membership in any way.
+os.environ["QT_STRICT"] = "1"
 
 excluded = {excluded}
 
@@ -78,6 +83,10 @@ excluded = {excluded}
     test = """\
 def test_{binding}_members():
     os.environ["QT_PREFERRED_BINDING"] = "{Binding}"
+
+    # Initialise Qt.py, this is especially important for PyQt4
+    # which sets sip to 2.0 upon loading Qt.py
+    import Qt
 
     if "PyQt" in "{Binding}":
         # PyQt4 and 5 performs some magic here
@@ -93,6 +102,7 @@ def test_{binding}_members():
         for missing in ("QtWidgets",
                         "QtXml",
                         "QtHelp",
+                        "QtNetwork",
                         "QtPrintSupport"):
             __all__.append(missing)
 
@@ -252,36 +262,8 @@ excluded = {
     ],
 
     "QtNetwork": [
-        # missing from PyQt4
+        # missing from Qt 4
         "QIPv6Address",
-
-        # missing from PySide
-        "QAbstractNetworkCache",
-        "QAbstractSocket",
-        "QAuthenticator",
-        "QHostAddress",
-        "QHostInfo",
-        "QLocalServer",
-        "QLocalSocket",
-        "QNetworkAccessManager",
-        "QNetworkAddressEntry",
-        "QNetworkCacheMetaData",
-        "QNetworkConfiguration",
-        "QNetworkConfigurationManager",
-        "QNetworkCookie",
-        "QNetworkCookieJar",
-        "QNetworkDiskCache",
-        "QNetworkInterface",
-        "QNetworkProxy",
-        "QNetworkProxyFactory",
-        "QNetworkProxyQuery",
-        "QNetworkReply",
-        "QNetworkRequest",
-        "QNetworkSession",
-        "QSsl",
-        "QTcpServer",
-        "QTcpSocket",
-        "QUdpSocket",
     ],
 
     "QtPrintSupport": [

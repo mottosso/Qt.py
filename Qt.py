@@ -62,7 +62,15 @@ import sys
 import types
 import shutil
 
-__all__ = ["QtGui", "QtCore", "QtWidgets", "QtCompat"]
+__all__ = [
+    "QtGui",
+    "QtCore",
+    "QtWidgets",
+    "QtNetwork",
+    "QtXml",
+    "QtHelp",
+    "QtCompat"
+]
 
 # Flags from environment variables
 QT_VERBOSE = bool(os.getenv("QT_VERBOSE"))
@@ -73,6 +81,10 @@ QT_STRICT = bool(os.getenv("QT_STRICT"))
 QtGui = types.ModuleType("QtGui")
 QtCore = types.ModuleType("QtCore")
 QtWidgets = types.ModuleType("QtWidgets")
+QtWidgets = types.ModuleType("QtWidgets")
+QtNetwork = types.ModuleType("QtNetwork")
+QtXml = types.ModuleType("QtXml")
+QtHelp = types.ModuleType("QtHelp")
 QtCompat = types.ModuleType("QtCompat")
 
 # To use other modules, such as QtTest and QtScript,
@@ -80,7 +92,16 @@ QtCompat = types.ModuleType("QtCompat")
 
 
 def _pyside2():
-    from PySide2 import QtWidgets, QtGui, QtCore, QtUiTools, __version__
+    from PySide2 import (
+        QtWidgets,
+        QtGui,
+        QtCore,
+        QtNetwork,
+        QtXml,
+        QtHelp,
+        QtUiTools,
+        __version__
+    )
 
     QtCompat.__binding__ = "PySide2"
     QtCompat.__qt_version__ = QtCore.qVersion()
@@ -89,11 +110,19 @@ def _pyside2():
     QtCompat.setSectionResizeMode = QtWidgets.QHeaderView.setSectionResizeMode
     QtCompat.translate = QtCore.QCoreApplication.translate
 
-    return QtCore, QtGui, QtWidgets
+    return QtCore, QtGui, QtWidgets, QtNetwork, QtXml, QtHelp
 
 
 def _pyside():
-    from PySide import QtGui, QtCore, QtUiTools, __version__
+    from PySide import (
+        QtGui,
+        QtCore,
+        QtNetwork,
+        QtXml,
+        QtHelp,
+        QtUiTools,
+        __version__
+    )
 
     QtWidgets = QtGui
 
@@ -109,11 +138,19 @@ def _pyside():
                                           disambiguation,
                                           QtCore.QCoreApplication.CodecForTr,
                                           n))
-    return QtCore, QtGui, QtWidgets
+    return QtCore, QtGui, QtWidgets, QtNetwork, QtXml, QtHelp
 
 
 def _pyqt5():
-    from PyQt5 import QtWidgets, QtGui, QtCore, uic
+    from PyQt5 import (
+        QtWidgets,
+        QtGui,
+        QtCore,
+        QtNetwork,
+        QtXml,
+        QtHelp,
+        uic
+    )
 
     QtCompat.__binding__ = "PyQt5"
     QtCompat.__qt_version__ = QtCore.QT_VERSION_STR
@@ -122,7 +159,7 @@ def _pyqt5():
     QtCompat.translate = QtCore.QCoreApplication.translate
     QtCompat.setSectionResizeMode = QtWidgets.QHeaderView.setSectionResizeMode
 
-    return QtCore, QtGui, QtWidgets
+    return QtCore, QtGui, QtWidgets, QtNetwork, QtXml, QtHelp
 
 
 def _pyqt4():
@@ -142,7 +179,14 @@ def _pyqt4():
         # API version already set to v1
         raise ImportError(str(e))
 
-    from PyQt4 import QtGui, QtCore, uic
+    from PyQt4 import (
+        QtGui,
+        QtCore,
+        QtNetwork,
+        QtXml,
+        QtHelp,
+        uic
+    )
 
     QtWidgets = QtGui
 
@@ -164,7 +208,7 @@ def _pyqt4():
                                           QtCore.QCoreApplication.CodecForTr,
                                           n))
 
-    return QtCore, QtGui, QtWidgets
+    return QtCore, QtGui, QtWidgets, QtNetwork, QtXml, QtHelp
 
 
 def _none():
@@ -178,7 +222,7 @@ def _none():
     QtCompat.load_ui = lambda fname: None
     QtCompat.setSectionResizeMode = lambda *args, **kwargs: None
 
-    return Mock(), Mock(), Mock()
+    return Mock(), Mock(), Mock(), Mock(), Mock(), Mock()
 
 
 def _log(text):
@@ -298,7 +342,7 @@ for _binding in _bindings:
     _log("Trying %s" % _binding.__name__)
 
     try:
-        _QtCore, _QtGui, _QtWidgets = _binding()
+        _QtCore, _QtGui, _QtWidgets, _QtNetwork, _QtXml, _QtHelp = _binding()
         _found_binding = True
         break
 
@@ -761,6 +805,80 @@ _strict_members = {
         "qWarning",
         "qrand",
         "qsrand",
+    ],
+    "QtXml": [
+        "QDomAttr",
+        "QDomCDATASection",
+        "QDomCharacterData",
+        "QDomComment",
+        "QDomDocument",
+        "QDomDocumentFragment",
+        "QDomDocumentType",
+        "QDomElement",
+        "QDomEntity",
+        "QDomEntityReference",
+        "QDomImplementation",
+        "QDomNamedNodeMap",
+        "QDomNode",
+        "QDomNodeList",
+        "QDomNotation",
+        "QDomProcessingInstruction",
+        "QDomText",
+        "QXmlAttributes",
+        "QXmlContentHandler",
+        "QXmlDTDHandler",
+        "QXmlDeclHandler",
+        "QXmlDefaultHandler",
+        "QXmlEntityResolver",
+        "QXmlErrorHandler",
+        "QXmlInputSource",
+        "QXmlLexicalHandler",
+        "QXmlLocator",
+        "QXmlNamespaceSupport",
+        "QXmlParseException",
+        "QXmlReader",
+        "QXmlSimpleReader"
+    ],
+    "QtHelp": [
+        "QHelpContentItem",
+        "QHelpContentModel",
+        "QHelpContentWidget",
+        "QHelpEngine",
+        "QHelpEngineCore",
+        "QHelpIndexModel",
+        "QHelpIndexWidget",
+        "QHelpSearchEngine",
+        "QHelpSearchQuery",
+        "QHelpSearchQueryWidget",
+        "QHelpSearchResultWidget"
+    ],
+    "QtNetwork": [
+        "QAbstractNetworkCache",
+        "QAbstractSocket",
+        "QAuthenticator",
+        "QHostAddress",
+        "QHostInfo",
+        "QLocalServer",
+        "QLocalSocket",
+        "QNetworkAccessManager",
+        "QNetworkAddressEntry",
+        "QNetworkCacheMetaData",
+        "QNetworkConfiguration",
+        "QNetworkConfigurationManager",
+        "QNetworkCookie",
+        "QNetworkCookieJar",
+        "QNetworkDiskCache",
+        "QNetworkInterface",
+        "QNetworkProxy",
+        "QNetworkProxyFactory",
+        "QNetworkProxyQuery",
+        "QNetworkReply",
+        "QNetworkRequest",
+        "QNetworkSession",
+        "QSsl",
+        "QTcpServer",
+        "QTcpSocket",
+        "QUdpSocket"
     ]
 }
 
@@ -801,6 +919,9 @@ def _loose():
     self.QtWidgets = self._QtWidgets
     self.QtGui = self._QtGui
     self.QtCore = self._QtCore
+    self.QtNetwork = self._QtNetwork
+    self.QtHelp = self._QtHelp
+    self.QtXml = self._QtXml
 
 
 _strict() if QT_STRICT else _loose()
@@ -812,6 +933,9 @@ sys.modules.update({
     __name__ + ".QtGui": QtGui,
     __name__ + ".QtCore": QtCore,
     __name__ + ".QtWidgets": QtWidgets,
+    __name__ + ".QtXml": QtXml,
+    __name__ + ".QtNetwork": QtNetwork,
+    __name__ + ".QtHelp": QtHelp,
     __name__ + ".QtCompat": QtCompat,
 })
 
