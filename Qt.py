@@ -312,6 +312,7 @@ if not _found_binding:
 
 
 # Members of Qt.py in Strict Mode.
+# Find or add excluded members in build_membership.py
 _strict_members = {
     "QtGui": [
         "QAbstractTextDocumentLayout",
@@ -490,7 +491,6 @@ _strict_members = {
         "QGraphicsEllipseItem",
         "QGraphicsGridLayout",
         "QGraphicsItem",
-        # "QGraphicsItemAnimation",  # Not in PyQt4
         "QGraphicsItemGroup",
         "QGraphicsLayout",
         "QGraphicsLayoutItem",
