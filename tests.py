@@ -309,7 +309,7 @@ def test_cli():
     popen = subprocess.Popen([sys.executable, "Qt.py", "--help"],
                              stdout=subprocess.PIPE)
     out, err = popen.communicate()
-    assert out.startswith("usage: Qt.py")
+    assert out.startswith(b"usage: Qt.py")
 
 
 if binding("PyQt4"):
