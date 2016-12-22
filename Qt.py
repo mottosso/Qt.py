@@ -65,8 +65,6 @@ import shutil
 __all__ = ["QtGui", "QtCore", "QtWidgets", "QtCompat"]
 
 # Flags from environment variables
-
-# Enable additional output when loading Qt.py
 QT_VERBOSE = bool(os.getenv("QT_VERBOSE"))
 QT_PREFERRED_BINDING = os.getenv("QT_PREFERRED_BINDING")
 QT_STRICT = bool(os.getenv("QT_STRICT"))
@@ -76,6 +74,9 @@ QtGui = types.ModuleType("QtGui")
 QtCore = types.ModuleType("QtCore")
 QtWidgets = types.ModuleType("QtWidgets")
 QtCompat = types.ModuleType("QtCompat")
+
+# To use other modules, such as QtTest and QtScript,
+# use conditional branching and import these explicitly.
 
 
 def _pyside2():
@@ -185,51 +186,6 @@ def _log(text):
         sys.stdout.write(text + "\n")
 
 
-# Default order (customise order and content via QT_PREFERRED_BINDING)
-_bindings = (_pyside2, _pyqt5, _pyside, _pyqt4)
-
-if QT_PREFERRED_BINDING:
-    _preferred = QT_PREFERRED_BINDING.split(os.pathsep)
-    _available = {
-        "PySide2": _pyside2,
-        "PyQt5": _pyqt5,
-        "PySide": _pyside,
-        "PyQt4": _pyqt4,
-        "None": _none
-    }
-
-    try:
-        _bindings = [_available[binding] for binding in _preferred]
-    except KeyError:
-        raise ImportError(
-            ("Requested %s, available: " % _preferred) +
-            "\n".join(_available.keys())
-        )
-
-    del(_preferred)
-    del(_available)
-
-_log("Preferred bindings: %s" % list(_b.__name__ for _b in _bindings))
-
-
-_found_binding = False
-for _binding in _bindings:
-    _log("Trying %s" % _binding.__name__)
-
-    try:
-        _QtCore, _QtGui, _QtWidgets = _binding()
-        _found_binding = True
-        break
-
-    except ImportError as e:
-        _log("ImportError: %s" % e)
-        continue
-
-if not _found_binding:
-    # If not binding were found, throw this error
-    raise ImportError("No Qt binding were found.")
-
-
 def _convert(lines):
     """Convert compiled .ui file from PySide2 to Qt.py
 
@@ -310,7 +266,53 @@ def _cli(args):
         sys.stdout.write("Successfully converted \"%s\"\n" % args.convert)
 
 
-_members = {
+# Default order (customise order and content via QT_PREFERRED_BINDING)
+_bindings = (_pyside2, _pyqt5, _pyside, _pyqt4)
+
+if QT_PREFERRED_BINDING:
+    _preferred = QT_PREFERRED_BINDING.split(os.pathsep)
+    _available = {
+        "PySide2": _pyside2,
+        "PyQt5": _pyqt5,
+        "PySide": _pyside,
+        "PyQt4": _pyqt4,
+        "None": _none
+    }
+
+    try:
+        _bindings = [_available[binding] for binding in _preferred]
+    except KeyError:
+        raise ImportError(
+            ("Requested %s, available: " % _preferred) +
+            "\n".join(_available.keys())
+        )
+
+    del(_preferred)
+    del(_available)
+
+_log("Preferred bindings: %s" % list(_b.__name__ for _b in _bindings))
+
+
+_found_binding = False
+for _binding in _bindings:
+    _log("Trying %s" % _binding.__name__)
+
+    try:
+        _QtCore, _QtGui, _QtWidgets = _binding()
+        _found_binding = True
+        break
+
+    except ImportError as e:
+        _log("ImportError: %s" % e)
+        continue
+
+if not _found_binding:
+    # If not binding were found, throw this error
+    raise ImportError("No Qt binding were found.")
+
+
+# Members of Qt.py in Strict Mode.
+_strict_members = {
     "QtGui": [
         "QAbstractTextDocumentLayout",
         "QActionEvent",
@@ -771,18 +773,38 @@ QtCompat.__remapped__ = list()  # DEPRECATED
 QtCompat.__modified__ = list()  # DEPRECATED
 QtCompat.__wrapper_version__ = "0.7.0"  # DEPRECATED
 
-if QT_STRICT:
-    for _module, _members in _members.items():
-        for _member in _members:
-            _original = getattr(sys.modules[__name__], "_%s" % _module)
-            _replacement = getattr(sys.modules[__name__], _module)
-            setattr(_replacement, _member, getattr(_original, _member))
 
-else:
-    # Plain reference to original modules
-    QtWidgets = _QtWidgets
-    QtGui = _QtGui
-    QtCore = _QtCore
+def _strict():
+    """Apply strict mode
+
+    This make Qt.py into a subset of PySide2 members that exist
+    across all other bindings.
+
+    """
+
+    for module, members in _strict_members.items():
+        for member in members:
+            orig = getattr(sys.modules[__name__], "_%s" % module)
+            repl = getattr(sys.modules[__name__], module)
+            setattr(repl, member, getattr(orig, member))
+
+
+def _loose():
+    """Apply loose mode
+
+    This forwards attribute access to Qt.py submodules
+    onto the original binding.
+
+    """
+
+    self = sys.modules[__name__]
+    self.QtWidgets = self._QtWidgets
+    self.QtGui = self._QtGui
+    self.QtCore = self._QtCore
+
+
+_strict() if QT_STRICT else _loose()
+
 
 # Enable direct import of submodules
 # E.g. import Qt.QtCore
@@ -799,6 +821,10 @@ sys.modules.update({
 Special case
 
 In some bindings, members are either misplaced or renamed.
+
+TODO: This is difficult to read, compared to the above dictionary.
+    Find a better way of implementing this, that also simplifies
+    adding or removing members.
 
 """
 
