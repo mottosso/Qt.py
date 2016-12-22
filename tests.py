@@ -296,6 +296,13 @@ def test_binding_and_qt_version():
     assert QtCompat.__qt_version__ != "0.0.0", ("Qt version was not populated")
 
 
+def test_strict():
+    """QT_STRICT exposes only a subset of PySide2"""
+    os.environ["QT_STRICT"] = "1"
+    from Qt import QtGui
+    assert not hasattr(QtGui, "QWidget")
+
+
 if binding("PyQt4"):
     def test_preferred_pyqt4():
         """QT_PREFERRED_BINDING = PyQt4 properly forces the binding"""

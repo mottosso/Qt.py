@@ -99,9 +99,6 @@ def test_{binding}_members():
     from Qt import *
 
     if "PySide" == "{Binding}":
-        # Qt 4 bindings do not include QtWidgets
-        # in their __all__ list. And who knows what else.
-        #
         # TODO: This needs a more robust implementation.
         from Qt import QtWidgets
 
@@ -306,6 +303,8 @@ excluded = {
         # PyQt5
         "QGraphicsItemAnimation",
         "QTileRules",
+
+        "qApp",  # See Issue #171
     ],
 
     "QtHelp": [
