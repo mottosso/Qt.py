@@ -874,3 +874,7 @@ del(_QtWidgets)
 del(_bindings)
 del(_binding)
 del(_found_binding)
+
+# Enable command-line interface
+if __name__ == "__main__":
+    _cli(sys.argv[1:])

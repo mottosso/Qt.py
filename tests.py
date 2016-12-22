@@ -303,6 +303,15 @@ def test_strict():
     assert not hasattr(QtGui, "QWidget")
 
 
+def test_cli():
+    """Qt.py is available from the command-line"""
+    os.environ.pop("QT_VERBOSE")
+    popen = subprocess.Popen([sys.executable, "Qt.py", "--help"],
+                             stdout=subprocess.PIPE)
+    out, err = popen.communicate()
+    assert out.startswith("usage: Qt.py")
+
+
 if binding("PyQt4"):
     def test_preferred_pyqt4():
         """QT_PREFERRED_BINDING = PyQt4 properly forces the binding"""
