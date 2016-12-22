@@ -292,11 +292,8 @@ Qt implicitly updates this variable through monkey patching whenever a new QAppl
 >>> import os
 >>> os.environ["QT_STRICT"] = "1"
 >>> from Qt import QtWidgets
->>> app = QtWidgets.QApplication(sys.argv)
->>> QtWidgets.qApp
-Traceback (most recent call last):
-...
-AttributeError: 'module' object has no attribute 'qApp'
+>>> "qApp" in dir(QtWidgets)
+False
 ```
 
 ##### Workaround
