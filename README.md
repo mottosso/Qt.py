@@ -302,6 +302,7 @@ Send us a pull-request with your studio here.
 - [ftrack](https://www.ftrack.com/)
 - [Fido](http://fido.se/)
 - [Bläck](http://www.blackstudios.se/)
+- [CGRU](http://cgru.info/)
 
 Presented at Siggraph 2016, BOF!
 
