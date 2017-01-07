@@ -323,6 +323,7 @@ Send us a pull-request with your project here.
 - [cmt](https://github.com/chadmv/cmt)
 - [PythonForMayaSamples](https://github.com/dgovil/PythonForMayaSamples)
 - [Kraken](https://github.com/fabric-engine/Kraken)
+- [AFANASY](http://cgru.info/afanasy/afanasy)
 
 <br>
 <br>
