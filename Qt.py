@@ -62,6 +62,7 @@ import sys
 import types
 import shutil
 
+# Enable support for `from Qt import *`
 __all__ = [
     "QtGui",
     "QtCore",
