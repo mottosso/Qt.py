@@ -201,6 +201,9 @@ excluded = {
         "qTan",
         "qtTrId",
 
+        # missing from all bindings
+        "QFileSelector",
+
         # missing from PyQt5
         "SIGNAL",
         "SLOT",
@@ -225,6 +228,15 @@ excluded = {
         "QMatrix",
         "QPyTextObject",
         "QStringListModel",
+
+        # missing from all bindings
+        "QAccessible",
+        "QAccessibleInterface",
+        "QExposeEvent",
+        "QOpenGLContext",
+        "QOpenGLFramebufferObject",
+        "QOpenGLShader",
+        "QScreen",
     ],
 
     "QtWebKit": [

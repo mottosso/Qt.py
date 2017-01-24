@@ -355,8 +355,16 @@ if not _found_binding:
     raise ImportError("No Qt binding were found.")
 
 
-# Members of Qt.py in Strict Mode.
-# Find or add excluded members in build_membership.py
+"""Members of Qt.py
+
+This is where each member of Qt.py is explicitly defined.
+It is based on a "lowest commond denominator" of all bindings;
+including members found in each of the 4 bindings.
+
+Find or add excluded members in build_membership.py
+
+"""
+
 _strict_members = {
     "QtGui": [
         "QAbstractTextDocumentLayout",
@@ -882,49 +890,32 @@ _strict_members = {
     ]
 }
 
-QtCompat.__version__ = "0.7.0"
+"""Augment QtCompat
+
+QtCompat contains wrappers and added functionality
+to the original bindings, such as the CLI interface
+and otherwise incompatible members between bindings,
+such as `QHeaderView.setSectionResizeMode`.
+
+"""
+
+QtCompat.__version__ = "1.0.0.b1"
 QtCompat._cli = _cli
 QtCompat._convert = _convert
 
-QtCompat.__added__ = list()     # DEPRECATED
-QtCompat.__remapped__ = list()  # DEPRECATED
-QtCompat.__modified__ = list()  # DEPRECATED
-QtCompat.__wrapper_version__ = "0.7.0"  # DEPRECATED
 
+"""Apply strict mode
 
-def _strict():
-    """Apply strict mode
+This make Qt.py into a subset of PySide2 members that exist
+across all other bindings.
 
-    This make Qt.py into a subset of PySide2 members that exist
-    across all other bindings.
+"""
 
-    """
-
-    for module, members in _strict_members.items():
-        for member in members:
-            orig = getattr(sys.modules[__name__], "_%s" % module)
-            repl = getattr(sys.modules[__name__], module)
-            setattr(repl, member, getattr(orig, member))
-
-
-def _loose():
-    """Apply loose mode
-
-    This forwards attribute access to Qt.py submodules
-    onto the original binding.
-
-    """
-
-    self = sys.modules[__name__]
-    self.QtWidgets = self._QtWidgets
-    self.QtGui = self._QtGui
-    self.QtCore = self._QtCore
-    self.QtNetwork = self._QtNetwork
-    self.QtHelp = self._QtHelp
-    self.QtXml = self._QtXml
-
-
-_strict() if QT_STRICT else _loose()
+for module, members in _strict_members.items():
+    for member in members:
+        orig = getattr(sys.modules[__name__], "_%s" % module)
+        repl = getattr(sys.modules[__name__], module)
+        setattr(repl, member, getattr(orig, member))
 
 
 # Enable direct import of submodules

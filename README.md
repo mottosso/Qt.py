@@ -2,7 +2,7 @@
 
 ### Qt.py
 
-Qt.py enables you to write software that dynamically chooses the most desireable bindings based on what's available, including PySide2, PyQt5, PySide and PyQt4; in that (configurable) order (see below).
+Qt.py enables you to write software that runs on any of the 4 supported bindings - PySide2, PyQt5, PySide and PyQt4.
 
 **Guides**
 
@@ -31,15 +31,15 @@ Qt.py enables you to write software that dynamically chooses the most desireable
 
 ### Project goals
 
-Write for PySide2, run in any binding.
+Write once, run in any binding.
 
 Qt.py was born in the film and visual effects industry to address the growing need for software capable of running with more than one flavor of the Qt bindings for Python - PySide, PySide2, PyQt4 and PyQt5.
 
 | Goal                                 | Description
 |:-------------------------------------|:---------------
-| *Support co-existence* | Qt.py should not affect other bindings running in same interpreter session.
-| *Build for one, run with all* | Code written with Qt.py should run on any binding.
-| *Explicit is better than implicit* | Differences between bindings should be visible to you.
+| *Support co-existence*               | Qt.py should not affect other bindings running in same interpreter session.
+| *Build for one, run with all*        | Code written with Qt.py should run on any binding.
+| *Explicit is better than implicit*   | Differences between bindings should be visible to you.
 
 See [`CONTRIBUTING.md`](CONTRIBUTING.md) for more details.
 
@@ -117,20 +117,15 @@ These are the publicly facing environment variables that in one way or another a
 | Variable             | Type  | Description
 |:---------------------|:------|:----------
 | QT_PREFFERED_BINDING | str   | Override order and content of binding to try.
-| QT_STRICT            | bool  | Enforce compatibility with other bindings.
-| QT_VERBOSE           | bool  | Be a little more chatty when importing Qt
+| QT_VERBOSE           | bool  | Be a little more chatty about what's going on with Qt.py
 
 <br>
 
-##### Strict Mode
+##### Subset
 
-Enforce compatibility with all bindings.
+Members of Qt.py is a subset of PySide2. Which means for a member to be made accessible via Qt.py, it will need to (1) be accessible via PySide2 and (2) each of the other supported bindings. This excludes large portions of the Qt framework, including the newly added QtQml and QtQuick modules but guarantees that anything you develop with Qt.py will work identically on any binding - PySide, PySide2, PyQt4 and PyQt5.
 
-Use this to ensure that your program will run identically on all bindings.
-
-When enabling `QT_STRICT`, Qt.py becomes a subset of PySide2. All members are guaranteed to exist across all bindings, meaning many will be missing. Including QtQml and QtQuick modules.
-
-Strict mode follows the [VFX Platform](http://www.vfxplatform.com/) to determine which version of PySide2 to use for reference. Currently version is 2.0.0.
+The version of PySide2 used as reference is the one specified on [VFX Platform](http://www.vfxplatform.com/). Currently version is 2.0.0.
 
 <br>
 
@@ -239,34 +234,6 @@ PyQt5.Slot = PyQt5.pyqtSlot
 PySide2.QtCore.QStringListModel = PySide2.QtGui.QStringListModel
 ```
 
-**Portability**
-
-Qt.py has two modes - loose and strict.
-
-Loose means Qt.py does not hide members from the original binding. This can be problematic if, for example, you accidentally use a member that only exists PyQt5 and later try running your software with a different binding.
-
-```python
-from Qt import QtCore
-
-# Incompatible with PySide
-signal = QtCore.pyqtSignal()
-```
-
-But it enables use of Qt.py as a helper library, in conjunction with an existing binding, simplifying the transition of an existing project from a particular binding.
-
-```python
-# This is ok
-from Qt import QtCore
-from PyQt4 import QtGui
-```
-
-Strict on the other hand only exposes members that are guaranteed to work identically across all bindings. This mode is ideal if you are looking for the most cross-compatible experience and you would like your software to run on all bindings.
-
-```python
-from Qt import QtGui
-assert not hasattr(QtGui, "QWidget")
-```
-
 **Caveats**
 
 There are cases where Qt.py is not handling incompatibility issues. Please see [`CAVEATS.md`](CAVEATS.md) for more information.
@@ -304,6 +271,7 @@ Send us a pull-request with your studio here.
 - [Fido](http://fido.se/)
 - [Bläck](http://www.blackstudios.se/)
 - [CGRU](http://cgru.info/)
+- [MPC](http://www.moving-picture.com)
 
 Presented at Siggraph 2016, BOF!
 
@@ -377,8 +345,8 @@ Tests that are written at module level are run four times - once per binding - w
 
 ```python
 if binding("PyQt4"):
-	def test_something_related_to_pyqt4():
-		pass
+    def test_something_related_to_pyqt4():
+        pass
 ```
 
 **Running tests**
