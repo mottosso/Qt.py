@@ -4,7 +4,7 @@ import os
 # Set preferred binding, or Qt.py tests will fail which doesn't have pysideuic
 os.environ['QT_PREFERRED_BINDING'] = 'PyQt4'
 
-from Qt import QtWidgets, QtCompat
+from Qt import QtWidgets, __binding__
 
 
 def load_ui_type(uifile):
@@ -100,10 +100,10 @@ def load_ui_wrapper(uifile, base_instance=None):
         function: pyside_load_ui or uic.loadUi
 
     """
-    if 'PySide' in QtCompat.__binding__:
+    if 'PySide' in __binding__:
         return pyside_load_ui(uifile, base_instance)
-    elif 'PyQt' in QtCompat.__binding__:
-        uic = __import__(QtCompat.__binding__ + ".uic").uic
+    elif 'PyQt' in __binding__:
+        uic = __import__(__binding__ + ".uic").uic
         return uic.loadUi(uifile, base_instance)
 
 

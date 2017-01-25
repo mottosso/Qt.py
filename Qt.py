@@ -62,6 +62,8 @@ import sys
 import types
 import shutil
 
+__version__ = "1.0.0.b1"
+
 # Enable support for `from Qt import *`
 __all__ = [
     "QtGui",
@@ -87,6 +89,7 @@ QtNetwork = types.ModuleType("QtNetwork")
 QtXml = types.ModuleType("QtXml")
 QtHelp = types.ModuleType("QtHelp")
 QtCompat = types.ModuleType("QtCompat")
+Qt = sys.modules[__name__]  # Reference to this module
 
 # To use other modules, such as QtTest and QtScript,
 # use conditional branching and import these explicitly.
@@ -104,9 +107,9 @@ def _pyside2():
         __version__
     )
 
-    QtCompat.__binding__ = "PySide2"
-    QtCompat.__qt_version__ = QtCore.qVersion()
-    QtCompat.__binding_version__ = __version__
+    Qt.__binding__ = "PySide2"
+    Qt.__qt_version__ = QtCore.qVersion()
+    Qt.__binding_version__ = __version__
     QtCompat.load_ui = lambda fname: QtUiTools.QUiLoader().load(fname)
     QtCompat.setSectionResizeMode = QtWidgets.QHeaderView.setSectionResizeMode
     QtCompat.translate = QtCore.QCoreApplication.translate
@@ -127,9 +130,9 @@ def _pyside():
 
     QtWidgets = QtGui
 
-    QtCompat.__binding__ = "PySide"
-    QtCompat.__qt_version__ = QtCore.qVersion()
-    QtCompat.__binding_version__ = __version__
+    Qt.__binding__ = "PySide"
+    Qt.__qt_version__ = QtCore.qVersion()
+    Qt.__binding_version__ = __version__
     QtCompat.load_ui = lambda fname: QtUiTools.QUiLoader().load(fname)
     QtCompat.setSectionResizeMode = QtGui.QHeaderView.setResizeMode
     QtCompat.translate = (
@@ -153,9 +156,9 @@ def _pyqt5():
         uic
     )
 
-    QtCompat.__binding__ = "PyQt5"
-    QtCompat.__qt_version__ = QtCore.QT_VERSION_STR
-    QtCompat.__binding_version__ = QtCore.PYQT_VERSION_STR
+    Qt.__binding__ = "PyQt5"
+    Qt.__qt_version__ = QtCore.QT_VERSION_STR
+    Qt.__binding_version__ = QtCore.PYQT_VERSION_STR
     QtCompat.load_ui = lambda fname: uic.loadUi(fname)
     QtCompat.translate = QtCore.QCoreApplication.translate
     QtCompat.setSectionResizeMode = QtWidgets.QHeaderView.setSectionResizeMode
@@ -191,9 +194,9 @@ def _pyqt4():
 
     QtWidgets = QtGui
 
-    QtCompat.__binding__ = "PyQt4"
-    QtCompat.__qt_version__ = QtCore.QT_VERSION_STR
-    QtCompat.__binding_version__ = QtCore.PYQT_VERSION_STR
+    Qt.__binding__ = "PyQt4"
+    Qt.__qt_version__ = QtCore.QT_VERSION_STR
+    Qt.__binding_version__ = QtCore.PYQT_VERSION_STR
     QtCompat.load_ui = lambda fname: uic.loadUi(fname)
     QtCompat.setSectionResizeMode = QtGui.QHeaderView.setResizeMode
 
@@ -215,11 +218,11 @@ def _pyqt4():
 def _none():
     """Internal option (used in installer)"""
 
-    Mock = type("Mock", (), {"__getattr__": lambda self, attr: None})
+    Mock = type("Mock", (), {"__getattr__": lambda Qt, attr: None})
 
-    QtCompat.__binding__ = "None"
-    QtCompat.__qt_version__ = "0.0.0"
-    QtCompat.__binding_version__ = "0.0.0"
+    Qt.__binding__ = "None"
+    Qt.__qt_version__ = "0.0.0"
+    Qt.__binding_version__ = "0.0.0"
     QtCompat.load_ui = lambda fname: None
     QtCompat.setSectionResizeMode = lambda *args, **kwargs: None
 
@@ -900,7 +903,6 @@ such as `QHeaderView.setSectionResizeMode`.
 
 """
 
-QtCompat.__version__ = "1.0.0.b1"
 QtCompat._cli = _cli
 QtCompat._convert = _convert
 
@@ -944,35 +946,35 @@ TODO: This is difficult to read, compared to the above dictionary.
 
 """
 
-if "PySide2" == QtCompat.__binding__:
+if "PySide2" == Qt.__binding__:
     QtCore.QAbstractProxyModel = _QtCore.QAbstractProxyModel
     QtCore.QSortFilterProxyModel = _QtCore.QSortFilterProxyModel
     QtCore.QStringListModel = _QtGui.QStringListModel
     QtCore.QItemSelection = _QtCore.QItemSelection
     QtCore.QItemSelectionModel = _QtCore.QItemSelectionModel
 
-if "PyQt5" == QtCompat.__binding__:
+if "PyQt5" == Qt.__binding__:
     QtCore.QAbstractProxyModel = _QtCore.QAbstractProxyModel
     QtCore.QSortFilterProxyModel = _QtCore.QSortFilterProxyModel
     QtCore.QStringListModel = _QtCore.QStringListModel
     QtCore.QItemSelection = _QtCore.QItemSelection
     QtCore.QItemSelectionModel = _QtCore.QItemSelectionModel
 
-if "PySide" == QtCompat.__binding__:
+if "PySide" == Qt.__binding__:
     QtCore.QAbstractProxyModel = _QtGui.QAbstractProxyModel
     QtCore.QSortFilterProxyModel = _QtGui.QSortFilterProxyModel
     QtCore.QStringListModel = _QtGui.QStringListModel
     QtCore.QItemSelection = _QtGui.QItemSelection
     QtCore.QItemSelectionModel = _QtGui.QItemSelectionModel
 
-if "PyQt4" == QtCompat.__binding__:
+if "PyQt4" == Qt.__binding__:
     QtCore.QAbstractProxyModel = _QtGui.QAbstractProxyModel
     QtCore.QSortFilterProxyModel = _QtGui.QSortFilterProxyModel
     QtCore.QItemSelection = _QtGui.QItemSelection
     QtCore.QStringListModel = _QtGui.QStringListModel
     QtCore.QItemSelectionModel = _QtGui.QItemSelectionModel
 
-if "PyQt" in QtCompat.__binding__:
+if "PyQt" in Qt.__binding__:
     QtCore.Property = _QtCore.pyqtProperty
     QtCore.Signal = _QtCore.pyqtSignal
     QtCore.Slot = _QtCore.pyqtSlot

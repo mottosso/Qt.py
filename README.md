@@ -85,7 +85,7 @@ app.exec_()
 
 ### Documentation
 
-All members of `Qt` stem directly from those available via PySide2, along with these additional members, accessible via `Qt.QtCompat`.
+All members of `Qt` stem directly from those available via PySide2, along with these additional members.
 
 | Attribute               | Returns     | Description
 |:------------------------|:------------|:------------
@@ -93,6 +93,19 @@ All members of `Qt` stem directly from those available via PySide2, along with t
 | `__binding__`           | `str`       | A string reference to binding currently in use
 | `__qt_version__`        | `str`       | Reference to version of Qt, such as Qt 5.6.1
 | `__binding_version__`   | `str`       | Reference to version of binding, such as PySide 1.2.6
+
+**Example**
+
+```python
+>>> from Qt import __binding__
+>>> __binding__
+'PyQt5'
+```
+
+Qt.py also provides compatibility wrappers for critical functionality that differs across bindings, these can be found in the added `QtCompat` submodule.
+
+| Attribute               | Returns     | Description
+|:------------------------|:------------|:------------
 | `load_ui(fname=str)`    | `QObject`   | Minimal wrapper of PyQt4.loadUi and PySide equivalent
 | `translate(...)`        | `function`  | Compatibility wrapper around [QCoreApplication.translate][]
 | `setSectionResizeMode()`| `method`    | Compatibility wrapper around [QAbstractItemView.setSectionResizeMode][]
@@ -104,8 +117,7 @@ All members of `Qt` stem directly from those available via PySide2, along with t
 
 ```python
 >>> from Qt import QtCompat
->>> QtCompat.__binding__
-'PyQt5'
+>>> QtCompat.setSectionResizeMode
 ```
 
 <br>
@@ -134,7 +146,7 @@ The version of PySide2 used as reference is the one specified on [VFX Platform](
 Some bindings offer features not available in others, you can use `__binding__` to capture those.
 
 ```python
-if "PySide" in QtCompat.__binding__:
+if "PySide" in __binding__:
   do_pyside_stuff()
 ```
 
@@ -147,7 +159,7 @@ If your system has multiple choices where one or more is preferred, you can over
 ```bash
 $ set QT_PREFERRED_BINDING=PyQt5  # Windows
 $ export QT_PREFERRED_BINDING=PyQt5  # Unix/OSX
-$ python -c "from Qt import QtCompat;print(QtCompat.__binding__)"
+$ python -c "import Qt;print(Qt.__binding__)"
 PyQt5
 ```
 

@@ -270,11 +270,11 @@ Or a conditional.
 
 ```python
 # PyQt5
->>> from Qt import QtWidgets, QtCompat
+>>> from Qt import QtWidgets, __binding__
 >>> app = QtWidgets.QApplication(sys.argv)
 >>> view = QtWidgets.QTreeWidget()
 >>> header = view.header()
->>> if QtCompat.__binding__ in ("PyQt4", "PySide"):
+>>> if __binding__ in ("PyQt4", "PySide"):
 ...   header.setResizeMode(QtWidgets.QHeaderView.Fixed)
 ... else:
 ...   header.setSectionResizeMode(QtWidgets.QHeaderView.Fixed)
