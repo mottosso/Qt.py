@@ -203,6 +203,8 @@ excluded = {
 
         # missing from all bindings
         "QFileSelector",
+        "QMimeDatabase",
+        "QMimeType",
 
         # missing from PyQt5
         "SIGNAL",
