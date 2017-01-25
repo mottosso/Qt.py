@@ -8,6 +8,7 @@ There are cases where Qt.py is not handling incompatibility issues.
 - [QtWidgets.QAction.triggered](#qtwidgetsqactiontriggered)
 - [QtGui.QRegExpValidator](#qtguiqregexpvalidator)
 - [QtWidgets.QHeaderView.setResizeMode](#qtwidgetsqheaderviewsetresizemode)
+- [QtWidgets.qApp](#qtwidgetsqapp)
 
 <br>
 <br>
@@ -121,15 +122,15 @@ PySide allows for a `result=None` keyword param to set the return type. PyQt4 cr
 
 ```python
 # PySide
->>> from Qt import QtCore, QtGui
->>> slot = QtCore.Slot(QtGui.QWidget, result=None)
+>>> from Qt import QtCore, QtWidgets
+>>> slot = QtCore.Slot(QtWidgets.QWidget, result=None)
 ```
 
 ```python
 # PyQt4, Python2
->>> from Qt import QtCore, QtGui
->>> slot = QtCore.Slot(QtGui.QWidget)
->>> slot = QtCore.Slot(QtGui.QWidget, result=None)
+>>> from Qt import QtCore, QtWidgets
+>>> slot = QtCore.Slot(QtWidgets.QWidget)
+>>> slot = QtCore.Slot(QtWidgets.QWidget, result=None)
 Traceback (most recent call last):
 ...
 TypeError: string or ASCII unicode expected not 'NoneType'
@@ -137,9 +138,9 @@ TypeError: string or ASCII unicode expected not 'NoneType'
 
 ```python
 # PyQt4, Python3
->>> from Qt import QtCore, QtGui
->>> slot = QtCore.Slot(QtGui.QWidget)
->>> slot = QtCore.Slot(QtGui.QWidget, result=None)
+>>> from Qt import QtCore, QtWidgets
+>>> slot = QtCore.Slot(QtWidgets.QWidget)
+>>> slot = QtCore.Slot(QtWidgets.QWidget, result=None)
 Traceback (most recent call last):
 ...
 TypeError: bytes or ASCII string expected not 'NoneType'
@@ -277,4 +278,36 @@ Or a conditional.
 ...   header.setResizeMode(QtWidgets.QHeaderView.Fixed)
 ... else:
 ...   header.setSectionResizeMode(QtWidgets.QHeaderView.Fixed)
+```
+
+
+#### QtWidgets.qApp
+
+In [Strict Mode](https://github.com/mottosso/Qt.py#qt_strict), `qApp` is not included in Qt.py due to the way Qt keeps this up to date with the currently active QApplication.
+
+Qt implicitly updates this variable through monkey patching whenever a new QApplication is instantiated. This means that our variable quickly goes out of date and is not updated at the same time.
+
+```python
+# PySide2
+>>> import os
+>>> os.environ["QT_STRICT"] = "1"
+>>> from Qt import QtWidgets
+>>> "qApp" in dir(QtWidgets)
+False
+```
+
+##### Workaround
+
+Use `QApplication.instance()` instead.
+
+Technically, there is no difference between the two, apart from more characters to type.
+
+```python
+# PySide2
+>>> import os
+>>> os.environ["QT_STRICT"] = "1"
+>>> from Qt import QtWidgets
+>>> app = QtWidgets.QApplication(sys.argv)
+>>> app == QtWidgets.QApplication.instance()
+True
 ```

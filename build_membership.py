@@ -68,8 +68,13 @@ def build_tests():
 import os
 import json
 
+
 with open("reference_members.json") as f:
     reference_members = json.load(f)
+
+# Only bother checking strict mode, as it is
+# the only mode that modifies membership in any way.
+os.environ["QT_STRICT"] = "1"
 
 excluded = {excluded}
 
@@ -79,11 +84,15 @@ excluded = {excluded}
 def test_{binding}_members():
     os.environ["QT_PREFERRED_BINDING"] = "{Binding}"
 
+    # Initialise Qt.py, this is especially important for PyQt4
+    # which sets sip to 2.0 upon loading Qt.py
+    import Qt
+
     if "PyQt" in "{Binding}":
         # PyQt4 and 5 performs some magic here
         # that must take place before attempting
         # to import with wildcard.
-        from Qt import Qt as _
+        from {Binding} import Qt as _
 
     if "PySide2" == "{Binding}":
         # PySide2, as of this writing, doesn't include
@@ -93,15 +102,13 @@ def test_{binding}_members():
         for missing in ("QtWidgets",
                         "QtXml",
                         "QtHelp",
+                        "QtNetwork",
                         "QtPrintSupport"):
             __all__.append(missing)
 
     from Qt import *
 
     if "PySide" == "{Binding}":
-        # Qt 4 bindings do not include QtWidgets
-        # in their __all__ list. And who knows what else.
-        #
         # TODO: This needs a more robust implementation.
         from Qt import QtWidgets
 
@@ -167,6 +174,9 @@ excluded = {
         "QMessageLogContext",
         "QtInfoMsg",
         "qInstallMessageHandler",
+        "QT_TRANSLATE_NOOP",
+        "QT_TR_NOOP",
+        "QT_TR_NOOP_UTF8",
 
         # missing from PyQt4
         "ClassInfo",
@@ -191,6 +201,11 @@ excluded = {
         "qTan",
         "qtTrId",
 
+        # missing from all bindings
+        "QFileSelector",
+        "QMimeDatabase",
+        "QMimeType",
+
         # missing from PyQt5
         "SIGNAL",
         "SLOT",
@@ -204,6 +219,8 @@ excluded = {
         "QSurfaceFormat",
         "QTouchDevice",
         "QWindow",  # (2) unique to Qt 5
+        "QTouchEvent",  # (2) unique to Qt 5
+        "qRgba",  # (2) unique to Qt 5
 
         # missing from PyQt4
         "QAccessibleEvent",
@@ -213,6 +230,15 @@ excluded = {
         "QMatrix",
         "QPyTextObject",
         "QStringListModel",
+
+        # missing from all bindings
+        "QAccessible",
+        "QAccessibleInterface",
+        "QExposeEvent",
+        "QOpenGLContext",
+        "QOpenGLFramebufferObject",
+        "QOpenGLShader",
+        "QScreen",
     ],
 
     "QtWebKit": [
@@ -250,7 +276,7 @@ excluded = {
     ],
 
     "QtNetwork": [
-        # missing from PyQt4
+        # missing from Qt 4
         "QIPv6Address",
     ],
 
@@ -273,6 +299,8 @@ excluded = {
         # PyQt5
         "QGraphicsItemAnimation",
         "QTileRules",
+
+        "qApp",  # See Issue #171
     ],
 
     "QtHelp": [
@@ -325,6 +353,10 @@ excluded = {
         "QXmlSimpleReader",
     ],
 
+    "QtTest": [
+        # missing from PySide
+        "QTest",
+    ],
 }
 
 if __name__ == '__main__':

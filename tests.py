@@ -88,9 +88,9 @@ def test_load_ui_returntype():
     """load_ui returns an instance of QObject"""
 
     import sys
-    from Qt import QtWidgets, QtCore, load_ui
+    from Qt import QtWidgets, QtCore, QtCompat
     app = QtWidgets.QApplication(sys.argv)
-    obj = load_ui(self.ui_qwidget)
+    obj = QtCompat.load_ui(self.ui_qwidget)
     assert isinstance(obj, QtCore.QObject)
     app.exit()
 
@@ -185,8 +185,8 @@ class Ui_uic(object):
             Qt.QtCompat.translate("uic", "NOT Ok", None, -1))
 """.split("\n")
 
-    import Qt
-    assert Qt.convert(before) == after, after
+    from Qt import QtCompat
+    assert QtCompat._convert(before) == after, after
 
 
 def test_convert_idempotency():
@@ -222,12 +222,12 @@ class Ui_uic(object):
     from Qt import QtCompat
 
     os.chdir(self.tempdir)
-    QtCompat.cli(args=["--convert", "idempotency.py"])
+    QtCompat._cli(args=["--convert", "idempotency.py"])
 
     with open(fname) as f:
         assert f.read() == after
 
-    QtCompat.cli(args=["--convert", "idempotency.py"])
+    QtCompat._cli(args=["--convert", "idempotency.py"])
 
     with open(fname) as f:
         assert f.read() == after
@@ -243,62 +243,11 @@ def test_convert_backup():
     from Qt import QtCompat
 
     os.chdir(self.tempdir)
-    QtCompat.cli(args=["--convert", "idempotency.py"])
+    QtCompat._cli(args=["--convert", "idempotency.py"])
 
     assert os.path.exists(
         os.path.join(self.tempdir, "%s_backup%s" % os.path.splitext(fname))
     )
-
-
-def test_meta_add():
-    """Qt._add() appends to __added__"""
-    from Qt import QtCompat
-
-    module = imp.new_module("QtMock")
-
-    QtCompat._add(module, "MyAttr", None)
-
-    assert "MyAttr" in QtCompat.__added__, QtCompat.__added__
-    assert "MyAttr" not in QtCompat.__remapped__
-    assert "MyAttr" not in QtCompat.__modified__
-
-
-def test_meta_remap():
-    """Qt._remap() appends to __modified__"""
-    from Qt import QtCompat
-
-    module = imp.new_module("QtMock")
-
-    QtCompat._remap(module, "MyAttr", None)
-
-    assert "MyAttr" not in QtCompat.__added__, QtCompat.__added__
-    assert "MyAttr" in QtCompat.__remapped__
-    assert "MyAttr" not in QtCompat.__modified__
-
-
-def test_meta_remap_existing():
-    """Qt._remap() of existing member throws an exception"""
-    from Qt import QtCompat
-
-    module = imp.new_module("QtMock")
-    module.MyAttr = None
-
-    assert_raises(AttributeError, QtCompat._remap, module, "MyAttr", None)
-
-
-def test_meta_force_remap_existing():
-    """Unsafe Qt._remap() of existing member adds to modified"""
-    from Qt import QtCompat
-
-    module = imp.new_module("QtMock")
-    module.MyAttr = 123
-
-    QtCompat._remap(module, "MyAttr", None, safe=False)
-
-    assert "MyAttr" in QtCompat.__remapped__, QtCompat.__remapped__
-    assert "MyAttr" not in QtCompat.__added__
-    assert "MyAttr" in QtCompat.__modified__
-    assert module.MyAttr is None, module.MyAttr
 
 
 def test_import_from_qtwidgets():
@@ -338,30 +287,47 @@ def test_translate_arguments():
 
 
 def test_binding_and_qt_version():
-    """QtCompat's __binding_version__ and __qt_version__ populated"""
+    """Qt's __binding_version__ and __qt_version__ populated"""
 
-    from Qt import QtCompat
+    import Qt
 
-    assert QtCompat.__binding_version__ != "0.0.0", ("Binding version was not "
-                                                     "populated")
-    assert QtCompat.__qt_version__ != "0.0.0", ("Qt version was not populated")
+    assert Qt.__binding_version__ != "0.0.0", ("Binding version was not "
+                                               "populated")
+    assert Qt.__qt_version__ != "0.0.0", ("Qt version was not populated")
+
+
+def test_strict():
+    """QT_STRICT exposes only a subset of PySide2"""
+    os.environ["QT_STRICT"] = "1"
+    from Qt import QtGui
+    assert not hasattr(QtGui, "QWidget")
+
+
+def test_cli():
+    """Qt.py is available from the command-line"""
+    os.environ.pop("QT_VERBOSE")
+    popen = subprocess.Popen([sys.executable, "Qt.py", "--help"],
+                             stdout=subprocess.PIPE)
+    out, err = popen.communicate()
+    assert out.startswith(b"usage: Qt.py")
 
 
 if binding("PyQt4"):
     def test_preferred_pyqt4():
         """QT_PREFERRED_BINDING = PyQt4 properly forces the binding"""
         import Qt
-        assert Qt.__name__ == "PyQt4", ("PyQt4 should have been picked, "
-                                        "instead got %s" % Qt)
+        assert Qt.__binding__ == "PyQt4", (
+            "PyQt4 should have been picked, "
+            "instead got %s" % Qt.__binding__)
 
     def test_sip_api_qtpy():
         """Preferred binding PyQt4 should have sip version 2"""
 
         __import__("Qt")  # Bypass linter warning
         import sip
-        assert sip.getapi("QString") == 2, ("PyQt4 API version should be 2, "
-                                            "instead is %s"
-                                            % sip.getapi("QString"))
+        assert sip.getapi("QString") == 2, (
+            "PyQt4 API version should be 2, "
+            "instead is %s" % sip.getapi("QString"))
 
     if PYTHON == 2:
         def test_sip_api_already_set():
@@ -377,24 +343,27 @@ if binding("PyQt5"):
     def test_preferred_pyqt5():
         """QT_PREFERRED_BINDING = PyQt5 properly forces the binding"""
         import Qt
-        assert Qt.__name__ == "PyQt5", ("PyQt5 should have been picked, "
-                                        "instead got %s" % Qt)
+        assert Qt.__binding__ == "PyQt5", (
+            "PyQt5 should have been picked, "
+            "instead got %s" % Qt.__binding__)
 
 
 if binding("PySide"):
     def test_preferred_pyside():
         """QT_PREFERRED_BINDING = PySide properly forces the binding"""
         import Qt
-        assert Qt.__name__ == "PySide", ("PySide should have been picked, "
-                                         "instead got %s" % Qt)
+        assert Qt.__binding__ == "PySide", (
+            "PySide should have been picked, "
+            "instead got %s" % Qt.__binding__)
 
 
 if binding("PySide2"):
     def test_preferred_pyside2():
         """QT_PREFERRED_BINDING = PySide2 properly forces the binding"""
         import Qt
-        assert Qt.__name__ == "PySide2", ("PySide2 should have been picked, "
-                                          "instead got %s" % Qt)
+        assert Qt.__binding__ == "PySide2", (
+            "PySide2 should have been picked, "
+            "instead got %s" % Qt.__binding__)
 
     def test_coexistence():
         """Qt.py may be use alongside the actual binding"""
@@ -418,5 +387,6 @@ if binding("PySide") or binding("PySide2"):
             ["PySide", "PySide2"])
 
         import Qt
-        assert Qt.__name__ == "PySide", ("PySide should have been picked, "
-                                         "instead got %s" % Qt)
+        assert Qt.__binding__ == "PySide", (
+            "PySide should have been picked, "
+            "instead got %s" % Qt.__binding__)

@@ -2,7 +2,7 @@ import os
 from setuptools import setup
 
 os.environ["QT_PREFERRED_BINDING"] = "None"
-version = __import__("Qt").__wrapper_version__
+version = __import__("Qt").__version__
 
 
 classifiers = [

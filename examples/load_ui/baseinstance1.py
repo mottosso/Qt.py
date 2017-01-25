@@ -4,7 +4,7 @@ import os
 # Set preferred binding
 os.environ['QT_PREFERRED_BINDING'] = os.pathsep.join(['PySide', 'PyQt4'])
 
-from Qt import QtWidgets, load_ui
+from Qt import QtWidgets, QtCompat
 
 
 def setup_ui(uifile, base_instance=None):
@@ -18,7 +18,7 @@ def setup_ui(uifile, base_instance=None):
         QWidget: the base instance
 
     """
-    ui = load_ui(uifile)  # Qt.py mapped function
+    ui = QtCompat.load_ui(uifile)  # Qt.py mapped function
     if not base_instance:
         return ui
     else:
@@ -37,7 +37,7 @@ class MainWindow(QtWidgets.QWidget):
 
 
 def test():
-    """Example: load_ui with setup_ui wrapper"""
+    """Example: QtCompat.load_ui with setup_ui wrapper"""
     working_directory = os.path.dirname(__file__)
     os.chdir(working_directory)
 
