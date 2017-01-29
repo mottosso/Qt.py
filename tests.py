@@ -1,12 +1,13 @@
 """Tests that run once"""
 
+import contextlib
+import imp
 import io
 import os
-import sys
-import imp
 import shutil
-import tempfile
 import subprocess
+import sys
+import tempfile
 
 from nose.tools import (
     assert_raises,
@@ -73,6 +74,14 @@ def binding(binding):
     """
 
     return os.getenv("QT_PREFERRED_BINDING") == binding
+
+
+def optional_module(name):
+    """Attempt to import a module, returning False if not available."""
+    try:
+      return __import__(name)
+    except ImportError:
+      return False
 
 
 def test_environment():
@@ -329,6 +338,14 @@ if binding("PyQt4"):
             "PyQt4 API version should be 2, "
             "instead is %s" % sip.getapi("QString"))
 
+    def test_c_binding():
+        """Verify c_binding exposes the correct functions"""
+        from Qt import c_binding
+        import sip
+        assert c_binding.wrapInstance is sip.wrapinstance
+        assert c_binding.getCppPointer is sip.unwrapinstance
+        assert c_binding.delete is sip.delete
+
     if PYTHON == 2:
         def test_sip_api_already_set():
             """Raise ImportError if sip API v1 was already set"""
@@ -347,6 +364,14 @@ if binding("PyQt5"):
             "PyQt5 should have been picked, "
             "instead got %s" % Qt.__binding__)
 
+    def test_c_binding():
+        """Verify c_binding exposes the correct functions"""
+        from Qt import c_binding
+        import sip
+        assert c_binding.wrapInstance is sip.wrapinstance
+        assert c_binding.getCppPointer is sip.unwrapinstance
+        assert c_binding.delete is sip.delete
+
 
 if binding("PySide"):
     def test_preferred_pyside():
@@ -355,6 +380,27 @@ if binding("PySide"):
         assert Qt.__binding__ == "PySide", (
             "PySide should have been picked, "
             "instead got %s" % Qt.__binding__)
+
+    shiboken = optional_module("shiboken")
+    if shiboken:
+        def test_c_binding():
+            """Verify c_binding exposes the correct functions"""
+            from Qt import c_binding
+            import shiboken
+            assert c_binding.wrapInstance is shiboken.wrapInstance
+            assert c_binding.getCppPointer is shiboken.getCppPointer
+            assert c_binding.delete is shiboken.delete
+    else:
+       def _assert_func_from_unavailable_module(attr):
+            from Qt import c_binding
+            with assert_raises(RuntimeError) as cm:
+              getattr(c_binding, attr)("foobar")
+            assert str(cm.exception) == "'%s' called on unavailable module 'shiboken'" % (attr,)
+
+       def test_without_c_bindings():
+            _assert_func_from_unavailable_module("wrapInstance")
+            _assert_func_from_unavailable_module("getCppPointer")
+            _assert_func_from_unavailable_module("delete")
 
 
 if binding("PySide2"):
@@ -376,6 +422,28 @@ if binding("PySide2"):
 
         # But does not delete the original
         assert PySide.QtGui.QStringListModel
+
+    shiboken2 = optional_module("shiboken2")
+    if shiboken2:
+        def test_c_binding():
+            """Verify c_binding exposes the correct functions"""
+            from Qt import c_binding
+            import shiboken2
+            assert c_binding.wrapInstance is shiboken2.wrapInstance
+            assert c_binding.getCppPointer is shiboken2.getCppPointer
+            assert c_binding.delete is shiboken2.delete
+    else:
+
+       def _assert_func_from_unavailable_module(attr):
+            from Qt import c_binding
+            with assert_raises(RuntimeError) as cm:
+              getattr(c_binding, attr)("foobar")
+            assert str(cm.exception) == "'%s' called on unavailable module 'shiboken2'" % (attr,)
+
+       def test_without_c_bindings():
+            _assert_func_from_unavailable_module("wrapInstance")
+            _assert_func_from_unavailable_module("getCppPointer")
+            _assert_func_from_unavailable_module("delete")
 
 
 if binding("PySide") or binding("PySide2"):
