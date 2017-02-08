@@ -284,6 +284,7 @@ Send us a pull-request with your studio here.
 - [Bläck](http://www.blackstudios.se/)
 - [CGRU](http://cgru.info/)
 - [MPC](http://www.moving-picture.com)
+- [Rising Sun Pictures](https://rsp.com.au)
 
 Presented at Siggraph 2016, BOF!
 
