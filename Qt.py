@@ -72,7 +72,8 @@ __all__ = [
     "QtNetwork",
     "QtXml",
     "QtHelp",
-    "QtCompat"
+    "QtCompat",
+    "c_binding"
 ]
 
 # Flags from environment variables
@@ -89,6 +90,7 @@ QtNetwork = types.ModuleType("QtNetwork")
 QtXml = types.ModuleType("QtXml")
 QtHelp = types.ModuleType("QtHelp")
 QtCompat = types.ModuleType("QtCompat")
+c_binding = types.ModuleType("c_binding")
 Qt = sys.modules[__name__]  # Reference to this module
 
 # To use other modules, such as QtTest and QtScript,
@@ -113,8 +115,9 @@ def _pyside2():
     QtCompat.load_ui = lambda fname: QtUiTools.QUiLoader().load(fname)
     QtCompat.setSectionResizeMode = QtWidgets.QHeaderView.setSectionResizeMode
     QtCompat.translate = QtCore.QCoreApplication.translate
+    c_binding = _import_or_make_stand_in("shiboken2")
 
-    return QtCore, QtGui, QtWidgets, QtNetwork, QtXml, QtHelp
+    return QtCore, QtGui, QtWidgets, QtNetwork, QtXml, QtHelp, c_binding
 
 
 def _pyside():
@@ -142,7 +145,9 @@ def _pyside():
                                           disambiguation,
                                           QtCore.QCoreApplication.CodecForTr,
                                           n))
-    return QtCore, QtGui, QtWidgets, QtNetwork, QtXml, QtHelp
+    c_binding = _import_or_make_stand_in("shiboken")
+
+    return QtCore, QtGui, QtWidgets, QtNetwork, QtXml, QtHelp, c_binding
 
 
 def _pyqt5():
@@ -162,8 +167,9 @@ def _pyqt5():
     QtCompat.load_ui = lambda fname: uic.loadUi(fname)
     QtCompat.translate = QtCore.QCoreApplication.translate
     QtCompat.setSectionResizeMode = QtWidgets.QHeaderView.setSectionResizeMode
+    c_binding = _import_or_make_stand_in("sip")
 
-    return QtCore, QtGui, QtWidgets, QtNetwork, QtXml, QtHelp
+    return QtCore, QtGui, QtWidgets, QtNetwork, QtXml, QtHelp, c_binding
 
 
 def _pyqt4():
@@ -211,14 +217,13 @@ def _pyqt4():
                                           disambiguation,
                                           QtCore.QCoreApplication.CodecForTr,
                                           n))
+    c_binding = _import_or_make_stand_in("sip")
 
-    return QtCore, QtGui, QtWidgets, QtNetwork, QtXml, QtHelp
+    return QtCore, QtGui, QtWidgets, QtNetwork, QtXml, QtHelp, c_binding
 
 
 def _none():
     """Internal option (used in installer)"""
-
-    Mock = type("Mock", (), {"__getattr__": lambda Qt, attr: None})
 
     Qt.__binding__ = "None"
     Qt.__qt_version__ = "0.0.0"
@@ -226,7 +231,26 @@ def _none():
     QtCompat.load_ui = lambda fname: None
     QtCompat.setSectionResizeMode = lambda *args, **kwargs: None
 
-    return Mock(), Mock(), Mock(), Mock(), Mock(), Mock()
+    return [_make_stand_in(mod)()
+            for mod in ('QtCore', 'QtGui', 'QtWidgets', 'QtNetwork', 'QtXml', 'QtHelp', 'c_binding')]
+
+
+def _make_stand_in(module):
+    """Create a stand-in that can be used when a modules is not available."""
+    def attr_getter(self, attr):
+        def raise_exc(*args):
+            raise RuntimeError("%r called on unavailable module %r" % (attr, module))
+        return raise_exc
+    return type("ModuleStandIn", (), {"__getattr__": attr_getter})
+
+
+def _import_or_make_stand_in(mod_name):
+    """Attempt to import a module.  On failure, a stand in is created."""
+    try:
+        module = __import__(mod_name)
+    except ImportError:
+        module = _make_stand_in(mod_name)()
+    return module
 
 
 def _log(text):
@@ -346,7 +370,7 @@ for _binding in _bindings:
     _log("Trying %s" % _binding.__name__)
 
     try:
-        _QtCore, _QtGui, _QtWidgets, _QtNetwork, _QtXml, _QtHelp = _binding()
+        _QtCore, _QtGui, _QtWidgets, _QtNetwork, _QtXml, _QtHelp, _c_binding = _binding()
         _found_binding = True
         break
 
@@ -891,7 +915,10 @@ _strict_members = {
         "QTcpServer",
         "QTcpSocket",
         "QUdpSocket"
-    ]
+    ],
+    "c_binding": [
+        "delete"
+    ],
 }
 
 """Augment QtCompat
@@ -931,6 +958,7 @@ sys.modules.update({
     __name__ + ".QtNetwork": QtNetwork,
     __name__ + ".QtHelp": QtHelp,
     __name__ + ".QtCompat": QtCompat,
+    __name__ + ".c_binding": c_binding,
 })
 
 
@@ -978,17 +1006,22 @@ if "PyQt" in Qt.__binding__:
     QtCore.Property = _QtCore.pyqtProperty
     QtCore.Signal = _QtCore.pyqtSignal
     QtCore.Slot = _QtCore.pyqtSlot
+    c_binding.wrapInstance = _c_binding.wrapinstance
+    c_binding.getCppPointer = _c_binding.unwrapinstance
 
 else:
     QtCore.Property = _QtCore.Property
     QtCore.Signal = _QtCore.Signal
     QtCore.Slot = _QtCore.Slot
+    c_binding.wrapInstance = _c_binding.wrapInstance
+    c_binding.getCppPointer = _c_binding.getCppPointer
 
 
 # Hide internal members from external use.
 del(_QtCore)
 del(_QtGui)
 del(_QtWidgets)
+del(_c_binding)
 del(_bindings)
 del(_binding)
 del(_found_binding)
