@@ -283,14 +283,12 @@ Or a conditional.
 
 #### QtWidgets.qApp
 
-In [Strict Mode](https://github.com/mottosso/Qt.py#qt_strict), `qApp` is not included in Qt.py due to the way Qt keeps this up to date with the currently active QApplication.
+`qApp` is not included in Qt.py due to the way Qt keeps this up to date with the currently active QApplication.
 
 Qt implicitly updates this variable through monkey patching whenever a new QApplication is instantiated. This means that our variable quickly goes out of date and is not updated at the same time.
 
 ```python
 # PySide2
->>> import os
->>> os.environ["QT_STRICT"] = "1"
 >>> from Qt import QtWidgets
 >>> "qApp" in dir(QtWidgets)
 False
@@ -304,8 +302,6 @@ Technically, there is no difference between the two, apart from more characters 
 
 ```python
 # PySide2
->>> import os
->>> os.environ["QT_STRICT"] = "1"
 >>> from Qt import QtWidgets
 >>> app = QtWidgets.QApplication(sys.argv)
 >>> app == QtWidgets.QApplication.instance()
