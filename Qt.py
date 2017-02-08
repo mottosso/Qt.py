@@ -104,12 +104,14 @@ def _pyside2():
         QtXml,
         QtHelp,
         QtUiTools,
-        __version__
+        __version__,
+        __path__,
     )
 
     Qt.__binding__ = "PySide2"
     Qt.__qt_version__ = QtCore.qVersion()
     Qt.__binding_version__ = __version__
+    Qt.__binding_path__ = __path__[:]
     QtCompat.load_ui = lambda fname: QtUiTools.QUiLoader().load(fname)
     QtCompat.setSectionResizeMode = QtWidgets.QHeaderView.setSectionResizeMode
     QtCompat.translate = QtCore.QCoreApplication.translate
@@ -125,7 +127,8 @@ def _pyside():
         QtXml,
         QtHelp,
         QtUiTools,
-        __version__
+        __version__,
+        __path__,
     )
 
     QtWidgets = QtGui
@@ -133,6 +136,7 @@ def _pyside():
     Qt.__binding__ = "PySide"
     Qt.__qt_version__ = QtCore.qVersion()
     Qt.__binding_version__ = __version__
+    Qt.__binding_path__ = __path__[:]
     QtCompat.load_ui = lambda fname: QtUiTools.QUiLoader().load(fname)
     QtCompat.setSectionResizeMode = QtGui.QHeaderView.setResizeMode
     QtCompat.translate = (
@@ -153,12 +157,14 @@ def _pyqt5():
         QtNetwork,
         QtXml,
         QtHelp,
-        uic
+        uic,
+        __path__,
     )
 
     Qt.__binding__ = "PyQt5"
     Qt.__qt_version__ = QtCore.QT_VERSION_STR
     Qt.__binding_version__ = QtCore.PYQT_VERSION_STR
+    Qt.__binding_path__ = __path__[:]
     QtCompat.load_ui = lambda fname: uic.loadUi(fname)
     QtCompat.translate = QtCore.QCoreApplication.translate
     QtCompat.setSectionResizeMode = QtWidgets.QHeaderView.setSectionResizeMode
@@ -189,7 +195,8 @@ def _pyqt4():
         QtNetwork,
         QtXml,
         QtHelp,
-        uic
+        uic,
+        __path__,
     )
 
     QtWidgets = QtGui
@@ -197,6 +204,7 @@ def _pyqt4():
     Qt.__binding__ = "PyQt4"
     Qt.__qt_version__ = QtCore.QT_VERSION_STR
     Qt.__binding_version__ = QtCore.PYQT_VERSION_STR
+    Qt.__binding_path__ = __path__[:]
     QtCompat.load_ui = lambda fname: uic.loadUi(fname)
     QtCompat.setSectionResizeMode = QtGui.QHeaderView.setResizeMode
 
@@ -223,6 +231,7 @@ def _none():
     Qt.__binding__ = "None"
     Qt.__qt_version__ = "0.0.0"
     Qt.__binding_version__ = "0.0.0"
+    Qt.__binding_path__ = ["no/path"]
     QtCompat.load_ui = lambda fname: None
     QtCompat.setSectionResizeMode = lambda *args, **kwargs: None
 
