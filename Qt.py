@@ -610,15 +610,8 @@ _common_members = {
     ],
     "QtOpenGL": [
         "QGL",
-        "QGLBuffer",
-        "QGLColormap",
         "QGLContext",
         "QGLFormat",
-        "QGLFramebufferObject",
-        "QGLFramebufferObjectFormat",
-        "QGLPixelBuffer",
-        "QGLShader",
-        "QGLShaderProgram",
         "QGLWidget"
     ]
 }
@@ -633,7 +626,7 @@ def _setup(module, extras):
 
     Qt.__binding__ = module
 
-    for name in _common_members.keys() + extras:
+    for name in list(_common_members) + extras:
         try:
             submodule = importlib.import_module(module + "." + name)
         except ImportError:
@@ -918,8 +911,12 @@ def _cli(args):
 def _install():
     # Default order (customise order and content via QT_PREFERRED_BINDING)
     default_order = ("PySide2", "PyQt5", "PySide", "PyQt4", "None")
-    preferred_order = QT_PREFERRED_BINDING.split(os.pathsep)
+    preferred_order = list(
+        b for b in QT_PREFERRED_BINDING.split(os.pathsep) if b
+    )
+
     order = preferred_order or default_order
+
     available = {
         "PySide2": _pyside2,
         "PyQt5": _pyqt5,
@@ -958,11 +955,22 @@ def _install():
 
         our_submodule = getattr(Qt, name)
 
+        # Enable import *
         __all__.append(name)
+
+        # Enable direct import of submodule,
+        # e.g. import Qt.QtCore
         sys.modules[__name__ + "." + name] = our_submodule
 
         for member in members:
-            setattr(our_submodule, member, getattr(their_submodule, member))
+            # Accept that a submodule may miss certain members.
+            try:
+                their_member = getattr(their_submodule, member)
+            except AttributeError:
+                _log("'%s.%s' was missing." % (name, member))
+                continue
+
+            setattr(our_submodule, member, their_member)
 
 
 _install()
