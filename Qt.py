@@ -61,305 +61,22 @@ import os
 import sys
 import types
 import shutil
+import importlib
 
 __version__ = "1.0.0.b1"
 
 # Enable support for `from Qt import *`
-__all__ = [
-    "QtGui",
-    "QtCore",
-    "QtWidgets",
-    "QtNetwork",
-    "QtXml",
-    "QtHelp",
-    "QtCompat"
-]
+__all__ = []
 
 # Flags from environment variables
 QT_VERBOSE = bool(os.getenv("QT_VERBOSE"))
-QT_PREFERRED_BINDING = os.getenv("QT_PREFERRED_BINDING")
-QT_STRICT = bool(os.getenv("QT_STRICT"))
+QT_PREFERRED_BINDING = os.getenv("QT_PREFERRED_BINDING", "")
 
-# Supported submodules
-QtGui = types.ModuleType("QtGui")
-QtCore = types.ModuleType("QtCore")
-QtWidgets = types.ModuleType("QtWidgets")
-QtWidgets = types.ModuleType("QtWidgets")
-QtNetwork = types.ModuleType("QtNetwork")
-QtXml = types.ModuleType("QtXml")
-QtHelp = types.ModuleType("QtHelp")
-QtCompat = types.ModuleType("QtCompat")
-Qt = sys.modules[__name__]  # Reference to this module
+# Reference to Qt.py
+Qt = sys.modules[__name__]
+Qt.QtCompat = types.ModuleType("QtCompat")
 
-# To use other modules, such as QtTest and QtScript,
-# use conditional branching and import these explicitly.
-
-
-def _pyside2():
-    from PySide2 import (
-        QtWidgets,
-        QtGui,
-        QtCore,
-        QtNetwork,
-        QtXml,
-        QtHelp,
-        QtUiTools,
-        __version__
-    )
-
-    Qt.__binding__ = "PySide2"
-    Qt.__qt_version__ = QtCore.qVersion()
-    Qt.__binding_version__ = __version__
-    QtCompat.load_ui = lambda fname: QtUiTools.QUiLoader().load(fname)
-    QtCompat.setSectionResizeMode = QtWidgets.QHeaderView.setSectionResizeMode
-    QtCompat.translate = QtCore.QCoreApplication.translate
-
-    return QtCore, QtGui, QtWidgets, QtNetwork, QtXml, QtHelp
-
-
-def _pyside():
-    from PySide import (
-        QtGui,
-        QtCore,
-        QtNetwork,
-        QtXml,
-        QtHelp,
-        QtUiTools,
-        __version__
-    )
-
-    QtWidgets = QtGui
-
-    Qt.__binding__ = "PySide"
-    Qt.__qt_version__ = QtCore.qVersion()
-    Qt.__binding_version__ = __version__
-    QtCompat.load_ui = lambda fname: QtUiTools.QUiLoader().load(fname)
-    QtCompat.setSectionResizeMode = QtGui.QHeaderView.setResizeMode
-    QtCompat.translate = (
-        lambda context, sourceText, disambiguation, n:
-        QtCore.QCoreApplication.translate(context,
-                                          sourceText,
-                                          disambiguation,
-                                          QtCore.QCoreApplication.CodecForTr,
-                                          n))
-    return QtCore, QtGui, QtWidgets, QtNetwork, QtXml, QtHelp
-
-
-def _pyqt5():
-    from PyQt5 import (
-        QtWidgets,
-        QtGui,
-        QtCore,
-        QtNetwork,
-        QtXml,
-        QtHelp,
-        uic
-    )
-
-    Qt.__binding__ = "PyQt5"
-    Qt.__qt_version__ = QtCore.QT_VERSION_STR
-    Qt.__binding_version__ = QtCore.PYQT_VERSION_STR
-    QtCompat.load_ui = lambda fname: uic.loadUi(fname)
-    QtCompat.translate = QtCore.QCoreApplication.translate
-    QtCompat.setSectionResizeMode = QtWidgets.QHeaderView.setSectionResizeMode
-
-    return QtCore, QtGui, QtWidgets, QtNetwork, QtXml, QtHelp
-
-
-def _pyqt4():
-    import sip
-    try:
-        sip.setapi("QString", 2)
-        sip.setapi("QVariant", 2)
-        sip.setapi("QDate", 2)
-        sip.setapi("QDateTime", 2)
-        sip.setapi("QTextStream", 2)
-        sip.setapi("QTime", 2)
-        sip.setapi("QUrl", 2)
-    except AttributeError as e:
-        raise ImportError(str(e))
-        # PyQt4 < v4.6
-    except ValueError as e:
-        # API version already set to v1
-        raise ImportError(str(e))
-
-    from PyQt4 import (
-        QtGui,
-        QtCore,
-        QtNetwork,
-        QtXml,
-        QtHelp,
-        uic
-    )
-
-    QtWidgets = QtGui
-
-    Qt.__binding__ = "PyQt4"
-    Qt.__qt_version__ = QtCore.QT_VERSION_STR
-    Qt.__binding_version__ = QtCore.PYQT_VERSION_STR
-    QtCompat.load_ui = lambda fname: uic.loadUi(fname)
-    QtCompat.setSectionResizeMode = QtGui.QHeaderView.setResizeMode
-
-    # PySide2 differs from Qt4 in that Qt4 has one extra argument
-    # which is always `None`. The lambda arguments represents the PySide2
-    # interface, whereas the arguments passed to `.translate` represent
-    # those expected of a Qt4 binding.
-    QtCompat.translate = (
-        lambda context, sourceText, disambiguation, n:
-        QtCore.QCoreApplication.translate(context,
-                                          sourceText,
-                                          disambiguation,
-                                          QtCore.QCoreApplication.CodecForTr,
-                                          n))
-
-    return QtCore, QtGui, QtWidgets, QtNetwork, QtXml, QtHelp
-
-
-def _none():
-    """Internal option (used in installer)"""
-
-    Mock = type("Mock", (), {"__getattr__": lambda Qt, attr: None})
-
-    Qt.__binding__ = "None"
-    Qt.__qt_version__ = "0.0.0"
-    Qt.__binding_version__ = "0.0.0"
-    QtCompat.load_ui = lambda fname: None
-    QtCompat.setSectionResizeMode = lambda *args, **kwargs: None
-
-    return Mock(), Mock(), Mock(), Mock(), Mock(), Mock()
-
-
-def _log(text):
-    if QT_VERBOSE:
-        sys.stdout.write(text + "\n")
-
-
-def _convert(lines):
-    """Convert compiled .ui file from PySide2 to Qt.py
-
-    Arguments:
-        lines (list): Each line of of .ui file
-
-    Usage:
-        >> with open("myui.py") as f:
-        ..   lines = _convert(f.readlines())
-
-    """
-
-    def parse(line):
-        line = line.replace("from PySide2 import", "from Qt import")
-        line = line.replace("QtWidgets.QApplication.translate",
-                            "Qt.QtCompat.translate")
-        return line
-
-    parsed = list()
-    for line in lines:
-        line = parse(line)
-        parsed.append(line)
-
-    return parsed
-
-
-def _cli(args):
-    """Qt.py command-line interface"""
-    import argparse
-
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--convert",
-                        help="Path to compiled Python module, e.g. my_ui.py")
-    parser.add_argument("--compile",
-                        help="Accept raw .ui file and compile with native "
-                             "PySide2 compiler.")
-    parser.add_argument("--stdout",
-                        help="Write to stdout instead of file",
-                        action="store_true")
-    parser.add_argument("--stdin",
-                        help="Read from stdin instead of file",
-                        action="store_true")
-
-    args = parser.parse_args(args)
-
-    if args.stdout:
-        raise NotImplementedError("--stdout")
-
-    if args.stdin:
-        raise NotImplementedError("--stdin")
-
-    if args.compile:
-        raise NotImplementedError("--compile")
-
-    if args.convert:
-        sys.stdout.write("#\n"
-                         "# WARNING: --convert is an ALPHA feature.\n#\n"
-                         "# See https://github.com/mottosso/Qt.py/pull/132\n"
-                         "# for details.\n"
-                         "#\n")
-
-        #
-        # ------> Read
-        #
-        with open(args.convert) as f:
-            lines = _convert(f.readlines())
-
-        backup = "%s_backup%s" % os.path.splitext(args.convert)
-        sys.stdout.write("Creating \"%s\"..\n" % backup)
-        shutil.copy(args.convert, backup)
-
-        #
-        # <------ Write
-        #
-        with open(args.convert, "w") as f:
-            f.write("".join(lines))
-
-        sys.stdout.write("Successfully converted \"%s\"\n" % args.convert)
-
-
-# Default order (customise order and content via QT_PREFERRED_BINDING)
-_bindings = (_pyside2, _pyqt5, _pyside, _pyqt4)
-
-if QT_PREFERRED_BINDING:
-    _preferred = QT_PREFERRED_BINDING.split(os.pathsep)
-    _available = {
-        "PySide2": _pyside2,
-        "PyQt5": _pyqt5,
-        "PySide": _pyside,
-        "PyQt4": _pyqt4,
-        "None": _none
-    }
-
-    try:
-        _bindings = [_available[binding] for binding in _preferred]
-    except KeyError:
-        raise ImportError(
-            ("Requested %s, available: " % _preferred) +
-            "\n".join(_available.keys())
-        )
-
-    del(_preferred)
-    del(_available)
-
-_log("Preferred bindings: %s" % list(_b.__name__ for _b in _bindings))
-
-
-_found_binding = False
-for _binding in _bindings:
-    _log("Trying %s" % _binding.__name__)
-
-    try:
-        _QtCore, _QtGui, _QtWidgets, _QtNetwork, _QtXml, _QtHelp = _binding()
-        _found_binding = True
-        break
-
-    except ImportError as e:
-        _log("ImportError: %s" % e)
-        continue
-
-if not _found_binding:
-    # If not binding were found, throw this error
-    raise ImportError("No Qt binding were found.")
-
-
-"""Members of Qt.py
+"""Common members of all bindings
 
 This is where each member of Qt.py is explicitly defined.
 It is based on a "lowest commond denominator" of all bindings;
@@ -369,7 +86,7 @@ Find or add excluded members in build_membership.py
 
 """
 
-_strict_members = {
+_common_members = {
     "QtGui": [
         "QAbstractTextDocumentLayout",
         "QActionEvent",
@@ -687,7 +404,6 @@ _strict_members = {
         "QWizard",
         "QWizardPage",
     ],
-
     "QtCore": [
         "QAbstractAnimation",
         "QAbstractEventDispatcher",
@@ -891,8 +607,366 @@ _strict_members = {
         "QTcpServer",
         "QTcpSocket",
         "QUdpSocket"
+    ],
+    "QtOpenGL": [
+        "QGL",
+        "QGLBuffer",
+        "QGLColormap",
+        "QGLContext",
+        "QGLFormat",
+        "QGLFramebufferObject",
+        "QGLFramebufferObjectFormat",
+        "QGLPixelBuffer",
+        "QGLShader",
+        "QGLShaderProgram",
+        "QGLWidget"
     ]
 }
+
+
+def _new_module(name):
+    return types.ModuleType(__name__ + "." + name)
+
+
+def _setup(module, extras):
+    """Install common submodules"""
+
+    Qt.__binding__ = module
+
+    for name in _common_members.keys() + extras:
+        try:
+            submodule = importlib.import_module(module + "." + name)
+        except ImportError:
+            continue
+
+        # Store reference to original binding
+        setattr(Qt, name, _new_module(name))
+        setattr(Qt, "_" + name, submodule)
+
+
+def _pyside2():
+    """Initialise PySide2
+
+    These functions serve to test the existence of a binding
+    along with set it up in such a way that it aligns with
+    the final step; adding members from the original binding
+    to Qt.py
+
+    """
+
+    _setup("PySide2", ["QtUiTools"])
+
+    Qt.__binding_version__ = __import__("PySide2").__version__
+
+    if hasattr(Qt, "QtUiTools"):
+        Qt.QtCompat.load_ui = lambda fname: \
+            Qt._QtUiTools.QUiLoader().load(fname)
+
+    if hasattr(Qt, "QtGui") and hasattr(Qt, "QtCore"):
+        Qt.QtCore.QStringListModel = Qt._QtGui.QStringListModel
+
+    if hasattr(Qt, "QtWidgets"):
+        Qt.QtCompat.setSectionResizeMode = \
+            Qt._QtWidgets.QHeaderView.setSectionResizeMode
+
+    if hasattr(Qt, "QtCore"):
+        Qt.__qt_version__ = Qt._QtCore.qVersion()
+        Qt.QtCompat.translate = Qt._QtCore.QCoreApplication.translate
+
+        Qt.QtCore.Property = Qt._QtCore.Property
+        Qt.QtCore.Signal = Qt._QtCore.Signal
+        Qt.QtCore.Slot = Qt._QtCore.Slot
+
+        Qt.QtCore.QAbstractProxyModel = Qt._QtCore.QAbstractProxyModel
+        Qt.QtCore.QSortFilterProxyModel = Qt._QtCore.QSortFilterProxyModel
+        Qt.QtCore.QItemSelection = Qt._QtCore.QItemSelection
+        Qt.QtCore.QItemSelectionModel = Qt._QtCore.QItemSelectionModel
+
+
+def _pyside():
+    """Initialise PySide"""
+
+    _setup("PySide", ["QtUiTools"])
+
+    Qt.__binding_version__ = __import__("PySide2").__version__
+
+    if hasattr(Qt, "QtUiTools"):
+        Qt.QtCompat.load_ui = lambda fname: \
+            Qt._QtUiTools.QUiLoader().load(fname)
+
+    if hasattr(Qt, "QtGui"):
+        setattr(Qt, "QtWidgets", _new_module("QtWidgets"))
+        setattr(Qt, "_QtWidgets", Qt._QtGui)
+
+        Qt.QtCompat.setSectionResizeMode = Qt._QtGui.QHeaderView.setResizeMode
+
+        if hasattr(Qt, "QtCore"):
+            Qt.QtCore.QAbstractProxyModel = Qt._QtGui.QAbstractProxyModel
+            Qt.QtCore.QSortFilterProxyModel = Qt._QtGui.QSortFilterProxyModel
+            Qt.QtCore.QStringListModel = Qt._QtGui.QStringListModel
+            Qt.QtCore.QItemSelection = Qt._QtGui.QItemSelection
+            Qt.QtCore.QItemSelectionModel = Qt._QtGui.QItemSelectionModel
+
+    if hasattr(Qt, "QtCore"):
+        Qt.__qt_version__ = Qt._QtCore.qVersion()
+
+        Qt.QtCore.Property = Qt._QtCore.Property
+        Qt.QtCore.Signal = Qt._QtCore.Signal
+        Qt.QtCore.Slot = Qt._QtCore.Slot
+
+        QCoreApplication = Qt._QtCore.QCoreApplication
+        Qt.QtCompat.translate = (
+            lambda context, sourceText, disambiguation, n:
+            QCoreApplication.translate(
+                context,
+                sourceText,
+                disambiguation,
+                QCoreApplication.CodecForTr,
+                n
+            )
+        )
+
+
+def _pyqt5():
+    """Initialise PyQt5"""
+
+    _setup("PyQt5", ["uic"])
+
+    if hasattr(Qt, "uic"):
+        Qt.QtCompat.load_ui = lambda fname: Qt._uic.loadUi(fname)
+
+    if hasattr(Qt, "QtWidgets"):
+        Qt.QtCompat.setSectionResizeMode = \
+            Qt._QtWidgets.QHeaderView.setSectionResizeMode
+
+    if hasattr(Qt, "QtCore"):
+        Qt.QtCompat.translate = Qt._QtCore.QCoreApplication.translate
+
+        Qt.QtCore.Property = Qt._QtCore.pyqtProperty
+        Qt.QtCore.Signal = Qt._QtCore.pyqtSignal
+        Qt.QtCore.Slot = Qt._QtCore.pyqtSlot
+
+        Qt.QtCore.QAbstractProxyModel = Qt._QtCore.QAbstractProxyModel
+        Qt.QtCore.QSortFilterProxyModel = Qt._QtCore.QSortFilterProxyModel
+        Qt.QtCore.QStringListModel = Qt._QtCore.QStringListModel
+        Qt.QtCore.QItemSelection = Qt._QtCore.QItemSelection
+        Qt.QtCore.QItemSelectionModel = Qt._QtCore.QItemSelectionModel
+
+        Qt.__qt_version__ = Qt._QtCore.QT_VERSION_STR
+        Qt.__binding_version__ = Qt._QtCore.PYQT_VERSION_STR
+
+
+def _pyqt4():
+    """Initialise PyQt4"""
+
+    import sip
+    try:
+        sip.setapi("QString", 2)
+        sip.setapi("QVariant", 2)
+        sip.setapi("QDate", 2)
+        sip.setapi("QDateTime", 2)
+        sip.setapi("QTextStream", 2)
+        sip.setapi("QTime", 2)
+        sip.setapi("QUrl", 2)
+    except AttributeError as e:
+        raise ImportError(str(e))
+        # PyQt4 < v4.6
+    except ValueError as e:
+        # API version already set to v1
+        raise ImportError(str(e))
+
+    _setup("PyQt4", ["uic"])
+
+    if hasattr(Qt, "uic"):
+        Qt.QtCompat.load_ui = lambda fname: Qt._uic.loadUi(fname)
+
+    if hasattr(Qt, "QtGui"):
+        setattr(Qt, "QtWidgets", _new_module("QtWidgets"))
+        setattr(Qt, "_QtWidgets", Qt._QtGui)
+
+        Qt.QtCompat.setSectionResizeMode = \
+            Qt._QtGui.QHeaderView.setResizeMode
+
+        if hasattr(Qt, "QtCore"):
+            Qt.QtCore.QAbstractProxyModel = Qt._QtGui.QAbstractProxyModel
+            Qt.QtCore.QSortFilterProxyModel = Qt._QtGui.QSortFilterProxyModel
+            Qt.QtCore.QItemSelection = Qt._QtGui.QItemSelection
+            Qt.QtCore.QStringListModel = Qt._QtGui.QStringListModel
+            Qt.QtCore.QItemSelectionModel = Qt._QtGui.QItemSelectionModel
+
+    if hasattr(Qt, "QtCore"):
+        Qt.__qt_version__ = Qt._QtCore.QT_VERSION_STR
+        Qt.__binding_version__ = Qt._QtCore.PYQT_VERSION_STR
+
+        Qt.QtCore.Property = Qt._QtCore.pyqtProperty
+        Qt.QtCore.Signal = Qt._QtCore.pyqtSignal
+        Qt.QtCore.Slot = Qt._QtCore.pyqtSlot
+
+        QCoreApplication = Qt._QtCore.QCoreApplication
+        Qt.QtCompat.translate = (
+            lambda context, sourceText, disambiguation, n:
+            QCoreApplication.translate(
+                context,
+                sourceText,
+                disambiguation,
+                QCoreApplication.CodecForTr,
+                n)
+        )
+
+
+def _none():
+    """Internal option (used in installer)"""
+
+    Mock = type("Mock", (), {"__getattr__": lambda Qt, attr: None})
+
+    Qt.__binding__ = "None"
+    Qt.__qt_version__ = "0.0.0"
+    Qt.__binding_version__ = "0.0.0"
+    Qt.QtCompat.load_ui = lambda fname: None
+    Qt.QtCompat.setSectionResizeMode = lambda *args, **kwargs: None
+
+    for submodule in _common_members.keys():
+        setattr(Qt, submodule, Mock())
+        setattr(Qt, "_" + submodule, Mock())
+
+
+def _log(text):
+    if QT_VERBOSE:
+        sys.stdout.write(text + "\n")
+
+
+def _convert(lines):
+    """Convert compiled .ui file from PySide2 to Qt.py
+
+    Arguments:
+        lines (list): Each line of of .ui file
+
+    Usage:
+        >> with open("myui.py") as f:
+        ..   lines = _convert(f.readlines())
+
+    """
+
+    def parse(line):
+        line = line.replace("from PySide2 import", "from Qt import")
+        line = line.replace("QtWidgets.QApplication.translate",
+                            "Qt.QtCompat.translate")
+        return line
+
+    parsed = list()
+    for line in lines:
+        line = parse(line)
+        parsed.append(line)
+
+    return parsed
+
+
+def _cli(args):
+    """Qt.py command-line interface"""
+    import argparse
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--convert",
+                        help="Path to compiled Python module, e.g. my_ui.py")
+    parser.add_argument("--compile",
+                        help="Accept raw .ui file and compile with native "
+                             "PySide2 compiler.")
+    parser.add_argument("--stdout",
+                        help="Write to stdout instead of file",
+                        action="store_true")
+    parser.add_argument("--stdin",
+                        help="Read from stdin instead of file",
+                        action="store_true")
+
+    args = parser.parse_args(args)
+
+    if args.stdout:
+        raise NotImplementedError("--stdout")
+
+    if args.stdin:
+        raise NotImplementedError("--stdin")
+
+    if args.compile:
+        raise NotImplementedError("--compile")
+
+    if args.convert:
+        sys.stdout.write("#\n"
+                         "# WARNING: --convert is an ALPHA feature.\n#\n"
+                         "# See https://github.com/mottosso/Qt.py/pull/132\n"
+                         "# for details.\n"
+                         "#\n")
+
+        #
+        # ------> Read
+        #
+        with open(args.convert) as f:
+            lines = _convert(f.readlines())
+
+        backup = "%s_backup%s" % os.path.splitext(args.convert)
+        sys.stdout.write("Creating \"%s\"..\n" % backup)
+        shutil.copy(args.convert, backup)
+
+        #
+        # <------ Write
+        #
+        with open(args.convert, "w") as f:
+            f.write("".join(lines))
+
+        sys.stdout.write("Successfully converted \"%s\"\n" % args.convert)
+
+
+def _install():
+    # Default order (customise order and content via QT_PREFERRED_BINDING)
+    default_order = ("PySide2", "PyQt5", "PySide", "PyQt4", "None")
+    preferred_order = QT_PREFERRED_BINDING.split(os.pathsep)
+    order = preferred_order or default_order
+    available = {
+        "PySide2": _pyside2,
+        "PyQt5": _pyqt5,
+        "PySide": _pyside,
+        "PyQt4": _pyqt4,
+        "None": _none
+    }
+
+    _log("Order: '%s'" % "', '".join(order))
+
+    found_binding = False
+    for name in order:
+        _log("Trying %s" % name)
+
+        try:
+            available[name]()
+            found_binding = True
+            break
+
+        except ImportError as e:
+            _log("ImportError: %s" % e)
+
+        except KeyError:
+            _log("ImportError: Preferred binding '%s' not found." % name)
+
+    if not found_binding:
+        # If not binding were found, throw this error
+        raise ImportError("No Qt binding were found.")
+
+    # Install individual members
+    for name, members in _common_members.items():
+        try:
+            their_submodule = getattr(Qt, "_%s" % name)
+        except AttributeError:
+            continue
+
+        our_submodule = getattr(Qt, name)
+
+        __all__.append(name)
+        sys.modules[__name__ + "." + name] = our_submodule
+
+        for member in members:
+            setattr(our_submodule, member, getattr(their_submodule, member))
+
+
+_install()
+
 
 """Augment QtCompat
 
@@ -903,95 +977,8 @@ such as `QHeaderView.setSectionResizeMode`.
 
 """
 
-QtCompat._cli = _cli
-QtCompat._convert = _convert
-
-
-"""Apply strict mode
-
-This make Qt.py into a subset of PySide2 members that exist
-across all other bindings.
-
-"""
-
-for module, members in _strict_members.items():
-    for member in members:
-        orig = getattr(sys.modules[__name__], "_%s" % module)
-        repl = getattr(sys.modules[__name__], module)
-        setattr(repl, member, getattr(orig, member))
-
-
-# Enable direct import of submodules
-# E.g. import Qt.QtCore
-sys.modules.update({
-    __name__ + ".QtGui": QtGui,
-    __name__ + ".QtCore": QtCore,
-    __name__ + ".QtWidgets": QtWidgets,
-    __name__ + ".QtXml": QtXml,
-    __name__ + ".QtNetwork": QtNetwork,
-    __name__ + ".QtHelp": QtHelp,
-    __name__ + ".QtCompat": QtCompat,
-})
-
-
-"""
-
-Special case
-
-In some bindings, members are either misplaced or renamed.
-
-TODO: This is difficult to read, compared to the above dictionary.
-    Find a better way of implementing this, that also simplifies
-    adding or removing members.
-
-"""
-
-if "PySide2" == Qt.__binding__:
-    QtCore.QAbstractProxyModel = _QtCore.QAbstractProxyModel
-    QtCore.QSortFilterProxyModel = _QtCore.QSortFilterProxyModel
-    QtCore.QStringListModel = _QtGui.QStringListModel
-    QtCore.QItemSelection = _QtCore.QItemSelection
-    QtCore.QItemSelectionModel = _QtCore.QItemSelectionModel
-
-if "PyQt5" == Qt.__binding__:
-    QtCore.QAbstractProxyModel = _QtCore.QAbstractProxyModel
-    QtCore.QSortFilterProxyModel = _QtCore.QSortFilterProxyModel
-    QtCore.QStringListModel = _QtCore.QStringListModel
-    QtCore.QItemSelection = _QtCore.QItemSelection
-    QtCore.QItemSelectionModel = _QtCore.QItemSelectionModel
-
-if "PySide" == Qt.__binding__:
-    QtCore.QAbstractProxyModel = _QtGui.QAbstractProxyModel
-    QtCore.QSortFilterProxyModel = _QtGui.QSortFilterProxyModel
-    QtCore.QStringListModel = _QtGui.QStringListModel
-    QtCore.QItemSelection = _QtGui.QItemSelection
-    QtCore.QItemSelectionModel = _QtGui.QItemSelectionModel
-
-if "PyQt4" == Qt.__binding__:
-    QtCore.QAbstractProxyModel = _QtGui.QAbstractProxyModel
-    QtCore.QSortFilterProxyModel = _QtGui.QSortFilterProxyModel
-    QtCore.QItemSelection = _QtGui.QItemSelection
-    QtCore.QStringListModel = _QtGui.QStringListModel
-    QtCore.QItemSelectionModel = _QtGui.QItemSelectionModel
-
-if "PyQt" in Qt.__binding__:
-    QtCore.Property = _QtCore.pyqtProperty
-    QtCore.Signal = _QtCore.pyqtSignal
-    QtCore.Slot = _QtCore.pyqtSlot
-
-else:
-    QtCore.Property = _QtCore.Property
-    QtCore.Signal = _QtCore.Signal
-    QtCore.Slot = _QtCore.Slot
-
-
-# Hide internal members from external use.
-del(_QtCore)
-del(_QtGui)
-del(_QtWidgets)
-del(_bindings)
-del(_binding)
-del(_found_binding)
+Qt.QtCompat._cli = _cli
+Qt.QtCompat._convert = _convert
 
 # Enable command-line interface
 if __name__ == "__main__":
