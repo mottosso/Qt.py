@@ -635,12 +635,13 @@ def _setup(module, extras):
             # print("Failed %s" % name)
             continue
 
+        setattr(Qt, "_" + name, submodule)
+
         if name not in extras:
             # Store reference to original binding,
             # but don't store speciality modules
             # such as uic or QtUiTools
             setattr(Qt, name, _new_module(name))
-            setattr(Qt, "_" + name, submodule)
 
 
 def _pyside2():
@@ -658,18 +659,18 @@ def _pyside2():
 
     Qt.__binding_version__ = __import__("PySide2").__version__
 
-    if hasattr(Qt, "QtUiTools"):
+    if hasattr(Qt, "_QtUiTools"):
         Qt.QtCompat.load_ui = lambda fname: \
             Qt._QtUiTools.QUiLoader().load(fname)
 
-    if hasattr(Qt, "QtGui") and hasattr(Qt, "QtCore"):
+    if hasattr(Qt, "_QtGui") and hasattr(Qt, "_QtCore"):
         Qt.QtCore.QStringListModel = Qt._QtGui.QStringListModel
 
-    if hasattr(Qt, "QtWidgets"):
+    if hasattr(Qt, "_QtWidgets"):
         Qt.QtCompat.setSectionResizeMode = \
             Qt._QtWidgets.QHeaderView.setSectionResizeMode
 
-    if hasattr(Qt, "QtCore"):
+    if hasattr(Qt, "_QtCore"):
         Qt.__qt_version__ = Qt._QtCore.qVersion()
         Qt.QtCompat.translate = Qt._QtCore.QCoreApplication.translate
 
@@ -691,24 +692,24 @@ def _pyside():
 
     Qt.__binding_version__ = __import__("PySide2").__version__
 
-    if hasattr(Qt, "QtUiTools"):
+    if hasattr(Qt, "_QtUiTools"):
         Qt.QtCompat.load_ui = lambda fname: \
             Qt._QtUiTools.QUiLoader().load(fname)
 
-    if hasattr(Qt, "QtGui"):
+    if hasattr(Qt, "_QtGui"):
         setattr(Qt, "QtWidgets", _new_module("QtWidgets"))
         setattr(Qt, "_QtWidgets", Qt._QtGui)
 
         Qt.QtCompat.setSectionResizeMode = Qt._QtGui.QHeaderView.setResizeMode
 
-        if hasattr(Qt, "QtCore"):
+        if hasattr(Qt, "_QtCore"):
             Qt.QtCore.QAbstractProxyModel = Qt._QtGui.QAbstractProxyModel
             Qt.QtCore.QSortFilterProxyModel = Qt._QtGui.QSortFilterProxyModel
             Qt.QtCore.QStringListModel = Qt._QtGui.QStringListModel
             Qt.QtCore.QItemSelection = Qt._QtGui.QItemSelection
             Qt.QtCore.QItemSelectionModel = Qt._QtGui.QItemSelectionModel
 
-    if hasattr(Qt, "QtCore"):
+    if hasattr(Qt, "_QtCore"):
         Qt.__qt_version__ = Qt._QtCore.qVersion()
 
         Qt.QtCore.Property = Qt._QtCore.Property
@@ -734,14 +735,14 @@ def _pyqt5():
     import PyQt5 as module
     _setup(module, ["uic"])
 
-    if hasattr(Qt, "uic"):
+    if hasattr(Qt, "_uic"):
         Qt.QtCompat.load_ui = lambda fname: Qt._uic.loadUi(fname)
 
-    if hasattr(Qt, "QtWidgets"):
+    if hasattr(Qt, "_QtWidgets"):
         Qt.QtCompat.setSectionResizeMode = \
             Qt._QtWidgets.QHeaderView.setSectionResizeMode
 
-    if hasattr(Qt, "QtCore"):
+    if hasattr(Qt, "_QtCore"):
         Qt.QtCompat.translate = Qt._QtCore.QCoreApplication.translate
 
         Qt.QtCore.Property = Qt._QtCore.pyqtProperty
@@ -780,24 +781,24 @@ def _pyqt4():
         import PyQt4 as module
     _setup(module, ["uic"])
 
-    if hasattr(Qt, "uic"):
+    if hasattr(Qt, "_uic"):
         Qt.QtCompat.load_ui = lambda fname: Qt._uic.loadUi(fname)
 
-    if hasattr(Qt, "QtGui"):
+    if hasattr(Qt, "_QtGui"):
         setattr(Qt, "QtWidgets", _new_module("QtWidgets"))
         setattr(Qt, "_QtWidgets", Qt._QtGui)
 
         Qt.QtCompat.setSectionResizeMode = \
             Qt._QtGui.QHeaderView.setResizeMode
 
-        if hasattr(Qt, "QtCore"):
+        if hasattr(Qt, "_QtCore"):
             Qt.QtCore.QAbstractProxyModel = Qt._QtGui.QAbstractProxyModel
             Qt.QtCore.QSortFilterProxyModel = Qt._QtGui.QSortFilterProxyModel
             Qt.QtCore.QItemSelection = Qt._QtGui.QItemSelection
             Qt.QtCore.QStringListModel = Qt._QtGui.QStringListModel
             Qt.QtCore.QItemSelectionModel = Qt._QtGui.QItemSelectionModel
 
-    if hasattr(Qt, "QtCore"):
+    if hasattr(Qt, "_QtCore"):
         Qt.__qt_version__ = Qt._QtCore.QT_VERSION_STR
         Qt.__binding_version__ = Qt._QtCore.PYQT_VERSION_STR
 
