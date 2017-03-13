@@ -778,7 +778,7 @@ def _pyqt4():
         # API version already set to v1
         raise ImportError(str(e))
 
-        import PyQt4 as module
+    import PyQt4 as module
     _setup(module, ["uic"])
 
     if hasattr(Qt, "_uic"):
