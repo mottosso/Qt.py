@@ -624,17 +624,23 @@ def _new_module(name):
 def _setup(module, extras):
     """Install common submodules"""
 
-    Qt.__binding__ = module
+    Qt.__binding__ = module.__name__
 
     for name in list(_common_members) + extras:
         try:
-            submodule = importlib.import_module(module + "." + name)
+            # print("Trying %s" % name)
+            submodule = importlib.import_module(
+                module.__name__ + "." + name)
         except ImportError:
+            # print("Failed %s" % name)
             continue
 
-        # Store reference to original binding
-        setattr(Qt, name, _new_module(name))
-        setattr(Qt, "_" + name, submodule)
+        if name not in extras:
+            # Store reference to original binding,
+            # but don't store speciality modules
+            # such as uic or QtUiTools
+            setattr(Qt, name, _new_module(name))
+            setattr(Qt, "_" + name, submodule)
 
 
 def _pyside2():
@@ -647,7 +653,8 @@ def _pyside2():
 
     """
 
-    _setup("PySide2", ["QtUiTools"])
+    import PySide2 as module
+    _setup(module, ["QtUiTools"])
 
     Qt.__binding_version__ = __import__("PySide2").__version__
 
@@ -679,7 +686,8 @@ def _pyside2():
 def _pyside():
     """Initialise PySide"""
 
-    _setup("PySide", ["QtUiTools"])
+    import PySide as module
+    _setup(module, ["QtUiTools"])
 
     Qt.__binding_version__ = __import__("PySide2").__version__
 
@@ -723,7 +731,8 @@ def _pyside():
 def _pyqt5():
     """Initialise PyQt5"""
 
-    _setup("PyQt5", ["uic"])
+    import PyQt5 as module
+    _setup(module, ["uic"])
 
     if hasattr(Qt, "uic"):
         Qt.QtCompat.load_ui = lambda fname: Qt._uic.loadUi(fname)
@@ -768,7 +777,8 @@ def _pyqt4():
         # API version already set to v1
         raise ImportError(str(e))
 
-    _setup("PyQt4", ["uic"])
+        import PyQt4 as module
+    _setup(module, ["uic"])
 
     if hasattr(Qt, "uic"):
         Qt.QtCompat.load_ui = lambda fname: Qt._uic.loadUi(fname)
@@ -910,7 +920,7 @@ def _cli(args):
 
 def _install():
     # Default order (customise order and content via QT_PREFERRED_BINDING)
-    default_order = ("PySide2", "PyQt5", "PySide", "PyQt4", "None")
+    default_order = ("PySide2", "PyQt5", "PySide", "PyQt4")
     preferred_order = list(
         b for b in QT_PREFERRED_BINDING.split(os.pathsep) if b
     )
