@@ -657,7 +657,7 @@ def _pyside2():
     import PySide2 as module
     _setup(module, ["QtUiTools"])
 
-    Qt.__binding_version__ = __import__("PySide2").__version__
+    Qt.__binding_version__ = module.__version__
 
     if hasattr(Qt, "_QtUiTools"):
         Qt.QtCompat.load_ui = lambda fname: \
@@ -690,7 +690,7 @@ def _pyside():
     import PySide as module
     _setup(module, ["QtUiTools"])
 
-    Qt.__binding_version__ = __import__("PySide2").__version__
+    Qt.__binding_version__ = module.__version__
 
     if hasattr(Qt, "_QtUiTools"):
         Qt.QtCompat.load_ui = lambda fname: \
