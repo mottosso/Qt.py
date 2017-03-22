@@ -296,20 +296,19 @@ def test_binding_and_qt_version():
     assert Qt.__qt_version__ != "0.0.0", ("Qt version was not populated")
 
 
-def test_strict():
-    """QT_STRICT exposes only a subset of PySide2"""
-    os.environ["QT_STRICT"] = "1"
-    from Qt import QtGui
-    assert not hasattr(QtGui, "QWidget")
-
-
 def test_cli():
     """Qt.py is available from the command-line"""
-    os.environ.pop("QT_VERBOSE")
-    popen = subprocess.Popen([sys.executable, "Qt.py", "--help"],
-                             stdout=subprocess.PIPE)
+    env = os.environ.copy()
+    env.pop("QT_VERBOSE")  # Do not include debug messages
+
+    popen = subprocess.Popen(
+        [sys.executable, "Qt.py", "--help"],
+        stdout=subprocess.PIPE,
+        env=env
+    )
+
     out, err = popen.communicate()
-    assert out.startswith(b"usage: Qt.py")
+    assert out.startswith(b"usage: Qt.py"), "\n%s" % out
 
 
 if binding("PyQt4"):

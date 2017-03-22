@@ -1,0 +1,1 @@
+docker run --rm -v $(pwd):/Qt.py mottosso/qt.py27

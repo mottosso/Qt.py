@@ -238,6 +238,7 @@ excluded = {
         "QOpenGLContext",
         "QOpenGLFramebufferObject",
         "QOpenGLShader",
+        "QOpenGLBuffer",
         "QScreen",
     ],
 
