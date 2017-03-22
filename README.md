@@ -11,7 +11,7 @@ Qt.py enables you to write software that runs on any of the 4 supported bindings
 | Date     | Version   | Event
 |:---------|:----------|:----------
 | Mar 2017 | [1.0.0][] | Increased safety, **backwards incompatible**
-| Sep 2016 | [0.6.0][] | Introducing `QtCompat`
+| Sep 2016 | [0.6.9][] | Stable release
 | Sep 2016 | [0.5.0][] | Alpha release of `--convert`
 | Jun 2016 | [0.2.6][] | First release of Qt.py
 
@@ -30,6 +30,7 @@ Qt.py enables you to write software that runs on any of the 4 supported bindings
 
 ##### Table of contents
 
+- [Project goals](#project-goals)
 - [Install](#install)
 - [Usage](#usage)
 - [Documentation](#documentation)
