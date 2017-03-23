@@ -63,7 +63,7 @@ import types
 import shutil
 import importlib
 
-__version__ = "1.0.0.b2"
+__version__ = "1.0.0.b3"
 
 # Enable support for `from Qt import *`
 __all__ = []
@@ -660,7 +660,7 @@ def _pyside2():
     Qt.__binding_version__ = module.__version__
 
     if hasattr(Qt, "_QtUiTools"):
-        Qt.QtCompat.load_ui = lambda fname: \
+        Qt.QtCompat.loadUi = lambda fname: \
             Qt._QtUiTools.QUiLoader().load(fname)
 
     if hasattr(Qt, "_QtGui") and hasattr(Qt, "_QtCore"):
@@ -693,7 +693,7 @@ def _pyside():
     Qt.__binding_version__ = module.__version__
 
     if hasattr(Qt, "_QtUiTools"):
-        Qt.QtCompat.load_ui = lambda fname: \
+        Qt.QtCompat.loadUi = lambda fname: \
             Qt._QtUiTools.QUiLoader().load(fname)
 
     if hasattr(Qt, "_QtGui"):
@@ -736,7 +736,7 @@ def _pyqt5():
     _setup(module, ["uic"])
 
     if hasattr(Qt, "_uic"):
-        Qt.QtCompat.load_ui = lambda fname: Qt._uic.loadUi(fname)
+        Qt.QtCompat.loadUi = lambda fname: Qt._uic.loadUi(fname)
 
     if hasattr(Qt, "_QtWidgets"):
         Qt.QtCompat.setSectionResizeMode = \
@@ -782,7 +782,7 @@ def _pyqt4():
     _setup(module, ["uic"])
 
     if hasattr(Qt, "_uic"):
-        Qt.QtCompat.load_ui = lambda fname: Qt._uic.loadUi(fname)
+        Qt.QtCompat.loadUi = lambda fname: Qt._uic.loadUi(fname)
 
     if hasattr(Qt, "_QtGui"):
         setattr(Qt, "QtWidgets", _new_module("QtWidgets"))
@@ -826,7 +826,7 @@ def _none():
     Qt.__binding__ = "None"
     Qt.__qt_version__ = "0.0.0"
     Qt.__binding_version__ = "0.0.0"
-    Qt.QtCompat.load_ui = lambda fname: None
+    Qt.QtCompat.loadUi = lambda fname: None
     Qt.QtCompat.setSectionResizeMode = lambda *args, **kwargs: None
 
     for submodule in _common_members.keys():
@@ -982,6 +982,9 @@ def _install():
                 continue
 
             setattr(our_submodule, member, their_member)
+
+    # Backwards compatibility
+    Qt.QtCompat.load_ui = Qt.QtCompat.loadUi
 
 
 _install()
