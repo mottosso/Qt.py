@@ -90,7 +90,7 @@ def test_load_ui_returntype():
     import sys
     from Qt import QtWidgets, QtCore, QtCompat
     app = QtWidgets.QApplication(sys.argv)
-    obj = QtCompat.load_ui(self.ui_qwidget)
+    obj = QtCompat.loadUi(self.ui_qwidget)
     assert isinstance(obj, QtCore.QObject)
     app.exit()
 
