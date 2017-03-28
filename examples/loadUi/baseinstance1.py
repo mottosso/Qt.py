@@ -18,7 +18,7 @@ def setup_ui(uifile, base_instance=None):
         QWidget: the base instance
 
     """
-    ui = QtCompat.load_ui(uifile)  # Qt.py mapped function
+    ui = QtCompat.loadUi(uifile)  # Qt.py mapped function
     if not base_instance:
         return ui
     else:
@@ -37,7 +37,7 @@ class MainWindow(QtWidgets.QWidget):
 
 
 def test():
-    """Example: QtCompat.load_ui with setup_ui wrapper"""
+    """Example: QtCompat.loadUi with setup_ui wrapper"""
     working_directory = os.path.dirname(__file__)
     os.chdir(working_directory)
 
