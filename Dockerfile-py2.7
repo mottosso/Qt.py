@@ -8,6 +8,7 @@ RUN apt-get update && \
         software-properties-common && \
     add-apt-repository -y ppa:thopiekar/pyside-git && \
     apt-get update && apt-get install -y \
+        nano \
         python \
         python-dev \
         python-pip \
@@ -16,7 +17,20 @@ RUN apt-get update && \
         python-pyside \
         python-pyside2 \
         pyside2-tools \
+        libshiboken2-dev \
         xvfb
+
+# Build shiboken
+RUN apt-get install -y \
+        wget \
+        libqt4-dev \
+        cmake && \
+    wget https://pypi.python.org/packages/source/S/Shiboken/Shiboken-1.2.2.tar.gz && \
+    tar -xvzf Shiboken-1.2.2.tar.gz && \
+    cd Shiboken-1.2.2 && \
+    python setup.py bdist_wheel --qmake=/usr/bin/qmake-qt4 && \
+    pip install dist/Shiboken-1.2.2-cp27-cp27mu-linux_x86_64.whl && \
+    python shiboken_postinstall.py -install
 
 # Make pyside2uic availble for Python 2.x
 RUN cp -avr /usr/lib/python3/dist-packages/pyside2uic /usr/local/lib/python2.7/dist-packages
@@ -32,6 +46,7 @@ ENV QT_TESTING true
 ENV DISPLAY :99
 
 # Warnings are exceptions
+ENV PYTHONPATH=/Shiboken-1.2.2/shiboken_package/Shiboken
 ENV PYTHONWARNINGS="ignore"
 
 WORKDIR /workspace/Qt.py

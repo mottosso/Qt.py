@@ -660,6 +660,15 @@ def _pyside2():
 
     Qt.__binding_version__ = module.__version__
 
+    try:
+        import shiboken2
+        Qt.QtCompat.wrapInstance = shiboken2.wrapInstance
+        Qt.QtCompat.getCppPointer = lambda object: \
+            shiboken2.getCppPointer(object)[0]
+
+    except ImportError:
+        pass  # Optional
+
     if hasattr(Qt, "_QtUiTools"):
         Qt.QtCompat.loadUi = lambda fname: \
             Qt._QtUiTools.QUiLoader().load(fname)
@@ -693,6 +702,15 @@ def _pyside():
     _setup(module, ["QtUiTools"])
 
     Qt.__binding_version__ = module.__version__
+
+    try:
+        import shiboken
+        Qt.QtCompat.wrapInstance = shiboken.wrapInstance
+        Qt.QtCompat.getCppPointer = lambda object: \
+            shiboken.getCppPointer(object)[0]
+
+    except ImportError:
+        pass  # Optional
 
     if hasattr(Qt, "_QtUiTools"):
         Qt.QtCompat.loadUi = lambda fname: \
@@ -737,6 +755,15 @@ def _pyqt5():
 
     import PyQt5 as module
     _setup(module, ["uic"])
+
+    try:
+        import sip
+        Qt.QtCompat.wrapInstance = sip.wrapinstance
+        Qt.QtCompat.getCppPointer = lambda object: \
+            sip.unwrapinstance(object)
+
+    except ImportError:
+        pass  # Optional
 
     if hasattr(Qt, "_uic"):
         Qt.QtCompat.loadUi = lambda fname: Qt._uic.loadUi(fname)
@@ -802,6 +829,15 @@ def _pyqt4():
 
     import PyQt4 as module
     _setup(module, ["uic"])
+
+    try:
+        import sip
+        Qt.QtCompat.wrapInstance = sip.wrapinstance
+        Qt.QtCompat.getCppPointer = lambda object: \
+            sip.unwrapinstance(object)
+
+    except ImportError:
+        pass  # Optional
 
     if hasattr(Qt, "_uic"):
         Qt.QtCompat.loadUi = lambda fname: Qt._uic.loadUi(fname)
