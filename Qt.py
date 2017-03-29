@@ -71,6 +71,7 @@ __all__ = []
 # Flags from environment variables
 QT_VERBOSE = bool(os.getenv("QT_VERBOSE"))
 QT_PREFERRED_BINDING = os.getenv("QT_PREFERRED_BINDING", "")
+QT_PRESERVE_API = bool(os.getenv("QT_PRESERVE_API"))
 
 # Reference to Qt.py
 Qt = sys.modules[__name__]
@@ -761,22 +762,24 @@ def _pyqt5():
 
 def _pyqt4():
     """Initialise PyQt4"""
-
-    import sip
-    try:
-        sip.setapi("QString", 2)
-        sip.setapi("QVariant", 2)
-        sip.setapi("QDate", 2)
-        sip.setapi("QDateTime", 2)
-        sip.setapi("QTextStream", 2)
-        sip.setapi("QTime", 2)
-        sip.setapi("QUrl", 2)
-    except AttributeError as e:
-        raise ImportError(str(e))
-        # PyQt4 < v4.6
-    except ValueError as e:
-        # API version already set to v1
-        raise ImportError(str(e))
+    if QT_PRESERVE_API:
+        _log("Preserving the Qt API")
+    else:
+        import sip
+        try:
+            sip.setapi("QString", 2)
+            sip.setapi("QVariant", 2)
+            sip.setapi("QDate", 2)
+            sip.setapi("QDateTime", 2)
+            sip.setapi("QTextStream", 2)
+            sip.setapi("QTime", 2)
+            sip.setapi("QUrl", 2)
+        except AttributeError as e:
+            raise ImportError(str(e))
+            # PyQt4 < v4.6
+        except ValueError as e:
+            # API version already set to v1
+            raise ImportError(str(e))
 
     import PyQt4 as module
     _setup(module, ["uic"])
