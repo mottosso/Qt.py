@@ -341,6 +341,7 @@ if binding("PyQt4"):
         """Should not raise error if import hint matches current"""
         import sip
         sip.setapi('QString', 1)
+        os.environ['QT_SIP_API_HINT'] = '1'
         import Qt
 
     def test_sip_api_with_non_matching_hint():
