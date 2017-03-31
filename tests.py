@@ -328,14 +328,14 @@ if binding("PyQt4"):
             "PyQt4 API version should be 2, "
             "instead is %s" % sip.getapi("QString"))
 
+    if PYTHON == 2:
+        def test_sip_api_already_set():
+            """Raise ImportError if sip API v1 was already set and no hint is provided"""
 
-    def test_sip_api_already_set():
-        """Raise ImportError if sip API v1 was already set and no hint is provided"""
-
-        __import__("PyQt4.QtCore")  # Bypass linter warning
-        import sip
-        sip.setapi("QString", 1)
-        assert_raises(ImportError, __import__, "Qt")
+            __import__("PyQt4.QtCore")  # Bypass linter warning
+            import sip
+            sip.setapi("QString", 1)
+            assert_raises(ImportError, __import__, "Qt")
 
     def test_sip_api_with_matching_hint():
         """Should not raise error if import hint matches current"""
