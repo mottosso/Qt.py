@@ -707,6 +707,7 @@ def _pyside():
             Qt.QtCore.QSortFilterProxyModel = Qt._QtGui.QSortFilterProxyModel
             Qt.QtCore.QStringListModel = Qt._QtGui.QStringListModel
             Qt.QtCore.QItemSelection = Qt._QtGui.QItemSelection
+            Qt.QtCore.QItemSelectionRange = Qt._QtGui.QItemSelectionRange
             Qt.QtCore.QItemSelectionModel = Qt._QtGui.QItemSelectionModel
 
     if hasattr(Qt, "_QtCore"):
