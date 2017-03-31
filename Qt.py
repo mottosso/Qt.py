@@ -71,7 +71,7 @@ __all__ = []
 # Flags from environment variables
 QT_VERBOSE = bool(os.getenv("QT_VERBOSE"))
 QT_PREFERRED_BINDING = os.getenv("QT_PREFERRED_BINDING", "")
-QT_SIP_API_HINT = int(os.getenv("QT_SIP_API_HINT") or 2) # Set using OR 2 in case env is set but empty string
+QT_SIP_API_HINT = os.getenv("QT_SIP_API_HINT")
 
 # Reference to Qt.py
 Qt = sys.modules[__name__]
@@ -764,20 +764,28 @@ def _pyqt4():
     """Initialise PyQt4"""
     
     import sip
-    try:
-        sip.setapi("QString", QT_SIP_API_HINT)
-        sip.setapi("QVariant", QT_SIP_API_HINT)
-        sip.setapi("QDate", QT_SIP_API_HINT)
-        sip.setapi("QDateTime", QT_SIP_API_HINT)
-        sip.setapi("QTextStream", QT_SIP_API_HINT)
-        sip.setapi("QTime", QT_SIP_API_HINT)
-        sip.setapi("QUrl", QT_SIP_API_HINT)
-    except AttributeError as e:
-        raise ImportError(str(e))
-        # PyQt4 < v4.6
-    except ValueError as e:
-        # API version already set to a different version
-        raise ImportError(str(e))
+
+    # Validation of env var. Prevents an error if the env var is invalid since it's just a hint.
+    api_hint = 2
+    if QT_SIP_API_HINT in ('1', '2'):
+        api_hint = int(QT_SIP_API_HINT)
+    elif QT_SIP_API_HINT:
+        _log("Warning: QT_SIP_API_HINT is not a valid value of 1 or 2: [%s]" % (QT_SIP_API_HINT))
+
+    api_names = ('QString', 'QVariant', 'QDate', 'QDateTime', 'QTextStream', 'QTime', 'QUrl')
+
+    for api_name in api_names:
+        try:
+            sip.setapi(api_name, api_hint)
+        except AttributeError as e:
+            raise ImportError(str(e))
+            # PyQt4 < v4.6
+        except ValueError as e:
+            # API version already set to a different version
+            if QT_SIP_API_HINT:
+                _log("Warning: API '%s' has already been set to %s" % (api_name, sip.getapi(api_name)))
+            else:
+                raise ImportError(str(e))
 
     import PyQt4 as module
     _setup(module, ["uic"])
