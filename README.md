@@ -145,7 +145,7 @@ These are the publicly facing environment variables that in one way or another a
 
 | Variable             | Type  | Description
 |:---------------------|:------|:----------
-| QT_PREFFERED_BINDING | str   | Override order and content of binding to try.
+| QT_PREFERRED_BINDING | str   | Override order and content of binding to try.
 | QT_VERBOSE           | bool  | Be a little more chatty about what's going on with Qt.py
 
 <br>
