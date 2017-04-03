@@ -681,6 +681,7 @@ def _pyside2():
         Qt.QtCore.QAbstractProxyModel = Qt._QtCore.QAbstractProxyModel
         Qt.QtCore.QSortFilterProxyModel = Qt._QtCore.QSortFilterProxyModel
         Qt.QtCore.QItemSelection = Qt._QtCore.QItemSelection
+        Qt.QtCore.QItemSelectionRange = Qt._QtCore.QItemSelectionRange
         Qt.QtCore.QItemSelectionModel = Qt._QtCore.QItemSelectionModel
 
 
@@ -755,6 +756,7 @@ def _pyqt5():
         Qt.QtCore.QStringListModel = Qt._QtCore.QStringListModel
         Qt.QtCore.QItemSelection = Qt._QtCore.QItemSelection
         Qt.QtCore.QItemSelectionModel = Qt._QtCore.QItemSelectionModel
+        Qt.QtCore.QItemSelectionRange = Qt._QtCore.QItemSelectionRange
 
         Qt.__qt_version__ = Qt._QtCore.QT_VERSION_STR
         Qt.__binding_version__ = Qt._QtCore.PYQT_VERSION_STR
@@ -798,6 +800,7 @@ def _pyqt4():
             Qt.QtCore.QItemSelection = Qt._QtGui.QItemSelection
             Qt.QtCore.QStringListModel = Qt._QtGui.QStringListModel
             Qt.QtCore.QItemSelectionModel = Qt._QtGui.QItemSelectionModel
+            Qt.QtCore.QItemSelectionRange = Qt._QtGui.QItemSelectionRange
 
     if hasattr(Qt, "_QtCore"):
         Qt.__qt_version__ = Qt._QtCore.QT_VERSION_STR
