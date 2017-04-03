@@ -681,6 +681,7 @@ def _pyside2():
         Qt.QtCore.QAbstractProxyModel = Qt._QtCore.QAbstractProxyModel
         Qt.QtCore.QSortFilterProxyModel = Qt._QtCore.QSortFilterProxyModel
         Qt.QtCore.QItemSelection = Qt._QtCore.QItemSelection
+        Qt.QtCore.QItemSelectionRange = Qt._QtCore.QItemSelectionRange
         Qt.QtCore.QItemSelectionModel = Qt._QtCore.QItemSelectionModel
 
 
