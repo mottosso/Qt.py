@@ -660,8 +660,7 @@ def _pyside2():
     Qt.__binding_version__ = module.__version__
 
     if hasattr(Qt, "_QtUiTools"):
-        Qt.QtCompat.loadUi = lambda fname: \
-            Qt._QtUiTools.QUiLoader().load(fname)
+        Qt.QtCompat.loadUi = __loadUi
 
     if hasattr(Qt, "_QtGui") and hasattr(Qt, "_QtCore"):
         Qt.QtCore.QStringListModel = Qt._QtGui.QStringListModel
@@ -693,8 +692,7 @@ def _pyside():
     Qt.__binding_version__ = module.__version__
 
     if hasattr(Qt, "_QtUiTools"):
-        Qt.QtCompat.loadUi = lambda fname: \
-            Qt._QtUiTools.QUiLoader().load(fname)
+        Qt.QtCompat.loadUi = __loadUi
 
     if hasattr(Qt, "_QtGui"):
         setattr(Qt, "QtWidgets", _new_module("QtWidgets"))
@@ -736,7 +734,7 @@ def _pyqt5():
     _setup(module, ["uic"])
 
     if hasattr(Qt, "_uic"):
-        Qt.QtCompat.loadUi = lambda fname: Qt._uic.loadUi(fname)
+        Qt.QtCompat.loadUi = lambda fname, baseinstance=None: Qt._uic.loadUi(fname, baseinstance)
 
     if hasattr(Qt, "_QtWidgets"):
         Qt.QtCompat.setSectionResizeMode = \
@@ -782,7 +780,7 @@ def _pyqt4():
     _setup(module, ["uic"])
 
     if hasattr(Qt, "_uic"):
-        Qt.QtCompat.loadUi = lambda fname: Qt._uic.loadUi(fname)
+        Qt.QtCompat.loadUi = lambda fname, baseinstance=None: Qt._uic.loadUi(fname, baseinstance)
 
     if hasattr(Qt, "_QtGui"):
         setattr(Qt, "QtWidgets", _new_module("QtWidgets"))
@@ -838,6 +836,12 @@ def _log(text):
     if QT_VERBOSE:
         sys.stdout.write(text + "\n")
 
+def __loadUi(fname, baseinstance=None):
+    """A PySide/PySide 2 implementation of the uic.loadUi method"""
+    loader = UiLoader(baseinstance)
+    widget = loader.load(fname)
+    Qt.QtCore.QMetaObject.connectSlotsByName(widget)
+    return widget
 
 def _convert(lines):
     """Convert compiled .ui file from PySide2 to Qt.py
@@ -989,6 +993,32 @@ def _install():
 
 _install()
 
+
+if hasattr(Qt, "_QtUiTools"):
+    class UiLoader(Qt._QtUiTools.QUiLoader):
+        """Based on this implementation: https://gist.github.com/cpbotha/1b42a20c8f3eb9bb7cb8"""
+        def __init__(self, baseinstance):
+            Qt._QtUiTools.QUiLoader.__init__(self, baseinstance)
+            self.baseinstance = baseinstance
+
+        def createWidget(self, class_name, parent=None, name=''):
+            # returns the baseinstance for the top level widget
+            if self.baseinstance and not parent:
+                return self.baseinstance
+
+            # This is unsupported behavior, and I'm unsure how to keep the behavior consistent between bindings
+            if class_name not in self.availableWidgets():
+                _log("Class Name %s is not supported" % (class_name))
+                return None
+
+            # create a new widget for child widgets
+            widget = Qt._QtUiTools.QUiLoader.createWidget(self, class_name, parent, name)
+
+            if self.baseinstance:
+                # set an attribute for the new child widget on the baseinstance, just like PyQt4.uic.loadUi does.
+                setattr(self.baseinstance, name, widget)
+
+            return widget
 
 """Augment QtCompat
 
