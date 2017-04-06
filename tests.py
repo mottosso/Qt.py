@@ -7,12 +7,29 @@ import imp
 import shutil
 import tempfile
 import subprocess
+import contextlib
+
+try:
+    from StringIO import StringIO
+except ImportError:
+    from io import StringIO  # Python 3
 
 from nose.tools import (
     assert_raises,
 )
 
 PYTHON = sys.version_info[0]  # e.g. 2 or 3
+
+
+@contextlib.contextmanager
+def captured_output():
+    new_out, new_err = StringIO(), StringIO()
+    old_out, old_err = sys.stdout, sys.stderr
+    try:
+        sys.stdout, sys.stderr = new_out, new_err
+        yield sys.stdout, sys.stderr
+    finally:
+        sys.stdout, sys.stderr = old_out, old_err
 
 
 self = sys.modules[__name__]
@@ -330,26 +347,49 @@ if binding("PyQt4"):
 
     if PYTHON == 2:
         def test_sip_api_already_set():
-            """Raise ImportError if sip API v1 was already set and no hint is provided"""
-
+            """Raise ImportError with sip was set to 1 with no hint, default"""
             __import__("PyQt4.QtCore")  # Bypass linter warning
             import sip
             sip.setapi("QString", 1)
             assert_raises(ImportError, __import__, "Qt")
 
-    def test_sip_api_with_matching_hint():
-        """Should not raise error if import hint matches current"""
-        import sip
-        sip.setapi('QString', 1)
-        os.environ['QT_SIP_API_HINT'] = '1'
-        import Qt
+        # A sip API hint of any kind bypasses ImportError
+        # on account of it being merely a hint.
+        def test_sip_api_1_1():
+            """sip=1, hint=1 == OK"""
+            import sip
+            sip.setapi("QString", 1)
+            os.environ["QT_SIP_API_HINT"] = "1"
+            __import__("Qt")  # Bypass linter warning
 
-    def test_sip_api_with_non_matching_hint():
-        """Should not error if the sip API hint is set but they don't match"""
-        import sip
-        sip.setapi('QString', 2)
-        os.environ['QT_SIP_API_HINT'] = '1'
-        import Qt
+        def test_sip_api_2_1():
+            """sip=2, hint=1 == WARNING"""
+            import sip
+            sip.setapi("QString", 2)
+            os.environ["QT_SIP_API_HINT"] = "1"
+
+            with captured_output() as out:
+                __import__("Qt")  # Bypass linter warning
+                stdout, stderr = out
+                assert stderr.getvalue().startswith("Warning:")
+
+        def test_sip_api_1_2():
+            """sip=1, hint=2 == WARNING"""
+            import sip
+            sip.setapi("QString", 1)
+            os.environ["QT_SIP_API_HINT"] = "2"
+
+            with captured_output() as out:
+                __import__("Qt")  # Bypass linter warning
+                stdout, stderr = out
+                assert stderr.getvalue().startswith("Warning:")
+
+        def test_sip_api_2_2():
+            """sip=2, hint=2 == OK"""
+            import sip
+            sip.setapi("QString", 2)
+            os.environ["QT_SIP_API_HINT"] = "2"
+            __import__("Qt")  # Bypass linter warning
 
 if binding("PyQt5"):
     def test_preferred_pyqt5():

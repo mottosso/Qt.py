@@ -762,30 +762,39 @@ def _pyqt5():
 
 def _pyqt4():
     """Initialise PyQt4"""
-    
+
     import sip
 
-    # Validation of env var. Prevents an error if the env var is invalid since it's just a hint.
-    api_hint = 2
-    if QT_SIP_API_HINT in ('1', '2'):
-        api_hint = int(QT_SIP_API_HINT)
-    elif QT_SIP_API_HINT:
-        _log("Warning: QT_SIP_API_HINT is not a valid value of 1 or 2: [%s]" % (QT_SIP_API_HINT))
+    # Validation of envivornment variable.
+    # Prevents an error if the variable is
+    # invalid since it's just a hint.
+    try:
+        hint = int(QT_SIP_API_HINT)
+    except TypeError:
+        hint = None
+    except ValueError:
+        raise ImportError("QT_SIP_API_HINT=%s must be a 1 or 2")
 
-    api_names = ('QString', 'QVariant', 'QDate', 'QDateTime', 'QTextStream', 'QTime', 'QUrl')
-
-    for api_name in api_names:
+    for api in ("QString",
+                "QVariant",
+                "QDate",
+                "QDateTime",
+                "QTextStream",
+                "QTime",
+                "QUrl"):
         try:
-            sip.setapi(api_name, api_hint)
-        except AttributeError as e:
-            raise ImportError(str(e))
-            # PyQt4 < v4.6
-        except ValueError as e:
-            # API version already set to a different version
-            if QT_SIP_API_HINT:
-                print("Warning: API '%s' has already been set to %s" % (api_name, sip.getapi(api_name)))
+            sip.setapi(api, hint or 2)
+        except AttributeError:
+            raise ImportError("PyQt4 < 4.6 isn't supported by Qt.py")
+        except ValueError:
+            actual = sip.getapi(api)
+            if hint:
+                sys.stderr.write(
+                    "Warning: API '%s' has already been set to %d"
+                    % (api, actual)
+                )
             else:
-                raise ImportError(str(e))
+                raise ImportError("API version already set to %d" % actual)
 
     import PyQt4 as module
     _setup(module, ["uic"])

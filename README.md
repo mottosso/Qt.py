@@ -379,6 +379,21 @@ if binding("PyQt4"):
         pass
 ```
 
+**Code convention**
+
+Below are some of the conventions that used throughout the Qt.py module and tests.
+
+- **Etiquette: PEP8**
+ 	- All code is written in PEP8. It is recommended you use a linter as you work, flake8 and pylinter are both good options. Anaconda if using Sublime is another good option.
+- **Etiquette: Double quotes**
+    - " = yes, ' = no.
+- **Etiquette: Napoleon docstrings**
+	- Any docstrings are made in Google Napoleon format. See [Napoleon](https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html) for details.
+- **Etiquette: Semantic Versioning**
+	- This project follows [semantic versioning](http://semver.org).
+- **Etiquette: Underscore means private**
+	- Anything prefixed with an underscore means that it is internal to Qt.py and not for public consumption.
+
 **Running tests**
 
 Due to the nature of multiple bindings and multiple interpreter support, setting up a development environment in which to properly test your contraptions can be challenging. So here is a guide for how to do just that using **Docker**.
