@@ -783,7 +783,7 @@ def _pyqt4():
         except ValueError as e:
             # API version already set to a different version
             if QT_SIP_API_HINT:
-                _log("Warning: API '%s' has already been set to %s" % (api_name, sip.getapi(api_name)))
+                print("Warning: API '%s' has already been set to %s" % (api_name, sip.getapi(api_name)))
             else:
                 raise ImportError(str(e))
 
