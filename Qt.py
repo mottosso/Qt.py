@@ -838,7 +838,7 @@ def _log(text):
 
 def __loadUi(fname, baseinstance=None):
     """A PySide/PySide 2 implementation of the uic.loadUi method"""
-    loader = UiLoader(baseinstance)
+    loader = __UiLoader(baseinstance)
     widget = loader.load(fname)
     Qt.QtCore.QMetaObject.connectSlotsByName(widget)
     return widget
@@ -995,7 +995,7 @@ _install()
 
 
 if hasattr(Qt, "_QtUiTools"):
-    class UiLoader(Qt._QtUiTools.QUiLoader):
+    class __UiLoader(Qt._QtUiTools.QUiLoader):
         """Based on this implementation: https://gist.github.com/cpbotha/1b42a20c8f3eb9bb7cb8"""
         def __init__(self, baseinstance):
             Qt._QtUiTools.QUiLoader.__init__(self, baseinstance)
