@@ -790,7 +790,7 @@ def _pyqt4():
             actual = sip.getapi(api)
             if hint:
                 sys.stderr.write(
-                    "Warning: API '%s' has already been set to %d"
+                    "Warning: API '%s' has already been set to %d.\n"
                     % (api, actual)
                 )
             else:
