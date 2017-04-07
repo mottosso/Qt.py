@@ -765,13 +765,12 @@ def _pyqt4():
 
     import sip
 
-    # Validation of envivornment variable.
-    # Prevents an error if the variable is
-    # invalid since it's just a hint.
+    # Validation of envivornment variable. Prevents an error if
+    # the variable is invalid since it's just a hint.
     try:
         hint = int(QT_SIP_API_HINT)
     except TypeError:
-        hint = None
+        hint = None  # Variable was None, i.e. not set.
     except ValueError:
         raise ImportError("QT_SIP_API_HINT=%s must be a 1 or 2")
 
@@ -788,13 +787,15 @@ def _pyqt4():
             raise ImportError("PyQt4 < 4.6 isn't supported by Qt.py")
         except ValueError:
             actual = sip.getapi(api)
-            if hint:
+            if not hint:
+                raise ImportError("API version already set to %d" % actual)
+            else:
+                # Having provided a hint indicates a soft constraint, one
+                # that doesn't throw an exception.
                 sys.stderr.write(
                     "Warning: API '%s' has already been set to %d.\n"
                     % (api, actual)
                 )
-            else:
-                raise ImportError("API version already set to %d" % actual)
 
     import PyQt4 as module
     _setup(module, ["uic"])
