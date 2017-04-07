@@ -71,6 +71,7 @@ __all__ = []
 # Flags from environment variables
 QT_VERBOSE = bool(os.getenv("QT_VERBOSE"))
 QT_PREFERRED_BINDING = os.getenv("QT_PREFERRED_BINDING", "")
+QT_SIP_API_HINT = os.getenv("QT_SIP_API_HINT")
 
 # Reference to Qt.py
 Qt = sys.modules[__name__]
@@ -766,20 +767,38 @@ def _pyqt4():
     """Initialise PyQt4"""
 
     import sip
+
+    # Validation of envivornment variable. Prevents an error if
+    # the variable is invalid since it's just a hint.
     try:
-        sip.setapi("QString", 2)
-        sip.setapi("QVariant", 2)
-        sip.setapi("QDate", 2)
-        sip.setapi("QDateTime", 2)
-        sip.setapi("QTextStream", 2)
-        sip.setapi("QTime", 2)
-        sip.setapi("QUrl", 2)
-    except AttributeError as e:
-        raise ImportError(str(e))
-        # PyQt4 < v4.6
-    except ValueError as e:
-        # API version already set to v1
-        raise ImportError(str(e))
+        hint = int(QT_SIP_API_HINT)
+    except TypeError:
+        hint = None  # Variable was None, i.e. not set.
+    except ValueError:
+        raise ImportError("QT_SIP_API_HINT=%s must be a 1 or 2")
+
+    for api in ("QString",
+                "QVariant",
+                "QDate",
+                "QDateTime",
+                "QTextStream",
+                "QTime",
+                "QUrl"):
+        try:
+            sip.setapi(api, hint or 2)
+        except AttributeError:
+            raise ImportError("PyQt4 < 4.6 isn't supported by Qt.py")
+        except ValueError:
+            actual = sip.getapi(api)
+            if not hint:
+                raise ImportError("API version already set to %d" % actual)
+            else:
+                # Having provided a hint indicates a soft constraint, one
+                # that doesn't throw an exception.
+                sys.stderr.write(
+                    "Warning: API '%s' has already been set to %d.\n"
+                    % (api, actual)
+                )
 
     import PyQt4 as module
     _setup(module, ["uic"])
