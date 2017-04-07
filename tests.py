@@ -337,9 +337,41 @@ if PYTHON == 2:
 
         try:
             button = QtWidgets.QPushButton("Hello world")
+            button.setObjectName("MySpecialButton")
             pointer = QtCompat.getCppPointer(button)
-            widget = QtCompat.wrapInstance(long(pointer), QtWidgets.QWidget)
+            widget = QtCompat.wrapInstance(long(pointer),
+                                           QtWidgets.QWidget)
             assert isinstance(widget, QtWidgets.QWidget), widget
+            assert widget.objectName() == button.objectName()
+
+            # IMPORTANT: this differs across sip and shiboken.
+            if binding("PySide") or binding("PySide2"):
+                assert widget != button
+            else:
+                assert widget == button
+
+        finally:
+            app.exit()
+
+    def test_implicit_wrapInstance():
+        """.wrapInstance doesn't need the `base` argument"""
+        from Qt import QtCompat, QtWidgets
+
+        app = QtWidgets.QApplication(sys.argv)
+
+        try:
+            button = QtWidgets.QPushButton("Hello world")
+            button.setObjectName("MySpecialButton")
+            pointer = QtCompat.getCppPointer(button)
+            widget = QtCompat.wrapInstance(long(pointer))
+            assert isinstance(widget, QtWidgets.QWidget), widget
+            assert widget.objectName() == button.objectName()
+
+            if binding("PySide") or binding("PySide2"):
+                assert widget != button
+            else:
+                assert widget == button
+
         finally:
             app.exit()
 
