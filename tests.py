@@ -99,7 +99,7 @@ def test_load_ui_baseinstance():
     import sys
     from Qt import QtWidgets, QtCore, QtCompat
     app = QtWidgets.QApplication(sys.argv)
-    win = QtWidgets.QMainWindow()
+    win = QtWidgets.QWidget()
     QtCompat.loadUi(self.ui_qwidget, win)
     assert hasattr(win, 'lineEdit'), "loadUi could not load instance to win (missing lineEdit widget)"
     app.exit()
