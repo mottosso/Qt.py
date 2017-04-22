@@ -6,3 +6,4 @@ test_caveats.py
 
 # Development
 .vscode
+.idea
