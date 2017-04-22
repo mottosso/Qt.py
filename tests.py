@@ -94,6 +94,15 @@ def test_load_ui_returntype():
     assert isinstance(obj, QtCore.QObject)
     app.exit()
 
+def test_load_ui_baseinstance():
+    """Tests to see if the baseinstance loading loads widgets on properly"""
+    import sys
+    from Qt import QtWidgets, QtCore, QtCompat
+    app = QtWidgets.QApplication(sys.argv)
+    win = QtWidgets.QMainWindow()
+    QtCompat.loadUi(self.ui_qwidget, win)
+    assert hasattr(win, 'lineEdit'), "loadUi could not load instance to win (missing lineEdit widget)"
+    app.exit()
 
 def test_preferred_none():
     """Preferring None shouldn't import anything"""
