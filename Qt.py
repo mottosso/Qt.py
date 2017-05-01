@@ -867,7 +867,7 @@ def __loadUi(uifile, baseinstance=None):
     """
 
     # We parse the UI file and import any required custom widgets
-    customWidgets = _get_custom_widgets(uifile)
+    customWidgets = __get_custom_widgets(uifile)
 
     loader = __UiLoader(baseinstance, customWidgets)
 
@@ -1094,31 +1094,31 @@ if hasattr(Qt, "_QtUiTools"):
     # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
     # DEALINGS IN THE SOFTWARE.
 
-      class __UiLoader(Qt._QtUiTools.QUiLoader):
+    class __UiLoader(Qt._QtUiTools.QUiLoader):
         """
         Subclass of :class:`~PySide.QtUiTools.QUiLoader` to create the user
         interface in a base instance.
-
+        
         Unlike :class:`~PySide.QtUiTools.QUiLoader` itself this class does not
         create a new instance of the top-level widget, but creates the user
         interface in an existing instance of the top-level class if needed.
-
+        
         This mimics the behaviour of :func:`PyQt4.uic.loadUi`.
         """
 
         def __init__(self, baseinstance, customWidgets=None):
             """
             Create a loader for the given ``baseinstance``.
-
+        
             The user interface is created in ``baseinstance``, which must be an
             instance of the top-level class in the user interface to load, or a
             subclass thereof.
-
+        
             ``customWidgets`` is a dictionary mapping from class name to class
             object for custom widgets. Usually, this should be done by calling
             registerCustomWidget on the QUiLoader, but with PySide 1.1.2 on
             Ubuntu 12.04 x86_64 this causes a segfault.
-
+        
             ``parent`` is the parent object of this loader.
             """
 
@@ -1169,7 +1169,7 @@ if hasattr(Qt, "_QtUiTools"):
                 return widget
 
 
-    def _get_custom_widgets(ui_file):
+    def __get_custom_widgets(ui_file):
         """
         This function is used to parse a ui file and look for the <customwidgets>
         section, then automatically load all the custom widget classes.
