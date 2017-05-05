@@ -196,18 +196,6 @@ def test_load_ui_invalidxml():
     finally:
         app.exit()
 
-def test_load_ui_overwrite_widget():
-    """Checks to make sure ui file widgets supersede previous ones"""
-    import sys
-    from Qt import QtWidgets, QtCore, QtCompat
-    app = QtWidgets.QApplication(sys.argv)
-    win = QtWidgets.QWidget()
-    layout = QtWidgets.QVBoxLayout(win)
-    win.lineEdit = QtWidgets.QPushButton('Test')
-    layout.addWidget(win.lineEdit)
-    QtCompat.loadUi(self.ui_qwidget, win)
-    assert isinstance(win.lineEdit, QtWidgets.QLineEdit), "Line Edit not loaded"
-    app.exit()
 
 
 def test_preferred_none():
