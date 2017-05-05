@@ -63,5 +63,6 @@ ENTRYPOINT cp -r /Qt.py /workspace && \
         --with-doctest \
         --exe \
             examples/*/*.py && \
-    coveralls && \
+    echo "Uploading results to Coveralls.io.." && \
+        coveralls && \
     echo Done

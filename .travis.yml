@@ -14,7 +14,7 @@ install:
   - docker build -f Dockerfile-py${TRAVIS_PYTHON_VERSION} -t mottosso/qt.py .
 
 script:
-  - docker run --rm -v $(pwd):/Qt.py mottosso/qt.py
+  - docker run --rm -v $(pwd):/Qt.py -e COVERALLS_REPO_TOKEN mottosso/qt.py
 
 deploy:
   provider: pypi
