@@ -1,5 +1,5 @@
 """Tests that run once"""
-
+import contextlib
 import io
 import os
 import sys
@@ -158,18 +158,56 @@ def test_load_ui_signals():
     app.exit()
 
 
-
 def test_load_ui_invalidpath():
+    """Tests to see if loadUi successfully fails on invalid paths"""
+    import sys
+    from Qt import QtWidgets, QtCore, QtCompat
+    app = QtWidgets.QApplication(sys.argv)
+    try:
+        QtCompat.loadUi('made/up/path')
+    except IOError:
+        pass  # Success
+    else:
+        raise RuntimeError("Loaded an invalid path successfully")
+    finally:
+        app.exit()
+
+
+def test_load_ui_invalidxml():
+    """Tests to see if loadUi successfully fails on invalid ui files"""
+    import sys
+    invalidXML = os.path.join(self.tempdir, "invalid.ui")
+    with io.open(invalidXML, "w", encoding="utf-8") as f:
+        f.write(u"""
+        <?xml version="1.0" encoding="UTF-8"?>
+        <ui version="4.0" garbage
+        </ui>
+        """)
+
+    from xml.etree import ElementTree
+    from Qt import QtWidgets, QtCore, QtCompat
+    app = QtWidgets.QApplication(sys.argv)
+    try:
+        obj = QtCompat.loadUi(invalidXML)
+    except ElementTree.ParseError:
+        pass
+    else:
+        raise RuntimeError("Loaded an invalid xml")
+    finally:
+        app.exit()
+
+def test_load_ui_overwrite_widget():
+    """Checks to make sure ui file widgets supersede previous ones"""
     import sys
     from Qt import QtWidgets, QtCore, QtCompat
     app = QtWidgets.QApplication(sys.argv)
     win = QtWidgets.QWidget()
-    try:
-        QtCompat.loadUi('made/up/path', win)
-    except IOError:
-        pass  # Success
-    finally:
-        app.exit()
+    layout = QtWidgets.QVBoxLayout(win)
+    win.lineEdit = QtWidgets.QPushButton('Test')
+    layout.addWidget(win.lineEdit)
+    QtCompat.loadUi(self.ui_qwidget, win)
+    assert isinstance(win.lineEdit, QtWidgets.QLineEdit), "Line Edit not loaded"
+    app.exit()
 
 
 def test_preferred_none():
