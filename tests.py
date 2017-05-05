@@ -14,7 +14,6 @@ from nose.tools import (
 
 PYTHON = sys.version_info[0]  # e.g. 2 or 3
 
-
 self = sys.modules[__name__]
 
 
@@ -39,8 +38,8 @@ def setup():
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>235</width>
-    <height>149</height>
+    <width>507</width>
+    <height>394</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -50,10 +49,37 @@ def setup():
    <item row="0" column="0">
     <widget class="QLineEdit" name="lineEdit"/>
    </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>TextLabel</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QLineEdit" name="lineEdit_2"/>
+   </item>
   </layout>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>lineEdit</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>label</receiver>
+   <slot>setText(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>228</x>
+     <y>23</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>37</x>
+     <y>197</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>
 """)
 
@@ -94,6 +120,7 @@ def test_load_ui_returntype():
     assert isinstance(obj, QtCore.QObject)
     app.exit()
 
+
 def test_load_ui_baseinstance():
     """Tests to see if the baseinstance loading loads widgets on properly"""
     import sys
@@ -101,8 +128,37 @@ def test_load_ui_baseinstance():
     app = QtWidgets.QApplication(sys.argv)
     win = QtWidgets.QWidget()
     QtCompat.loadUi(self.ui_qwidget, win)
-    assert hasattr(win, 'lineEdit'), "loadUi could not load instance to win (missing lineEdit widget)"
+    assert hasattr(win, 'lineEdit'), "loadUi could not load instance to win"
     app.exit()
+
+
+def test_load_ui_signals():
+    """Tests to see if the baseinstance loading loads widgets on properly"""
+    import sys
+    from Qt import QtWidgets, QtCore, QtCompat
+    app = QtWidgets.QApplication(sys.argv)
+    win = QtWidgets.QWidget()
+    QtCompat.loadUi(self.ui_qwidget, win)
+
+    win.lineEdit.setText('Hello')
+    assert str(win.label.text()) == 'Hello', "lineEdit signal did not fire"
+
+    app.exit()
+
+
+
+def test_load_ui_invalidpath():
+    import sys
+    from Qt import QtWidgets, QtCore, QtCompat
+    app = QtWidgets.QApplication(sys.argv)
+    win = QtWidgets.QWidget()
+    try:
+        QtCompat.loadUi('made/up/path', win)
+    except IOError:
+        pass  # Success
+    finally:
+        app.exit()
+
 
 def test_preferred_none():
     """Preferring None shouldn't import anything"""
@@ -147,7 +203,7 @@ def test_vendoring():
     assert subprocess.call(
         [sys.executable, "-c", "import myproject"],
         cwd=self.tempdir,
-        stdout=subprocess.PIPE,    # With nose process isolation, buffer can
+        stdout=subprocess.PIPE,  # With nose process isolation, buffer can
         stderr=subprocess.STDOUT,  # easily get full and throw an error.
     ) == 0
 
@@ -289,9 +345,9 @@ def test_translate_arguments():
 
     # This will run on each binding
     result = Qt.QtCompat.translate("CustomDialog",  # context
-                                   "Status",        # sourceText
-                                   None,            # disambiguation
-                                   -1)              # n
+                                   "Status",  # sourceText
+                                   None,  # disambiguation
+                                   -1)  # n
     assert result == u'Status', result
 
 
@@ -328,6 +384,7 @@ if binding("PyQt4"):
             "PyQt4 should have been picked, "
             "instead got %s" % Qt.__binding__)
 
+
     def test_sip_api_qtpy():
         """Preferred binding PyQt4 should have sip version 2"""
 
@@ -336,6 +393,7 @@ if binding("PyQt4"):
         assert sip.getapi("QString") == 2, (
             "PyQt4 API version should be 2, "
             "instead is %s" % sip.getapi("QString"))
+
 
     if PYTHON == 2:
         def test_sip_api_already_set():
@@ -346,7 +404,6 @@ if binding("PyQt4"):
             sip.setapi("QString", 1)
             assert_raises(ImportError, __import__, "Qt")
 
-
 if binding("PyQt5"):
     def test_preferred_pyqt5():
         """QT_PREFERRED_BINDING = PyQt5 properly forces the binding"""
@@ -354,7 +411,6 @@ if binding("PyQt5"):
         assert Qt.__binding__ == "PyQt5", (
             "PyQt5 should have been picked, "
             "instead got %s" % Qt.__binding__)
-
 
 if binding("PySide"):
     def test_preferred_pyside():
@@ -364,7 +420,6 @@ if binding("PySide"):
             "PySide should have been picked, "
             "instead got %s" % Qt.__binding__)
 
-
 if binding("PySide2"):
     def test_preferred_pyside2():
         """QT_PREFERRED_BINDING = PySide2 properly forces the binding"""
@@ -372,6 +427,7 @@ if binding("PySide2"):
         assert Qt.__binding__ == "PySide2", (
             "PySide2 should have been picked, "
             "instead got %s" % Qt.__binding__)
+
 
     def test_coexistence():
         """Qt.py may be use alongside the actual binding"""
@@ -384,7 +440,6 @@ if binding("PySide2"):
 
         # But does not delete the original
         assert PySide.QtGui.QStringListModel
-
 
 if binding("PySide") or binding("PySide2"):
     def test_multiple_preferred():
