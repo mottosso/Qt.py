@@ -734,7 +734,7 @@ def _pyqt5():
     _setup(module, ["uic"])
 
     if hasattr(Qt, "_uic"):
-        Qt.QtCompat.loadUi = lambda fname, baseinstance=None: Qt._uic.loadUi(fname, baseinstance)
+        Qt.QtCompat.loadUi = __loadUi
 
     if hasattr(Qt, "_QtWidgets"):
         Qt.QtCompat.setSectionResizeMode = \
@@ -780,7 +780,7 @@ def _pyqt4():
     _setup(module, ["uic"])
 
     if hasattr(Qt, "_uic"):
-        Qt.QtCompat.loadUi = lambda fname, baseinstance=None: Qt._uic.loadUi(fname, baseinstance)
+        Qt.QtCompat.loadUi = __loadUi
 
     if hasattr(Qt, "_QtGui"):
         setattr(Qt, "QtWidgets", _new_module("QtWidgets"))
@@ -836,16 +836,12 @@ def _log(text):
     if QT_VERBOSE:
         sys.stdout.write(text + "\n")
 
-def __loadUi(fname, baseinstance=None):
-    """A PySide/PySide 2 implementation of the uic.loadUi method"""
-    loader = __UiLoader(baseinstance)
-    widget = loader.load(fname)
-    Qt.QtCore.QMetaObject.connectSlotsByName(widget)
-    return widget
 
-def __loadUi(uifile, baseinstance=None):
+def __loadUi(fname, baseinstance=None):
     """
     Dynamically load a user interface from the given ``uifile``.
+    This function calls uic.loadUi if using PyQt bindings, 
+    else it implements a comparable binding for PySide.
 
     ``uifile`` is a string containing a file name of the UI file to load.
 
@@ -856,9 +852,9 @@ def __loadUi(uifile, baseinstance=None):
     subclass thereof. In other words, if you've created a ``QMainWindow``
     interface in the designer, ``baseinstance`` must be a ``QMainWindow``
     or a subclass thereof, too. You cannot load a ``QMainWindow`` UI file
-    with a plain :class:`~PySide.QtGui.QWidget` as ``baseinstance``.
+    with a plain :class:`~Qt.QtWidgets.QWidget` as ``baseinstance``.
 
-    :method:`~PySide.QtCore.QMetaObject.connectSlotsByName()` is called on
+    :method:`~Qt.QtCore.QMetaObject.connectSlotsByName()` is called on
     the created user interface, so you can implemented your slots according
     to its conventions in your widget class.
 
@@ -866,14 +862,19 @@ def __loadUi(uifile, baseinstance=None):
     return the newly created instance of the user interface.
     """
 
-    # We parse the UI file and import any required custom widgets
-    customWidgets = __get_custom_widgets(uifile)
+    if hasattr(Qt, "_uic"):
+        return Qt._uic.loadUi(fname, baseinstance)
+    elif not hasattr(Qt, "_QtUiTools"):
+        raise NotImplementedError("No implementation available for loadUi")
+
+    customWidgets = __get_custom_widgets(fname)
 
     loader = __UiLoader(baseinstance, customWidgets)
 
-    widget = loader.load(uifile)
+    widget = loader.load(fname)
     Qt.QtCore.QMetaObject.connectSlotsByName(widget)
     return widget
+
 
 def _convert(lines):
     """Convert compiled .ui file from PySide2 to Qt.py
@@ -1096,10 +1097,10 @@ if hasattr(Qt, "_QtUiTools"):
 
     class __UiLoader(Qt._QtUiTools.QUiLoader):
         """
-        Subclass of :class:`~PySide.QtUiTools.QUiLoader` to create the user
+        Subclass of :class:`~Qt._QtUiTools.QUiLoader` to create the user
         interface in a base instance.
         
-        Unlike :class:`~PySide.QtUiTools.QUiLoader` itself this class does not
+        Unlike :class:`~Qt._QtUiTools.QUiLoader` itself this class does not
         create a new instance of the top-level widget, but creates the user
         interface in an existing instance of the top-level class if needed.
         
