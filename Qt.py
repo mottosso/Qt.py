@@ -840,7 +840,7 @@ def _log(text):
 def __loadUi(fname, baseinstance=None):
     """
     Dynamically load a user interface from the given ``uifile``.
-    This function calls uic.loadUi if using PyQt bindings, 
+    This function calls uic.loadUi if using PyQt bindings,
     else it implements a comparable binding for PySide.
 
     ``uifile`` is a string containing a file name of the UI file to load.
@@ -1078,8 +1078,9 @@ if hasattr(Qt, "_QtUiTools"):
     # Modifications by Charl Botha <cpbotha@vxlabs.com>
     #
     # Permission is hereby granted, free of charge, to any person obtaining a
-    # copy of this software and associated documentation files (the "Software"),
-    # to deal in the Software without restriction, including without limitation
+    # copy of this software and associated documentation files
+    # (the "Software"),to deal in the Software without restriction,
+    # including without limitation
     # the rights to use, copy, modify, merge, publish, distribute, sublicense,
     # and/or sell copies of the Software, and to permit persons to whom the
     # Software is furnished to do so, subject to the following conditions:
@@ -1099,7 +1100,7 @@ if hasattr(Qt, "_QtUiTools"):
         """
         Subclass of :class:`~Qt._QtUiTools.QUiLoader` to create the user
         interface in a base instance.
-        
+
         Unlike :class:`~Qt._QtUiTools.QUiLoader` itself this class does not
         create a new instance of the top-level widget, but creates the user
         interface in an existing instance of the top-level class if needed.
@@ -1127,7 +1128,7 @@ if hasattr(Qt, "_QtUiTools"):
 
             self.baseinstance = baseinstance
 
-            customWidgets = self.parseCustomWidgets() or {}
+            self.customWidgets = self.parseCustomWidgets() or {}
 
         def createWidget(self, class_name, parent=None, name=''):
             """
