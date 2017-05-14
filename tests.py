@@ -8,6 +8,11 @@ import tempfile
 import subprocess
 import contextlib
 
+try:
+    from StringIO import StringIO
+except ImportError:
+    from io import StringIO  # Python 3
+
 from nose.tools import (
     assert_raises,
 )
@@ -17,7 +22,7 @@ PYTHON = sys.version_info[0]  # e.g. 2 or 3
 
 @contextlib.contextmanager
 def captured_output():
-    new_out, new_err = io.StringIO(), io.StringIO()
+    new_out, new_err = StringIO(), StringIO()
     old_out, old_err = sys.stdout, sys.stderr
     try:
         sys.stdout, sys.stderr = new_out, new_err
