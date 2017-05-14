@@ -1,5 +1,4 @@
 """Tests that run once"""
-import contextlib
 import io
 import os
 import sys
@@ -7,6 +6,7 @@ import imp
 import shutil
 import tempfile
 import subprocess
+import contextlib
 
 from nose.tools import (
     assert_raises,
@@ -17,7 +17,7 @@ PYTHON = sys.version_info[0]  # e.g. 2 or 3
 
 @contextlib.contextmanager
 def captured_output():
-    new_out, new_err = StringIO(), StringIO()
+    new_out, new_err = io.StringIO(), io.StringIO()
     old_out, old_err = sys.stdout, sys.stderr
     try:
         sys.stdout, sys.stderr = new_out, new_err
@@ -199,7 +199,8 @@ def test_load_ui_invalidxml():
 if  binding("PySide") or binding("PySide2"):
     def test_load_ui_overwrite_widget():
         """Checks to make sure ui file widgets supersede previous ones
-        Unfortunately this test only runs in PySide, because PyQt doesn't allow replacing layouts.
+        Unfortunately this test only runs in PySide, because PyQt doesn't 
+        allow replacing layouts.
         """
         import sys
         from Qt import QtWidgets, QtCore, QtCompat
@@ -210,7 +211,8 @@ if  binding("PySide") or binding("PySide2"):
         layout.addWidget(win.lineEdit)
 
         QtCompat.loadUi(self.ui_qwidget, win)
-        assert isinstance(win.lineEdit, QtWidgets.QLineEdit), "Line Edit not loaded"
+        assert isinstance(win.lineEdit, QtWidgets.QLineEdit), \
+            "Line Edit not loaded"
         app.exit()
 
 

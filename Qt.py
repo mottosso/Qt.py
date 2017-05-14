@@ -867,9 +867,7 @@ def __loadUi(fname, baseinstance=None):
     elif not hasattr(Qt, "_QtUiTools"):
         raise NotImplementedError("No implementation available for loadUi")
 
-    customWidgets = __get_custom_widgets(fname)
-
-    loader = __UiLoader(baseinstance, customWidgets)
+    loader = __UiLoader(baseinstance)
 
     widget = loader.load(fname)
     Qt.QtCore.QMetaObject.connectSlotsByName(widget)
@@ -1030,8 +1028,10 @@ _install()
 if hasattr(Qt, "_QtUiTools"):
     # In PySide(2), loadUi does not exist, so we implement it
     #
-    # This is adapted from the qtpy project, which was further influenced by qt-helpers
-    # which was released under a 3-clause BSD license which in turn is based on a solution at
+    # This is adapted from the qtpy project, which was further influenced by
+    # qt-helpers
+    # which was released under a 3-clause BSD license which in turn is based on
+    # a solution at
     # https://gist.github.com/cpbotha/1b42a20c8f3eb9bb7cb8
     #
     # The License for this code is as follows:
@@ -1084,16 +1084,16 @@ if hasattr(Qt, "_QtUiTools"):
     # and/or sell copies of the Software, and to permit persons to whom the
     # Software is furnished to do so, subject to the following conditions:
     #
-    # The above copyright notice and this permission notice shall be included in
-    # all copies or substantial portions of the Software.
+    # The above copyright notice and this permission notice shall be included
+    # in all copies or substantial portions of the Software.
     #
-    # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-    # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-    # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
-    # THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-    # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-    # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-    # DEALINGS IN THE SOFTWARE.
+    # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+    # OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+    # MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+    # IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+    # CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+    # TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+    # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
     class __UiLoader(Qt._QtUiTools.QUiLoader):
         """
@@ -1107,7 +1107,7 @@ if hasattr(Qt, "_QtUiTools"):
         This mimics the behaviour of :func:`PyQt4.uic.loadUi`.
         """
 
-        def __init__(self, baseinstance, customWidgets=None):
+        def __init__(self, baseinstance):
             """
             Create a loader for the given ``baseinstance``.
         
@@ -1127,10 +1127,7 @@ if hasattr(Qt, "_QtUiTools"):
 
             self.baseinstance = baseinstance
 
-            if customWidgets is None:
-                self.customWidgets = {}
-            else:
-                self.customWidgets = customWidgets
+            customWidgets = self.parseCustomWidgets() or {}
 
         def createWidget(self, class_name, parent=None, name=''):
             """
@@ -1147,9 +1144,13 @@ if hasattr(Qt, "_QtUiTools"):
 
                 # For some reason, Line is not in the list of available
                 # widgets, but works fine, so we have to special case it here.
-                if class_name in self.availableWidgets() or class_name == 'Line':
+                if class_name in self.availableWidgets() or\
+                                class_name == 'Line':
                     # create a new widget for child widgets
-                    widget = Qt._QtUiTools.QUiLoader.createWidget(self, class_name, parent, name)
+                    widget = Qt._QtUiTools.QUiLoader.createWidget(self,
+                                                                  class_name,
+                                                                  parent,
+                                                                  name)
 
                 else:
                     # If not in the list of availableWidgets, must be a custom
@@ -1159,8 +1160,8 @@ if hasattr(Qt, "_QtUiTools"):
                     try:
                         widget = self.customWidgets[class_name](parent)
                     except KeyError:
-                        raise Exception('No custom widget ' + class_name + ' '
-                                                                           'found in customWidgets')
+                        raise Exception('No custom widget ' + class_name +
+                                        ' found in customWidgets')
 
                 if self.baseinstance:
                     # set an attribute for the new child widget on the base
@@ -1170,36 +1171,37 @@ if hasattr(Qt, "_QtUiTools"):
                 return widget
 
 
-    def __get_custom_widgets(ui_file):
-        """
-        This function is used to parse a ui file and look for the <customwidgets>
-        section, then automatically load all the custom widget classes.
-        """
+        def parseCustomWidgets(self, ui_file):
+            """
+            This function is used to parse a ui file and look for the 
+            <customwidgets> section, then automatically load all the custom
+            widget classes.
+            """
 
-        import importlib
-        from xml.etree.ElementTree import ElementTree
+            import importlib
+            from xml.etree.ElementTree import ElementTree
 
-        # Parse the UI file
-        etree = ElementTree()
-        ui = etree.parse(ui_file)
+            # Parse the UI file
+            etree = ElementTree()
+            ui = etree.parse(ui_file)
 
-        # Get the customwidgets section
-        custom_widgets = ui.find('customwidgets')
+            # Get the customwidgets section
+            custom_widgets = ui.find('customwidgets')
 
-        if custom_widgets is None:
-            return {}
+            if custom_widgets is None:
+                return {}
 
-        custom_widget_classes = {}
+            custom_widget_classes = {}
 
-        for custom_widget in custom_widgets.getchildren():
-            cw_class = custom_widget.find('class').text
-            cw_header = custom_widget.find('header').text
+            for custom_widget in custom_widgets.getchildren():
+                cw_class = custom_widget.find('class').text
+                cw_header = custom_widget.find('header').text
 
-            module = importlib.import_module(cw_header)
+                module = importlib.import_module(cw_header)
 
-            custom_widget_classes[cw_class] = getattr(module, cw_class)
+                custom_widget_classes[cw_class] = getattr(module, cw_class)
 
-        return custom_widget_classes
+            return custom_widget_classes
 
 """Augment QtCompat
 
