@@ -1103,18 +1103,18 @@ if hasattr(Qt, "_QtUiTools"):
         Unlike :class:`~Qt._QtUiTools.QUiLoader` itself this class does not
         create a new instance of the top-level widget, but creates the user
         interface in an existing instance of the top-level class if needed.
-        
+
         This mimics the behaviour of :func:`PyQt4.uic.loadUi`.
         """
 
         def __init__(self, baseinstance):
             """
             Create a loader for the given ``baseinstance``.
-        
+
             The user interface is created in ``baseinstance``, which must be an
             instance of the top-level class in the user interface to load, or a
             subclass thereof.
-        
+
             ``customWidgets`` is a dictionary mapping from class name to class
             object for custom widgets. Usually, this should be done by calling
             registerCustomWidget on the QUiLoader, but with PySide 1.1.2 on
@@ -1170,10 +1170,9 @@ if hasattr(Qt, "_QtUiTools"):
 
                 return widget
 
-
         def parseCustomWidgets(self, ui_file):
             """
-            This function is used to parse a ui file and look for the 
+            This function is used to parse a ui file and look for the
             <customwidgets> section, then automatically load all the custom
             widget classes.
             """

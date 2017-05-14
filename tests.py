@@ -199,11 +199,11 @@ def test_load_ui_invalidxml():
 if  binding("PySide") or binding("PySide2"):
     def test_load_ui_overwrite_widget():
         """Checks to make sure ui file widgets supersede previous ones
-        Unfortunately this test only runs in PySide, because PyQt doesn't 
+        Unfortunately this test only runs in PySide, because PyQt doesn't
         allow replacing layouts.
         """
         import sys
-        from Qt import QtWidgets, QtCore, QtCompat
+        from Qt import QtWidgets, QtCompat
         app = QtWidgets.QApplication(sys.argv)
         win = QtWidgets.QWidget()
         layout = QtWidgets.QVBoxLayout(win)
