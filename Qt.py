@@ -1142,7 +1142,7 @@ if hasattr(Qt, "_QtUiTools"):
             object for custom widgets. Usually, this should be done by calling
             registerCustomWidget on the QUiLoader, but with PySide 1.1.2 on
             Ubuntu 12.04 x86_64 this causes a segfault.
-        
+
             ``parent`` is the parent object of this loader.
             """
 

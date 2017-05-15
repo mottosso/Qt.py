@@ -193,7 +193,7 @@ def test_load_ui_invalidxml():
     from Qt import QtWidgets, QtCompat
     app = QtWidgets.QApplication(sys.argv)
     try:
-        obj = QtCompat.loadUi(invalidXML)
+        QtCompat.loadUi(invalidXML)
     except ElementTree.ParseError:
         pass
     else:
