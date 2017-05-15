@@ -1127,7 +1127,11 @@ if hasattr(Qt, "_QtUiTools"):
 
             self.baseinstance = baseinstance
 
-            self.customWidgets = self.parseCustomWidgets() or {}
+            self.customWidgets = {}
+
+        def load(self, ui_file, *args, **kwargs):
+            self.customWidgets = self.parseCustomWidgets(ui_file)
+            Qt._QtUiTools.QUiLoader.load(self, ui_file, *args, **kwargs)
 
         def createWidget(self, class_name, parent=None, name=''):
             """
