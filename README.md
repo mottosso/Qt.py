@@ -26,6 +26,7 @@ Qt.py enables you to write software that runs on any of the 4 supported bindings
 
 - [Developing with Qt.py](https://fredrikaverpil.github.io/2016/07/25/developing-with-qt-py/)
 - [Dealing with Maya 2017 and PySide2](https://fredrikaverpil.github.io/2016/07/25/dealing-with-maya-2017-and-pyside2/)
+- [Vendoring Qt.py](https://fredrikaverpil.github.io/2017/05/04/vendoring-qt-py/)
 - [Udemy Course](https://www.udemy.com/python-for-maya/learn/v4/t/lecture/6027394)
 
 ##### Table of contents
@@ -72,7 +73,7 @@ Qt.py is a single file and can either be [copy/pasted](https://raw.githubusercon
 $ pip install Qt.py
 ```
 
-- Pro tip: Supports vendoring
+- Pro tip: Supports [vendoring](https://fredrikaverpil.github.io/2017/05/04/vendoring-qt-py/)
 
 <br>
 <br>
@@ -145,7 +146,7 @@ These are the publicly facing environment variables that in one way or another a
 
 | Variable             | Type  | Description
 |:---------------------|:------|:----------
-| QT_PREFFERED_BINDING | str   | Override order and content of binding to try.
+| QT_PREFERRED_BINDING | str   | Override order and content of binding to try.
 | QT_VERBOSE           | bool  | Be a little more chatty about what's going on with Qt.py
 | QT_SIP_API_HINT      | int   | Sets the preferred SIP api version that will be attempted to set.
 
@@ -399,6 +400,21 @@ if binding("PyQt4"):
     def test_something_related_to_pyqt4():
         pass
 ```
+
+**Code convention**
+
+Below are some of the conventions that used throughout the Qt.py module and tests.
+
+- **Etiquette: PEP8**
+ 	- All code is written in PEP8. It is recommended you use a linter as you work, flake8 and pylinter are both good options. Anaconda if using Sublime is another good option.
+- **Etiquette: Double quotes**
+    - " = yes, ' = no.
+- **Etiquette: Napoleon docstrings**
+	- Any docstrings are made in Google Napoleon format. See [Napoleon](https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html) for details.
+- **Etiquette: Semantic Versioning**
+	- This project follows [semantic versioning](http://semver.org).
+- **Etiquette: Underscore means private**
+	- Anything prefixed with an underscore means that it is internal to Qt.py and not for public consumption.
 
 **Running tests**
 
