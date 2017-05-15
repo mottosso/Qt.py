@@ -141,7 +141,7 @@ def test_load_ui_returntype():
 def test_load_ui_baseinstance():
     """Tests to see if the baseinstance loading loads widgets on properly"""
     import sys
-    from Qt import QtWidgets, QtCore, QtCompat
+    from Qt import QtWidgets, QtCompat
     app = QtWidgets.QApplication(sys.argv)
     win = QtWidgets.QWidget()
     QtCompat.loadUi(self.ui_qwidget, win)
@@ -152,7 +152,7 @@ def test_load_ui_baseinstance():
 def test_load_ui_signals():
     """Tests to see if the baseinstance loading loads widgets on properly"""
     import sys
-    from Qt import QtWidgets, QtCore, QtCompat
+    from Qt import QtWidgets, QtCompat
     app = QtWidgets.QApplication(sys.argv)
     win = QtWidgets.QWidget()
     QtCompat.loadUi(self.ui_qwidget, win)
@@ -166,7 +166,7 @@ def test_load_ui_signals():
 def test_load_ui_invalidpath():
     """Tests to see if loadUi successfully fails on invalid paths"""
     import sys
-    from Qt import QtWidgets, QtCore, QtCompat
+    from Qt import QtWidgets, QtCompat
     app = QtWidgets.QApplication(sys.argv)
     try:
         QtCompat.loadUi('made/up/path')
@@ -190,7 +190,7 @@ def test_load_ui_invalidxml():
         """)
 
     from xml.etree import ElementTree
-    from Qt import QtWidgets, QtCore, QtCompat
+    from Qt import QtWidgets, QtCompat
     app = QtWidgets.QApplication(sys.argv)
     try:
         obj = QtCompat.loadUi(invalidXML)
@@ -201,7 +201,8 @@ def test_load_ui_invalidxml():
     finally:
         app.exit()
 
-if  binding("PySide") or binding("PySide2"):
+
+if binding("PySide") or binding("PySide2"):
     def test_load_ui_overwrite_widget():
         """Checks to make sure ui file widgets supersede previous ones
         Unfortunately this test only runs in PySide, because PyQt doesn't
