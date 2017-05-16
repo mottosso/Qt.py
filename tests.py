@@ -201,7 +201,7 @@ def test_load_ui_overwrite_fails():
     layout = QtWidgets.QVBoxLayout(win)
     win.lineEdit = QtWidgets.QPushButton('Test')
     layout.addWidget(win.lineEdit)
-    assert_raises(Exception, QtCompat.loadUi, self.ui_qwidget, win)
+    assert_raises(RuntimeError, QtCompat.loadUi, self.ui_qwidget, win)
     app.exit()
 
 
