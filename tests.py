@@ -168,21 +168,15 @@ def test_load_ui_invalidpath():
     import sys
     from Qt import QtWidgets, QtCompat
     app = QtWidgets.QApplication(sys.argv)
-    try:
-        QtCompat.loadUi('made/up/path')
-    except IOError:
-        pass  # Success
-    else:
-        raise RuntimeError("Loaded an invalid path successfully")
-    finally:
-        app.exit()
+    assert_raises(IOError, QtCompat.loadUi, 'made/up/path')
+    app.exit()
 
 
 def test_load_ui_invalidxml():
     """Tests to see if loadUi successfully fails on invalid ui files"""
     import sys
-    invalidXML = os.path.join(self.tempdir, "invalid.ui")
-    with io.open(invalidXML, "w", encoding="utf-8") as f:
+    invalid_xml = os.path.join(self.tempdir, "invalid.ui")
+    with io.open(invalid_xml, "w", encoding="utf-8") as f:
         f.write(u"""
         <?xml version="1.0" encoding="UTF-8"?>
         <ui version="4.0" garbage
@@ -192,14 +186,8 @@ def test_load_ui_invalidxml():
     from xml.etree import ElementTree
     from Qt import QtWidgets, QtCompat
     app = QtWidgets.QApplication(sys.argv)
-    try:
-        QtCompat.loadUi(invalidXML)
-    except ElementTree.ParseError:
-        pass
-    else:
-        raise RuntimeError("Loaded an invalid xml")
-    finally:
-        app.exit()
+    assert_raises(ElementTree.ParseError, QtCompat.loadUi, invalid_xml)
+    app.exit()
 
 
 if binding("PySide") or binding("PySide2"):
@@ -401,6 +389,7 @@ def test_translate_arguments():
     equivalent with an interface like the one found in PySide2.
 
     Reference: https://doc.qt.io/qt-5/qcoreapplication.html#translate
+
     """
 
     import Qt
@@ -501,6 +490,7 @@ if binding("PyQt4"):
             os.environ["QT_SIP_API_HINT"] = "2"
             __import__("Qt")  # Bypass linter warning
 
+
 if binding("PyQt5"):
     def test_preferred_pyqt5():
         """QT_PREFERRED_BINDING = PyQt5 properly forces the binding"""
@@ -508,6 +498,7 @@ if binding("PyQt5"):
         assert Qt.__binding__ == "PyQt5", (
             "PyQt5 should have been picked, "
             "instead got %s" % Qt.__binding__)
+
 
 if binding("PySide"):
     def test_preferred_pyside():
@@ -517,6 +508,7 @@ if binding("PySide"):
             "PySide should have been picked, "
             "instead got %s" % Qt.__binding__)
 
+
 if binding("PySide2"):
     def test_preferred_pyside2():
         """QT_PREFERRED_BINDING = PySide2 properly forces the binding"""
@@ -524,7 +516,6 @@ if binding("PySide2"):
         assert Qt.__binding__ == "PySide2", (
             "PySide2 should have been picked, "
             "instead got %s" % Qt.__binding__)
-
 
     def test_coexistence():
         """Qt.py may be use alongside the actual binding"""
@@ -537,6 +528,7 @@ if binding("PySide2"):
 
         # But does not delete the original
         assert PySide.QtGui.QStringListModel
+
 
 if binding("PySide") or binding("PySide2"):
     def test_multiple_preferred():
