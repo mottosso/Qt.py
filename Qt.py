@@ -1,38 +1,14 @@
-"""The MIT License (MIT)
+"""Minimal Python 2 & 3 shim around all Qt bindings
 
-Copyright (c) 2016-2017 Marcus Ottosson
+DOCUMENTATION
+    Qt.py was born in the film and visual effects industry to address
+    the growing need for the development of software capable of running
+    with more than one flavour of the Qt bindings for Python - PySide,
+    PySide2, PyQt4 and PyQt5.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
-Documentation
-
-    Map all bindings to PySide2
-
-    Project goals:
-        Qt.py was born in the film and visual effects industry to address
-        the growing need for the development of software capable of running
-        with more than one flavour of the Qt bindings for Python - PySide,
-        PySide2, PyQt4 and PyQt5.
-
-        1. Build for one, run with all
-        2. Explicit is better than implicit
-        3. Support co-existence
+    1. Build for one, run with all
+    2. Explicit is better than implicit
+    3. Support co-existence
 
     Default resolution order:
         - PySide2
@@ -55,6 +31,10 @@ Documentation
 
     For more details, visit https://github.com/mottosso/Qt.py
 
+LICENSE
+
+    See end of file for license (MIT, BSD) information.
+
 """
 
 import os
@@ -63,7 +43,7 @@ import types
 import shutil
 import importlib
 
-__version__ = "1.0.0.b3"
+__version__ = "1.0.0.b4"
 
 # Enable support for `from Qt import *`
 __all__ = []
@@ -661,8 +641,7 @@ def _pyside2():
     Qt.__binding_version__ = module.__version__
 
     if hasattr(Qt, "_QtUiTools"):
-        Qt.QtCompat.loadUi = lambda fname: \
-            Qt._QtUiTools.QUiLoader().load(fname)
+        Qt.QtCompat.loadUi = _loadUi
 
     if hasattr(Qt, "_QtGui") and hasattr(Qt, "_QtCore"):
         Qt.QtCore.QStringListModel = Qt._QtGui.QStringListModel
@@ -695,8 +674,7 @@ def _pyside():
     Qt.__binding_version__ = module.__version__
 
     if hasattr(Qt, "_QtUiTools"):
-        Qt.QtCompat.loadUi = lambda fname: \
-            Qt._QtUiTools.QUiLoader().load(fname)
+        Qt.QtCompat.loadUi = _loadUi
 
     if hasattr(Qt, "_QtGui"):
         setattr(Qt, "QtWidgets", _new_module("QtWidgets"))
@@ -739,7 +717,7 @@ def _pyqt5():
     _setup(module, ["uic"])
 
     if hasattr(Qt, "_uic"):
-        Qt.QtCompat.loadUi = lambda fname: Qt._uic.loadUi(fname)
+        Qt.QtCompat.loadUi = _loadUi
 
     if hasattr(Qt, "_QtWidgets"):
         Qt.QtCompat.setSectionResizeMode = \
@@ -804,7 +782,7 @@ def _pyqt4():
     _setup(module, ["uic"])
 
     if hasattr(Qt, "_uic"):
-        Qt.QtCompat.loadUi = lambda fname: Qt._uic.loadUi(fname)
+        Qt.QtCompat.loadUi = _loadUi
 
     if hasattr(Qt, "_QtGui"):
         setattr(Qt, "QtWidgets", _new_module("QtWidgets"))
@@ -849,7 +827,7 @@ def _none():
     Qt.__binding__ = "None"
     Qt.__qt_version__ = "0.0.0"
     Qt.__binding_version__ = "0.0.0"
-    Qt.QtCompat.loadUi = lambda fname: None
+    Qt.QtCompat.loadUi = lambda uifile, baseinstance=None: None
     Qt.QtCompat.setSectionResizeMode = lambda *args, **kwargs: None
 
     for submodule in _common_members.keys():
@@ -860,6 +838,103 @@ def _none():
 def _log(text):
     if QT_VERBOSE:
         sys.stdout.write(text + "\n")
+
+
+def _loadUi(uifile, baseinstance=None):
+    """Dynamically load a user interface from the given `uifile`
+
+    This function calls `uic.loadUi` if using PyQt bindings,
+    else it implements a comparable binding for PySide.
+
+    Documentation:
+        http://pyqt.sourceforge.net/Docs/PyQt5/designer.html#PyQt5.uic.loadUi
+
+    Arguments:
+        uifile (str): Absolute path to Qt Designer file.
+        baseinstance (QWidget): Instantiated QWidget or subclass thereof
+
+    Return:
+        baseinstance if `baseinstance` is not `None`. Otherwise
+        return the newly created instance of the user interface.
+
+    """
+    if hasattr(baseinstance, "layout") and baseinstance.layout():
+        message = ("QLayout: Attempting to add Layout to %s which "
+                   "already has a layout")
+        raise RuntimeError(message % (baseinstance))
+
+    if hasattr(Qt, "_uic"):
+        return Qt._uic.loadUi(uifile, baseinstance)
+
+    elif hasattr(Qt, "_QtUiTools"):
+        # Implement `PyQt5.uic.loadUi` for PySide(2)
+
+        class _UiLoader(Qt._QtUiTools.QUiLoader):
+            """Create the user interface in a base instance.
+
+            Unlike `Qt._QtUiTools.QUiLoader` itself this class does not
+            create a new instance of the top-level widget, but creates the user
+            interface in an existing instance of the top-level class if needed.
+
+            This mimics the behaviour of `PyQt5.uic.loadUi`.
+
+            """
+
+            def __init__(self, baseinstance):
+                super(_UiLoader, self).__init__(baseinstance)
+                self.baseinstance = baseinstance
+
+            def load(self, uifile, *args, **kwargs):
+                from xml.etree.ElementTree import ElementTree
+
+                # For whatever reason, if this doesn't happen then
+                # reading an invalid or non-existing .ui file throws
+                # a RuntimeError.
+                etree = ElementTree()
+                etree.parse(uifile)
+
+                return Qt._QtUiTools.QUiLoader.load(
+                    self, uifile, *args, **kwargs)
+
+            def createWidget(self, class_name, parent=None, name=""):
+                """Called for each widget defined in ui file
+
+                Overridden here to populate `baseinstance` instead.
+
+                """
+
+                if parent is None and self.baseinstance:
+                    # Supposed to create the top-level widget,
+                    # return the base instance instead
+                    return self.baseinstance
+
+                # For some reason, Line is not in the list of available
+                # widgets, but works fine, so we have to special case it here.
+                if class_name in self.availableWidgets() + ["Line"]:
+                    # Create a new widget for child widgets
+                    widget = Qt._QtUiTools.QUiLoader.createWidget(self,
+                                                                  class_name,
+                                                                  parent,
+                                                                  name)
+
+                else:
+                    raise Exception("Custom widget '%s' not supported"
+                                    % class_name)
+
+                if self.baseinstance:
+                    # Set an attribute for the new child widget on the base
+                    # instance, just like PyQt5.uic.loadUi does.
+                    setattr(self.baseinstance, name, widget)
+
+                return widget
+
+        widget = _UiLoader(baseinstance).load(uifile)
+        Qt.QtCore.QMetaObject.connectSlotsByName(widget)
+
+        return widget
+
+    else:
+        raise NotImplementedError("No implementation available for loadUi")
 
 
 def _convert(lines):
@@ -1028,3 +1103,96 @@ Qt.QtCompat._convert = _convert
 # Enable command-line interface
 if __name__ == "__main__":
     _cli(sys.argv[1:])
+
+
+# The MIT License (MIT)
+#
+# Copyright (c) 2016-2017 Marcus Ottosson
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+#
+# In PySide(2), loadUi does not exist, so we implement it
+#
+# `_UiLoader` is adapted from the qtpy project, which was further influenced
+# by qt-helpers which was released under a 3-clause BSD license which in turn
+# is based on a solution at:
+#
+# - https://gist.github.com/cpbotha/1b42a20c8f3eb9bb7cb8
+#
+# The License for this code is as follows:
+#
+# qt-helpers - a common front-end to various Qt modules
+#
+# Copyright (c) 2015, Chris Beaumont and Thomas Robitaille
+#
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are
+# met:
+#
+#  * Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+#  * Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the
+#    distribution.
+#  * Neither the name of the Glue project nor the names of its contributors
+#    may be used to endorse or promote products derived from this software
+#    without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
+# IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+# THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+# CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+# EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+# PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+# LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+# NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+# Which itself was based on the solution at
+#
+# https://gist.github.com/cpbotha/1b42a20c8f3eb9bb7cb8
+#
+# which was released under the MIT license:
+#
+# Copyright (c) 2011 Sebastian Wiesner <lunaryorn@gmail.com>
+# Modifications by Charl Botha <cpbotha@vxlabs.com>
+#
+# Permission is hereby granted, free of charge, to any person obtaining a
+# copy of this software and associated documentation files
+# (the "Software"),to deal in the Software without restriction,
+# including without limitation
+# the rights to use, copy, modify, merge, publish, distribute, sublicense,
+# and/or sell copies of the Software, and to permit persons to whom the
+# Software is furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included
+# in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+# OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+# IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+# CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+# TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+# SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.

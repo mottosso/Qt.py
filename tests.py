@@ -1,5 +1,4 @@
 """Tests that run once"""
-
 import io
 import os
 import sys
@@ -56,8 +55,8 @@ def setup():
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>235</width>
-    <height>149</height>
+    <width>507</width>
+    <height>394</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -67,10 +66,37 @@ def setup():
    <item row="0" column="0">
     <widget class="QLineEdit" name="lineEdit"/>
    </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>TextLabel</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QLineEdit" name="lineEdit_2"/>
+   </item>
   </layout>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>lineEdit</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>label</receiver>
+   <slot>setText(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>228</x>
+     <y>23</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>37</x>
+     <y>197</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>
 """)
 
@@ -109,6 +135,73 @@ def test_load_ui_returntype():
     app = QtWidgets.QApplication(sys.argv)
     obj = QtCompat.loadUi(self.ui_qwidget)
     assert isinstance(obj, QtCore.QObject)
+    app.exit()
+
+
+def test_load_ui_baseinstance():
+    """Tests to see if the baseinstance loading loads widgets on properly"""
+    import sys
+    from Qt import QtWidgets, QtCompat
+    app = QtWidgets.QApplication(sys.argv)
+    win = QtWidgets.QWidget()
+    QtCompat.loadUi(self.ui_qwidget, win)
+    assert hasattr(win, 'lineEdit'), "loadUi could not load instance to win"
+    app.exit()
+
+
+def test_load_ui_signals():
+    """Tests to see if the baseinstance loading loads widgets on properly"""
+    import sys
+    from Qt import QtWidgets, QtCompat
+    app = QtWidgets.QApplication(sys.argv)
+    win = QtWidgets.QWidget()
+    QtCompat.loadUi(self.ui_qwidget, win)
+
+    win.lineEdit.setText('Hello')
+    assert str(win.label.text()) == 'Hello', "lineEdit signal did not fire"
+
+    app.exit()
+
+
+def test_load_ui_invalidpath():
+    """Tests to see if loadUi successfully fails on invalid paths"""
+    import sys
+    from Qt import QtWidgets, QtCompat
+    app = QtWidgets.QApplication(sys.argv)
+    assert_raises(IOError, QtCompat.loadUi, 'made/up/path')
+    app.exit()
+
+
+def test_load_ui_invalidxml():
+    """Tests to see if loadUi successfully fails on invalid ui files"""
+    import sys
+    invalid_xml = os.path.join(self.tempdir, "invalid.ui")
+    with io.open(invalid_xml, "w", encoding="utf-8") as f:
+        f.write(u"""
+        <?xml version="1.0" encoding="UTF-8"?>
+        <ui version="4.0" garbage
+        </ui>
+        """)
+
+    from xml.etree import ElementTree
+    from Qt import QtWidgets, QtCompat
+    app = QtWidgets.QApplication(sys.argv)
+    assert_raises(ElementTree.ParseError, QtCompat.loadUi, invalid_xml)
+    app.exit()
+
+
+def test_load_ui_overwrite_fails():
+    """PyQt4/5 loadUi functiion will fail if the widget has a preexisting
+    layout. This tests that our custom implementation for PySide does the same
+    """
+    import sys
+    from Qt import QtWidgets, QtCompat
+    app = QtWidgets.QApplication(sys.argv)
+    win = QtWidgets.QWidget()
+    layout = QtWidgets.QVBoxLayout(win)
+    win.lineEdit = QtWidgets.QPushButton('Test')
+    layout.addWidget(win.lineEdit)
+    assert_raises(RuntimeError, QtCompat.loadUi, self.ui_qwidget, win)
     app.exit()
 
 
@@ -155,7 +248,7 @@ def test_vendoring():
     assert subprocess.call(
         [sys.executable, "-c", "import myproject"],
         cwd=self.tempdir,
-        stdout=subprocess.PIPE,    # With nose process isolation, buffer can
+        stdout=subprocess.PIPE,  # With nose process isolation, buffer can
         stderr=subprocess.STDOUT,  # easily get full and throw an error.
     ) == 0
 
@@ -291,15 +384,16 @@ def test_translate_arguments():
     equivalent with an interface like the one found in PySide2.
 
     Reference: https://doc.qt.io/qt-5/qcoreapplication.html#translate
+
     """
 
     import Qt
 
     # This will run on each binding
     result = Qt.QtCompat.translate("CustomDialog",  # context
-                                   "Status",        # sourceText
-                                   None,            # disambiguation
-                                   -1)              # n
+                                   "Status",  # sourceText
+                                   None,  # disambiguation
+                                   -1)  # n
     assert result == u'Status', result
 
 
@@ -390,6 +484,7 @@ if binding("PyQt4"):
             sip.setapi("QString", 2)
             os.environ["QT_SIP_API_HINT"] = "2"
             __import__("Qt")  # Bypass linter warning
+
 
 if binding("PyQt5"):
     def test_preferred_pyqt5():
