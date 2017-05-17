@@ -124,7 +124,7 @@ Qt.py also provides compatibility wrappers for critical functionality that diffe
 
 | Attribute                                 | Returns     | Description
 |:------------------------------------------|:------------|:------------
-| `loadUi(fname=str, baseinstance=QWidget)` | `QObject`   | Minimal wrapper of PyQt4.loadUi and PySide equivalent
+| `loadUi(uifile=str, baseinstance=QWidget)` | `QObject`   | Minimal wrapper of PyQt4.loadUi and PySide equivalent
 | `translate(...)`                          | `function`  | Compatibility wrapper around [QCoreApplication.translate][]
 | `setSectionResizeMode()`                  | `method`    | Compatibility wrapper around [QAbstractItemView.setSectionResizeMode][]
 
@@ -222,7 +222,7 @@ import sys
 from Qt import QtCompat
 
 app = QtWidgets.QApplication(sys.argv)
-ui = QtCompat.loadUi(fname="my.ui")
+ui = QtCompat.loadUi(uifile="my.ui")
 ui.show()
 app.exec_()
 ```
@@ -232,7 +232,7 @@ For `PyQt` bindings it uses their native implementation, whereas for `PySide` bi
 The second argument is `baseinstance` which allows a ui to be dynamically loaded onto an existing QWidget instance.
 
 ```python
-QtCompat.loadUi(fname="my.ui", baseinstance=QtWidgets.QWidget)
+QtCompat.loadUi(uifile="my.ui", baseinstance=QtWidgets.QWidget)
 ```
 
 `uifile` is the string path to the ui file to load.
