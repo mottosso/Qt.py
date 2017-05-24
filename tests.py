@@ -284,7 +284,7 @@ class Ui_uic(object):
 """.split("\n")
 
     after = """\
-from Qt import QtCore, QtGui, QtWidgets
+from Qt import QtCompat, QtCore, QtGui, QtWidgets
 
 class Ui_uic(object):
     def setupUi(self, uic):
@@ -292,7 +292,7 @@ class Ui_uic(object):
 
     def retranslateUi(self, uic):
         self.pushButton_2.setText(
-            Qt.QtCompat.translate("uic", "NOT Ok", None, -1))
+            QtCompat.translate("uic", "NOT Ok", None, -1))
 """.split("\n")
 
     from Qt import QtCompat
@@ -314,7 +314,7 @@ class Ui_uic(object):
 """
 
     after = """\
-from Qt import QtCore, QtGui, QtWidgets
+from Qt import QtCompat, QtCore, QtGui, QtWidgets
 
 class Ui_uic(object):
     def setupUi(self, uic):
@@ -322,7 +322,7 @@ class Ui_uic(object):
 
     def retranslateUi(self, uic):
         self.pushButton_2.setText(
-            Qt.QtCompat.translate("uic", "NOT Ok", None, -1))
+            QtCompat.translate("uic", "NOT Ok", None, -1))
 """
 
     fname = os.path.join(self.tempdir, "idempotency.py")
