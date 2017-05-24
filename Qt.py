@@ -45,6 +45,15 @@ import importlib
 
 __version__ = "1.0.0.b4"
 
+def path():
+    print("Foo")
+
+# For Autocomplete support inside of packages like PyCharm.
+# Tricks PyCharm into believing these namespaces are imported
+if False:
+    from PySide2 import QtWidgets, QtGui, QtCore
+    from PyQt5 import QtWidgets, QtGui, QtCore
+
 # Enable support for `from Qt import *`
 __all__ = []
 
