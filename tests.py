@@ -397,6 +397,16 @@ def test_translate_arguments():
     assert result == u'Status', result
 
 
+def test_binding_and_qt_version():
+    """Qt's __binding_version__ and __qt_version__ populated"""
+
+    import Qt
+
+    assert Qt.__binding_version__ != "0.0.0", ("Binding version was not "
+                                               "populated")
+    assert Qt.__qt_version__ != "0.0.0", ("Qt version was not populated")
+
+
 def test_binding_states():
     """Tests to see if the Qt binding enum states are set properly"""
     import Qt
@@ -537,12 +547,3 @@ if binding("PySide") or binding("PySide2"):
             "PySide should have been picked, "
             "instead got %s" % Qt.__binding__)
 
-
-def test_binding_and_qt_version():
-    """Qt's __binding_version__ and __qt_version__ populated"""
-
-    import Qt
-
-    assert Qt.__binding_version__ != "0.0.0", ("Binding version was not "
-                                               "populated")
-    assert Qt.__qt_version__ != "0.0.0", ("Qt version was not populated")
