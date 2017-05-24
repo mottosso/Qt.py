@@ -546,4 +546,3 @@ if binding("PySide") or binding("PySide2"):
         assert Qt.__binding__ == "PySide", (
             "PySide should have been picked, "
             "instead got %s" % Qt.__binding__)
-
