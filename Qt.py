@@ -45,7 +45,6 @@ import importlib
 
 __version__ = "1.0.0.b4"
 
-
 # For Autocomplete support inside of packages like PyCharm.
 # Tricks PyCharm into believing these namespaces are imported
 if False:
