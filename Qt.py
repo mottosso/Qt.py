@@ -598,6 +598,18 @@ _common_members = {
 }
 
 
+def _add_site_members():
+    global _common_members
+    try:
+        import Qt_site_config
+    except ImportError:
+        # If no Qt_site_config module found, no modifications to
+        # _common_members are needed.
+        return
+    # Update _common_members with any changes made by Qt_site_config
+    _common_members = Qt_site_config.update_common_members(_common_members)
+
+
 def _new_module(name):
     return types.ModuleType(__name__ + "." + name)
 
@@ -1035,6 +1047,9 @@ def _install():
     }
 
     _log("Order: '%s'" % "', '".join(order))
+
+    # Allow site-level customization of the available modules.
+    _add_site_members()
 
     found_binding = False
     for name in order:
