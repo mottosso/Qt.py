@@ -1088,10 +1088,10 @@ def _install():
 _install()
 
 # Setup Binding Enum states
-Qt.isPySide2 = lambda: Qt.__binding__ == 'PySide2'
-Qt.isPyQt5 = lambda: Qt.__binding__ == 'PyQt5'
-Qt.isPySide = lambda: Qt.__binding__ == 'PySide'
-Qt.isPyQt4 = lambda: Qt.__binding__ == 'PyQt4'
+Qt.IsPySide2 = Qt.__binding__ == 'PySide2'
+Qt.IsPyQt5 = Qt.__binding__ == 'PyQt5'
+Qt.IsPySide = Qt.__binding__ == 'PySide'
+Qt.IsPyQt4 = Qt.__binding__ == 'PyQt4'
 
 """Augment QtCompat
 

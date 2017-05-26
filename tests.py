@@ -410,10 +410,10 @@ def test_binding_and_qt_version():
 def test_binding_states():
     """Tests to see if the Qt binding enum states are set properly"""
     import Qt
-    assert Qt.isPySide() == binding("PySide")
-    assert Qt.isPySide2() == binding("PySide2")
-    assert Qt.isPyQt5() == binding("PyQt5")
-    assert Qt.isPyQt4() == binding("PyQt4")
+    assert Qt.IsPySide == binding("PySide")
+    assert Qt.IsPySide2 == binding("PySide2")
+    assert Qt.IsPyQt5 == binding("PyQt5")
+    assert Qt.IsPyQt4 == binding("PyQt4")
 
 
 def test_cli():
