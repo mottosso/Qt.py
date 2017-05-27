@@ -601,13 +601,13 @@ _common_members = {
 def _add_site_members():
     global _common_members
     try:
-        import Qt_site_config
+        import QtSiteConfig
     except ImportError:
-        # If no Qt_site_config module found, no modifications to
+        # If no QtSiteConfig module found, no modifications to
         # _common_members are needed.
         return
-    # Update _common_members with any changes made by Qt_site_config
-    _common_members = Qt_site_config.update_common_members(_common_members)
+    # Update _common_members with any changes made by QtSiteConfig
+    _common_members = QtSiteConfig.update_common_members(_common_members)
 
 
 def _new_module(name):

@@ -191,6 +191,10 @@ $ export QT_PREFERRED_BINDING=PyQt:PySide
 
 Using the OS path separator (`os.pathsep`) which is `:` on Unix systems and `;` on Windows.
 
+##### Site Config
+
+If you need to expose a module that isn't included in Qt.py by default or wish to remove something from being exposed in Qt.py you can do so by creating a QtSiteConfig module. This  module needs to be importable at the time that Qt is imported. If Qt.py can import QtSiteConfig, it will call `QtSiteConfig.update_common_members(_common_members)` this function takes a dictionary of Qt Module names and the Classes in that module that are exposed in Qt.py. You can modify this dict to remove or add Qt modules and return the updated dictionary. See [/examples/siteConfig/QtSiteConfig.py](/examples/siteConfig/QtSiteConfig.py)
+
 <br>
 
 ##### Compile Qt Designer files
