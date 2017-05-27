@@ -9,6 +9,7 @@ There are cases where Qt.py is not handling incompatibility issues.
 - [QtGui.QRegExpValidator](#qtguiqregexpvalidator)
 - [QtWidgets.QHeaderView.setResizeMode](#qtwidgetsqheaderviewsetresizemode)
 - [QtWidgets.qApp](#qtwidgetsqapp)
+- [QtCompat.wrapInstance](#qtcompatwrapinstance)
 
 <br>
 <br>
@@ -307,3 +308,38 @@ Technically, there is no difference between the two, apart from more characters 
 >>> app == QtWidgets.QApplication.instance()
 True
 ```
+
+
+#### QtCompat.wrapInstance
+
+`QtCompat.wrapInstance` differs across `sip` and `shiboken` in subtle ways.
+
+```python
+# PySide2
+>>> from Qt import QtCompat, QtWidgets
+>>> app = QtWidgets.QApplication(sys.argv)
+>>> button = QtWidgets.QPushButton("Hello world")
+>>> button.setObjectName("MySpecialButton")
+>>> pointer = QtCompat.getCppPointer(button)
+>>> widget = QtCompat.wrapInstance(long(pointer))
+>>> assert isinstance(widget, QtWidgets.QWidget), widget
+>>> assert widget.objectName() == button.objectName()
+>>> widget == button
+False
+```
+
+```python
+# PyQt5
+>>> from Qt import QtCompat, QtWidgets
+>>> app = QtWidgets.QApplication(sys.argv)
+>>> button = QtWidgets.QPushButton("Hello world")
+>>> button.setObjectName("MySpecialButton")
+>>> pointer = QtCompat.getCppPointer(button)
+>>> widget = QtCompat.wrapInstance(long(pointer))
+>>> assert isinstance(widget, QtWidgets.QWidget), widget
+>>> assert widget.objectName() == button.objectName()
+>>> widget == button
+True
+```
+
+Note the `False` for PySide2 and `True` for PyQt5.

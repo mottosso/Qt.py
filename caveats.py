@@ -117,6 +117,12 @@ def test_{count}_{header}():
     '''Test {header}
 
     >>> import os, sys
+    >>> try:
+    ...   long
+    ... except NameError:
+    ...   # For Python 3
+    ...   long = int
+    ...
     >>> _ = os.environ.pop("QT_VERBOSE", None)  # Disable debug output
     >>> os.environ["QT_PREFERRED_BINDING"] = "{binding}"
     {body}
