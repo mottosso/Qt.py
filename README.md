@@ -35,6 +35,14 @@ Qt.py enables you to write software that runs on any of the 4 supported bindings
 - [Install](#install)
 - [Usage](#usage)
 - [Documentation](#documentation)
+  - [Environment Variables](#environment-variables)
+  - [Subset](#subset)
+  - [Branch binding-specific code](#branch-binding-specific-code)
+  - [Override preferred choice](#override-preferred-choice)
+  - [QtSiteConfig.py](#qtsiteconfigpy)
+  - [Compile Qt Designer files](#compile-qt-designer-files)
+  - [Loading Qt Designer files](#loading-qt-designer-files)
+  - [sip API v2](#sip-api-v2)
 - [Rules](#rules)
 - [How it works](#how-it-works)
 - [Known problems](#known-problems)
@@ -191,9 +199,44 @@ $ export QT_PREFERRED_BINDING=PyQt:PySide
 
 Using the OS path separator (`os.pathsep`) which is `:` on Unix systems and `;` on Windows.
 
-##### Site Config
+<br>
 
-If you need to expose a module that isn't included in Qt.py by default or wish to remove something from being exposed in Qt.py you can do so by creating a QtSiteConfig module. This  module needs to be importable at the time that Qt is imported. If Qt.py can import QtSiteConfig, it will call `QtSiteConfig.update_common_members(_common_members)` this function takes a dictionary of Qt Module names and the Classes in that module that are exposed in Qt.py. You can modify this dict to remove or add Qt modules and return the updated dictionary. See [/examples/siteConfig/QtSiteConfig.py](/examples/siteConfig/QtSiteConfig.py)
+##### QtSiteConfig.py
+
+Add or remove members from Qt.py at run-time.
+
+-  [Examples](/examples/siteConfig)
+
+<br>
+
+If you need to expose a module that isn't included in Qt.py by default or wish to remove something from being exposed in Qt.py you can do so by creating a `QtSiteConfig.py` module and making it available to Python.
+
+1. Create a new file `QtSiteConfig.py`
+2. Implement `update_members`
+3. Expose to Python
+
+```python
+# QtSiteConfig.py
+def update_members(members):
+	"""Called by Qt.py at run-time to modify the modules it makes available.
+
+    Arguments:
+        members (dict): The members considered by Qt.py
+
+    """
+
+    members.pop("QtCore")
+```
+
+Finally, expose the module to Python.
+
+```bash
+$ set PYTHONPATH=/path/to
+$ python -c "import Qt.QtCore"
+ImportError: No module named Qt.QtCore
+```
+
+> Linux and MacOS users, replace `set` with `export`
 
 <br>
 
@@ -410,15 +453,15 @@ if binding("PyQt4"):
 Below are some of the conventions that used throughout the Qt.py module and tests.
 
 - **Etiquette: PEP8**
- 	- All code is written in PEP8. It is recommended you use a linter as you work, flake8 and pylinter are both good options. Anaconda if using Sublime is another good option.
+    - All code is written in PEP8. It is recommended you use a linter as you work, flake8 and pylinter are both good options. Anaconda if using Sublime is another good option.
 - **Etiquette: Double quotes**
     - " = yes, ' = no.
 - **Etiquette: Napoleon docstrings**
-	- Any docstrings are made in Google Napoleon format. See [Napoleon](https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html) for details.
+    - Any docstrings are made in Google Napoleon format. See [Napoleon](https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html) for details.
 - **Etiquette: Semantic Versioning**
-	- This project follows [semantic versioning](http://semver.org).
+    - This project follows [semantic versioning](http://semver.org).
 - **Etiquette: Underscore means private**
-	- Anything prefixed with an underscore means that it is internal to Qt.py and not for public consumption.
+    - Anything prefixed with an underscore means that it is internal to Qt.py and not for public consumption.
 
 **Running tests**
 

@@ -599,7 +599,7 @@ _common_members = {
 }
 
 
-def _add_site_members():
+def _apply_site_config():
     try:
         import QtSiteConfig
     except ImportError:
@@ -608,7 +608,7 @@ def _add_site_members():
         pass
     else:
         # Update _common_members with any changes made by QtSiteConfig
-        QtSiteConfig.update_common_members(_common_members)
+        QtSiteConfig.update_members(_common_members)
 
 
 def _new_module(name):
@@ -1050,7 +1050,7 @@ def _install():
     _log("Order: '%s'" % "', '".join(order))
 
     # Allow site-level customization of the available modules.
-    _add_site_members()
+    _apply_site_config()
 
     found_binding = False
     for name in order:
