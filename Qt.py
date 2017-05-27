@@ -77,6 +77,12 @@ QT_SIP_API_HINT = os.getenv("QT_SIP_API_HINT")
 Qt = sys.modules[__name__]
 Qt.QtCompat = types.ModuleType("QtCompat")
 
+try:
+    long
+except NameError:
+    # Python 3 compatibility
+    long = int
+
 """Common members of all bindings
 
 This is where each member of Qt.py is explicitly defined.
@@ -629,11 +635,9 @@ def _setup(module, extras):
 
     for name in list(_common_members) + extras:
         try:
-            # print("Trying %s" % name)
             submodule = importlib.import_module(
                 module.__name__ + "." + name)
         except ImportError:
-            # print("Failed %s" % name)
             continue
 
         setattr(Qt, "_" + name, submodule)

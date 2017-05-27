@@ -24,7 +24,10 @@ RUN apt-get update && \
         xvfb
 
 # Nose is the Python test-runner
-RUN pip3 install nose nosepipe
+RUN pip3 install \
+    nose \
+    nosepipe \
+    six
 
 # Enable additional output from Qt.py
 ENV QT_VERBOSE true

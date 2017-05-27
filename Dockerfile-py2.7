@@ -36,7 +36,10 @@ RUN apt-get install -y \
 RUN cp -avr /usr/lib/python3/dist-packages/pyside2uic /usr/local/lib/python2.7/dist-packages
 
 # Nose is the Python test-runner
-RUN pip install nose nosepipe
+RUN pip install \
+    nose \
+    nosepipe \
+    six
 
 # Enable additional output from Qt.py
 ENV QT_VERBOSE true

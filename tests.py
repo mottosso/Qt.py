@@ -9,10 +9,8 @@ import tempfile
 import subprocess
 import contextlib
 
-try:
-    from StringIO import StringIO
-except ImportError:
-    from io import StringIO  # Python 3
+# Third-party dependency
+import six
 
 from nose.tools import (
     assert_raises,
@@ -20,10 +18,16 @@ from nose.tools import (
 
 PYTHON = sys.version_info[0]  # e.g. 2 or 3
 
+try:
+    long
+except NameError:
+    # Python 3 compatibility
+    long = int
+
 
 @contextlib.contextmanager
 def captured_output():
-    new_out, new_err = StringIO(), StringIO()
+    new_out, new_err = six.StringIO(), six.StringIO()
     old_out, old_err = sys.stdout, sys.stderr
     try:
         sys.stdout, sys.stderr = new_out, new_err
@@ -328,7 +332,10 @@ def test_cli():
     assert out.startswith(b"usage: Qt.py"), "\n%s" % out
 
 
-if PYTHON == 2:
+if not (PYTHON == 3 and binding("PySide")):
+    # Shiboken(1) doesn't support Python 3.5
+    # https://github.com/PySide/shiboken-setup/issues/3
+
     def test_wrapInstance():
         """.wrapInstance and .getCppPointer is identical across all bindings"""
         from Qt import QtCompat, QtWidgets
@@ -374,6 +381,7 @@ if PYTHON == 2:
 
         finally:
             app.exit()
+
 
 if binding("PyQt4"):
     def test_preferred_pyqt4():
