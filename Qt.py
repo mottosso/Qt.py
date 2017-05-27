@@ -1087,6 +1087,11 @@ def _install():
 
 _install()
 
+# Setup Binding Enum states
+Qt.IsPySide2 = Qt.__binding__ == 'PySide2'
+Qt.IsPyQt5 = Qt.__binding__ == 'PyQt5'
+Qt.IsPySide = Qt.__binding__ == 'PySide'
+Qt.IsPyQt4 = Qt.__binding__ == 'PyQt4'
 
 """Augment QtCompat
 

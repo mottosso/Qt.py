@@ -407,6 +407,15 @@ def test_binding_and_qt_version():
     assert Qt.__qt_version__ != "0.0.0", ("Qt version was not populated")
 
 
+def test_binding_states():
+    """Tests to see if the Qt binding enum states are set properly"""
+    import Qt
+    assert Qt.IsPySide == binding("PySide")
+    assert Qt.IsPySide2 == binding("PySide2")
+    assert Qt.IsPyQt5 == binding("PyQt5")
+    assert Qt.IsPyQt4 == binding("PyQt4")
+
+
 def test_cli():
     """Qt.py is available from the command-line"""
     env = os.environ.copy()
