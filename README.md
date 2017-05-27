@@ -26,6 +26,7 @@ Qt.py enables you to write software that runs on any of the 4 supported bindings
 
 - [Developing with Qt.py](https://fredrikaverpil.github.io/2016/07/25/developing-with-qt-py/)
 - [Dealing with Maya 2017 and PySide2](https://fredrikaverpil.github.io/2016/07/25/dealing-with-maya-2017-and-pyside2/)
+- [Vendoring Qt.py](https://fredrikaverpil.github.io/2017/05/04/vendoring-qt-py/)
 - [Udemy Course](https://www.udemy.com/python-for-maya/learn/v4/t/lecture/6027394)
 
 ##### Table of contents
@@ -72,7 +73,7 @@ Qt.py is a single file and can either be [copy/pasted](https://raw.githubusercon
 $ pip install Qt.py
 ```
 
-- Pro tip: Supports vendoring
+- Pro tip: Supports [vendoring](https://fredrikaverpil.github.io/2017/05/04/vendoring-qt-py/)
 
 <br>
 <br>
@@ -121,13 +122,13 @@ All members of `Qt` stem directly from those available via PySide2, along with t
 
 Qt.py also provides compatibility wrappers for critical functionality that differs across bindings, these can be found in the added `QtCompat` submodule.
 
-| Attribute               | Returns     | Description
-|:------------------------|:------------|:------------
-| `loadUi(fname=str)`     | `QObject`   | Minimal wrapper of PyQt4.loadUi and PySide equivalent
-| `translate(...)`        | `function`  | Compatibility wrapper around [QCoreApplication.translate][]
-| `setSectionResizeMode()`| `method`    | Compatibility wrapper around [QAbstractItemView.setSectionResizeMode][]
-| `wrapInstance(addr=long, type=QObject)` | `QObject` | Wrapper around `shiboken2.wrapInstance` and PyQt equivalent
-| `getCppPointer(object=QObject)`    | `long`      | Wrapper around `shiboken2.getCppPointer` and PyQt equivalent
+| Attribute                                 | Returns     | Description
+|:------------------------------------------|:------------|:------------
+| `loadUi(uifile=str, baseinstance=QWidget)`| `QObject`   | Minimal wrapper of PyQt4.loadUi and PySide equivalent
+| `translate(...)`        					| `function`  | Compatibility wrapper around [QCoreApplication.translate][]
+| `setSectionResizeMode()`					| `method`    | Compatibility wrapper around [QAbstractItemView.setSectionResizeMode][]
+| `wrapInstance(addr=long, type=QObject)`   | `QObject`   | Wrapper around `shiboken2.wrapInstance` and PyQt equivalent
+| `getCppPointer(object=QObject)`           | `long`      | Wrapper around `shiboken2.getCppPointer` and PyQt equivalent
 
 [QCoreApplication.translate]: https://doc.qt.io/qt-5/qcoreapplication.html#translate
 [QAbstractItemView.setSectionResizeMode]: https://doc.qt.io/qt-5/qheaderview.html#setSectionResizeMode
@@ -149,6 +150,7 @@ These are the publicly facing environment variables that in one way or another a
 |:---------------------|:------|:----------
 | QT_PREFERRED_BINDING | str   | Override order and content of binding to try.
 | QT_VERBOSE           | bool  | Be a little more chatty about what's going on with Qt.py
+| QT_SIP_API_HINT      | int   | Sets the preferred SIP api version that will be attempted to set.
 
 <br>
 
@@ -213,21 +215,41 @@ Now you may use the file as you normally would, with Qt.py
 
 <br>
 
-##### Load Qt Designer files
+##### Loading Qt Designer files
 
-The `uic.loadUi` function of PyQt4 and PyQt5 as well as the `QtUiTools.QUiLoader().load` function of PySide/PySide2 are mapped to a convenience function `load_ui`.
+The `uic.loadUi` function of PyQt4 and PyQt5 as well as the `QtUiTools.QUiLoader().load` function of PySide/PySide2 are mapped to a convenience function `loadUi`.
 
 ```python
 import sys
 from Qt import QtCompat
 
 app = QtWidgets.QApplication(sys.argv)
-ui = QtCompat.load_ui(fname="my.ui")
+ui = QtCompat.loadUi(uifile="my.ui")
 ui.show()
 app.exec_()
 ```
+For `PyQt` bindings it uses their native implementation, whereas for `PySide` bindings it uses our custom implementation borrowed from the [qtpy](https://github.com/spyder-ide/qtpy) project.
 
-Please note, `load_ui` has only one argument, whereas the PyQt and PySide equivalent has more. See [here](https://github.com/mottosso/Qt.py/pull/81) for details - in a nutshell, those arguments differ between PyQt and PySide in incompatible ways.
+`loadUi` has two arguments as opposed to the multiple that PyQt ships with. See [here](https://github.com/mottosso/Qt.py/pull/81) for details - in a nutshell, those arguments differ between PyQt and PySide in incompatible ways.
+The second argument is `baseinstance` which allows a ui to be dynamically loaded onto an existing QWidget instance.
+
+```python
+QtCompat.loadUi(uifile="my.ui", baseinstance=QtWidgets.QWidget)
+```
+
+`uifile` is the string path to the ui file to load.
+
+If `baseinstance` is `None`, the a new instance of the top-level
+widget will be created. Otherwise, the user interface is created within
+the given `baseinstance`. In this case `baseinstance` must be an
+instance of the top-level widget class in the UI file to load, or a
+subclass thereof. In other words, if you've created a `QMainWindow`
+interface in the designer, `baseinstance` must be a `QMainWindow`
+or a subclass thereof, too. You cannot load a `QMainWindow` UI file
+with a plain `QWidget` as `baseinstance`.
+
+`loadUi` returns `baseinstance`, if `baseinstance` is provided.
+Otherwise it will return the newly created instance of the user interface.
 
 <br>
 
