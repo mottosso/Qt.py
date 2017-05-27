@@ -431,6 +431,7 @@ _common_members = {
         "QMetaMethod",
         "QMetaObject",
         "QMetaProperty",
+        "QMetaType",
         "QMimeData",
         "QModelIndex",
         "QMutex",
@@ -599,15 +600,15 @@ _common_members = {
 
 
 def _add_site_members():
-    global _common_members
     try:
         import QtSiteConfig
     except ImportError:
-        # If no QtSiteConfig module found, no modifications to
-        # _common_members are needed.
-        return
-    # Update _common_members with any changes made by QtSiteConfig
-    _common_members = QtSiteConfig.update_common_members(_common_members)
+        # If no QtSiteConfig module found, no modifications
+        # to _common_members are needed.
+        pass
+    else:
+        # Update _common_members with any changes made by QtSiteConfig
+        QtSiteConfig.update_common_members(_common_members)
 
 
 def _new_module(name):
