@@ -205,7 +205,7 @@ Using the OS path separator (`os.pathsep`) which is `:` on Unix systems and `;` 
 
 Add or remove members from Qt.py at run-time.
 
--  [Examples](/examples/siteConfig)
+-  [Examples](/examples/QtSiteConfig)
 
 <br>
 

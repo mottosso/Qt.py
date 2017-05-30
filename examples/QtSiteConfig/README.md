@@ -1,4 +1,4 @@
-## `QSiteConfig` example
+## `QtSiteConfig` example
 
 This example illustrates how to make a QtSiteConfig module and how it affects Qt.py at run-time.
 
@@ -36,7 +36,7 @@ def update_members_example(members):
 
     Arguments:
         members (dict): The default list of members in Qt.py.
-            Update this dict and return it with any modifications needed.
+            Update this dict with any modifications needed.
 
     """
 

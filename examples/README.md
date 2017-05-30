@@ -13,4 +13,4 @@ If you wish to contribute, make a pull request. Please put your example files in
 #### List of examples   
 
 * [`loadUi`](/examples/loadUi/README.md) - add base instance argument
-* [`siteConfig`](/examples/siteConfig/README.md) - expose additional Qt modules and classes
+* [`QtSiteConfig`](/examples/QtSiteConfig/README.md) - expose additional Qt modules and classes
