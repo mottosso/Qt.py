@@ -893,8 +893,13 @@ def _loadUi(uifile, baseinstance=None):
                 etree = ElementTree()
                 etree.parse(uifile)
 
-                return Qt._QtUiTools.QUiLoader.load(
+                widget = Qt._QtUiTools.QUiLoader.load(
                     self, uifile, *args, **kwargs)
+
+                # Prevent RuntimeError in Nuke 9.0v9 with PySide 1.0.9
+                parent = widget.parentWidget()
+
+                return widget
 
             def createWidget(self, class_name, parent=None, name=""):
                 """Called for each widget defined in ui file
