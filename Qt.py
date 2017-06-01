@@ -897,7 +897,7 @@ def _loadUi(uifile, baseinstance=None):
                     self, uifile, *args, **kwargs)
 
                 # Prevent RuntimeError in Nuke 9.0v9 with PySide 1.0.9
-                parent = widget.parentWidget()
+                Qt.QtCompat._loadUi_temp = widget.parentWidget()
 
                 return widget
 
@@ -935,6 +935,7 @@ def _loadUi(uifile, baseinstance=None):
 
         widget = _UiLoader(baseinstance).load(uifile)
         Qt.QtCore.QMetaObject.connectSlotsByName(widget)
+        del Qt.QtCompat._loadUi_temp
 
         return widget
 
