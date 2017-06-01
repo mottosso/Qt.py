@@ -897,7 +897,7 @@ def _loadUi(uifile, baseinstance=None):
                     self, uifile, *args, **kwargs)
 
                 # Prevent RuntimeError in Nuke 9.0v9 with PySide 1.0.9
-                parent = widget.parentWidget()
+                widget.parentWidget()
 
                 return widget
 
