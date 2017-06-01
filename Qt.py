@@ -896,7 +896,7 @@ def _loadUi(uifile, baseinstance=None):
                 widget = Qt._QtUiTools.QUiLoader.load(
                     self, uifile, *args, **kwargs)
 
-                # Workaround for PySide 1.0.9, see issue #209
+                # Workaround for PySide 1.0.9, see issue #208
                 widget.parentWidget()
 
                 return widget
