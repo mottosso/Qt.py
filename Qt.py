@@ -43,7 +43,7 @@ import types
 import shutil
 import importlib
 
-__version__ = "1.0.0.b5"
+__version__ = "1.0.0.b6"
 
 # Enable support for `from Qt import *`
 __all__ = []
@@ -431,6 +431,7 @@ _common_members = {
         "QMetaMethod",
         "QMetaObject",
         "QMetaProperty",
+        "QMetaType",
         "QMimeData",
         "QModelIndex",
         "QMutex",
@@ -596,6 +597,18 @@ _common_members = {
         "QGLWidget"
     ]
 }
+
+
+def _apply_site_config():
+    try:
+        import QtSiteConfig
+    except ImportError:
+        # If no QtSiteConfig module found, no modifications
+        # to _common_members are needed.
+        pass
+    else:
+        # Update _common_members with any changes made by QtSiteConfig
+        QtSiteConfig.update_members(_common_members)
 
 
 def _new_module(name):
@@ -1040,6 +1053,9 @@ def _install():
     }
 
     _log("Order: '%s'" % "', '".join(order))
+
+    # Allow site-level customization of the available modules.
+    _apply_site_config()
 
     found_binding = False
     for name in order:
