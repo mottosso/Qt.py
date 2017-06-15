@@ -384,6 +384,7 @@ Presented at Siggraph 2016, BOF!
 
 Send us a pull-request with your project here.
 
+- [Cosmos](http://cosmos.toolsfrom.space/)
 - [maya-capture-gui](https://github.com/BigRoy/maya-capture-gui)
 - [pyblish-lite](https://github.com/pyblish/pyblish-lite)
 - [pyvfx-boilerplate](https://github.com/fredrikaverpil/pyvfx-boilerplate)
