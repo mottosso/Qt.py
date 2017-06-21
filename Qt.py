@@ -716,8 +716,10 @@ def _setattr(obj, path, value, default=None):
         return obj
     part = path.pop(0)
     if not hasattr(obj, part):
-        # TODO: If the value is missing, should we place an empty dummy value in there? Or should we raise an Exception.
-        setattr(obj, part, default or types.ModuleType(part))
+        module_name = obj.__name__
+        if module_name == "__main__":
+            module_name = obj.__binding__
+        raise ModuleMissingException("Missing %s on %s" % (part, module_name))
     _setattr(getattr(obj, part), path, value, default=default)
 
 
@@ -742,7 +744,10 @@ def _getattr(module, path, resolve_callables=False):
     try:
         module = getattr(module, part)
     except AttributeError:
-        raise ModuleMissingException("Missing %s on %s" % (part, module.__name__))
+        module_name = module.__name__
+        if module_name == "__main__":
+            module_name = module.__binding__
+        raise ModuleMissingException("Missing %s on %s" % (part, module_name))
     return _getattr(module, path, resolve_callables=resolve_callables)
 
 
@@ -762,10 +767,10 @@ def _set_common_replacements(key, resolve_callables=True):
                 path=destination_parts,
                 value=_getattr(Qt, source_parts, resolve_callables=resolve_callables)
             )
-        except ModuleMissingException:
-            # TODO: reevaluate if silently skipping is the correct thing to do.
-            # If we have some missing module, silently skip.
-            pass
+        except ModuleMissingException as err:
+            _log(
+                "A module was missing when we were applying automatic binding remapping. The error was:\n%s" % str(err)
+            )
 
 
 def _pyside2():
