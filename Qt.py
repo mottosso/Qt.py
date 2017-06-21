@@ -43,7 +43,7 @@ import types
 import shutil
 import importlib
 
-__version__ = "1.0.0.b7
+__version__ = "1.0.0.b7"
 
 # Enable support for `from Qt import *`
 __all__ = []
@@ -696,8 +696,10 @@ def _setup(module, extras):
 
 class ModuleMissingException(ImportError):
     """
-    ModuleMissingException is an exception thrown in _resolve_dots when it cannot find a module it expects to find.
-    This is often due to a Qt component not being loaded. For example missing QtCore.
+    ModuleMissingException is an exception thrown in _resolve_dots when it 
+    cannot find a module it expects to find.
+    This is often due to a Qt component not being loaded. 
+    For example missing QtCore.
     """
     pass
 
@@ -706,10 +708,12 @@ def _setattr(obj, path, value, default=None):
     """
     _setattr is a deep setattr function with some default value support in it.
 
-    :param Object|types.ModuleType obj: Object that we want to set values to recursively.
+    :param Object|types.ModuleType obj: Object that we want to set values to 
+        recursively.
     :param list[str] path: Path to where we want to store the final value.
     :param Any value: Value that we want to set at the end of our path.
-    :param Any|types.ModuleType default: If a part of the path is missing, what value should we store in it's place.
+    :param Any|types.ModuleType default: If a part of the path is missing, what 
+        value should we store in it's place.
     """
     if len(path) <= 1:
         setattr(obj, path[0], value)
@@ -725,11 +729,13 @@ def _setattr(obj, path, value, default=None):
 
 def _getattr(module, path, resolve_callables=False):
     """
-    _getattr is a deep getattr function with some callable resolving logic in it.
+    _getattr is a deep getattr function with some callable resolving logic in it
 
-    :param Object|types.ModuleType module: Object that we are using to get values on.
+    :param Object|types.ModuleType module: Object that we are using to get 
+        values on.
     :param list[str] path: List of getattr values that need to recursively run.
-    :param bool resolve_callables: Should the _getattr function attempt to resolve the final value if it is a callable?
+    :param bool resolve_callables: Should the _getattr function attempt to 
+        resolve the final value if it is a callable?
     """
     if path:
         part = path.pop(0)
@@ -753,10 +759,12 @@ def _getattr(module, path, resolve_callables=False):
 
 def _set_common_replacements(key, resolve_callables=True):
     """
-    _set_common_replacements will parse the _common_replacements dict and remap values based on the underlying binding.
+    _set_common_replacements will parse the _common_replacements dict and remap 
+    values based on the underlying binding.
     It uses _setattr and _getattr to parse the paths and remap the values.
 
-    :param str key: Top level key in _common_replacements. Should be <binding name>.lower()
+    :param str key: Top level key in _common_replacements. 
+        Should be <binding name>.lower()
     """
     for replace in _common_replacements[key]:
         source_parts = replace.split(".")
@@ -765,11 +773,16 @@ def _set_common_replacements(key, resolve_callables=True):
             _setattr(
                 obj=Qt,
                 path=destination_parts,
-                value=_getattr(Qt, source_parts, resolve_callables=resolve_callables)
+                value=_getattr(
+                    Qt,
+                    source_parts,
+                    resolve_callables=resolve_callables
+                )
             )
         except ModuleMissingException as err:
             _log(
-                "A module was missing when we were applying automatic binding remapping. The error was:\n%s" % str(err)
+                "A module was missing when we were applying automatic binding "
+                "remapping. The error was:\n%s" % str(err)
             )
 
 
