@@ -840,7 +840,7 @@ def _pyside2():
         Qt.QtCompat.loadUi = _loadUi
 
     if hasattr(Qt, "_QtCore"):
-        Qt.__binding__ = Qt._QtCore.qVersion()
+        Qt.__qt_version__ = Qt._QtCore.qVersion()
 
     # Replacements using _common_replacements
     _set_common_replacements("pyside2")
