@@ -599,6 +599,62 @@ _common_members = {
 }
 
 
+_common_replacements = {
+    "pyside2": {
+        "_QtGui.QStringListModel": "QtCore.QStringListModel",
+        "_QtWidgets.QHeaderView.setSectionResizeMode": "QtCompat.setSectionResizeMode",
+        "_QtCore.qVersion": "__qt_version__",
+        "_QtCore.QCoreApplication.translate": "QtCompat.translate",
+        "_QtCore.Property": "QtCore.Property",
+        "_QtCore.Signal": "QtCore.Signal",
+        "_QtCore.Slot": "QtCore.Slot",
+        "_QtCore.QAbstractProxyModel": "QtCore.QAbstractProxyModel",
+        "_QtCore.QSortFilterProxyModel": "QtCore.QSortFilterProxyModel",
+        "_QtCore.QItemSelection": "QtCore.QItemSelection",
+        "_QtCore.QItemSelectionModel": "QtCore.QItemSelectionModel",
+    },
+    "pyqt5": {
+        "QtWidgets.QHeaderView.setResizeMode": "QtCompat.setSectionResizeMode",
+        "_QtCore.QCoreApplication.translate": "QtCompat.translate",
+        "_QtCore.pyqtProperty": "QtCore.Property",
+        "_QtCore.pyqtSignal": "QtCore.Signal",
+        "_QtCore.pyqtSlot": "QtCore.Slot",
+        "_QtCore.QAbstractProxyModel": "QtCore.QAbstractProxyModel",
+        "_QtCore.QSortFilterProxyModel": "QtCore.QSortFilterProxyModel",
+        "_QtCore.QStringListModel": "QtCore.QStringListModel",
+        "_QtCore.QItemSelection": "QtCore.QItemSelection",
+        "_QtCore.QItemSelectionModel": "QtCore.QItemSelectionModel",
+        "_QtCore.QT_VERSION_STR": "__qt_version__",
+    },
+    "pyside": {
+        "_QtGui.QHeaderView.setResizeMode": "QtCompat.setSectionResizeMode",
+        "_QtGui.QAbstractProxyModel": "QtCore.QAbstractProxyModel",
+        "_QtGui.QSortFilterProxyModel": "QtCore.QSortFilterProxyModel",
+        "_QtGui.QStringListModel": "QtCore.QStringListModel",
+        "_QtGui.QItemSelection": "QtCore.QItemSelection",
+        "_QtGui.QItemSelectionModel": "QtCore.QItemSelectionModel",
+        "_QtCore.qVersion": "__qt_version__",
+        "_QtCore.Property": "QtCore.Property",
+        "_QtCore.Signal": "QtCore.Signal",
+        "_QtCore.Slot": "QtCore.Slot",
+
+    },
+    "pyqt4": {
+        "_QtGui.QHeaderView.setResizeMode": "QtCompat.setSectionResizeMode",
+        "_QtGui.QAbstractProxyModel": "QtCore.QAbstractProxyModel",
+        "_QtGui.QSortFilterProxyModel": "QtCore.QSortFilterProxyModel",
+        "_QtGui.QItemSelection": "QtCore.QItemSelection",
+        "_QtGui.QStringListModel": "QtCore.QStringListModel",
+        "_QtGui.QItemSelectionModel": "QtCore.QItemSelectionModel",
+        "_QtCore.QT_VERSION_STR": "__qt_version__",
+        "_QtCore.pyqtProperty": "QtCore.Property",
+        "_QtCore.pyqtSignal": "QtCore.Signal",
+        "_QtCore.pyqtSlot": "QtCore.Slot",
+
+    }
+}
+
+
 def _apply_site_config():
     try:
         import QtSiteConfig
@@ -638,6 +694,80 @@ def _setup(module, extras):
             setattr(Qt, name, _new_module(name))
 
 
+class ModuleMissingException(ImportError):
+    """
+    ModuleMissingException is an exception thrown in _resolve_dots when it cannot find a module it expects to find.
+    This is often due to a Qt component not being loaded. For example missing QtCore.
+    """
+    pass
+
+
+def _setattr(obj, path, value, default=None):
+    """
+    _setattr is a deep setattr function with some default value support in it.
+
+    :param Object|types.ModuleType obj: Object that we want to set values to recursively.
+    :param list[str] path: Path to where we want to store the final value.
+    :param Any value: Value that we want to set at the end of our path.
+    :param Any|types.ModuleType default: If a part of the path is missing, what value should we store in it's place.
+    """
+    if len(path) <= 1:
+        setattr(obj, path[0], value)
+        return obj
+    part = path.pop(0)
+    if not hasattr(obj, part):
+        # TODO: If the value is missing, should we place an empty dummy value in there? Or should we raise an Exception.
+        setattr(obj, part, default or types.ModuleType(part))
+    _setattr(getattr(obj, part), path, value, default=default)
+
+
+def _getattr(module, path, resolve_callables=False):
+    """
+    _getattr is a deep getattr function with some callable resolving logic in it.
+
+    :param Object|types.ModuleType module: Object that we are using to get values on.
+    :param list[str] path: List of getattr values that need to recursively run.
+    :param bool resolve_callables: Should the _getattr function attempt to resolve the final value if it is a callable?
+    """
+    if path:
+        part = path.pop(0)
+    else:
+        if resolve_callables and hasattr(module, "__call__"):
+            try:
+                return module()
+            except (TypeError, NotImplementedError):
+                # Failed executing the callable
+                pass
+        return module
+    try:
+        module = getattr(module, part)
+    except AttributeError:
+        raise ModuleMissingException("Missing %s on %s" % (part, module.__name__))
+    return _getattr(module, path, resolve_callables=resolve_callables)
+
+
+def _set_common_replacements(key, resolve_callables=True):
+    """
+    _set_common_replacements will parse the _common_replacements dict and remap values based on the underlying binding.
+    It uses _setattr and _getattr to parse the paths and remap the values.
+
+    :param str key: Top level key in _common_replacements. Should be <binding name>.lower()
+    """
+    for replace in _common_replacements[key]:
+        source_parts = replace.split(".")
+        destination_parts = _common_replacements[key][replace].split(".")
+        try:
+            _setattr(
+                obj=Qt,
+                path=destination_parts,
+                value=_getattr(Qt, source_parts, resolve_callables=resolve_callables)
+            )
+        except ModuleMissingException:
+            # TODO: reevaluate if silently skipping is the correct thing to do.
+            # If we have some missing module, silently skip.
+            pass
+
+
 def _pyside2():
     """Initialise PySide2
 
@@ -656,26 +786,8 @@ def _pyside2():
     if hasattr(Qt, "_QtUiTools"):
         Qt.QtCompat.loadUi = _loadUi
 
-    if hasattr(Qt, "_QtGui") and hasattr(Qt, "_QtCore"):
-        Qt.QtCore.QStringListModel = Qt._QtGui.QStringListModel
-
-    if hasattr(Qt, "_QtWidgets"):
-        Qt.QtCompat.setSectionResizeMode = \
-            Qt._QtWidgets.QHeaderView.setSectionResizeMode
-
-    if hasattr(Qt, "_QtCore"):
-        Qt.__qt_version__ = Qt._QtCore.qVersion()
-        Qt.QtCompat.translate = Qt._QtCore.QCoreApplication.translate
-
-        Qt.QtCore.Property = Qt._QtCore.Property
-        Qt.QtCore.Signal = Qt._QtCore.Signal
-        Qt.QtCore.Slot = Qt._QtCore.Slot
-
-        Qt.QtCore.QAbstractProxyModel = Qt._QtCore.QAbstractProxyModel
-        Qt.QtCore.QSortFilterProxyModel = Qt._QtCore.QSortFilterProxyModel
-        Qt.QtCore.QItemSelection = Qt._QtCore.QItemSelection
-        Qt.QtCore.QItemSelectionRange = Qt._QtCore.QItemSelectionRange
-        Qt.QtCore.QItemSelectionModel = Qt._QtCore.QItemSelectionModel
+    # Replacements using _common_replacements
+    _set_common_replacements("pyside2")
 
 
 def _pyside():
@@ -693,23 +805,7 @@ def _pyside():
         setattr(Qt, "QtWidgets", _new_module("QtWidgets"))
         setattr(Qt, "_QtWidgets", Qt._QtGui)
 
-        Qt.QtCompat.setSectionResizeMode = Qt._QtGui.QHeaderView.setResizeMode
-
-        if hasattr(Qt, "_QtCore"):
-            Qt.QtCore.QAbstractProxyModel = Qt._QtGui.QAbstractProxyModel
-            Qt.QtCore.QSortFilterProxyModel = Qt._QtGui.QSortFilterProxyModel
-            Qt.QtCore.QStringListModel = Qt._QtGui.QStringListModel
-            Qt.QtCore.QItemSelection = Qt._QtGui.QItemSelection
-            Qt.QtCore.QItemSelectionRange = Qt._QtGui.QItemSelectionRange
-            Qt.QtCore.QItemSelectionModel = Qt._QtGui.QItemSelectionModel
-
     if hasattr(Qt, "_QtCore"):
-        Qt.__qt_version__ = Qt._QtCore.qVersion()
-
-        Qt.QtCore.Property = Qt._QtCore.Property
-        Qt.QtCore.Signal = Qt._QtCore.Signal
-        Qt.QtCore.Slot = Qt._QtCore.Slot
-
         QCoreApplication = Qt._QtCore.QCoreApplication
         Qt.QtCompat.translate = (
             lambda context, sourceText, disambiguation, n:
@@ -722,6 +818,9 @@ def _pyside():
             )
         )
 
+    # Replacements using _common_replacements
+    _set_common_replacements("pyside")
+
 
 def _pyqt5():
     """Initialise PyQt5"""
@@ -732,26 +831,11 @@ def _pyqt5():
     if hasattr(Qt, "_uic"):
         Qt.QtCompat.loadUi = _loadUi
 
-    if hasattr(Qt, "_QtWidgets"):
-        Qt.QtCompat.setSectionResizeMode = \
-            Qt._QtWidgets.QHeaderView.setSectionResizeMode
-
     if hasattr(Qt, "_QtCore"):
-        Qt.QtCompat.translate = Qt._QtCore.QCoreApplication.translate
-
-        Qt.QtCore.Property = Qt._QtCore.pyqtProperty
-        Qt.QtCore.Signal = Qt._QtCore.pyqtSignal
-        Qt.QtCore.Slot = Qt._QtCore.pyqtSlot
-
-        Qt.QtCore.QAbstractProxyModel = Qt._QtCore.QAbstractProxyModel
-        Qt.QtCore.QSortFilterProxyModel = Qt._QtCore.QSortFilterProxyModel
-        Qt.QtCore.QStringListModel = Qt._QtCore.QStringListModel
-        Qt.QtCore.QItemSelection = Qt._QtCore.QItemSelection
-        Qt.QtCore.QItemSelectionModel = Qt._QtCore.QItemSelectionModel
-        Qt.QtCore.QItemSelectionRange = Qt._QtCore.QItemSelectionRange
-
-        Qt.__qt_version__ = Qt._QtCore.QT_VERSION_STR
         Qt.__binding_version__ = Qt._QtCore.PYQT_VERSION_STR
+
+    # Replacements using _common_replacements
+    _set_common_replacements("pyqt5")
 
 
 def _pyqt4():
@@ -801,24 +885,8 @@ def _pyqt4():
         setattr(Qt, "QtWidgets", _new_module("QtWidgets"))
         setattr(Qt, "_QtWidgets", Qt._QtGui)
 
-        Qt.QtCompat.setSectionResizeMode = \
-            Qt._QtGui.QHeaderView.setResizeMode
-
-        if hasattr(Qt, "_QtCore"):
-            Qt.QtCore.QAbstractProxyModel = Qt._QtGui.QAbstractProxyModel
-            Qt.QtCore.QSortFilterProxyModel = Qt._QtGui.QSortFilterProxyModel
-            Qt.QtCore.QItemSelection = Qt._QtGui.QItemSelection
-            Qt.QtCore.QStringListModel = Qt._QtGui.QStringListModel
-            Qt.QtCore.QItemSelectionModel = Qt._QtGui.QItemSelectionModel
-            Qt.QtCore.QItemSelectionRange = Qt._QtGui.QItemSelectionRange
-
     if hasattr(Qt, "_QtCore"):
-        Qt.__qt_version__ = Qt._QtCore.QT_VERSION_STR
         Qt.__binding_version__ = Qt._QtCore.PYQT_VERSION_STR
-
-        Qt.QtCore.Property = Qt._QtCore.pyqtProperty
-        Qt.QtCore.Signal = Qt._QtCore.pyqtSignal
-        Qt.QtCore.Slot = Qt._QtCore.pyqtSlot
 
         QCoreApplication = Qt._QtCore.QCoreApplication
         Qt.QtCompat.translate = (
@@ -830,6 +898,9 @@ def _pyqt4():
                 QCoreApplication.CodecForTr,
                 n)
         )
+
+    # Replacements using _common_replacements
+    _set_common_replacements("pyqt4")
 
 
 def _none():
