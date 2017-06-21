@@ -60,7 +60,7 @@ Qt.QtCompat = types.ModuleType("QtCompat")
 """Common members of all bindings
 
 This is where each member of Qt.py is explicitly defined.
-It is based on a "lowest commond denominator" of all bindings;
+It is based on a "lowest common denominator" of all bindings;
 including members found in each of the 4 bindings.
 
 Find or add excluded members in build_membership.py
@@ -599,92 +599,52 @@ _common_members = {
 }
 
 
-_common_replacements = {
+"""Misplaced members
+
+These members from the original submodule are misplaced relative PySide2
+
+"""
+_misplaced_members = {
     "pyside2": {
-        "_QtGui.QStringListModel":
-            "QtCore.QStringListModel",
-        "_QtWidgets.QHeaderView.setSectionResizeMode":
-            "QtCompat.setSectionResizeMode",
-        "_QtCore.QCoreApplication.translate":
-            "QtCompat.translate",
-        "_QtCore.Property":
-            "QtCore.Property",
-        "_QtCore.Signal":
-            "QtCore.Signal",
-        "_QtCore.Slot":
-            "QtCore.Slot",
-        "_QtCore.QAbstractProxyModel":
-            "QtCore.QAbstractProxyModel",
-        "_QtCore.QSortFilterProxyModel":
-            "QtCore.QSortFilterProxyModel",
-        "_QtCore.QItemSelection":
-            "QtCore.QItemSelection",
-        "_QtCore.QItemSelectionModel":
-            "QtCore.QItemSelectionModel",
+        "QtGui.QStringListModel": "QtCore.QStringListModel",
+        "QtCore.Property": "QtCore.Property",
+        "QtCore.Signal": "QtCore.Signal",
+        "QtCore.Slot": "QtCore.Slot",
+        "QtCore.QAbstractProxyModel": "QtCore.QAbstractProxyModel",
+        "QtCore.QSortFilterProxyModel": "QtCore.QSortFilterProxyModel",
+        "QtCore.QItemSelection": "QtCore.QItemSelection",
+        "QtCore.QItemSelectionModel": "QtCore.QItemSelectionModel",
     },
     "pyqt5": {
-        "QtWidgets.QHeaderView.setResizeMode":
-            "QtCompat.setSectionResizeMode",
-        "_QtCore.QCoreApplication.translate":
-            "QtCompat.translate",
-        "_QtCore.pyqtProperty":
-            "QtCore.Property",
-        "_QtCore.pyqtSignal":
-            "QtCore.Signal",
-        "_QtCore.pyqtSlot":
-            "QtCore.Slot",
-        "_QtCore.QAbstractProxyModel":
-            "QtCore.QAbstractProxyModel",
-        "_QtCore.QSortFilterProxyModel":
-            "QtCore.QSortFilterProxyModel",
-        "_QtCore.QStringListModel":
-            "QtCore.QStringListModel",
-        "_QtCore.QItemSelection":
-            "QtCore.QItemSelection",
-        "_QtCore.QItemSelectionModel":
-            "QtCore.QItemSelectionModel",
+        "QtCore.pyqtProperty": "QtCore.Property",
+        "QtCore.pyqtSignal": "QtCore.Signal",
+        "QtCore.pyqtSlot": "QtCore.Slot",
+        "QtCore.QAbstractProxyModel": "QtCore.QAbstractProxyModel",
+        "QtCore.QSortFilterProxyModel": "QtCore.QSortFilterProxyModel",
+        "QtCore.QStringListModel": "QtCore.QStringListModel",
+        "QtCore.QItemSelection": "QtCore.QItemSelection",
+        "QtCore.QItemSelectionModel": "QtCore.QItemSelectionModel",
     },
     "pyside": {
-        "_QtGui.QHeaderView.setResizeMode":
-            "QtCompat.setSectionResizeMode",
-        "_QtGui.QAbstractProxyModel":
-            "QtCore.QAbstractProxyModel",
-        "_QtGui.QSortFilterProxyModel":
-            "QtCore.QSortFilterProxyModel",
-        "_QtGui.QStringListModel":
-            "QtCore.QStringListModel",
-        "_QtGui.QItemSelection":
-            "QtCore.QItemSelection",
-        "_QtGui.QItemSelectionModel":
-            "QtCore.QItemSelectionModel",
-        "_QtCore.Property":
-            "QtCore.Property",
-        "_QtCore.Signal":
-            "QtCore.Signal",
-        "_QtCore.Slot":
-            "QtCore.Slot",
+        "QtGui.QAbstractProxyModel": "QtCore.QAbstractProxyModel",
+        "QtGui.QSortFilterProxyModel": "QtCore.QSortFilterProxyModel",
+        "QtGui.QStringListModel": "QtCore.QStringListModel",
+        "QtGui.QItemSelection": "QtCore.QItemSelection",
+        "QtGui.QItemSelectionModel": "QtCore.QItemSelectionModel",
+        "QtCore.Property": "QtCore.Property",
+        "QtCore.Signal": "QtCore.Signal",
+        "QtCore.Slot": "QtCore.Slot",
 
     },
     "pyqt4": {
-        "_QtGui.QHeaderView.setResizeMode":
-            "QtCompat.setSectionResizeMode",
-        "_QtGui.QAbstractProxyModel":
-            "QtCore.QAbstractProxyModel",
-        "_QtGui.QSortFilterProxyModel":
-            "QtCore.QSortFilterProxyModel",
-        "_QtGui.QItemSelection":
-            "QtCore.QItemSelection",
-        "_QtGui.QStringListModel":
-            "QtCore.QStringListModel",
-        "_QtGui.QItemSelectionModel":
-            "QtCore.QItemSelectionModel",
-        "_QtCore.pyqtProperty":
-            "QtCore.Property",
-        "_QtCore.pyqtSignal":
-            "QtCore.Signal",
-        "_QtCore.pyqtSlot":
-            "QtCore.Slot",
-
+        "QtGui.QAbstractProxyModel": "QtCore.QAbstractProxyModel",
+        "QtGui.QSortFilterProxyModel": "QtCore.QSortFilterProxyModel",
+        "QtGui.QItemSelection": "QtCore.QItemSelection",
+        "QtGui.QStringListModel": "QtCore.QStringListModel",
+        "QtGui.QItemSelectionModel": "QtCore.QItemSelectionModel",
+        "QtCore.pyqtProperty": "QtCore.Property",
+        "QtCore.pyqtSignal": "QtCore.Signal",
+        "QtCore.pyqtSlot": "QtCore.Slot",
     }
 }
 
@@ -728,97 +688,34 @@ def _setup(module, extras):
             setattr(Qt, name, _new_module(name))
 
 
-class ModuleMissingException(ImportError):
-    """
-    ModuleMissingException is an exception thrown in _resolve_dots when it 
-    cannot find a module it expects to find.
-    This is often due to a Qt component not being loaded. 
-    For example missing QtCore.
-    """
-    pass
-
-
-def _setattr(obj, path, value, default=None):
-    """
-    _setattr is a deep setattr function with some default value support in it.
-
-    :param Object|types.ModuleType obj: Object that we want to set values to 
-        recursively.
-    :param list[str] path: Path to where we want to store the final value.
-    :param Any value: Value that we want to set at the end of our path.
-    :param Any|types.ModuleType default: If a part of the path is missing, what 
-        value should we store in it's place.
-    """
-    if len(path) <= 1:
-        setattr(obj, path[0], value)
-        _log("Setting %s to %s" % (obj.__name__ + "." + path[0], value))
-        return obj
-    part = path.pop(0)
-    if not hasattr(obj, part):
-        module_name = obj.__name__
-        if module_name == "__main__":
-            module_name = obj.__binding__
-        raise ModuleMissingException("Missing %s on %s" % (part, module_name))
-    _setattr(getattr(obj, part), path, value, default=default)
-
-
-def _getattr(module, path, resolve_callables=False):
-    """_getattr is a deep getattr function with some callable resolving logic 
-    in it
-
-    :param Object|types.ModuleType module: Object that we are using to get 
-        values on.
-    :param list[str] path: List of getattr values that need to recursively run.
-    :param bool resolve_callables: Should the _getattr function attempt to 
-        resolve the final value if it is a callable?
-    """
-    if path:
-        part = path.pop(0)
-    else:
-        if resolve_callables and hasattr(module, "__call__"):
-            try:
-                return module()
-            except (TypeError, NotImplementedError):
-                # Failed executing the callable
-                pass
-        return module
-    try:
-        module = getattr(module, part)
-    except AttributeError:
-        module_name = module.__name__
-        if module_name == "__main__":
-            module_name = module.__binding__
-        raise ModuleMissingException("Missing %s on %s" % (part, module_name))
-    return _getattr(module, path, resolve_callables=resolve_callables)
-
-
-def _set_common_replacements(key, resolve_callables=False):
-    """
-    _set_common_replacements will parse the _common_replacements dict and remap 
+def _reassign_misplaced_members(binding):
+    """Parse `_misplaced_members` dict and remap
     values based on the underlying binding.
-    It uses _setattr and _getattr to parse the paths and remap the values.
 
-    :param str key: Top level key in _common_replacements. 
-        Should be <binding name>.lower()
+    :param str binding: Top level binding in _misplaced_members.
+
     """
-    for replace in _common_replacements[key]:
-        source_parts = replace.split(".")
-        destination_parts = _common_replacements[key][replace].split(".")
+
+    for src, dst in _misplaced_members[binding].items():
+        src_module, src_member = src.split(".")
+        dst_module, dst_member = dst.split(".")
+
         try:
-            _setattr(
-                obj=Qt,
-                path=destination_parts,
-                value=_getattr(
-                    Qt,
-                    source_parts,
-                    resolve_callables=resolve_callables
-                )
-            )
-        except ModuleMissingException as err:
-            _log(
-                "A module was missing when we were applying automatic binding "
-                "remapping. The error was:\n%s" % str(err)
-            )
+            src_object = getattr(Qt, dst_module)
+        except AttributeError:
+            # Skip reassignment of non-existing members.
+            # This can happen if a request was made to
+            # rename a member that didn't exist, for example
+            # if QtWidgets isn't available on the target platform.
+            continue
+
+        dst_value = getattr(getattr(Qt, "_" + src_module), src_member)
+
+        setattr(
+            src_object,
+            dst_member,
+            dst_value
+        )
 
 
 def _pyside2():
@@ -841,9 +738,13 @@ def _pyside2():
 
     if hasattr(Qt, "_QtCore"):
         Qt.__qt_version__ = Qt._QtCore.qVersion()
+        Qt.QtCompat.translate = Qt._QtCore.QCoreApplication.translate
 
-    # Replacements using _common_replacements
-    _set_common_replacements("pyside2")
+    if hasattr(Qt, "_QtWidgets"):
+        Qt.QtCompat.setSectionResizeMode = \
+            Qt._QtWidgets.QHeaderView.setSectionResizeMode
+
+    _reassign_misplaced_members("pyside2")
 
 
 def _pyside():
@@ -861,6 +762,8 @@ def _pyside():
         setattr(Qt, "QtWidgets", _new_module("QtWidgets"))
         setattr(Qt, "_QtWidgets", Qt._QtGui)
 
+        Qt.QtCompat.setSectionResizeMode = Qt._QtGui.QHeaderView.setResizeMode
+
     if hasattr(Qt, "_QtCore"):
         Qt.__qt_version__ = Qt._QtCore.qVersion()
         QCoreApplication = Qt._QtCore.QCoreApplication
@@ -875,8 +778,7 @@ def _pyside():
             )
         )
 
-    # Replacements using _common_replacements
-    _set_common_replacements("pyside")
+    _reassign_misplaced_members("pyside")
 
 
 def _pyqt5():
@@ -891,9 +793,13 @@ def _pyqt5():
     if hasattr(Qt, "_QtCore"):
         Qt.__binding_version__ = Qt._QtCore.PYQT_VERSION_STR
         Qt.__qt_version__ = Qt._QtCore.QT_VERSION_STR
+        Qt.QtCompat.translate = Qt._QtCore.QCoreApplication.translate
 
-    # Replacements using _common_replacements
-    _set_common_replacements("pyqt5")
+    if hasattr(Qt, "_QtWidgets"):
+        Qt.QtCompat.setSectionResizeMode = \
+            Qt._QtWidgets.QHeaderView.setSectionResizeMode
+
+    _reassign_misplaced_members("pyqt5")
 
 
 def _pyqt4():
@@ -943,6 +849,9 @@ def _pyqt4():
         setattr(Qt, "QtWidgets", _new_module("QtWidgets"))
         setattr(Qt, "_QtWidgets", Qt._QtGui)
 
+        Qt.QtCompat.setSectionResizeMode = \
+            Qt._QtGui.QHeaderView.setResizeMode
+
     if hasattr(Qt, "_QtCore"):
         Qt.__binding_version__ = Qt._QtCore.PYQT_VERSION_STR
         Qt.__qt_version__ = Qt._QtCore.QT_VERSION_STR
@@ -958,8 +867,7 @@ def _pyqt4():
                 n)
         )
 
-    # Replacements using _common_replacements
-    _set_common_replacements("pyqt4")
+    _reassign_misplaced_members("pyqt4")
 
 
 def _none():
