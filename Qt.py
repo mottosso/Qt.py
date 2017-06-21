@@ -605,8 +605,6 @@ _common_replacements = {
             "QtCore.QStringListModel",
         "_QtWidgets.QHeaderView.setSectionResizeMode":
             "QtCompat.setSectionResizeMode",
-        "_QtCore.qVersion":
-            "__qt_version__",
         "_QtCore.QCoreApplication.translate":
             "QtCompat.translate",
         "_QtCore.Property":
@@ -645,8 +643,6 @@ _common_replacements = {
             "QtCore.QItemSelection",
         "_QtCore.QItemSelectionModel":
             "QtCore.QItemSelectionModel",
-        "_QtCore.QT_VERSION_STR":
-            "__qt_version__",
     },
     "pyside": {
         "_QtGui.QHeaderView.setResizeMode":
@@ -661,8 +657,6 @@ _common_replacements = {
             "QtCore.QItemSelection",
         "_QtGui.QItemSelectionModel":
             "QtCore.QItemSelectionModel",
-        "_QtCore.qVersion":
-            "__qt_version__",
         "_QtCore.Property":
             "QtCore.Property",
         "_QtCore.Signal":
@@ -684,8 +678,6 @@ _common_replacements = {
             "QtCore.QStringListModel",
         "_QtGui.QItemSelectionModel":
             "QtCore.QItemSelectionModel",
-        "_QtCore.QT_VERSION_STR":
-            "__qt_version__",
         "_QtCore.pyqtProperty":
             "QtCore.Property",
         "_QtCore.pyqtSignal":
@@ -800,7 +792,7 @@ def _getattr(module, path, resolve_callables=False):
     return _getattr(module, path, resolve_callables=resolve_callables)
 
 
-def _set_common_replacements(key, resolve_callables=True):
+def _set_common_replacements(key, resolve_callables=False):
     """
     _set_common_replacements will parse the _common_replacements dict and remap 
     values based on the underlying binding.
@@ -847,6 +839,9 @@ def _pyside2():
     if hasattr(Qt, "_QtUiTools"):
         Qt.QtCompat.loadUi = _loadUi
 
+    if hasattr(Qt, "_QtCore"):
+        Qt.__binding__ = Qt._QtCore.qVersion()
+
     # Replacements using _common_replacements
     _set_common_replacements("pyside2")
 
@@ -867,6 +862,7 @@ def _pyside():
         setattr(Qt, "_QtWidgets", Qt._QtGui)
 
     if hasattr(Qt, "_QtCore"):
+        Qt.__qt_version__ = Qt._QtCore.qVersion()
         QCoreApplication = Qt._QtCore.QCoreApplication
         Qt.QtCompat.translate = (
             lambda context, sourceText, disambiguation, n:
@@ -894,6 +890,7 @@ def _pyqt5():
 
     if hasattr(Qt, "_QtCore"):
         Qt.__binding_version__ = Qt._QtCore.PYQT_VERSION_STR
+        Qt.__qt_version__ = Qt._QtCore.QT_VERSION_STR
 
     # Replacements using _common_replacements
     _set_common_replacements("pyqt5")
@@ -948,6 +945,7 @@ def _pyqt4():
 
     if hasattr(Qt, "_QtCore"):
         Qt.__binding_version__ = Qt._QtCore.PYQT_VERSION_STR
+        Qt.__qt_version__ = Qt._QtCore.QT_VERSION_STR
 
         QCoreApplication = Qt._QtCore.QCoreApplication
         Qt.QtCompat.translate = (
