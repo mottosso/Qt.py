@@ -601,55 +601,97 @@ _common_members = {
 
 _common_replacements = {
     "pyside2": {
-        "_QtGui.QStringListModel": "QtCore.QStringListModel",
-        "_QtWidgets.QHeaderView.setSectionResizeMode": "QtCompat.setSectionResizeMode",
-        "_QtCore.qVersion": "__qt_version__",
-        "_QtCore.QCoreApplication.translate": "QtCompat.translate",
-        "_QtCore.Property": "QtCore.Property",
-        "_QtCore.Signal": "QtCore.Signal",
-        "_QtCore.Slot": "QtCore.Slot",
-        "_QtCore.QAbstractProxyModel": "QtCore.QAbstractProxyModel",
-        "_QtCore.QSortFilterProxyModel": "QtCore.QSortFilterProxyModel",
-        "_QtCore.QItemSelection": "QtCore.QItemSelection",
-        "_QtCore.QItemSelectionModel": "QtCore.QItemSelectionModel",
+        "_QtGui.QStringListModel":
+            "QtCore.QStringListModel",
+        "_QtWidgets.QHeaderView.setSectionResizeMode":
+            "QtCompat.setSectionResizeMode",
+        "_QtCore.qVersion":
+            "__qt_version__",
+        "_QtCore.QCoreApplication.translate":
+            "QtCompat.translate",
+        "_QtCore.Property":
+            "QtCore.Property",
+        "_QtCore.Signal":
+            "QtCore.Signal",
+        "_QtCore.Slot":
+            "QtCore.Slot",
+        "_QtCore.QAbstractProxyModel":
+            "QtCore.QAbstractProxyModel",
+        "_QtCore.QSortFilterProxyModel":
+            "QtCore.QSortFilterProxyModel",
+        "_QtCore.QItemSelection":
+            "QtCore.QItemSelection",
+        "_QtCore.QItemSelectionModel":
+            "QtCore.QItemSelectionModel",
     },
     "pyqt5": {
-        "QtWidgets.QHeaderView.setResizeMode": "QtCompat.setSectionResizeMode",
-        "_QtCore.QCoreApplication.translate": "QtCompat.translate",
-        "_QtCore.pyqtProperty": "QtCore.Property",
-        "_QtCore.pyqtSignal": "QtCore.Signal",
-        "_QtCore.pyqtSlot": "QtCore.Slot",
-        "_QtCore.QAbstractProxyModel": "QtCore.QAbstractProxyModel",
-        "_QtCore.QSortFilterProxyModel": "QtCore.QSortFilterProxyModel",
-        "_QtCore.QStringListModel": "QtCore.QStringListModel",
-        "_QtCore.QItemSelection": "QtCore.QItemSelection",
-        "_QtCore.QItemSelectionModel": "QtCore.QItemSelectionModel",
-        "_QtCore.QT_VERSION_STR": "__qt_version__",
+        "QtWidgets.QHeaderView.setResizeMode":
+            "QtCompat.setSectionResizeMode",
+        "_QtCore.QCoreApplication.translate":
+            "QtCompat.translate",
+        "_QtCore.pyqtProperty":
+            "QtCore.Property",
+        "_QtCore.pyqtSignal":
+            "QtCore.Signal",
+        "_QtCore.pyqtSlot":
+            "QtCore.Slot",
+        "_QtCore.QAbstractProxyModel":
+            "QtCore.QAbstractProxyModel",
+        "_QtCore.QSortFilterProxyModel":
+            "QtCore.QSortFilterProxyModel",
+        "_QtCore.QStringListModel":
+            "QtCore.QStringListModel",
+        "_QtCore.QItemSelection":
+            "QtCore.QItemSelection",
+        "_QtCore.QItemSelectionModel":
+            "QtCore.QItemSelectionModel",
+        "_QtCore.QT_VERSION_STR":
+            "__qt_version__",
     },
     "pyside": {
-        "_QtGui.QHeaderView.setResizeMode": "QtCompat.setSectionResizeMode",
-        "_QtGui.QAbstractProxyModel": "QtCore.QAbstractProxyModel",
-        "_QtGui.QSortFilterProxyModel": "QtCore.QSortFilterProxyModel",
-        "_QtGui.QStringListModel": "QtCore.QStringListModel",
-        "_QtGui.QItemSelection": "QtCore.QItemSelection",
-        "_QtGui.QItemSelectionModel": "QtCore.QItemSelectionModel",
-        "_QtCore.qVersion": "__qt_version__",
-        "_QtCore.Property": "QtCore.Property",
-        "_QtCore.Signal": "QtCore.Signal",
-        "_QtCore.Slot": "QtCore.Slot",
+        "_QtGui.QHeaderView.setResizeMode":
+            "QtCompat.setSectionResizeMode",
+        "_QtGui.QAbstractProxyModel":
+            "QtCore.QAbstractProxyModel",
+        "_QtGui.QSortFilterProxyModel":
+            "QtCore.QSortFilterProxyModel",
+        "_QtGui.QStringListModel":
+            "QtCore.QStringListModel",
+        "_QtGui.QItemSelection":
+            "QtCore.QItemSelection",
+        "_QtGui.QItemSelectionModel":
+            "QtCore.QItemSelectionModel",
+        "_QtCore.qVersion":
+            "__qt_version__",
+        "_QtCore.Property":
+            "QtCore.Property",
+        "_QtCore.Signal":
+            "QtCore.Signal",
+        "_QtCore.Slot":
+            "QtCore.Slot",
 
     },
     "pyqt4": {
-        "_QtGui.QHeaderView.setResizeMode": "QtCompat.setSectionResizeMode",
-        "_QtGui.QAbstractProxyModel": "QtCore.QAbstractProxyModel",
-        "_QtGui.QSortFilterProxyModel": "QtCore.QSortFilterProxyModel",
-        "_QtGui.QItemSelection": "QtCore.QItemSelection",
-        "_QtGui.QStringListModel": "QtCore.QStringListModel",
-        "_QtGui.QItemSelectionModel": "QtCore.QItemSelectionModel",
-        "_QtCore.QT_VERSION_STR": "__qt_version__",
-        "_QtCore.pyqtProperty": "QtCore.Property",
-        "_QtCore.pyqtSignal": "QtCore.Signal",
-        "_QtCore.pyqtSlot": "QtCore.Slot",
+        "_QtGui.QHeaderView.setResizeMode":
+            "QtCompat.setSectionResizeMode",
+        "_QtGui.QAbstractProxyModel":
+            "QtCore.QAbstractProxyModel",
+        "_QtGui.QSortFilterProxyModel":
+            "QtCore.QSortFilterProxyModel",
+        "_QtGui.QItemSelection":
+            "QtCore.QItemSelection",
+        "_QtGui.QStringListModel":
+            "QtCore.QStringListModel",
+        "_QtGui.QItemSelectionModel":
+            "QtCore.QItemSelectionModel",
+        "_QtCore.QT_VERSION_STR":
+            "__qt_version__",
+        "_QtCore.pyqtProperty":
+            "QtCore.Property",
+        "_QtCore.pyqtSignal":
+            "QtCore.Signal",
+        "_QtCore.pyqtSlot":
+            "QtCore.Slot",
 
     }
 }
@@ -717,6 +759,7 @@ def _setattr(obj, path, value, default=None):
     """
     if len(path) <= 1:
         setattr(obj, path[0], value)
+        _log("Setting %s to %s" % (obj.__name__ + "." + path[0], value))
         return obj
     part = path.pop(0)
     if not hasattr(obj, part):
@@ -728,8 +771,8 @@ def _setattr(obj, path, value, default=None):
 
 
 def _getattr(module, path, resolve_callables=False):
-    """
-    _getattr is a deep getattr function with some callable resolving logic in it
+    """_getattr is a deep getattr function with some callable resolving logic 
+    in it
 
     :param Object|types.ModuleType module: Object that we are using to get 
         values on.
