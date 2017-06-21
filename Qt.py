@@ -43,7 +43,7 @@ import types
 import shutil
 import importlib
 
-__version__ = "1.0.0.b6"
+__version__ = "1.0.0"
 
 # Enable support for `from Qt import *`
 __all__ = []
