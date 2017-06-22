@@ -43,7 +43,7 @@ import types
 import shutil
 import importlib
 
-__version__ = "1.0.0"
+__version__ = "1.1.0.b1"
 
 # Enable support for `from Qt import *`
 __all__ = []
@@ -60,7 +60,7 @@ Qt.QtCompat = types.ModuleType("QtCompat")
 """Common members of all bindings
 
 This is where each member of Qt.py is explicitly defined.
-It is based on a "lowest commond denominator" of all bindings;
+It is based on a "lowest common denominator" of all bindings;
 including members found in each of the 4 bindings.
 
 Find or add excluded members in build_membership.py
@@ -599,6 +599,56 @@ _common_members = {
 }
 
 
+"""Misplaced members
+
+These members from the original submodule are misplaced relative PySide2
+
+"""
+_misplaced_members = {
+    "pyside2": {
+        "QtGui.QStringListModel": "QtCore.QStringListModel",
+        "QtCore.Property": "QtCore.Property",
+        "QtCore.Signal": "QtCore.Signal",
+        "QtCore.Slot": "QtCore.Slot",
+        "QtCore.QAbstractProxyModel": "QtCore.QAbstractProxyModel",
+        "QtCore.QSortFilterProxyModel": "QtCore.QSortFilterProxyModel",
+        "QtCore.QItemSelection": "QtCore.QItemSelection",
+        "QtCore.QItemSelectionModel": "QtCore.QItemSelectionModel",
+    },
+    "pyqt5": {
+        "QtCore.pyqtProperty": "QtCore.Property",
+        "QtCore.pyqtSignal": "QtCore.Signal",
+        "QtCore.pyqtSlot": "QtCore.Slot",
+        "QtCore.QAbstractProxyModel": "QtCore.QAbstractProxyModel",
+        "QtCore.QSortFilterProxyModel": "QtCore.QSortFilterProxyModel",
+        "QtCore.QStringListModel": "QtCore.QStringListModel",
+        "QtCore.QItemSelection": "QtCore.QItemSelection",
+        "QtCore.QItemSelectionModel": "QtCore.QItemSelectionModel",
+    },
+    "pyside": {
+        "QtGui.QAbstractProxyModel": "QtCore.QAbstractProxyModel",
+        "QtGui.QSortFilterProxyModel": "QtCore.QSortFilterProxyModel",
+        "QtGui.QStringListModel": "QtCore.QStringListModel",
+        "QtGui.QItemSelection": "QtCore.QItemSelection",
+        "QtGui.QItemSelectionModel": "QtCore.QItemSelectionModel",
+        "QtCore.Property": "QtCore.Property",
+        "QtCore.Signal": "QtCore.Signal",
+        "QtCore.Slot": "QtCore.Slot",
+
+    },
+    "pyqt4": {
+        "QtGui.QAbstractProxyModel": "QtCore.QAbstractProxyModel",
+        "QtGui.QSortFilterProxyModel": "QtCore.QSortFilterProxyModel",
+        "QtGui.QItemSelection": "QtCore.QItemSelection",
+        "QtGui.QStringListModel": "QtCore.QStringListModel",
+        "QtGui.QItemSelectionModel": "QtCore.QItemSelectionModel",
+        "QtCore.pyqtProperty": "QtCore.Property",
+        "QtCore.pyqtSignal": "QtCore.Signal",
+        "QtCore.pyqtSlot": "QtCore.Slot",
+    }
+}
+
+
 def _apply_site_config():
     try:
         import QtSiteConfig
@@ -638,6 +688,36 @@ def _setup(module, extras):
             setattr(Qt, name, _new_module(name))
 
 
+def _reassign_misplaced_members(binding):
+    """Parse `_misplaced_members` dict and remap
+    values based on the underlying binding.
+
+    :param str binding: Top level binding in _misplaced_members.
+
+    """
+
+    for src, dst in _misplaced_members[binding].items():
+        src_module, src_member = src.split(".")
+        dst_module, dst_member = dst.split(".")
+
+        try:
+            src_object = getattr(Qt, dst_module)
+        except AttributeError:
+            # Skip reassignment of non-existing members.
+            # This can happen if a request was made to
+            # rename a member that didn't exist, for example
+            # if QtWidgets isn't available on the target platform.
+            continue
+
+        dst_value = getattr(getattr(Qt, "_" + src_module), src_member)
+
+        setattr(
+            src_object,
+            dst_member,
+            dst_value
+        )
+
+
 def _pyside2():
     """Initialise PySide2
 
@@ -656,26 +736,15 @@ def _pyside2():
     if hasattr(Qt, "_QtUiTools"):
         Qt.QtCompat.loadUi = _loadUi
 
-    if hasattr(Qt, "_QtGui") and hasattr(Qt, "_QtCore"):
-        Qt.QtCore.QStringListModel = Qt._QtGui.QStringListModel
+    if hasattr(Qt, "_QtCore"):
+        Qt.__qt_version__ = Qt._QtCore.qVersion()
+        Qt.QtCompat.translate = Qt._QtCore.QCoreApplication.translate
 
     if hasattr(Qt, "_QtWidgets"):
         Qt.QtCompat.setSectionResizeMode = \
             Qt._QtWidgets.QHeaderView.setSectionResizeMode
 
-    if hasattr(Qt, "_QtCore"):
-        Qt.__qt_version__ = Qt._QtCore.qVersion()
-        Qt.QtCompat.translate = Qt._QtCore.QCoreApplication.translate
-
-        Qt.QtCore.Property = Qt._QtCore.Property
-        Qt.QtCore.Signal = Qt._QtCore.Signal
-        Qt.QtCore.Slot = Qt._QtCore.Slot
-
-        Qt.QtCore.QAbstractProxyModel = Qt._QtCore.QAbstractProxyModel
-        Qt.QtCore.QSortFilterProxyModel = Qt._QtCore.QSortFilterProxyModel
-        Qt.QtCore.QItemSelection = Qt._QtCore.QItemSelection
-        Qt.QtCore.QItemSelectionRange = Qt._QtCore.QItemSelectionRange
-        Qt.QtCore.QItemSelectionModel = Qt._QtCore.QItemSelectionModel
+    _reassign_misplaced_members("pyside2")
 
 
 def _pyside():
@@ -695,21 +764,8 @@ def _pyside():
 
         Qt.QtCompat.setSectionResizeMode = Qt._QtGui.QHeaderView.setResizeMode
 
-        if hasattr(Qt, "_QtCore"):
-            Qt.QtCore.QAbstractProxyModel = Qt._QtGui.QAbstractProxyModel
-            Qt.QtCore.QSortFilterProxyModel = Qt._QtGui.QSortFilterProxyModel
-            Qt.QtCore.QStringListModel = Qt._QtGui.QStringListModel
-            Qt.QtCore.QItemSelection = Qt._QtGui.QItemSelection
-            Qt.QtCore.QItemSelectionRange = Qt._QtGui.QItemSelectionRange
-            Qt.QtCore.QItemSelectionModel = Qt._QtGui.QItemSelectionModel
-
     if hasattr(Qt, "_QtCore"):
         Qt.__qt_version__ = Qt._QtCore.qVersion()
-
-        Qt.QtCore.Property = Qt._QtCore.Property
-        Qt.QtCore.Signal = Qt._QtCore.Signal
-        Qt.QtCore.Slot = Qt._QtCore.Slot
-
         QCoreApplication = Qt._QtCore.QCoreApplication
         Qt.QtCompat.translate = (
             lambda context, sourceText, disambiguation, n:
@@ -722,6 +778,8 @@ def _pyside():
             )
         )
 
+    _reassign_misplaced_members("pyside")
+
 
 def _pyqt5():
     """Initialise PyQt5"""
@@ -732,26 +790,16 @@ def _pyqt5():
     if hasattr(Qt, "_uic"):
         Qt.QtCompat.loadUi = _loadUi
 
+    if hasattr(Qt, "_QtCore"):
+        Qt.__binding_version__ = Qt._QtCore.PYQT_VERSION_STR
+        Qt.__qt_version__ = Qt._QtCore.QT_VERSION_STR
+        Qt.QtCompat.translate = Qt._QtCore.QCoreApplication.translate
+
     if hasattr(Qt, "_QtWidgets"):
         Qt.QtCompat.setSectionResizeMode = \
             Qt._QtWidgets.QHeaderView.setSectionResizeMode
 
-    if hasattr(Qt, "_QtCore"):
-        Qt.QtCompat.translate = Qt._QtCore.QCoreApplication.translate
-
-        Qt.QtCore.Property = Qt._QtCore.pyqtProperty
-        Qt.QtCore.Signal = Qt._QtCore.pyqtSignal
-        Qt.QtCore.Slot = Qt._QtCore.pyqtSlot
-
-        Qt.QtCore.QAbstractProxyModel = Qt._QtCore.QAbstractProxyModel
-        Qt.QtCore.QSortFilterProxyModel = Qt._QtCore.QSortFilterProxyModel
-        Qt.QtCore.QStringListModel = Qt._QtCore.QStringListModel
-        Qt.QtCore.QItemSelection = Qt._QtCore.QItemSelection
-        Qt.QtCore.QItemSelectionModel = Qt._QtCore.QItemSelectionModel
-        Qt.QtCore.QItemSelectionRange = Qt._QtCore.QItemSelectionRange
-
-        Qt.__qt_version__ = Qt._QtCore.QT_VERSION_STR
-        Qt.__binding_version__ = Qt._QtCore.PYQT_VERSION_STR
+    _reassign_misplaced_members("pyqt5")
 
 
 def _pyqt4():
@@ -804,21 +852,9 @@ def _pyqt4():
         Qt.QtCompat.setSectionResizeMode = \
             Qt._QtGui.QHeaderView.setResizeMode
 
-        if hasattr(Qt, "_QtCore"):
-            Qt.QtCore.QAbstractProxyModel = Qt._QtGui.QAbstractProxyModel
-            Qt.QtCore.QSortFilterProxyModel = Qt._QtGui.QSortFilterProxyModel
-            Qt.QtCore.QItemSelection = Qt._QtGui.QItemSelection
-            Qt.QtCore.QStringListModel = Qt._QtGui.QStringListModel
-            Qt.QtCore.QItemSelectionModel = Qt._QtGui.QItemSelectionModel
-            Qt.QtCore.QItemSelectionRange = Qt._QtGui.QItemSelectionRange
-
     if hasattr(Qt, "_QtCore"):
-        Qt.__qt_version__ = Qt._QtCore.QT_VERSION_STR
         Qt.__binding_version__ = Qt._QtCore.PYQT_VERSION_STR
-
-        Qt.QtCore.Property = Qt._QtCore.pyqtProperty
-        Qt.QtCore.Signal = Qt._QtCore.pyqtSignal
-        Qt.QtCore.Slot = Qt._QtCore.pyqtSlot
+        Qt.__qt_version__ = Qt._QtCore.QT_VERSION_STR
 
         QCoreApplication = Qt._QtCore.QCoreApplication
         Qt.QtCompat.translate = (
@@ -830,6 +866,8 @@ def _pyqt4():
                 QCoreApplication.CodecForTr,
                 n)
         )
+
+    _reassign_misplaced_members("pyqt4")
 
 
 def _none():
