@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/mottosso/Qt.py.svg?branch=master)](https://travis-ci.org/mottosso/Qt.py) [![PyPI version](https://badge.fury.io/py/Qt.py.svg)](https://pypi.python.org/pypi/Qt.py)
+[![Build Status](https://travis-ci.org/mottosso/Qt.py.svg?branch=master)](https://travis-ci.org/mottosso/Qt.py) [![PyPI version](https://badge.fury.io/py/Qt.py.svg)](https://pypi.python.org/pypi/Qt.py) [![Coverage Status](https://coveralls.io/repos/github/mottosso/Qt.py/badge.svg?branch=master)](https://coveralls.io/github/mottosso/Qt.py?branch=master)
 
 ### Qt.py
 

@@ -22,7 +22,10 @@ RUN apt-get update && \
 RUN cp -avr /usr/lib/python3/dist-packages/pyside2uic /usr/local/lib/python2.7/dist-packages
 
 # Nose is the Python test-runner
-RUN pip install nose nosepipe
+RUN pip install \
+    nose \
+    nosepipe \
+    coveralls
 
 # Enable additional output from Qt.py
 ENV QT_VERBOSE true
@@ -60,4 +63,6 @@ ENTRYPOINT cp -r /Qt.py /workspace && \
         --with-doctest \
         --exe \
             examples/*/*.py && \
+    echo "Uploading results to Coveralls.io.." && \
+        coveralls && \
     echo Done
