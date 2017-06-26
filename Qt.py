@@ -751,7 +751,7 @@ def _pyside2():
         Qt.QtCompat.getCppPointer = lambda object: \
                 shiboken2.getCppPointer(object)[0]
     except ImportError as e:
-        _log(e)
+        _log("ImportError: %s" % e)
 
     _reassign_misplaced_members("pyside2")
 
@@ -794,7 +794,7 @@ def _pyside():
         Qt.QtCompat.getCppPointer = lambda object: \
                 shiboken.getCppPointer(object)[0]
     except ImportError as e:
-        _log(e)
+        _log("ImportError: %s" % e)
 
     _reassign_misplaced_members("pyside")
 
@@ -823,7 +823,7 @@ def _pyqt5():
                                     _wrapinstance(sip.wrapinstance, ptr, base)
         Qt.QtCompat.getCppPointer = lambda object: sip.unwrapinstance(object)
     except ImportError as e:
-        _log(e)
+        _log("ImportError: %s" % e)
 
     _reassign_misplaced_members("pyqt5")
 
@@ -899,7 +899,7 @@ def _pyqt4():
                                     _wrapinstance(sip.wrapinstance, ptr, base)
         Qt.QtCompat.getCppPointer = lambda object: sip.unwrapinstance(object)
     except ImportError as e:
-        _log(e)
+        _log("ImportError: %s" % e)
 
     _reassign_misplaced_members("pyqt4")
 
