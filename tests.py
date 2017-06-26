@@ -18,7 +18,8 @@ from nose.tools import (
 )
 
 PYTHON = sys.version_info[0]  # e.g. 2 or 3
-long = long if PYTHON == 2 else int
+if sys.version_info[0] != 2:
+    long = int
 
 @contextlib.contextmanager
 def captured_output():

@@ -946,9 +946,10 @@ def _wrapinstance(func, ptr, base=None):
             which should handle anything.
 
     """
-    long = long if sys.version_info[0] == 2 else int
-    longType = long.__class__.__name__
-    assert isinstance(ptr, long), "'ptr' must be of type <%s>" % longType
+    if sys.version_info[0] != 2:
+        long = int
+    long_type = long.__class__.__name__
+    assert isinstance(ptr, long), "'ptr' must be of type <%s>" % long_type
     assert (base is None) or issubclass(base, Qt.QtCore.QObject), (
         "'base' must be of type <QObject>")
 
