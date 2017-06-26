@@ -48,6 +48,9 @@ __version__ = "1.1.0.b1"
 # Enable support for `from Qt import *`
 __all__ = []
 
+if sys.version_info[0] != 2:
+    long = int
+
 # Flags from environment variables
 QT_VERBOSE = bool(os.getenv("QT_VERBOSE"))
 QT_PREFERRED_BINDING = os.getenv("QT_PREFERRED_BINDING", "")
@@ -946,11 +949,7 @@ def _wrapinstance(func, ptr, base=None):
             which should handle anything.
 
     """
-    if sys.version_info[0] != 2:
-        long = int
-    long_type = long.__name__
-
-    assert isinstance(ptr, long), "'ptr' must be of type <%s>" % long_type
+    assert isinstance(ptr, long), "'ptr' must be of type <%s>" % long.__name__
     assert (base is None) or issubclass(base, Qt.QtCore.QObject), (
         "'base' must be of type <QObject>")
 
