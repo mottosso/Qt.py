@@ -3,6 +3,9 @@ FROM ubuntu:16.04
 # Needed to install pyside2-tools without issues
 ENV DEBIAN_FRONTEND noninteractive
 
+# Expose shiboken to apt-get
+RUN echo deb http://us.archive.ubuntu.com/ubuntu xenial main universe >> /etc/apt/sources.list
+
 RUN apt-get update && \
     apt-get install -y \
         software-properties-common && \
@@ -16,6 +19,7 @@ RUN apt-get update && \
         python3-pyside \
         python3-pyside2 \
         pyside2-tools \
+        libshiboken2-dev \
         xvfb
 
 # Nose is the Python test-runner

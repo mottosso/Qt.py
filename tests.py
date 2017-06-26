@@ -18,7 +18,8 @@ from nose.tools import (
 )
 
 PYTHON = sys.version_info[0]  # e.g. 2 or 3
-
+if sys.version_info[0] != 2:
+    long = int
 
 @contextlib.contextmanager
 def captured_output():
@@ -429,6 +430,57 @@ def test_cli():
 
     out, err = popen.communicate()
     assert out.startswith(b"usage: Qt.py"), "\n%s" % out
+
+
+if not (PYTHON == 3 and binding("PySide")):
+    # Shiboken(1) doesn't support Python 3.5
+    # https://github.com/PySide/shiboken-setup/issues/3
+
+    def test_wrapInstance():
+        """.wrapInstance and .getCppPointer is identical across all bindings"""
+        from Qt import QtCompat, QtWidgets
+
+        app = QtWidgets.QApplication(sys.argv)
+
+        try:
+            button = QtWidgets.QPushButton("Hello world")
+            button.setObjectName("MySpecialButton")
+            pointer = QtCompat.getCppPointer(button)
+            widget = QtCompat.wrapInstance(long(pointer),
+                                           QtWidgets.QWidget)
+            assert isinstance(widget, QtWidgets.QWidget), widget
+            assert widget.objectName() == button.objectName()
+
+            # IMPORTANT: this differs across sip and shiboken.
+            if binding("PySide") or binding("PySide2"):
+                assert widget != button
+            else:
+                assert widget == button
+
+        finally:
+            app.exit()
+
+    def test_implicit_wrapInstance():
+        """.wrapInstance doesn't need the `base` argument"""
+        from Qt import QtCompat, QtWidgets
+
+        app = QtWidgets.QApplication(sys.argv)
+
+        try:
+            button = QtWidgets.QPushButton("Hello world")
+            button.setObjectName("MySpecialButton")
+            pointer = QtCompat.getCppPointer(button)
+            widget = QtCompat.wrapInstance(long(pointer))
+            assert isinstance(widget, QtWidgets.QWidget), widget
+            assert widget.objectName() == button.objectName()
+
+            if binding("PySide") or binding("PySide2"):
+                assert widget != button
+            else:
+                assert widget == button
+
+        finally:
+            app.exit()
 
 
 if binding("PyQt4"):
