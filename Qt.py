@@ -744,6 +744,15 @@ def _pyside2():
         Qt.QtCompat.setSectionResizeMode = \
             Qt._QtWidgets.QHeaderView.setSectionResizeMode
 
+    try:
+        import shiboken2
+        Qt.QtCompat.wrapInstance = lambda ptr, base=None: \
+                _wrapinstance(shiboken2.wrapInstance, ptr, base)
+        Qt.QtCompat.getCppPointer = lambda object: \
+                shiboken2.getCppPointer(object)[0]
+    except ImportError as e:
+        _log(e)
+
     _reassign_misplaced_members("pyside2")
 
 
@@ -778,6 +787,15 @@ def _pyside():
             )
         )
 
+    try:
+        import shiboken
+        Qt.QtCompat.wrapInstance = lambda ptr, base=None: \
+                _wrapinstance(shiboken.wrapInstance, ptr, base)
+        Qt.QtCompat.getCppPointer = lambda object: \
+                shiboken.getCppPointer(object)[0]
+    except ImportError as e:
+        _log(e)
+
     _reassign_misplaced_members("pyside")
 
 
@@ -798,6 +816,14 @@ def _pyqt5():
     if hasattr(Qt, "_QtWidgets"):
         Qt.QtCompat.setSectionResizeMode = \
             Qt._QtWidgets.QHeaderView.setSectionResizeMode
+
+    try:
+        import sip
+        Qt.QtCompat.wrapInstance = lambda ptr, base=None: \
+                                    _wrapinstance(sip.wrapinstance, ptr, base)
+        Qt.QtCompat.getCppPointer = lambda object: sip.unwrapinstance(object)
+    except ImportError as e:
+        _log(e)
 
     _reassign_misplaced_members("pyqt5")
 
@@ -867,6 +893,14 @@ def _pyqt4():
                 n)
         )
 
+    try:
+        import sip
+        Qt.QtCompat.wrapInstance = lambda ptr, base=None: \
+                                    _wrapinstance(sip.wrapinstance, ptr, base)
+        Qt.QtCompat.getCppPointer = lambda object: sip.unwrapinstance(object)
+    except ImportError as e:
+        _log(e)
+
     _reassign_misplaced_members("pyqt4")
 
 
@@ -889,6 +923,51 @@ def _none():
 def _log(text):
     if QT_VERBOSE:
         sys.stdout.write(text + "\n")
+
+
+def _wrapinstance(func, ptr, base=None):
+    """Enable implicit cast of pointer to most suitable class
+
+    This behaviour is available in sip per default.
+
+    Based on http://nathanhorne.com/pyqtpyside-wrap-instance
+
+    Usage:
+        This mechanism kicks in under these circumstances.
+        1. Qt.py is using PySide 1 or 2.
+        2. A `base` argument is not provided.
+
+        See :func:`QtCompat.wrapInstance()`
+
+    Arguments:
+        func (function): Original function
+        ptr (long): Pointer to QObject in memory
+        base (QObject, optional): Base class to wrap with. Defaults to QObject,
+            which should handle anything.
+
+    """
+    long = long if sys.version_info[0] == 2 else int
+    longType = long.__class__.__name__
+    assert isinstance(ptr, long), "'ptr' must be of type <%s>" % longType
+    assert (base is None) or issubclass(base, Qt.QtCore.QObject), (
+        "'base' must be of type <QObject>")
+
+    if base is None:
+        q_object = func(long(ptr), Qt.QtCore.QObject)
+        meta_object = q_object.metaObject()
+        class_name = meta_object.className()
+        super_class_name = meta_object.superClass().className()
+
+        if hasattr(Qt.QtWidgets, class_name):
+            base = getattr(Qt.QtWidgets, class_name)
+
+        elif hasattr(Qt.QtWidgets, super_class_name):
+            base = getattr(Qt.QtWidgets, super_class_name)
+
+        else:
+            base = Qt.QtCore.QObject
+
+    return func(long(ptr), base)
 
 
 def _loadUi(uifile, baseinstance=None):
