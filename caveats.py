@@ -117,6 +117,8 @@ def test_{count}_{header}():
     '''Test {header}
 
     >>> import os, sys
+    >>> PYTHON = sys.version_info[0]
+    >>> long = int if PYTHON == 3 else long
     >>> _ = os.environ.pop("QT_VERBOSE", None)  # Disable debug output
     >>> os.environ["QT_PREFERRED_BINDING"] = "{binding}"
     {body}

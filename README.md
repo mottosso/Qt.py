@@ -132,9 +132,11 @@ Qt.py also provides compatibility wrappers for critical functionality that diffe
 
 | Attribute                                 | Returns     | Description
 |:------------------------------------------|:------------|:------------
-| `loadUi(uifile=str, baseinstance=QWidget)` | `QObject`   | Minimal wrapper of PyQt4.loadUi and PySide equivalent
-| `translate(...)`                          | `function`  | Compatibility wrapper around [QCoreApplication.translate][]
-| `setSectionResizeMode()`                  | `method`    | Compatibility wrapper around [QAbstractItemView.setSectionResizeMode][]
+| `loadUi(uifile=str, baseinstance=QWidget)`| `QObject`   | Minimal wrapper of PyQt4.loadUi and PySide equivalent
+| `translate(...)`        					| `function`  | Compatibility wrapper around [QCoreApplication.translate][]
+| `setSectionResizeMode()`					| `method`    | Compatibility wrapper around [QAbstractItemView.setSectionResizeMode][]
+| `wrapInstance(addr=long, type=QObject)`   | `QObject`   | Wrapper around `shiboken2.wrapInstance` and PyQt equivalent
+| `getCppPointer(object=QObject)`           | `long`      | Wrapper around `shiboken2.getCppPointer` and PyQt equivalent
 
 [QCoreApplication.translate]: https://doc.qt.io/qt-5/qcoreapplication.html#translate
 [QAbstractItemView.setSectionResizeMode]: https://doc.qt.io/qt-5/qheaderview.html#setSectionResizeMode
