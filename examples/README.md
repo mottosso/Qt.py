@@ -12,4 +12,5 @@ If you wish to contribute, make a pull request. Please put your example files in
 
 #### List of examples   
 
-* [`loadUi`](https://github.com/mottosso/Qt.py/blob/master/examples/loadUi/README.md) - add base instance argument
+* [`loadUi`](/examples/loadUi/README.md) - add base instance argument
+* [`QtSiteConfig`](/examples/QtSiteConfig/README.md) - expose additional Qt modules and classes
