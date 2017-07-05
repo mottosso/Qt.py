@@ -654,6 +654,76 @@ _misplaced_members = {
     }
 }
 
+""" Compatibility Members
+
+This dictionary is used to build Qt.QtCompat objects that provide a consistent
+interface for obsolete members, and differences in binding return values.
+
+{
+    "binding": {
+        "classname": {
+            "targetname": "binding_namespace",
+        }
+    }
+}
+"""
+_compatibility_members = {
+    "pyside2": {
+        "QHeaderView": {
+            'sectionResizeMode': '_QtWidgets.QHeaderView.sectionResizeMode',
+            'setSectionResizeMode': \
+                '_QtWidgets.QHeaderView.setSectionResizeMode',
+            'sectionsMovable': '_QtWidgets.QHeaderView.sectionsMovable',
+            'setSectionsMovable': '_QtWidgets.QHeaderView.setSectionsMovable',
+        },
+        "QFileDialog": {
+            'getOpenFileName': '_QtWidgets.QFileDialog.getOpenFileName',
+            'getOpenFileNames': '_QtWidgets.QFileDialog.getOpenFileNames',
+            'getSaveFileName': '_QtWidgets.QFileDialog.getSaveFileName',
+        },
+    },
+    "pyqt5": {
+        "QHeaderView": {
+            'sectionResizeMode': '_QtWidgets.QHeaderView.sectionResizeMode',
+            'setSectionResizeMode': \
+                '_QtWidgets.QHeaderView.setSectionResizeMode',
+            'sectionsMovable': '_QtWidgets.QHeaderView.sectionsMovable',
+            'setSectionsMovable': '_QtWidgets.QHeaderView.setSectionsMovable',
+        },
+        "QFileDialog": {
+            'getOpenFileName': '_QtWidgets.QFileDialog.getOpenFileName',
+            'getOpenFileNames': '_QtWidgets.QFileDialog.getOpenFileNames',
+            'getSaveFileName': '_QtWidgets.QFileDialog.getSaveFileName',
+        },
+    },
+    "pyside": {
+        "QHeaderView": {
+            'sectionResizeMode': '_QtWidgets.QHeaderView.resizeMode',
+            'setSectionResizeMode': '_QtWidgets.QHeaderView.setResizeMode',
+            'sectionsMovable': '_QtWidgets.QHeaderView.isMovable',
+            'setSectionsMovable': '_QtWidgets.QHeaderView.setMovable',
+        },
+        "QFileDialog": {
+            'getOpenFileName': '_QtWidgets.QFileDialog.getOpenFileName',
+            'getOpenFileNames': '_QtWidgets.QFileDialog.getOpenFileNames',
+            'getSaveFileName': '_QtWidgets.QFileDialog.getSaveFileName',
+        },
+    },
+    "pyqt4": {
+        "QHeaderView": {
+            'sectionResizeMode': '_QtWidgets.QHeaderView.resizeMode',
+            'setSectionResizeMode': '_QtWidgets.QHeaderView.setResizeMode',
+            'sectionsMovable': '_QtWidgets.QHeaderView.isMovable',
+            'setSectionsMovable': '_QtWidgets.QHeaderView.setMovable',
+        },
+        "QFileDialog": {
+            'getOpenFileName': '_QtWidgets.QFileDialog.getOpenFileName',
+            'getOpenFileNames': '_QtWidgets.QFileDialog.getOpenFileNames',
+            'getSaveFileName': '_QtWidgets.QFileDialog.getSaveFileName',
+        },
+    },
+}
+
 
 def _apply_site_config():
     try:
@@ -766,6 +836,47 @@ def _reassign_misplaced_members(binding):
         )
 
 
+def _build_compatibility_members(binding, decorators={}):
+    """ Parse `_compatibility_members` dict and construct _QtCompat classes
+    based on the underlying binding.
+
+    Arguments:
+        binding (str): Top level binding in _compatibility_members.
+        decorators (dict, optional): Provides the ability to decorate the
+            original Qt functions when needed by a binding. This can be used
+            to change the returned value to a standard value. The key should
+            match the binding_namespace of _compatibility_members and the value
+            is a decorator that will be called on the function being bound.
+    """
+
+    for classname, bindings in _compatibility_members[binding].items():
+        attrs = {}
+        for target, binding in bindings.items():
+            namespaces = binding.split('.')
+            try:
+                src_object = getattr(Qt, namespaces[0])
+            except AttributeError:
+                # Skip reassignment of non-existing members.
+                # This can happen if a request was made to
+                # rename a member that didn't exist, for example
+                # if QtWidgets isn't available on the target platform.
+                continue
+            # Walk down any remaining namespace getting the object assuming
+            # that if the first namespace exists the rest will exist.
+            for namespace in namespaces[1:]:
+                src_object = getattr(src_object, namespace)
+
+            # decorate the Qt function if a decorator was provided.
+            if binding in decorators:
+                src_object = decorators[binding](src_object)
+
+            attrs[target] = src_object
+
+        # Create the QtCompat class and install it into the namespace
+        cls = type(classname, tuple([_QtCompat]), attrs)
+        setattr(Qt.QtCompat, classname, cls)
+
+
 def _pyside2():
     """Initialise PySide2
 
@@ -805,6 +916,7 @@ def _pyside2():
             Qt._QtWidgets.QHeaderView.setSectionResizeMode
 
     _reassign_misplaced_members("pyside2")
+    _build_compatibility_members("pyside2")
 
 
 def _pyside():
@@ -851,6 +963,7 @@ def _pyside():
         )
 
     _reassign_misplaced_members("pyside")
+    _build_compatibility_members("pyside")
 
 
 def _pyqt5():
@@ -884,6 +997,7 @@ def _pyqt5():
             Qt._QtWidgets.QHeaderView.setSectionResizeMode
 
     _reassign_misplaced_members("pyqt5")
+    _build_compatibility_members('pyqt5')
 
 
 def _pyqt4():
@@ -965,6 +1079,27 @@ def _pyqt4():
 
     _reassign_misplaced_members("pyqt4")
 
+    # QFileDialog QtCompat decorator
+    def _standardizeQFileDialog(some_function):
+        """ decorator that makes PyQt4 return conform to other bindings
+        """
+        def wrapper(*args, **kwargs):
+            ret = (some_function(*args, **kwargs))
+            # PyQt4 only returns the selected filename
+            # force the return to conform to all other bindings
+            return (ret, '')
+        # preserve docstring and name of original function
+        wrapper.__doc__ = some_function.__doc__
+        wrapper.__name__ = some_function.__name__
+        return staticmethod(wrapper)
+
+    decorators = {
+        "_QtWidgets.QFileDialog.getOpenFileName": _standardizeQFileDialog,
+        "_QtWidgets.QFileDialog.getOpenFileNames": _standardizeQFileDialog,
+        "_QtWidgets.QFileDialog.getSaveFileName": _standardizeQFileDialog,
+    }
+    _build_compatibility_members('pyqt4', decorators)
+
 
 def _none():
     """Internal option (used in installer)"""
@@ -980,6 +1115,23 @@ def _none():
     for submodule in _common_members.keys():
         setattr(Qt, submodule, Mock())
         setattr(Qt, "_" + submodule, Mock())
+#
+#    # There is no base function to bind to, so generate fake ones
+#    def _placeholderMethod(some_function):
+#        return lambda *args, **kwargs: None
+#    def _standardizeQFileDialog(some_function):
+#        return staticmethod(lambda *args, **kwargs: ("", ""))
+#    decorators = {b: _placeholderMethod \
+#        for c in _compatibility_members['pyqt5'].values() \
+#        for b in c.values()}
+#    # These must be staticmethods not regular methods
+#    for static in [
+#            "_QtWidgets.QFileDialog.getOpenFileName",
+#            "_QtWidgets.QFileDialog.getOpenFileNames",
+#            "_QtWidgets.QFileDialog.getSaveFileName",
+#        ]:
+#        decorators[static] = _standardizeQFileDialog
+#    _build_compatibility_members('pyqt4', decorators)
 
 
 def _log(text):
@@ -1088,6 +1240,10 @@ def _loadUi(uifile, baseinstance=None):
     else:
         raise NotImplementedError("No implementation available for loadUi")
 
+
+class _QtCompat(object):
+    """ Baseclass for QtCompat namespace objects."""
+    pass
 
 def _convert(lines):
     """Convert compiled .ui file from PySide2 to Qt.py
