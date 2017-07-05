@@ -671,7 +671,7 @@ _compatibility_members = {
     "pyside2": {
         "QHeaderView": {
             'sectionResizeMode': '_QtWidgets.QHeaderView.sectionResizeMode',
-            'setSectionResizeMode': \
+            'setSectionResizeMode':
                 '_QtWidgets.QHeaderView.setSectionResizeMode',
             'sectionsMovable': '_QtWidgets.QHeaderView.sectionsMovable',
             'setSectionsMovable': '_QtWidgets.QHeaderView.setSectionsMovable',
@@ -685,7 +685,7 @@ _compatibility_members = {
     "pyqt5": {
         "QHeaderView": {
             'sectionResizeMode': '_QtWidgets.QHeaderView.sectionResizeMode',
-            'setSectionResizeMode': \
+            'setSectionResizeMode':
                 '_QtWidgets.QHeaderView.setSectionResizeMode',
             'sectionsMovable': '_QtWidgets.QHeaderView.sectionsMovable',
             'setSectionsMovable': '_QtWidgets.QHeaderView.setSectionsMovable',
