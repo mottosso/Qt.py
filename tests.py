@@ -195,17 +195,22 @@ def test_load_ui_signals():
 
     app.exit()
 
+
 def test_load_ui_mainwindow():
-    """Tests to see if the baseinstance loading loads on main windows properly"""
+    """Tests to see if the baseinstance loading loads on
+    main windows properly
+    """
     import sys
     from Qt import QtWidgets, QtCompat
     app = QtWidgets.QApplication(sys.argv)
     win = QtWidgets.QMainWindow()
     QtCompat.loadUi(self.ui_qmainwindow, win)
 
-    assert hasattr(win, 'lineEdit'), "loadUi could not load instance to main window"
+    assert hasattr(win, 'lineEdit'), \
+        "loadUi could not load instance to main window"
 
     app.exit()
+
 
 def test_load_ui_invalidpath():
     """Tests to see if loadUi successfully fails on invalid paths"""
