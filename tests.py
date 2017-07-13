@@ -45,10 +45,9 @@ def setup():
     all tests have completed.
 
     """
-
     self.tempdir = tempfile.mkdtemp()
-    self.ui_qwidget = os.path.join(self.tempdir, "qwidget.ui")
 
+    self.ui_qwidget = os.path.join(self.tempdir, "qwidget.ui")
     with io.open(self.ui_qwidget, "w", encoding="utf-8") as f:
         f.write(u"""\
 <?xml version="1.0" encoding="UTF-8"?>
@@ -104,6 +103,36 @@ def setup():
 </ui>
 """)
 
+    self.ui_qmainwindow = os.path.join(self.tempdir, "qmainwindow.ui")
+    with io.open(self.ui_qmainwindow, "w", encoding="utf-8") as f:
+        f.write(u"""\
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>238</width>
+    <height>44</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <widget class="QLineEdit" name="lineEdit"/>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
+""")
 
 def teardown():
     shutil.rmtree(self.tempdir)
@@ -163,6 +192,22 @@ def test_load_ui_signals():
 
     win.lineEdit.setText('Hello')
     assert str(win.label.text()) == 'Hello', "lineEdit signal did not fire"
+
+    app.exit()
+
+
+def test_load_ui_mainwindow():
+    """Tests to see if the baseinstance loading loads on
+    main windows properly
+    """
+    import sys
+    from Qt import QtWidgets, QtCompat
+    app = QtWidgets.QApplication(sys.argv)
+    win = QtWidgets.QMainWindow()
+    QtCompat.loadUi(self.ui_qmainwindow, win)
+
+    assert hasattr(win, 'lineEdit'), \
+        "loadUi could not load instance to main window"
 
     app.exit()
 
