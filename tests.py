@@ -424,12 +424,12 @@ def test_qtcompat_base_class():
     """Tests to ensure the QtCompat namespace object works as expected"""
     import sys
     import Qt
-    from Qt.QtWidgets import QHeaderView, QApplication
+    from Qt import QtWidgets
     from Qt import QtCompat
-    app = QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     # suppress `local variable 'app' is assigned to but never used`
     app
-    header = QHeaderView(Qt.QtCore.Qt.Horizontal)
+    header = QtWidgets.QHeaderView(Qt.QtCore.Qt.Horizontal)
 
     # Spot check compatibility functions
     QtCompat.QHeaderView.setSectionsMovable(header, False)

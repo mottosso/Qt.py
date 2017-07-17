@@ -670,56 +670,64 @@ interface for obsolete members, and differences in binding return values.
 _compatibility_members = {
     "pyside2": {
         "QHeaderView": {
-            'sectionResizeMode': '_QtWidgets.QHeaderView.sectionResizeMode',
-            'setSectionResizeMode':
-                '_QtWidgets.QHeaderView.setSectionResizeMode',
-            'sectionsMovable': '_QtWidgets.QHeaderView.sectionsMovable',
-            'setSectionsMovable': '_QtWidgets.QHeaderView.setSectionsMovable',
+            "sectionsClickable": "_QtWidgets.QHeaderView.sectionsClickable",
+            "setSectionsClickable": "_QtWidgets.QHeaderView.setSectionsClickable",
+            "sectionResizeMode": "_QtWidgets.QHeaderView.sectionResizeMode",
+            "setSectionResizeMode":
+                "_QtWidgets.QHeaderView.setSectionResizeMode",
+            "sectionsMovable": "_QtWidgets.QHeaderView.sectionsMovable",
+            "setSectionsMovable": "_QtWidgets.QHeaderView.setSectionsMovable",
         },
         "QFileDialog": {
-            'getOpenFileName': '_QtWidgets.QFileDialog.getOpenFileName',
-            'getOpenFileNames': '_QtWidgets.QFileDialog.getOpenFileNames',
-            'getSaveFileName': '_QtWidgets.QFileDialog.getSaveFileName',
+            "getOpenFileName": "_QtWidgets.QFileDialog.getOpenFileName",
+            "getOpenFileNames": "_QtWidgets.QFileDialog.getOpenFileNames",
+            "getSaveFileName": "_QtWidgets.QFileDialog.getSaveFileName",
         },
     },
     "pyqt5": {
         "QHeaderView": {
-            'sectionResizeMode': '_QtWidgets.QHeaderView.sectionResizeMode',
-            'setSectionResizeMode':
-                '_QtWidgets.QHeaderView.setSectionResizeMode',
-            'sectionsMovable': '_QtWidgets.QHeaderView.sectionsMovable',
-            'setSectionsMovable': '_QtWidgets.QHeaderView.setSectionsMovable',
+            "sectionsClickable": "_QtWidgets.QHeaderView.sectionsClickable",
+            "setSectionsClickable": "_QtWidgets.QHeaderView.setSectionsClickable",
+            "sectionResizeMode": "_QtWidgets.QHeaderView.sectionResizeMode",
+            "setSectionResizeMode":
+                "_QtWidgets.QHeaderView.setSectionResizeMode",
+            "sectionsMovable": "_QtWidgets.QHeaderView.sectionsMovable",
+            "setSectionsMovable": "_QtWidgets.QHeaderView.setSectionsMovable",
         },
         "QFileDialog": {
-            'getOpenFileName': '_QtWidgets.QFileDialog.getOpenFileName',
-            'getOpenFileNames': '_QtWidgets.QFileDialog.getOpenFileNames',
-            'getSaveFileName': '_QtWidgets.QFileDialog.getSaveFileName',
+            "getOpenFileName": "_QtWidgets.QFileDialog.getOpenFileName",
+            "getOpenFileNames": "_QtWidgets.QFileDialog.getOpenFileNames",
+            "getSaveFileName": "_QtWidgets.QFileDialog.getSaveFileName",
         },
     },
     "pyside": {
         "QHeaderView": {
-            'sectionResizeMode': '_QtWidgets.QHeaderView.resizeMode',
-            'setSectionResizeMode': '_QtWidgets.QHeaderView.setResizeMode',
-            'sectionsMovable': '_QtWidgets.QHeaderView.isMovable',
-            'setSectionsMovable': '_QtWidgets.QHeaderView.setMovable',
+            "sectionsClickable": "_QtWidgets.QHeaderView.isClickable",
+            "setSectionsClickable": "_QtWidgets.QHeaderView.setClickable",
+            "sectionResizeMode": "_QtWidgets.QHeaderView.resizeMode",
+            "setSectionResizeMode": "_QtWidgets.QHeaderView.setResizeMode",
+            "sectionsMovable": "_QtWidgets.QHeaderView.isMovable",
+            "setSectionsMovable": "_QtWidgets.QHeaderView.setMovable",
         },
         "QFileDialog": {
-            'getOpenFileName': '_QtWidgets.QFileDialog.getOpenFileName',
-            'getOpenFileNames': '_QtWidgets.QFileDialog.getOpenFileNames',
-            'getSaveFileName': '_QtWidgets.QFileDialog.getSaveFileName',
+            "getOpenFileName": "_QtWidgets.QFileDialog.getOpenFileName",
+            "getOpenFileNames": "_QtWidgets.QFileDialog.getOpenFileNames",
+            "getSaveFileName": "_QtWidgets.QFileDialog.getSaveFileName",
         },
     },
     "pyqt4": {
         "QHeaderView": {
-            'sectionResizeMode': '_QtWidgets.QHeaderView.resizeMode',
-            'setSectionResizeMode': '_QtWidgets.QHeaderView.setResizeMode',
-            'sectionsMovable': '_QtWidgets.QHeaderView.isMovable',
-            'setSectionsMovable': '_QtWidgets.QHeaderView.setMovable',
+            "sectionsClickable": "_QtWidgets.QHeaderView.isClickable",
+            "setSectionsClickable": "_QtWidgets.QHeaderView.setClickable",
+            "sectionResizeMode": "_QtWidgets.QHeaderView.resizeMode",
+            "setSectionResizeMode": "_QtWidgets.QHeaderView.setResizeMode",
+            "sectionsMovable": "_QtWidgets.QHeaderView.isMovable",
+            "setSectionsMovable": "_QtWidgets.QHeaderView.setMovable",
         },
         "QFileDialog": {
-            'getOpenFileName': '_QtWidgets.QFileDialog.getOpenFileName',
-            'getOpenFileNames': '_QtWidgets.QFileDialog.getOpenFileNames',
-            'getSaveFileName': '_QtWidgets.QFileDialog.getSaveFileName',
+            "getOpenFileName": "_QtWidgets.QFileDialog.getOpenFileName",
+            "getOpenFileNames": "_QtWidgets.QFileDialog.getOpenFileNames",
+            "getSaveFileName": "_QtWidgets.QFileDialog.getSaveFileName",
         },
     },
 }
