@@ -744,7 +744,9 @@ def _apply_site_config():
         pass
     else:
         # Update _common_members with any changes made by QtSiteConfig
-        QtSiteConfig.update_members(_common_members)
+        QtSiteConfig.update_members(_common_members, 'common')
+        QtSiteConfig.update_members(_misplaced_members, 'misplaced')
+        QtSiteConfig.update_members(_compatibility_members, 'compatibility')
 
 
 def _new_module(name):
@@ -858,6 +860,17 @@ def _build_compatibility_members(binding, decorators={}):
             match the binding_namespace of _compatibility_members and the value
             is a decorator that will be called on the function being bound.
     """
+    # Allow site-level customization of the compatibility members.
+    try:
+        import QtSiteConfig
+        QtSiteConfig.update_compatibility_decorators
+    except (ImportError, AttributeError):
+        # QtSiteConfig and QtSiteConfig.update_compatibility_decorators
+        # are optional.
+        pass
+    else:
+        # Allow QtSiteConfig to modify decorators if needed.
+        QtSiteConfig.update_compatibility_decorators(binding, decorators)
 
     for classname, bindings in _compatibility_members[binding].items():
         attrs = {}
@@ -1125,23 +1138,6 @@ def _none():
     for submodule in _common_members.keys():
         setattr(Qt, submodule, Mock())
         setattr(Qt, "_" + submodule, Mock())
-#
-#    # There is no base function to bind to, so generate fake ones
-#    def _placeholderMethod(some_function):
-#        return lambda *args, **kwargs: None
-#    def _standardizeQFileDialog(some_function):
-#        return staticmethod(lambda *args, **kwargs: ("", ""))
-#    decorators = {b: _placeholderMethod \
-#        for c in _compatibility_members['pyqt5'].values() \
-#        for b in c.values()}
-#    # These must be staticmethods not regular methods
-#    for static in [
-#            "_QtWidgets.QFileDialog.getOpenFileName",
-#            "_QtWidgets.QFileDialog.getOpenFileNames",
-#            "_QtWidgets.QFileDialog.getSaveFileName",
-#        ]:
-#        decorators[static] = _standardizeQFileDialog
-#    _build_compatibility_members('pyqt4', decorators)
 
 
 def _log(text):
