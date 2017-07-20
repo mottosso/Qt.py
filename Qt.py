@@ -611,7 +611,7 @@ These members from the original submodule are misplaced relative PySide2
 
 """
 _misplaced_members = {
-    "pyside2": {
+    "PySide2": {
         "QtGui.QStringListModel": "QtCore.QStringListModel",
         "QtCore.Property": "QtCore.Property",
         "QtCore.Signal": "QtCore.Signal",
@@ -621,7 +621,7 @@ _misplaced_members = {
         "QtCore.QItemSelection": "QtCore.QItemSelection",
         "QtCore.QItemSelectionModel": "QtCore.QItemSelectionModel",
     },
-    "pyqt5": {
+    "PyQt5": {
         "QtCore.pyqtProperty": "QtCore.Property",
         "QtCore.pyqtSignal": "QtCore.Signal",
         "QtCore.pyqtSlot": "QtCore.Slot",
@@ -631,7 +631,7 @@ _misplaced_members = {
         "QtCore.QItemSelection": "QtCore.QItemSelection",
         "QtCore.QItemSelectionModel": "QtCore.QItemSelectionModel",
     },
-    "pyside": {
+    "PySide": {
         "QtGui.QAbstractProxyModel": "QtCore.QAbstractProxyModel",
         "QtGui.QSortFilterProxyModel": "QtCore.QSortFilterProxyModel",
         "QtGui.QStringListModel": "QtCore.QStringListModel",
@@ -642,7 +642,7 @@ _misplaced_members = {
         "QtCore.Slot": "QtCore.Slot",
 
     },
-    "pyqt4": {
+    "PyQt4": {
         "QtGui.QAbstractProxyModel": "QtCore.QAbstractProxyModel",
         "QtGui.QSortFilterProxyModel": "QtCore.QSortFilterProxyModel",
         "QtGui.QItemSelection": "QtCore.QItemSelection",
@@ -668,7 +668,7 @@ interface for obsolete members, and differences in binding return values.
 }
 """
 _compatibility_members = {
-    "pyside2": {
+    "PySide2": {
         "QHeaderView": {
             "sectionsClickable": "_QtWidgets.QHeaderView.sectionsClickable",
             "setSectionsClickable":
@@ -685,7 +685,7 @@ _compatibility_members = {
             "getSaveFileName": "_QtWidgets.QFileDialog.getSaveFileName",
         },
     },
-    "pyqt5": {
+    "PyQt5": {
         "QHeaderView": {
             "sectionsClickable": "_QtWidgets.QHeaderView.sectionsClickable",
             "setSectionsClickable":
@@ -702,7 +702,7 @@ _compatibility_members = {
             "getSaveFileName": "_QtWidgets.QFileDialog.getSaveFileName",
         },
     },
-    "pyside": {
+    "PySide": {
         "QHeaderView": {
             "sectionsClickable": "_QtWidgets.QHeaderView.isClickable",
             "setSectionsClickable": "_QtWidgets.QHeaderView.setClickable",
@@ -717,7 +717,7 @@ _compatibility_members = {
             "getSaveFileName": "_QtWidgets.QFileDialog.getSaveFileName",
         },
     },
-    "pyqt4": {
+    "PyQt4": {
         "QHeaderView": {
             "sectionsClickable": "_QtWidgets.QHeaderView.isClickable",
             "setSectionsClickable": "_QtWidgets.QHeaderView.setClickable",
@@ -925,8 +925,8 @@ def _pyside2():
         Qt.QtCompat.setSectionResizeMode = \
             Qt._QtWidgets.QHeaderView.setSectionResizeMode
 
-    _reassign_misplaced_members("pyside2")
-    _build_compatibility_members("pyside2")
+    _reassign_misplaced_members("PySide2")
+    _build_compatibility_members("PySide2")
 
 
 def _pyside():
@@ -972,8 +972,8 @@ def _pyside():
             )
         )
 
-    _reassign_misplaced_members("pyside")
-    _build_compatibility_members("pyside")
+    _reassign_misplaced_members("PySide")
+    _build_compatibility_members("PySide")
 
 
 def _pyqt5():
@@ -1006,8 +1006,8 @@ def _pyqt5():
         Qt.QtCompat.setSectionResizeMode = \
             Qt._QtWidgets.QHeaderView.setSectionResizeMode
 
-    _reassign_misplaced_members("pyqt5")
-    _build_compatibility_members('pyqt5')
+    _reassign_misplaced_members("PyQt5")
+    _build_compatibility_members('PyQt5')
 
 
 def _pyqt4():
@@ -1087,7 +1087,7 @@ def _pyqt4():
                 n)
         )
 
-    _reassign_misplaced_members("pyqt4")
+    _reassign_misplaced_members("PyQt4")
 
     # QFileDialog QtCompat decorator
     def _standardizeQFileDialog(some_function):
@@ -1108,7 +1108,7 @@ def _pyqt4():
         "_QtWidgets.QFileDialog.getOpenFileNames": _standardizeQFileDialog,
         "_QtWidgets.QFileDialog.getSaveFileName": _standardizeQFileDialog,
     }
-    _build_compatibility_members('pyqt4', decorators)
+    _build_compatibility_members('PyQt4', decorators)
 
 
 def _none():
