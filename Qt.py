@@ -883,8 +883,8 @@ def _build_compatibility_members(binding, decorators={}):
             attrs[target] = src_object
 
         # Create the QtCompat class and install it into the namespace
-        cls = type(classname, tuple([_QtCompat]), attrs)
-        setattr(Qt.QtCompat, classname, cls)
+        compat_class = type(classname, tuple([_QtCompat]), attrs)
+        setattr(Qt.QtCompat, classname, compat_class)
 
 
 def _pyside2():
