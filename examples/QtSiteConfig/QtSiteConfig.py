@@ -1,6 +1,7 @@
 # Contrived example used for unit testing. For a more realistic example
 # see the README
 
+
 def update_members(members, step):
     """This function is called by Qt.py to modify the modules it exposes.
 
@@ -26,6 +27,7 @@ def update_members(members, step):
                 # the returned value.
                 "windowTitleDecorator": "_QtWidgets.QWidget.windowTitle",
             }
+
 
 def update_compatibility_decorators(binding, decorators):
     """ This function is called by Qt.py to modify the decorators applied to

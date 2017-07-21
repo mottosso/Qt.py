@@ -33,10 +33,15 @@ def test():
     win.setWindowTitle(title)
 
     # Verify that our simple remapping of QWidget.windowTitle works
-    assert QtCompat.QWidget.windowTitleTest(win) == title
+    assert QtCompat.QWidget.windowTitleTest(win) == title, \
+        "Non-decorated function was added to QtCompat.QWidget"
     # Verify that our decorated remapping of QWidget.windowTitle works
     check = 'Test: {}'.format(title)
-    assert QtCompat.QWidget.windowTitleDecorator(win) == check
+    assert QtCompat.QWidget.windowTitleDecorator(win) == check, \
+        "Decorated function was added to QtCompat.QWidget"
+
+    # Suppress 'app' imported but unused warning
+    app
 
 
 if __name__ == '__main__':

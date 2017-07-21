@@ -1134,7 +1134,7 @@ def _pyqt4():
         "getOpenFileName:_QtWidgets.QFileDialog.getOpenFileName":
             _standardizeQFileDialog,
         "getOpenFileNames:_QtWidgets.QFileDialog.getOpenFileNames":
-                _standardizeQFileDialog,
+            _standardizeQFileDialog,
         "getSaveFileName:_QtWidgets.QFileDialog.getSaveFileName":
             _standardizeQFileDialog,
     }
