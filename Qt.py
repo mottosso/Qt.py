@@ -857,20 +857,21 @@ def _build_compatibility_members(binding, decorators={}):
         decorators (dict, optional): Provides the ability to decorate the
             original Qt functions when needed by a binding. This can be used
             to change the returned value to a standard value. The key should
-            match the binding_namespace of _compatibility_members and the value
-            is a decorator that will be called on the function being bound.
+            match "targetname:binding_namespace". targetname is the function
+            name that the decorator will be applied to. binding_namespace
+            should match the binding_namespace of _compatibility_members.
+            The value is a decorator that will be called on the function
+            being bound.
     """
-    # Allow site-level customization of the compatibility members.
+    # Allow optional site-level customization of the compatibility members.
+    # This method does not need to be implemented in QtSiteConfig.
     try:
         import QtSiteConfig
-        QtSiteConfig.update_compatibility_decorators
-    except (ImportError, AttributeError):
-        # QtSiteConfig and QtSiteConfig.update_compatibility_decorators
-        # are optional.
+    except ImportError:
         pass
     else:
-        # Allow QtSiteConfig to modify decorators if needed.
-        QtSiteConfig.update_compatibility_decorators(binding, decorators)
+        if hasattr(QtSiteConfig, 'update_compatibility_decorators'):
+            QtSiteConfig.update_compatibility_decorators(binding, decorators)
 
     for classname, bindings in _compatibility_members[binding].items():
         attrs = {}
@@ -878,7 +879,8 @@ def _build_compatibility_members(binding, decorators={}):
             namespaces = binding.split('.')
             try:
                 src_object = getattr(Qt, namespaces[0])
-            except AttributeError:
+            except AttributeError as e:
+                _log("QtCompat: AttributeError: %s" % e)
                 # Skip reassignment of non-existing members.
                 # This can happen if a request was made to
                 # rename a member that didn't exist, for example
@@ -889,9 +891,21 @@ def _build_compatibility_members(binding, decorators={}):
             for namespace in namespaces[1:]:
                 src_object = getattr(src_object, namespace)
 
+            # To allow remapping a single Qt function to multiple QtCompat
+            # method names with unique decorators applied, we need a way
+            # to uniquely identify the decorator. For example, to map the
+            # getOpenFileName method to _QtWidgets.QFileDialog.getOpenFileName
+            # use: "getOpenFileName:_QtWidgets.QFileDialog.getOpenFileName"
+            decoratorId = '{target}:{binding}'.format(
+                target=target,
+                binding=binding,
+            )
             # decorate the Qt function if a decorator was provided.
-            if binding in decorators:
-                src_object = decorators[binding](src_object)
+            if decoratorId in decorators:
+                # staticmethod must be called on the decorated function to
+                # prevent a TypeError being raised when the decorated function
+                # is called.
+                src_object = staticmethod(decorators[decoratorId](src_object))
 
             attrs[target] = src_object
 
@@ -1117,9 +1131,12 @@ def _pyqt4():
         return staticmethod(wrapper)
 
     decorators = {
-        "_QtWidgets.QFileDialog.getOpenFileName": _standardizeQFileDialog,
-        "_QtWidgets.QFileDialog.getOpenFileNames": _standardizeQFileDialog,
-        "_QtWidgets.QFileDialog.getSaveFileName": _standardizeQFileDialog,
+        "getOpenFileName:_QtWidgets.QFileDialog.getOpenFileName":
+            _standardizeQFileDialog,
+        "getOpenFileNames:_QtWidgets.QFileDialog.getOpenFileNames":
+                _standardizeQFileDialog,
+        "getSaveFileName:_QtWidgets.QFileDialog.getSaveFileName":
+            _standardizeQFileDialog,
     }
     _build_compatibility_members('PyQt4', decorators)
 
