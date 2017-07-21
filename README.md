@@ -232,15 +232,16 @@ If you need to expose a module that isn't included in Qt.py by default or wish t
 
 ```python
 # QtSiteConfig.py
-def update_members(members):
-	"""Called by Qt.py at run-time to modify the modules it makes available.
+def update_members(members, step):
+    """Called by Qt.py at run-time to modify the modules it makes available.
 
     Arguments:
         members (dict): The members considered by Qt.py
-
+        step (str): Used to identify what members will be used for.
     """
 
-    members.pop("QtCore")
+    if step == 'common':
+        members.pop("QtCore")
 ```
 
 Finally, expose the module to Python.
@@ -386,6 +387,7 @@ Send us a pull-request with your studio here.
 - [CGRU](http://cgru.info/)
 - [MPC](http://www.moving-picture.com)
 - [Rising Sun Pictures](https://rsp.com.au)
+- [Blur Studio](http://www.blur.com)
 
 Presented at Siggraph 2016, BOF!
 
