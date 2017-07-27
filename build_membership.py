@@ -24,16 +24,9 @@ def build_membership():
                     "QtPrintSupport"):
         __all__.append(missing)
 
-    # Why `import *`?
-    #
-    # PySide, and PyQt, perform magic that triggers via Python's
-    # import mechanism. If we try and sidestep it in any way, say
-    # by using `imp.load_module` or `__import__`, the mechanism
-    # will not trigger and the compiled libraries will not get loaded.
-    #
-    # Wildcard was the only way I could think of to import everything,
-    # without hardcoding the members, such as QtCore into the function.
-    from PySide2 import *
+    # Import modules
+    for module in __all__:
+        exec('from PySide2 import ' + module)
 
     # Serialise members
     members = {}
@@ -41,7 +34,7 @@ def build_membership():
         if name.startswith("_"):
             continue
 
-        if name in ("json", "members", "missing"):
+        if name in ("json", "members", "missing", "module"):
             continue
 
         members[name] = list(member for member in dir(module)
