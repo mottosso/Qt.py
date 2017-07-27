@@ -43,7 +43,7 @@ import types
 import shutil
 import importlib
 
-__version__ = "1.1.0.b1"
+__version__ = "1.1.0.b2"
 
 # Enable support for `from Qt import *`
 __all__ = []
@@ -1237,10 +1237,7 @@ def _install():
             setattr(our_submodule, member, their_member)
 
     # Backwards compatibility
-    try:
-        Qt.QtCompat.load_ui = Qt.QtCompat.loadUi
-    except AttributeError:
-        pass
+    Qt.QtCompat.load_ui = Qt.QtCompat.loadUi
 
 
 _install()
