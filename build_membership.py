@@ -4,12 +4,7 @@ import json
 def build_membership():
     """Generate a .json file with all members of PySide2"""
 
-    # NOTE: PySide2, as of this writing, is incomplete.
-    # In it's __all__ module is a module, `QtOpenGL`
-    # that does no exists. This causes `import *` to fail.
-
     from PySide2 import __all__
-    __all__.remove("QtOpenGL")
 
     # These modules do not exist pre-Qt 5,
     # so do not bother testing for them.
