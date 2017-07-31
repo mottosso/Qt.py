@@ -745,9 +745,15 @@ def _apply_site_config():
         pass
     else:
         # Update _common_members with any changes made by QtSiteConfig
-        QtSiteConfig.update_members(_common_members, 'common')
-        QtSiteConfig.update_members(_misplaced_members, 'misplaced')
-        QtSiteConfig.update_members(_compatibility_members, 'compatibility')
+        try:
+            QtSiteConfig.update_members(_common_members, 'common')
+            QtSiteConfig.update_members(_misplaced_members, 'misplaced')
+            QtSiteConfig.update_members(_compatibility_members, 'compatibility')
+        except TypeError:
+            # Handle the old method signature so we don't break backwards
+            # compatibility with previous versions of QtSiteConfig
+            _log("QtSiteConfig.update_members now takes (dict, step) arguments")
+            QtSiteConfig.update_members(_common_members)
 
 
 def _new_module(name):
