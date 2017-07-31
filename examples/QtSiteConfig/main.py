@@ -25,6 +25,24 @@ def test():
         # Suppress 'Qt.QtCore' imported but unused warning
         QtCore
 
+    # Test _compatibility_members is applied correctly
+    title = 'Test Widget'
+    from Qt import QtWidgets, QtCompat
+    app = QtWidgets.QApplication(sys.argv)
+    win = QtWidgets.QWidget()
+    win.setWindowTitle(title)
+
+    # Verify that our simple remapping of QWidget.windowTitle works
+    assert QtCompat.QWidget.windowTitleTest(win) == title, \
+        "Non-decorated function was added to QtCompat.QWidget"
+    # Verify that our decorated remapping of QWidget.windowTitle works
+    check = 'Test: {}'.format(title)
+    assert QtCompat.QWidget.windowTitleDecorator(win) == check, \
+        "Decorated function was added to QtCompat.QWidget"
+
+    # Suppress 'app' imported but unused warning
+    app
+
 
 if __name__ == '__main__':
     test()
