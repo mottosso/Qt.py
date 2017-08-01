@@ -22,10 +22,10 @@ def update_members(members, step):
         for binding in ("PySide2", "PyQt5", "PySide", "PyQt4"):
             members[binding]["QWidget"] = {
                 # Simple remapping of QWidget.windowTitle
-                "windowTitleTest": "_QtWidgets.QWidget.windowTitle",
+                "windowTitleTest": "QtWidgets.QWidget.windowTitle",
                 # Remap QWidget.windowTitle with a decorator that modifies
                 # the returned value.
-                "windowTitleDecorator": "_QtWidgets.QWidget.windowTitle",
+                "windowTitleDecorator": "QtWidgets.QWidget.windowTitle",
             }
 
 
@@ -52,5 +52,5 @@ def update_compatibility_decorators(binding, decorators):
         return wrapper
 
     # Install the decorator so it will be applied to the QtCompat object
-    decorators['windowTitleDecorator:_QtWidgets.QWidget.windowTitle'] = \
+    decorators['windowTitleDecorator:QtWidgets.QWidget.windowTitle'] = \
         _testFunction
