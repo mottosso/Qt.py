@@ -118,9 +118,9 @@ def update_members_example(members, step):
     """
     if step == 'compatibility':
         members['PyQt4']["QFileDialog"] = {
-            "getOpenFileName": "_QtWidgets.QFileDialog.getOpenFileName",
-            "getOpenFileNames": "_QtWidgets.QFileDialog.getOpenFileNames",
-            "getSaveFileName": "_QtWidgets.QFileDialog.getSaveFileName",
+            "getOpenFileName": "QtWidgets.QFileDialog.getOpenFileName",
+            "getOpenFileNames": "QtWidgets.QFileDialog.getOpenFileNames",
+            "getSaveFileName": "QtWidgets.QFileDialog.getSaveFileName",
         }
 
 def update_compatibility_decorators_example(binding, decorators):
@@ -149,10 +149,10 @@ def update_compatibility_decorators_example(binding, decorators):
             wrapper.__doc__ = some_function.__doc__
             wrapper.__name__ = some_function.__name__
             return wrapper
-        decorators["getOpenFileName:_QtWidgets.QFileDialog.getOpenFileName"] = \
+        decorators["getOpenFileName:QtWidgets.QFileDialog.getOpenFileName"] = \
             _standardizeQFileDialog
-        decorators["getOpenFileNames:_QtWidgets.QFileDialog.getOpenFileNames"] = \
+        decorators["getOpenFileNames:QtWidgets.QFileDialog.getOpenFileNames"] = \
             _standardizeQFileDialog
-        decorators["getSaveFileName:_QtWidgets.QFileDialog.getSaveFileName"] = \
+        decorators["getSaveFileName:QtWidgets.QFileDialog.getSaveFileName"] = \
             _standardizeQFileDialog
 ```
