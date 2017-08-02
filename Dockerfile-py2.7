@@ -3,6 +3,7 @@ FROM fredrikaverpil/vfxplatform
 RUN yum update -y && \
     yum install -y \
         xorg-x11-server-Xvfb \
+        mesa-dri-drivers \
         libxkbcommon \
         libxkbcommon-devel \
         libxkbcommon-x11 \
