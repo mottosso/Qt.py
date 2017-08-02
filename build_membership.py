@@ -94,7 +94,9 @@ def test_{binding}_members():
                         "QtPrintSupport"):
             __all__.append(missing)
 
-    from Qt import *
+    # Import modules
+    for module in __all__:
+        exec('from PySide2 import ' + module)
 
     if "PySide" == "{Binding}":
         # TODO: This needs a more robust implementation.
