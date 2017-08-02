@@ -32,8 +32,8 @@ ENV PYTHONWARNINGS="ignore"
 WORKDIR /workspace/Qt.py
 
 # RUN ls /usr/lib64/python2.7/site-packages/
-RUN cp -avr /usr/lib64/python2.7/site-packages/sip* /usr/local/python/lib/python2.7/site-packages && \
-    cp -avr /usr/lib64/python2.7/site-packages/PyQt4 /usr/local/python/lib/python2.7/site-packages && \
+# RUN cp -avr /usr/lib64/python2.7/site-packages/sip* /usr/local/python/lib/python2.7/site-packages && \
+RUN cp -avr /usr/lib64/python2.7/site-packages/PyQt4 /usr/local/python/lib/python2.7/site-packages && \
     cp -avr /usr/lib64/python2.7/site-packages/shiboken* /usr/local/python/lib/python2.7/site-packages && \
     cp -avr /usr/lib64/python2.7/site-packages/PySide /usr/local/python/lib/python2.7/site-packages
 
