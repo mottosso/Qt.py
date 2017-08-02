@@ -437,7 +437,6 @@ _common_members = {
         "QMetaMethod",
         "QMetaObject",
         "QMetaProperty",
-        "QMetaType",
         "QMimeData",
         "QModelIndex",
         "QMutex",
