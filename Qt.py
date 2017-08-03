@@ -1129,7 +1129,7 @@ def _pyqt4():
 
     decorators = {
         "QFileDialog": {
-            "getOpenFileName":_standardizeQFileDialog,
+            "getOpenFileName": _standardizeQFileDialog,
             "getOpenFileNames": _standardizeQFileDialog,
             "getSaveFileName": _standardizeQFileDialog,
         }

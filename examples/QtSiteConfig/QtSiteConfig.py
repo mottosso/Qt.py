@@ -14,6 +14,7 @@ def update_members(members):
     # more realistic example see the README
     members.pop("QtCore")
 
+
 def update_misplaced_members(members):
     """This optional function is called by Qt.py to standardize the location
     and naming of exposed classes.
@@ -25,6 +26,7 @@ def update_misplaced_members(members):
     members["PyQt5"]["QtGui.QColor"] = "QtGui.QColorTest"
     members["PySide"]["QtGui.QColor"] = "QtGui.QColorTest"
     members["PyQt4"]["QtGui.QColor"] = "QtGui.QColorTest"
+
 
 def update_compatibility_members(members):
     """This optional function is called by Qt.py to modify the structure of
@@ -46,6 +48,7 @@ def update_compatibility_members(members):
         members[binding]["QMainWindow"] = {
             "windowTitleDecorator": "QtWidgets.QMainWindow.windowTitle"
         }
+
 
 def update_compatibility_decorators(binding, decorators):
     """ This optional function is called by Qt.py to modify the decorators
