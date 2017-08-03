@@ -1129,14 +1129,14 @@ def _pyqt4():
         # preserve docstring and name of original function
         wrapper.__doc__ = some_function.__doc__
         wrapper.__name__ = some_function.__name__
-        return staticmethod(wrapper)
+        return wrapper
 
     decorators = {
-        "getOpenFileName:_QtWidgets.QFileDialog.getOpenFileName":
+        "getOpenFileName:QtWidgets.QFileDialog.getOpenFileName":
             _standardizeQFileDialog,
-        "getOpenFileNames:_QtWidgets.QFileDialog.getOpenFileNames":
+        "getOpenFileNames:QtWidgets.QFileDialog.getOpenFileNames":
             _standardizeQFileDialog,
-        "getSaveFileName:_QtWidgets.QFileDialog.getSaveFileName":
+        "getSaveFileName:QtWidgets.QFileDialog.getSaveFileName":
             _standardizeQFileDialog,
     }
     _build_compatibility_members('PyQt4', decorators)
