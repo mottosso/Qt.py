@@ -2,8 +2,6 @@
 
 This example illustrates how to make a QtSiteConfig module and how it affects Qt.py at run-time.
 
-<br>
-
 **Usage**
 
 ```bash
@@ -24,115 +22,125 @@ $ python main.py
 
 <br>
 
-**Advanced example**
+**Advanced examples**
 
-If you need to  you can also add modules that are not in the standard Qt.py.
+If you need to you can also add modules that are not in the standard Qt.py. All of these functions are optional in QtSiteConfig, so only implement the functions you need.
 
 #### QtSiteConfig.py: Adding non-standard modules
 
-This example shows how to add a module that is not included by default with Qt.py.
+By default Qt.py only exposes the "lowest common denominator" of all bindings. This example shows how to add the Qsci module that is not included by default with Qt.py.
 
 ```python
-def update_members_example(members):
+def update_members(members):
     """An example of adding Qsci to Qt.py.
-    
-    Remove "_example" from the function name to use this example.
 
     Arguments:
         members (dict): The default list of members in Qt.py.
             Update this dict with any modifications needed.
-
     """
 
-    if step == 'common':
-        # Include Qsci module for scintilla lexer support.
-        members["Qsci"] = [
-            "QsciAPIs",
-            "QsciAbstractAPIs",
-            "QsciCommand",
-            "QsciCommandSet",
-            "QsciDocument",
-            "QsciLexer",
-            "QsciLexerAVS",
-            "QsciLexerBash",
-            "QsciLexerBatch",
-            "QsciLexerCMake",
-            "QsciLexerCPP",
-            "QsciLexerCSS",
-            "QsciLexerCSharp",
-            "QsciLexerCoffeeScript",
-            "QsciLexerCustom",
-            "QsciLexerD",
-            "QsciLexerDiff",
-            "QsciLexerFortran",
-            "QsciLexerFortran77",
-            "QsciLexerHTML",
-            "QsciLexerIDL",
-            "QsciLexerJSON",
-            "QsciLexerJava",
-            "QsciLexerJavaScript",
-            "QsciLexerLua",
-            "QsciLexerMakefile",
-            "QsciLexerMarkdown",
-            "QsciLexerMatlab",
-            "QsciLexerOctave",
-            "QsciLexerPO",
-            "QsciLexerPOV",
-            "QsciLexerPascal",
-            "QsciLexerPerl",
-            "QsciLexerPostScript",
-            "QsciLexerProperties",
-            "QsciLexerPython",
-            "QsciLexerRuby",
-            "QsciLexerSQL",
-            "QsciLexerSpice",
-            "QsciLexerTCL",
-            "QsciLexerTeX",
-            "QsciLexerVHDL",
-            "QsciLexerVerilog",
-            "QsciLexerXML",
-            "QsciLexerYAML",
-            "QsciMacro",
-            "QsciPrinter",
-            "QsciScintilla",
-            "QsciScintillaBase",
-            "QsciStyle",
-            "QsciStyledText",
-        ]
+    # Include Qsci module for scintilla lexer support.
+    members["Qsci"] = [
+        "QsciAPIs",
+        "QsciAbstractAPIs",
+        "QsciCommand",
+        "QsciCommandSet",
+        "QsciDocument",
+        "QsciLexer",
+        "QsciLexerAVS",
+        "QsciLexerBash",
+        "QsciLexerBatch",
+        "QsciLexerCMake",
+        "QsciLexerCPP",
+        "QsciLexerCSS",
+        "QsciLexerCSharp",
+        "QsciLexerCoffeeScript",
+        "QsciLexerCustom",
+        "QsciLexerD",
+        "QsciLexerDiff",
+        "QsciLexerFortran",
+        "QsciLexerFortran77",
+        "QsciLexerHTML",
+        "QsciLexerIDL",
+        "QsciLexerJSON",
+        "QsciLexerJava",
+        "QsciLexerJavaScript",
+        "QsciLexerLua",
+        "QsciLexerMakefile",
+        "QsciLexerMarkdown",
+        "QsciLexerMatlab",
+        "QsciLexerOctave",
+        "QsciLexerPO",
+        "QsciLexerPOV",
+        "QsciLexerPascal",
+        "QsciLexerPerl",
+        "QsciLexerPostScript",
+        "QsciLexerProperties",
+        "QsciLexerPython",
+        "QsciLexerRuby",
+        "QsciLexerSQL",
+        "QsciLexerSpice",
+        "QsciLexerTCL",
+        "QsciLexerTeX",
+        "QsciLexerVHDL",
+        "QsciLexerVerilog",
+        "QsciLexerXML",
+        "QsciLexerYAML",
+        "QsciMacro",
+        "QsciPrinter",
+        "QsciScintilla",
+        "QsciScintillaBase",
+        "QsciStyle",
+        "QsciStyledText",
+    ]
 ```
 
 
-#### QtSiteConfig.py: Standardizing PyQt4 functionality
+#### QtSiteConfig.py: Standardizing the location of Qt classes
 
-This example reproduces functionality already in Qt.py but it provides a good example of what is necessary to create your QtCompat namespaces with custom function decorators to change how the source function runs.
+Some classes have been moved to new locations between bindings. Qt.py uses the namespace dictated by PySide2 and most members are already in place.
+This example reproduces functionality already in Qt.py but it provides a good example of how use this function.
 
 ```python
-def update_members_example(members, step):
-    """This function is called by Qt.py to modify the modules it exposes.
-
-    Remove "_example" from the function name to use this example.
+def update_misplaced_members(members):
+    """This optional function is called by Qt.py to standardize the location
+    and naming of exposed classes.
 
     Arguments:
         members (dict): The members considered by Qt.py
-        step (str): Used to identify what members will be used for.
     """
-    if step == 'compatibility':
-        members['PyQt4']["QFileDialog"] = {
-            "getOpenFileName": "QtWidgets.QFileDialog.getOpenFileName",
-            "getOpenFileNames": "QtWidgets.QFileDialog.getOpenFileNames",
-            "getSaveFileName": "QtWidgets.QFileDialog.getSaveFileName",
-        }
+    # Standardize the the Property name
+    members["PySide2"]["QtCore.Property"] = "QtCore.Property"
+    members["PyQt5"]["QtCore.pyqtProperty"] = "QtCore.Property"
+    members["PySide"]["QtCore.Property"] = "QtCore.Property"
+    members["PyQt4"]["QtCore.pyqtProperty"] = "QtCore.Property"
+```
 
-def update_compatibility_decorators_example(binding, decorators):
+#### QtSiteConfig.py: Standardizing PyQt4's QFileDialog functionality
+
+This example reproduces functionality already in Qt.py but it provides a good example of what is necessary to create your QtCompat namespaces with custom method decorators to change how the source method runs.
+
+```python
+def update_compatibility_members(members):
+    """This function is called by Qt.py to modify the modules it exposes.
+
+    Arguments:
+        members (dict): The members considered by Qt.py
+    """
+    members['PyQt4']["QFileDialog"] = {
+        "getOpenFileName": "QtWidgets.QFileDialog.getOpenFileName",
+        "getOpenFileNames": "QtWidgets.QFileDialog.getOpenFileNames",
+        "getSaveFileName": "QtWidgets.QFileDialog.getSaveFileName",
+    }
+
+def update_compatibility_decorators(binding, decorators):
     """ This function is called by Qt.py to modify the decorators applied to
     QtCompat namespace objects. Defining this method is optional.
 
-    Remove "_example" from the function name to use this example.
-
     Arguments:
         binding (str): The Qt binding being wrapped by Qt.py
-        decorators (dict): Maps specific decorator functions to
-            QtCompat namespace functions. See Qt._build_compatibility_members
+        decorators (dict): Maps specific decorator methods to
+            QtCompat namespace methods. See Qt._build_compatibility_members
             for more info.
     """
     if binding == 'PyQt4':
@@ -142,17 +150,19 @@ def update_compatibility_decorators_example(binding, decorators):
             """
             def wrapper(*args, **kwargs):
                 ret = some_function(*args, **kwargs)
-                # PyQt4 only returns the selected filename
-                # force the return to conform to all other bindings
+                # PyQt4 only returns the selected filename, force it to a
+                # standard return of the selected filename, and a empty string
+                # for the selected filter
                 return (ret, '')
-            # preserve docstring and name of original function
+            # preserve docstring and name of original method
             wrapper.__doc__ = some_function.__doc__
             wrapper.__name__ = some_function.__name__
             return wrapper
-        decorators["getOpenFileName:QtWidgets.QFileDialog.getOpenFileName"] = \
+
+        decorators.setdefault("QFileDialog",{})["getOpenFileName"] = \
             _standardizeQFileDialog
-        decorators["getOpenFileNames:QtWidgets.QFileDialog.getOpenFileNames"] = \
+        decorators.setdefault("QFileDialog",{})["getOpenFileNames"] = \
             _standardizeQFileDialog
-        decorators["getSaveFileName:QtWidgets.QFileDialog.getSaveFileName"] = \
+        decorators.setdefault("QFileDialog",{})["getSaveFileName"] = \
             _standardizeQFileDialog
 ```

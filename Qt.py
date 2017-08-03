@@ -1118,10 +1118,11 @@ def _pyqt4():
         """
         def wrapper(*args, **kwargs):
             ret = (some_function(*args, **kwargs))
-            # PyQt4 only returns the selected filename
-            # force the return to conform to all other bindings
+            # PyQt4 only returns the selected filename, force it to a
+            # standard return of the selected filename, and a empty string
+            # for the selected filter
             return (ret, '')
-        # preserve docstring and name of original function
+        # preserve docstring and name of original method
         wrapper.__doc__ = some_function.__doc__
         wrapper.__name__ = some_function.__name__
         return wrapper
