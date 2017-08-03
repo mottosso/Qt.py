@@ -744,10 +744,16 @@ def _apply_site_config():
         # to _common_members are needed.
         pass
     else:
-        # Update _common_members with any changes made by QtSiteConfig
-        QtSiteConfig.update_members(_common_members, 'common')
-        QtSiteConfig.update_members(_misplaced_members, 'misplaced')
-        QtSiteConfig.update_members(_compatibility_members, 'compatibility')
+        # Provide the ability to modify the dicts used to build Qt.py
+        if hasattr(QtSiteConfig, 'update_members'):
+            QtSiteConfig.update_members(_common_members)
+
+        if hasattr(QtSiteConfig, 'update_misplaced_members'):
+            QtSiteConfig.update_misplaced_members(members=_misplaced_members)
+
+        if hasattr(QtSiteConfig, 'update_compatibility_members'):
+            QtSiteConfig.update_compatibility_members(
+                members=_compatibility_members)
 
 
 def _new_module(name):

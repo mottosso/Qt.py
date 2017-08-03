@@ -22,11 +22,16 @@ def test():
             "applied correctly."
         )
 
-        # Suppress 'Qt.QtCore' imported but unused warning
+        # Suppress "Qt.QtCore" imported but unused warning
         QtCore
 
+    # Test _misplaced_members is applied correctly
+    from Qt import QtGui
+    assert QtGui.QColorTest == QtGui.QColor, \
+        "QtGui.QColor was not mapped to QtGui.QColorTest"
+
     # Test _compatibility_members is applied correctly
-    title = 'Test Widget'
+    title = "Test Widget"
     from Qt import QtWidgets, QtCompat
     app = QtWidgets.QApplication(sys.argv)
     win = QtWidgets.QWidget()
@@ -36,13 +41,13 @@ def test():
     assert QtCompat.QWidget.windowTitleTest(win) == title, \
         "Non-decorated function was added to QtCompat.QWidget"
     # Verify that our decorated remapping of QWidget.windowTitle works
-    check = 'Test: {}'.format(title)
+    check = "Test: {}".format(title)
     assert QtCompat.QWidget.windowTitleDecorator(win) == check, \
         "Decorated function was added to QtCompat.QWidget"
 
-    # Suppress 'app' imported but unused warning
+    # Suppress "app" imported but unused warning
     app
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     test()
