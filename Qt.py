@@ -862,13 +862,10 @@ def _build_compatibility_members(binding, decorators={}):
     Arguments:
         binding (str): Top level binding in _compatibility_members.
         decorators (dict, optional): Provides the ability to decorate the
-            original Qt functions when needed by a binding. This can be used
+            original Qt methods when needed by a binding. This can be used
             to change the returned value to a standard value. The key should
-            match "targetname:binding_namespace". targetname is the function
-            name that the decorator will be applied to. binding_namespace
-            should match the binding_namespace of _compatibility_members.
-            The value is a decorator that will be called on the function
-            being bound.
+            be the classname, the value is a dict where the keys are the
+            target method names, and the values are the decorator functions.
     """
     # Allow optional site-level customization of the compatibility members.
     # This method does not need to be implemented in QtSiteConfig.
@@ -898,21 +895,13 @@ def _build_compatibility_members(binding, decorators={}):
             for namespace in namespaces[1:]:
                 src_object = getattr(src_object, namespace)
 
-            # To allow remapping a single Qt function to multiple QtCompat
-            # method names with unique decorators applied, we need a way
-            # to uniquely identify the decorator. For example, to map the
-            # getOpenFileName method to QtWidgets.QFileDialog.getOpenFileName
-            # use: "getOpenFileName:QtWidgets.QFileDialog.getOpenFileName"
-            decoratorId = '{target}:{binding}'.format(
-                target=target,
-                binding=binding,
-            )
-            # decorate the Qt function if a decorator was provided.
-            if decoratorId in decorators:
-                # staticmethod must be called on the decorated function to
-                # prevent a TypeError being raised when the decorated function
+            # decorate the Qt method if a decorator was provided.
+            if target in decorators.get(classname, []):
+                # staticmethod must be called on the decorated method to
+                # prevent a TypeError being raised when the decorated method
                 # is called.
-                src_object = staticmethod(decorators[decoratorId](src_object))
+                src_object = staticmethod(
+                    decorators[classname][target](src_object))
 
             attrs[target] = src_object
 
@@ -1138,12 +1127,11 @@ def _pyqt4():
         return wrapper
 
     decorators = {
-        "getOpenFileName:QtWidgets.QFileDialog.getOpenFileName":
-            _standardizeQFileDialog,
-        "getOpenFileNames:QtWidgets.QFileDialog.getOpenFileNames":
-            _standardizeQFileDialog,
-        "getSaveFileName:QtWidgets.QFileDialog.getSaveFileName":
-            _standardizeQFileDialog,
+        "QFileDialog": {
+            "getOpenFileName":_standardizeQFileDialog,
+            "getOpenFileNames": _standardizeQFileDialog,
+            "getSaveFileName": _standardizeQFileDialog,
+        }
     }
     _build_compatibility_members('PyQt4', decorators)
 

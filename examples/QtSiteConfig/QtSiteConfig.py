@@ -43,6 +43,9 @@ def update_compatibility_members(members):
             # the returned value.
             "windowTitleDecorator": "QtWidgets.QWidget.windowTitle",
         }
+        members[binding]["QMainWindow"] = {
+            "windowTitleDecorator": "QtWidgets.QMainWindow.windowTitle"
+        }
 
 def update_compatibility_decorators(binding, decorators):
     """ This optional function is called by Qt.py to modify the decorators
@@ -51,11 +54,11 @@ def update_compatibility_decorators(binding, decorators):
     Arguments:
         binding (str): The Qt binding being wrapped by Qt.py
         decorators (dict): Maps specific decorator functions to
-            QtCompat namespace functions. See Qt._build_compatibility_members
+            QtCompat namespace methods. See Qt._build_compatibility_members
             for more info.
     """
 
-    def _testFunction(some_function):
+    def _widgetDecorator(some_function):
         def wrapper(*args, **kwargs):
             ret = some_function(*args, **kwargs)
             # Modifies the returned value so we can test that the
@@ -66,6 +69,18 @@ def update_compatibility_decorators(binding, decorators):
         wrapper.__name__ = some_function.__name__
         return wrapper
 
-    # Install the decorator so it will be applied to the QtCompat object
-    decorators["windowTitleDecorator:QtWidgets.QWidget.windowTitle"] = \
-        _testFunction
+    # Assign a different decorator for the same method name on each class
+    def _mainWindowDecorator(some_function):
+        def wrapper(*args, **kwargs):
+            ret = some_function(*args, **kwargs)
+            # Modifies the returned value so we can test that the
+            # decorator works.
+            return "QMainWindow Test: {}".format(ret)
+        # preserve docstring and name of original function
+        wrapper.__doc__ = some_function.__doc__
+        wrapper.__name__ = some_function.__name__
+        return wrapper
+    decorators.setdefault("QWidget", {})["windowTitleDecorator"] = \
+        _widgetDecorator
+    decorators.setdefault("QMainWindow", {})["windowTitleDecorator"] = \
+        _mainWindowDecorator
