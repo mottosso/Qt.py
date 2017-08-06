@@ -1,54 +1,84 @@
 FROM centos:7.3.1611
 
-# Devtoolset-4 (equivalent of Redhat DTS 4.1) provides GCC 5.3.1
-# Building Qt5 from git: https://wiki.qt.io/Building_Qt_5_from_Git
-# Qt5 requirements: http://doc.qt.io/qt-5/linux-requirements.html
-# Qt Web Engine: http://doc.qt.io/qt-5/qtwebengine-platform-notes.html
-#                https://wiki.qt.io/How_to_Try_QtWebEngine
-# PySide2: https://wiki.qt.io/PySide2_GettingStarted
-
-# Show available devtools-4 packages
-# RUN yum list available devtoolset-4-\*
-
 RUN yum install -y deltarpm && \
     yum update -y && \
     yum install -y \
         # Devtools requirements
-        centos-release-scl \
+            centos-release-scl \
         # cmake3 requirements
-        epel-release && \
+            epel-release && \
     yum install -y \
         # gcc 5.3.1 (via Devtools which is equivalent of RedHat DTS)
-        devtoolset-4-gcc*-5.3.1 \
+            devtoolset-4-gcc*-5.3.1 \
         # glibc 2.17
-        glibc-*-2.17 \
+            glibc-*-2.17 \
         # Qt5 requirements
-        libXrender* libxcb* xcb* fontconfig* freetype* libXi* libXext* libX11* libSM* libICE* libglib* libpthread* gstreamer* \
-        # QtWebEngine requirements
-        bison* flex* gperf* libicu-devel libxslt-devel ruby \
-        libgcrypt-devel libgcrypt pciutils-devel nss-devel libXtst-devel gperf cups-devel pulseaudio-libs-devel libgudev1-devel systemd-devel libcap-devel alsa-lib-devel flex bison ruby gcc-c++ dbus libXrandr-devel libXcomposite-devel libXcursor-devel dbus-devel fontconfig-devel \
+            # http://doc.qt.io/qt-5/linux-requirements.html
+                libXrender* libxcb* xcb* fontconfig* freetype* libXi* libXext* libX11* libSM* libICE* libglib* libpthread* gstreamer* \
+            # https://wiki.qt.io/Building_Qt_5_from_Git
+                # Build essentials
+                    perl-version \
+                # Libxcb
+                    libxcb libxcb-devel xcb-util xcb-util-devel xcb-util-*-devel libX11-devel libXrender-devel libXi-devel \
+                # Accessibility
+                    at-spi2-core-devel \
+                    libdbus* \
+                # QtWebkit
+                    flex bison gperf libicu-devel libxslt-devel ruby \
+                # QtMultimedia
+                    alsa-lib alsa-lib-devel gstreamer gstreamer-devel gstreamer-plugins-base gstreamer-plugins-base-devel \
+                # libICU
+                    libicu-devel \
+        # QtWebEngine requirements (disabled because of "error code 2" during make)
+            # http://doc.qt.io/qt-5/qtwebengine-platform-notes.html
+                # bison* flex* gperf* \
+                # python2-pkgconfig \
+                    # dbus dbus-devel \
+                    # fontconfig-devel \
+                # libxcb* \
+                    # libdrm* \
+                    # libXcomposite-devel \
+                    # libXcursor-devel \
+                    # libXi libXi-devel \
+                    # libXrandr-devel \
+                    # libXScrnSaver-devel \
+                    # libXtst-devel \
+                # Note: khr package ???
+                # libcap* \
+            # https://wiki.qt.io/How_to_Try_QtWebEngine
+                # gyp ninja-build \
+                # mesa-libEGL-devel libgcrypt-devel libgcrypt pciutils-devel nss-devel libXtst-devel gperf \
+                # cups-devel pulseaudio-libs-devel libgudev1-devel systemd-devel libcap-devel alsa-lib-devel flex bison ruby \
+                # ninja requirements (used by QtWebEngine)
+                    # re2c \
+            # https://wiki.qt.io/Building_Qt_5_from_Git
+                # libgcrypt-devel libgcrypt pciutils-devel nss-devel libXtst-devel gperf cups-devel pulseaudio-libs-devel libgudev1-devel systemd-devel libcap-devel alsa-lib-devel flex bison ruby gcc-c++ dbus libXrandr-devel libXcomposite-devel libXcursor-devel dbus-devel fontconfig-devel \
         # Python requirements
-        zlib-devel openssl-devel sqlite-devel bzip2-devel readline-devel tk-devel \
-        valgrind-devel \
+            zlib-devel openssl-devel sqlite-devel bzip2-devel readline-devel tk-devel \
+            valgrind-devel \
         # PySide2 requirements
-        libxslt libxml2 libxml2-devel libxslt-devel cmake3 openssl* \
+            # https://wiki.qt.io/PySide2_GettingStarted
+                libxslt libxml2 libxml2-devel libxslt-devel cmake3 openssl* \
         # PySide
-        # Not used here: cmake gcc gcc-c++ make python-devel python-pip
-        qt-devel qt-webkit-devel libxml2-devel libxslt-devel rpmdevtools \
+            # cmake gcc gcc-c++ make python-devel python-pip \
+            qt-devel qt-webkit-devel libxml2-devel libxslt-devel rpmdevtools \
         # Xvfb etc
-        Xvfb \
-        xorg-x11-server-Xvfb \
-        mesa-dri-drivers \
-        libxkbcommon \
-        libxkbcommon-devel \
-        libxkbcommon-x11 \
-        libxkbcommon-x11-devel \
+            Xvfb \
+            xorg-x11-server-Xvfb \
+            mesa-dri-drivers \
+            libxkbcommon \
+            libxkbcommon-devel \
+            libxkbcommon-x11 \
+            libxkbcommon-x11-devel \
         # Git
-        # Not used here: gcc
-        curl-devel expat-devel gettext-devel openssl-devel zlib-devel \
-        perl-ExtUtils-MakeMaker \
+            # gcc \
+            curl-devel expat-devel gettext-devel openssl-devel zlib-devel \
+            perl-ExtUtils-MakeMaker \
         # Various tools
-        wget
+            wget
+
+# Parallel build processes (set to cores +1)
+ENV BUILD_THREADS=9
 
 # Activate devtoolset-4 gcc 5.3.1
 # RUN scl enable devtoolset-4 bash
@@ -63,24 +93,35 @@ ENV GIT_VER=2.9.4
 RUN wget https://www.kernel.org/pub/software/scm/git/git-${GIT_VER}.tar.gz && \
     tar xzf git-${GIT_VER}.tar.gz && \
     cd git-${GIT_VER} && \
-    make -j12 prefix=/usr/local/git all && \
+    make -j${BUILD_THREADS} prefix=/usr/local/git all && \
     make prefix=/usr/local/git install && \
     cd .. && rm -rf git-${GIT_VER}
 ENV PATH="/usr/local/git/bin:${PATH}"
 
 # Qt 5.6.1, Autodesk-modified
 ENV QT_VER=5.6.1
-RUN git clone --recursive -j12 --branch ${QT_VER} https://code.qt.io/qt/qt5.git && \
+RUN git clone --recursive -j${BUILD_THREADS} --branch ${QT_VER} https://code.qt.io/qt/qt5.git && \
     rm -rf qt5/qtbase && \
     rm -rf qt5/qtx11extras && \
     git clone --recursive --branch adsk-contrib/vfx/${QT_VER} https://github.com/autodesk-forks/qtbase.git qt5/qtbase && \
     git clone --recursive --branch adsk-contrib/vfx/${QT_VER} https://github.com/autodesk-forks/qtx11extras.git qt5/qtx11extras && \
     cd qt5 && \
-    ./configure -help && \
+    # ./configure -help && \
     ./configure -opensource -confirm-license -nomake examples -nomake tests && \
-    make -j12 && \
+    make -j${BUILD_THREADS} && \
     make install && \
     cd .. && rm -rf qt5
+
+# Qt Creator
+# https://wiki.qt.io/Building_Qt_Creator_from_Git
+# Required for PySide2.QtUiTools
+RUN git clone --recursive --branch 4.4 -j${BUILD_THREADS} https://code.qt.io/qt-creator/qt-creator.git && \
+    mkdir qt-creator-build && \
+    cd qt-creator-build && \
+    /usr/local/Qt-${QT_VER}/bin/qmake -r /workdir/qt-creator/qtcreator.pro && \
+    make -j${BUILD_THREADS} && \
+    make install INSTALL_ROOT=/usr/local/qtcreator && \
+    cd .. && rm -rf qt-creator && rm -rf qt-creator-build
 
 # Python 2.7.x
 # Notes:
@@ -118,7 +159,7 @@ RUN mkdir -p /usr/local/python/lib && \
         CC=gcc \
         CFLAGS="-O2 -g -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector-strong --param=ssp-buffer-size=4 -grecord-gcc-switches   -m64 -mtune=generic -D_GNU_SOURCE -fPIC -fwrapv" \
         CPPFLAGS="" && \
-    make -j12 && \
+    make -j${BUILD_THREADS} && \
     make altinstall && \
     cd /workdir && \
     wget https://bootstrap.pypa.io/get-pip.py && \
@@ -141,14 +182,17 @@ RUN pip install -U \
         six \
         # General build
         setuptools \
-        wheel \
-        # PySide2 docs
-        sphinx && \
+        wheel && \
     ln -s /usr/local/python/bin/nosetests /usr/local/bin/nosetests
 
 # PySide2
-RUN git clone --recursive -j12 --branch 5.6 https://codereview.qt-project.org/pyside/pyside-setup && \
+RUN git clone --recursive -j${BUILD_THREADS} --branch 5.6 https://codereview.qt-project.org/pyside/pyside-setup && \
     cd pyside-setup && \
+
+    # Fix bug https://bugreports.qt.io/browse/PYSIDE-552
+    sed -i.bak $'s/if(Qt5Designer_FOUND)/find_package(Qt5Designer)\\\nif(Qt5Designer_FOUND)/g' sources/pyside2/CMakeLists.txt && \
+    # cat sources/pyside2/CMakeLists.txt && \
+
     python setup.py \
         # bdist_wheel \
         install \
@@ -168,7 +212,7 @@ RUN wget http://sourceforge.net/projects/pyqt/files/sip/sip-${SIP_VER}/sip-${SIP
     tar -xvf sip-${SIP_VER}.tar.gz && \
     cd sip-${SIP_VER} && \
     python configure.py && \
-    make -j12 && \
+    make -j${BUILD_THREADS} && \
     make install && \
     wget http://sourceforge.net/projects/pyqt/files/PyQt5/PyQt-${PYQT5_VER}/PyQt5_gpl-${PYQT5_VER}.tar.gz && \
     tar -xvf PyQt5_gpl-${PYQT5_VER}.tar.gz && \
@@ -178,13 +222,13 @@ RUN wget http://sourceforge.net/projects/pyqt/files/sip/sip-${SIP_VER}/sip-${SIP
         --confirm-license \
         --qmake=/usr/local/Qt-${QT_VER}/bin/qmake \
         --sip=/usr/local/python/bin/sip && \
-    make -j12 && \
+    make -j${BUILD_THREADS} && \
     make install && \
     cd .. && rm -rf PyQt5_gpl-${PYQT5_VER}
 
 # PySide
 # http://pyside.readthedocs.io/en/latest/building/options.html
-RUN git clone --recursive -j12 https://github.com/pyside/pyside-setup.git && \
+RUN git clone --recursive -j${BUILD_THREADS} https://github.com/pyside/pyside-setup.git && \
     cd pyside-setup && \
     python setup.py \
         install \
@@ -192,6 +236,18 @@ RUN git clone --recursive -j12 https://github.com/pyside/pyside-setup.git && \
             --cmake=/usr/bin/cmake3 \
             --openssl=/usr/bin/openssl && \
     cd .. && rm -rf pyside-setup
+
+# # Build shiboken
+# ENV SHIBOKEN_VER=1.2.2
+# RUN wget https://pypi.python.org/packages/source/S/Shiboken/Shiboken-${SHIBOKEN_VER}.tar.gz && \
+#     tar -xvzf Shiboken-${SHIBOKEN_VER}.tar.gz && \
+#     cd Shiboken-${SHIBOKEN_VER} && \
+#     python setup.py \
+#         bdist_wheel \
+#             --qmake=/usr/bin/qmake-qt4 && \
+#     pip install dist/Shiboken*.whl && \
+#     python shiboken_postinstall.py -install && \
+#     cd .. && rm -rf Shiboken-${SHIBOKEN_VER}
 
 # PyQt4
 # The version of PyQt4 must be compatible with the SIP version used to build PyQt5
@@ -203,7 +259,7 @@ RUN wget http://sourceforge.net/projects/pyqt/files/PyQt4/PyQt-${PYQT4_VER}/PyQt
         # --verbose \
         --confirm-license \
         --qmake=/usr/bin/qmake-qt4 && \
-    make -j12 && \
+    make -j${BUILD_THREADS} && \
     make install && \
     cd .. && rm -rf PyQt-x11-gpl-${PYQT4_VER}
 
