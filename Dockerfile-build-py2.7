@@ -239,18 +239,6 @@ RUN git clone --recursive --jobs ${BUILD_THREADS} https://github.com/pyside/pysi
             --jobs=${BUILD_THREADS} && \
     cd .. && rm -rf pyside-setup
 
-# # Build shiboken
-# ENV SHIBOKEN_VER=1.2.2
-# RUN wget https://pypi.python.org/packages/source/S/Shiboken/Shiboken-${SHIBOKEN_VER}.tar.gz && \
-#     tar -xvzf Shiboken-${SHIBOKEN_VER}.tar.gz && \
-#     cd Shiboken-${SHIBOKEN_VER} && \
-#     python setup.py \
-#         bdist_wheel \
-#             --qmake=/usr/bin/qmake-qt4 && \
-#     pip install dist/Shiboken*.whl && \
-#     python shiboken_postinstall.py -install && \
-#     cd .. && rm -rf Shiboken-${SHIBOKEN_VER}
-
 # PyQt4
 # The version of PyQt4 must be compatible with the SIP version used to build PyQt5
 ENV PYQT4_VER=4.11.4
