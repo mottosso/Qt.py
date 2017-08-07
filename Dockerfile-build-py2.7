@@ -75,7 +75,8 @@ RUN yum install -y deltarpm && \
             curl-devel expat-devel gettext-devel openssl-devel zlib-devel \
             perl-ExtUtils-MakeMaker \
         # Various tools
-            wget
+            wget && \
+    yum clean all
 
 # Parallel build processes (set to cores +1)
 ENV BUILD_THREADS=9
@@ -95,7 +96,7 @@ RUN wget https://www.kernel.org/pub/software/scm/git/git-${GIT_VER}.tar.gz && \
     cd git-${GIT_VER} && \
     make -j${BUILD_THREADS} prefix=/usr/local/git all && \
     make prefix=/usr/local/git install && \
-    cd .. && rm -rf git-${GIT_VER}
+    cd .. && rm -rf git-${GIT_VER} && rm -f git-${GIT_VER}.tar.gz
 ENV PATH="/usr/local/git/bin:${PATH}"
 
 # Qt 5.6.1, Autodesk-modified
@@ -163,9 +164,9 @@ RUN mkdir -p /usr/local/python/lib && \
     make altinstall && \
     cd /workdir && \
     wget https://bootstrap.pypa.io/get-pip.py && \
-    /usr/local/python/bin/python2.7 get-pip.py && \
-    /usr/local/python/bin/pip2.7 install -U pip && \
-    cd .. && rm -rf Python-${PYTHON_VER} && rm -f Python-${PYTHON_VER}.tar.xz && rm -f get-pip.py
+    pip get-pip.py && \
+    pip install -U pip && \
+    rm -rf Python-${PYTHON_VER} && rm -f Python-${PYTHON_VER}.tgz && rm -f get-pip.py
 
 # Register Python as default (without replacing system-python and without breaking e.g. yum)
 RUN ln -s /usr/local/python/bin/python2.7 /usr/local/bin/python && \
@@ -225,7 +226,7 @@ RUN wget http://sourceforge.net/projects/pyqt/files/sip/sip-${SIP_VER}/sip-${SIP
         --sip=/usr/local/python/bin/sip && \
     make -j${BUILD_THREADS} && \
     make install && \
-    cd .. && rm -rf PyQt5_gpl-${PYQT5_VER}
+    cd .. && rm -rf sip-${SIP_VER} && rm -rf PyQt5_gpl-${PYQT5_VER} && rm -f *.tar.gz
 
 # PySide
 # http://pyside.readthedocs.io/en/latest/building/options.html
@@ -251,6 +252,6 @@ RUN wget http://sourceforge.net/projects/pyqt/files/PyQt4/PyQt-${PYQT4_VER}/PyQt
         --qmake=/usr/bin/qmake-qt4 && \
     make -j${BUILD_THREADS} && \
     make install && \
-    cd .. && rm -rf PyQt-x11-gpl-${PYQT4_VER}
+    cd .. && rm -rf PyQt-x11-gpl-${PYQT4_VER} && rm -f *.tar.gz
 
 
