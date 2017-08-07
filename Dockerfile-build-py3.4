@@ -201,7 +201,7 @@ RUN git clone --recursive --jobs ${BUILD_THREADS} --branch 5.6 https://coderevie
             --cmake=/usr/bin/cmake3 \
             --openssl=/usr/bin/openssl \
             --jobs=${BUILD_THREADS} && \
-    # /usr/local/python/bin/pip2.7 install /workdir/pyside-setup/dist/*.whl
+    # pip install /workdir/pyside-setup/dist/*.whl
     cd .. && rm -rf pyside-setup
 # Ugly fix to make PySide2 find the Qt libs
 ENV LD_LIBRARY_PATH="/usr/local/Qt-${QT_VER}/lib:${LD_LIBRARY_PATH}"
