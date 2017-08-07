@@ -186,10 +186,10 @@ RUN pip install -U \
     ln -s /usr/local/python/bin/nosetests /usr/local/bin/nosetests
 
 # PySide2
-RUN git clone --recursive -j${BUILD_THREADS} --branch 5.6 https://codereview.qt-project.org/pyside/pyside-setup && \
+RUN git clone --recursive --jobs ${BUILD_THREADS} --branch 5.6 https://codereview.qt-project.org/pyside/pyside-setup && \
     cd pyside-setup && \
 
-    # Fix bug https://bugreports.qt.io/browse/PYSIDE-552
+    # Fix bug in order to build PySide2.QtUiTools: https://bugreports.qt.io/browse/PYSIDE-552
     sed -i.bak $'s/if(Qt5Designer_FOUND)/find_package(Qt5Designer)\\\nif(Qt5Designer_FOUND)/g' sources/pyside2/CMakeLists.txt && \
     # cat sources/pyside2/CMakeLists.txt && \
 
@@ -199,7 +199,8 @@ RUN git clone --recursive -j${BUILD_THREADS} --branch 5.6 https://codereview.qt-
             --ignore-git \
             --qmake=/usr/local/Qt-${QT_VER}/bin/qmake \
             --cmake=/usr/bin/cmake3 \
-            --openssl=/usr/bin/openssl && \
+            --openssl=/usr/bin/openssl \
+            --jobs=${BUILD_THREADS} && \
     # /usr/local/python/bin/pip2.7 install /workdir/pyside-setup/dist/*.whl
     cd .. && rm -rf pyside-setup
 # Ugly fix to make PySide2 find the Qt libs
@@ -228,13 +229,14 @@ RUN wget http://sourceforge.net/projects/pyqt/files/sip/sip-${SIP_VER}/sip-${SIP
 
 # PySide
 # http://pyside.readthedocs.io/en/latest/building/options.html
-RUN git clone --recursive -j${BUILD_THREADS} https://github.com/pyside/pyside-setup.git && \
+RUN git clone --recursive --jobs ${BUILD_THREADS} https://github.com/pyside/pyside-setup.git && \
     cd pyside-setup && \
     python setup.py \
         install \
             --qmake=/usr/bin/qmake-qt4 \
             --cmake=/usr/bin/cmake3 \
-            --openssl=/usr/bin/openssl && \
+            --openssl=/usr/bin/openssl \
+            --jobs=${BUILD_THREADS} && \
     cd .. && rm -rf pyside-setup
 
 # # Build shiboken
