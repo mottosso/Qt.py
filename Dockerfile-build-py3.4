@@ -56,14 +56,11 @@ RUN yum install -y deltarpm && \
         # Python requirements
             zlib-devel openssl-devel sqlite-devel bzip2-devel readline-devel tk-devel \
             valgrind-devel \
-        # Python 3.x requirements
-            # For dtrace, use systemtap-sdt-devel
-            devtoolset-4-systemtap-sdt-devel \
         # PySide2 requirements
             # https://wiki.qt.io/PySide2_GettingStarted
                 libxslt libxml2 libxml2-devel libxslt-devel cmake3 openssl* \
         # PySide
-            # gcc gcc-c++ make python-devel python-pip \
+            # cmake gcc gcc-c++ make python-devel python-pip \
             qt-devel qt-webkit-devel libxml2-devel libxslt-devel rpmdevtools \
         # Xvfb etc
             Xvfb \
@@ -125,6 +122,10 @@ RUN git clone --recursive --branch 4.4 -j${BUILD_THREADS} https://code.qt.io/qt-
     make -j${BUILD_THREADS} && \
     make install INSTALL_ROOT=/usr/local/qtcreator && \
     cd .. && rm -rf qt-creator && rm -rf qt-creator-build
+
+# Python 3.x requirements
+# For dtrace, use systemtap-sdt-devel
+RUN yum install -y devtoolset-4-systemtap-sdt-devel
 
 # Python 3.x
 # Notes:

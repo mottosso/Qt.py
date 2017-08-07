@@ -781,7 +781,13 @@ def _pyside2():
     Qt.__binding_version__ = module.__version__
 
     try:
-        import shiboken2
+        try:
+            # Before merge of PySide and shiboken
+            import shiboken2
+        except ImportError:
+            # After merge of PySide and shiboken, May 2017
+            from PySide2 import shiboken2
+
         Qt.QtCompat.wrapInstance = (
             lambda ptr, base=None: _wrapinstance(
                 shiboken2.wrapInstance, ptr, base)
@@ -815,7 +821,13 @@ def _pyside():
     Qt.__binding_version__ = module.__version__
 
     try:
-        import shiboken
+        try:
+            # Before merge of PySide and shiboken
+            import shiboken
+        except ImportError:
+            # After merge of PySide and shiboken, May 2017
+            from PySide import shiboken
+
         Qt.QtCompat.wrapInstance = (
             lambda ptr, base=None: _wrapinstance(
                 shiboken.wrapInstance, ptr, base)
