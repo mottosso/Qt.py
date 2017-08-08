@@ -164,8 +164,8 @@ RUN mkdir -p /usr/local/python/lib && \
     make altinstall && \
     cd /workdir && \
     wget https://bootstrap.pypa.io/get-pip.py && \
-    pip get-pip.py && \
-    pip install -U pip && \
+    /usr/local/python/bin/python2.7 get-pip.py && \
+    /usr/local/python/bin/pip2.7 install -U pip && \
     rm -rf Python-${PYTHON_VER} && rm -f Python-${PYTHON_VER}.tgz && rm -f get-pip.py
 
 # Register Python as default (without replacing system-python and without breaking e.g. yum)
