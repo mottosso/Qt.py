@@ -124,10 +124,6 @@ RUN git clone --recursive --branch 4.4 -j${BUILD_THREADS} https://code.qt.io/qt-
     make install INSTALL_ROOT=/usr/local/qtcreator && \
     cd .. && rm -rf qt-creator && rm -rf qt-creator-build
 
-# Python 3.x requirements
-# For dtrace, use systemtap-sdt-devel
-RUN yum install -y devtoolset-4-systemtap-sdt-devel
-
 # Python 3.x
 # Notes:
 #     https://danieleriksson.net/2017/02/08/how-to-install-latest-python-on-centos/
