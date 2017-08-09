@@ -1,20 +1,17 @@
-language: python
+matrix:
+  include:
+  - env:
+    - VFXPLAT_VER=2018dev
 
+language: python
 sudo: required
 dist: trusty
-
-python:
-  - 2.7
-  - 3.4
 
 services:
   - docker
 
-install:
-  - docker build -f Dockerfile-py${TRAVIS_PYTHON_VERSION} -t mottosso/qt.py .
-
 script:
-  - docker run --rm -v $(pwd):/Qt.py mottosso/qt.py
+  - docker run --rm -v $(pwd):/Qt.py qtpyshim/vfxplatform:${VFXPLAT_VER}
 
 deploy:
   provider: pypi

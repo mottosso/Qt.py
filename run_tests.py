@@ -25,8 +25,9 @@ def binding(binding):
 
 
 if __name__ == "__main__":
+
     argv = [
-        "nosetests",
+        os.environ.get('NOSETESTS_BINARY'),
         "--verbose",
         "--with-process-isolation",
         "--exe",
