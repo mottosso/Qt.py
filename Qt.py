@@ -1237,7 +1237,8 @@ def _install():
             setattr(our_submodule, member, their_member)
 
     # Backwards compatibility
-    Qt.QtCompat.load_ui = Qt.QtCompat.loadUi
+    if hasattr(Qt.QtCompat, 'loadUi'):
+        Qt.QtCompat.load_ui = Qt.QtCompat.loadUi
 
 
 _install()
