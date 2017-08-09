@@ -396,8 +396,6 @@ RUN \
 # Ugly fix to make PySide2 find the Qt libs
 ENV LD_LIBRARY_PATH="/usr/local/Qt-${QT_VER}/lib:${LD_LIBRARY_PATH}"
 
-RUN yum update -y
-
 # Enable additional output from Qt.py
 ENV QT_VERBOSE true
 ENV QT_TESTING true
