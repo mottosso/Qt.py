@@ -826,10 +826,10 @@ def _wrapinstance(func, ptr, base=None):
 
 
 def _reassign_misplaced_members(binding):
-    """Parse `_misplaced_members` dict and remap
-    values based on the underlying binding.
+    """Apply misplaced members from `binding` to Qt.py
 
-    :param str binding: Top level binding in _misplaced_members.
+    Arguments:
+        binding (dict): Misplaced members
 
     """
 
@@ -855,9 +855,8 @@ def _reassign_misplaced_members(binding):
         )
 
 
-def _build_compatibility_members(binding, decorators={}):
-    """ Parse `_compatibility_members` dict and construct _QtCompat classes
-    based on the underlying binding.
+def _build_compatibility_members(binding, decorators=None):
+    """Apply `binding` to QtCompat
 
     Arguments:
         binding (str): Top level binding in _compatibility_members.
@@ -866,7 +865,11 @@ def _build_compatibility_members(binding, decorators={}):
             to change the returned value to a standard value. The key should
             be the classname, the value is a dict where the keys are the
             target method names, and the values are the decorator functions.
+
     """
+
+    decorators = decorators or dict()
+
     # Allow optional site-level customization of the compatibility members.
     # This method does not need to be implemented in QtSiteConfig.
     try:
@@ -876,6 +879,8 @@ def _build_compatibility_members(binding, decorators={}):
     else:
         if hasattr(QtSiteConfig, 'update_compatibility_decorators'):
             QtSiteConfig.update_compatibility_decorators(binding, decorators)
+
+    _QtCompat = type("QtCompat", (object,), {})
 
     for classname, bindings in _compatibility_members[binding].items():
         attrs = {}
@@ -890,6 +895,7 @@ def _build_compatibility_members(binding, decorators={}):
                 # rename a member that didn't exist, for example
                 # if QtWidgets isn't available on the target platform.
                 continue
+
             # Walk down any remaining namespace getting the object assuming
             # that if the first namespace exists the rest will exist.
             for namespace in namespaces[1:]:
@@ -906,7 +912,7 @@ def _build_compatibility_members(binding, decorators={}):
             attrs[target] = src_object
 
         # Create the QtCompat class and install it into the namespace
-        compat_class = type(classname, tuple([_QtCompat]), attrs)
+        compat_class = type(classname, (_QtCompat,), attrs)
         setattr(Qt.QtCompat, classname, compat_class)
 
 
@@ -1114,17 +1120,18 @@ def _pyqt4():
 
     # QFileDialog QtCompat decorator
     def _standardizeQFileDialog(some_function):
-        """ decorator that makes PyQt4 return conform to other bindings
-        """
+        """Decorator that makes PyQt4 return conform to other bindings"""
         def wrapper(*args, **kwargs):
             ret = (some_function(*args, **kwargs))
+
             # PyQt4 only returns the selected filename, force it to a
             # standard return of the selected filename, and a empty string
             # for the selected filter
-            return (ret, '')
-        # preserve docstring and name of original method
+            return ret, ''
+
         wrapper.__doc__ = some_function.__doc__
         wrapper.__name__ = some_function.__name__
+
         return wrapper
 
     decorators = {
@@ -1259,10 +1266,6 @@ def _loadUi(uifile, baseinstance=None):
     else:
         raise NotImplementedError("No implementation available for loadUi")
 
-
-class _QtCompat(object):
-    """ Baseclass for QtCompat namespace objects."""
-    pass
 
 def _convert(lines):
     """Convert compiled .ui file from PySide2 to Qt.py
