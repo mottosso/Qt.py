@@ -20,7 +20,7 @@ services:
   - docker
 
 script:
-  - docker run --rm -v $(pwd):/Qt.py -e ${PYTHON} fredrikaverpil/qtpy:${VFXPLATFORM}
+  - docker run --rm -v $(pwd):/Qt.py -e PYTHON=${PYTHON} fredrikaverpil/qt.py:${VFXPLATFORM}
 
 deploy:
   provider: pypi
