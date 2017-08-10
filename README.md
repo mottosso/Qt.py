@@ -473,18 +473,15 @@ Due to the nature of multiple bindings and multiple interpreter support, setting
 With Docker setup, here's what you do.
 
 ```bash
-# Build image
 cd Qt.py
-docker build -t mottosso/qt.py27 -f Dockerfile-py2.7 .
-docker build -t mottosso/qt.py34 -f Dockerfile-py3.4 .
 
 # Run nosetests (Linux/OSX)
-docker run --rm -v $(pwd):/Qt.py mottosso/qt.py27
-docker run --rm -v $(pwd):/Qt.py mottosso/qt.py34
+docker run --rm -v $(pwd):/Qt.py -e PYTHON=2.7 fredrikaverpil/qt.py:2018dev
+docker run --rm -v $(pwd):/Qt.py -e PYTHON=3.4 fredrikaverpil/qt.py:2018dev
 
 # Run nosetests (Windows)
-docker run --rm -v %CD%:/Qt.py mottosso/qt.py27
-docker run --rm -v %CD%:/Qt.py mottosso/qt.py34
+docker run --rm -v %CD%:/Qt.py -e PYTHON=2.7 fredrikaverpil/qt.py:2018dev
+docker run --rm -v %CD%:/Qt.py -e PYTHON=3.4 fredrikaverpil/qt.py:2018dev
 
 # Doctest: test_caveats.test_1_qtgui_qabstractitemmodel_createindex ... ok
 # Doctest: test_caveats.test_2_qtgui_qabstractitemmodel_createindex ... ok
