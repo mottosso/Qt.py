@@ -116,7 +116,7 @@ RUN wget ftp://ftp.gnu.org/pub/gnu/gcc/gcc-${GCC_VER}/gcc-${GCC_VER}.tar.bz2 && 
     mv /usr/lib64/libstdc++.so.6 /usr/lib64/libstdc++.so.6.bak && \
     mv /opt/gcc-${GCC_VER}/lib64/libstdc++.so.6 /usr/lib64/libstdc++.so.6 && \
     mv /opt/gcc-${GCC_VER}/lib64/libstdc++.so.6.0.19 /usr/lib64/libstdc++.so.6.0.19 && \
-    cd /workdir && rm -rf gcc-${GCC_VER && rm -f gcc-${GCC_VER}.tar.bz2
+    cd /workdir && rm -rf gcc-${GCC_VER} && rm -f gcc-${GCC_VER}.tar.bz2
 ENV PATH="/opt/gcc-${GCC_VER}/bin:${PATH}"
 
 
