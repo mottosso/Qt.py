@@ -4,11 +4,11 @@ matrix:
   # VFX Platform 2018 (in development)
   - os: linux
     env:
-    - VFXPLAT_VER=2018dev
+    - VFXPLATFORM=2018dev
     - PYTHON=2.7
   - os: linux
     env:
-    - VFXPLAT_VER=2018dev
+    - VFXPLATFORM=2018dev
     - PYTHON=3.4
 
 
@@ -20,7 +20,7 @@ services:
   - docker
 
 script:
-  - docker run --rm -v $(pwd):/Qt.py -e ${PYTHON} fredrikaverpil/qtpy:${VFXPLAT_VER}
+  - docker run --rm -v $(pwd):/Qt.py -e ${PYTHON} fredrikaverpil/qtpy:${VFXPLATFORM}
 
 deploy:
   provider: pypi
