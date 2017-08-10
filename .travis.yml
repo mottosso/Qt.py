@@ -1,7 +1,16 @@
 matrix:
   include:
-  - env:
+
+  # VFX Platform 2018 (in development)
+  - os: linux
+    env:
     - VFXPLAT_VER=2018dev
+    - PYTHON=2.7
+  - os: linux
+    env:
+    - VFXPLAT_VER=2018dev
+    - PYTHON=3.4
+
 
 language: python
 sudo: required
@@ -11,7 +20,7 @@ services:
   - docker
 
 script:
-  - docker run --rm -v $(pwd):/Qt.py fredrikaverpil/qtpy:${VFXPLAT_VER}
+  - docker run --rm -v $(pwd):/Qt.py -e ${PYTHON} fredrikaverpil/qtpy:${VFXPLAT_VER}
 
 deploy:
   provider: pypi
