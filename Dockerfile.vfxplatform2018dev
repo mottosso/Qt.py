@@ -410,7 +410,7 @@ ENV QT_XKB_CONFIG_ROOT=/usr/share/X11/xkb
 # Warnings are exceptions
 ENV PYTHONWARNINGS="ignore"
 
-WORKDIR /workdir/Qt.py
+WORKDIR /workspace/Qt.py
 
 ENTRYPOINT  cp -r /Qt.py /workspace && \
             Xvfb :99 -screen 0 1024x768x16 2>/dev/null & \
