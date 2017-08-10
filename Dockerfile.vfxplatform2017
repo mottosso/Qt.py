@@ -1,17 +1,19 @@
-FROM centos:7.3.1611
+FROM centos:6
 
-RUN yum install -y deltarpm && \
+RUN yum install deltarpm -y && \
     yum update -y && \
+    # glibc requirements
+        yum groupinstall -y "Development tools" && \
     yum install -y \
-        # Devtools requirements
-            centos-release-scl \
         # cmake3 requirements
             epel-release && \
     yum install -y \
-        # gcc 5.3.1 (via Devtools which is equivalent of RedHat DTS)
-            devtoolset-4-gcc*-5.3.1 \
-        # glibc 2.17
-            glibc-*-2.17 \
+        # PySide2 requirement
+            cmake3 && \
+    yum install -y \
+        # glibc requirements
+        glibc-devel.i686 glibc-i686 sudo \
+
         # Qt5 requirements
             # http://doc.qt.io/qt-5/linux-requirements.html
                 libXrender* libxcb* xcb* fontconfig* freetype* libXi* libXext* libX11* libSM* libICE* libglib* libpthread* gstreamer* \
@@ -74,24 +76,60 @@ RUN yum install -y deltarpm && \
             # gcc \
             curl-devel expat-devel gettext-devel openssl-devel zlib-devel \
             perl-ExtUtils-MakeMaker \
-        # Various tools
-            wget && \
+        # general
+        xz wget && \
     yum clean all
 
 # Parallel build processes (set to cores +1)
 ENV BUILD_THREADS=9
 
-# Activate devtoolset-4 gcc 5.3.1
-# RUN scl enable devtoolset-4 bash
-ENV PATH="/opt/rh/devtoolset-4/root/usr/bin:${PATH}"
-
-# Set workdir
 WORKDIR /workdir
 
 
-# Git 2.x with "git clone -j" functionality
+# # glibc (disabled since CentOS 6 comes with glibc 2.12 already)
+# # https://github.com/FezVrasta/ark-server-tools/wiki/Install-of-required-versions-of-glibc-and-gcc-on-RHEL-CentOS
+# ENV GLIBC_VER=2.12.2
+# RUN wget http://ftp.gnu.org/gnu/glibc/glibc-${GLIBC_VER}.tar.gz && \
+#     tar -xvzf glibc-${GLIBC_VER}.tar.gz && \
+#     cd glibc-${GLIBC_VER} && \
+#     mkdir glibc-build && \
+#     cd glibc-build && \
+#     ../configure --prefix='/usr' && \
+#     make -j ${BUILD_THREADS} && \
+#     sudo make install && \
+#     cd .. && rm -rf glibc-${GLIBC_VER} && rm -f *.tar.gz
+
+
+# Gcc
+# https://github.com/FezVrasta/ark-server-tools/wiki/Install-of-required-versions-of-glibc-and-gcc-on-RHEL-CentOS
+# https://gcc.gnu.org/install/configure.html
+ENV GCC_VER=4.8.3
+RUN wget ftp://ftp.gnu.org/pub/gnu/gcc/gcc-${GCC_VER}/gcc-${GCC_VER}.tar.bz2 && \
+    tar xvfj gcc-${GCC_VER}.tar.bz2 && \
+    cd gcc-${GCC_VER} && \
+    ./contrib/download_prerequisites && \
+    mkdir objdir && \
+    cd objdir && \
+    ../configure --prefix=/opt/gcc-${GCC_VER} --enable-languages=c,c++ && \
+    make -j ${BUILD_THREADS} && \
+    make install && \
+    mv /usr/lib64/libstdc++.so.6 /usr/lib64/libstdc++.so.6.bak && \
+    mv /opt/gcc-${GCC_VER}/lib64/libstdc++.so.6 /usr/lib64/libstdc++.so.6 && \
+    mv /opt/gcc-${GCC_VER}/lib64/libstdc++.so.6.0.19 /usr/lib64/libstdc++.so.6.0.19 && \
+    cd /workdir && rm -rf gcc-${GCC_VER && rm -f gcc-${GCC_VER}.tar.bz2
+ENV PATH="/opt/gcc-${GCC_VER}/bin:${PATH}"
+
+
+# # Check gcc version
+# RUN gcc --version
+# # Check glibc
+# RUN ldd --version
+
+
+# Git 2.14 with "git clone -j" functionality and "git checkout --recurse-submodules"
 # https://tecadmin.net/install-git-2-0-on-centos-rhel-fedora/
-ENV GIT_VER=2.9.4
+# https://stackoverflow.com/a/44249558/2448495
+ENV GIT_VER=2.14.1
 RUN wget https://www.kernel.org/pub/software/scm/git/git-${GIT_VER}.tar.gz && \
     tar xzf git-${GIT_VER}.tar.gz && \
     cd git-${GIT_VER} && \
@@ -103,7 +141,7 @@ ENV PATH="/usr/local/git/bin:${PATH}"
 
 # Qt 5.6.1, Autodesk-modified
 ENV QT_VER=5.6.1
-RUN git clone --recursive -j${BUILD_THREADS} --branch ${QT_VER} https://code.qt.io/qt/qt5.git && \
+RUN git clone --recursive --jobs ${BUILD_THREADS} --branch ${QT_VER} https://code.qt.io/qt/qt5.git && \
     rm -rf qt5/qtbase && \
     rm -rf qt5/qtx11extras && \
     git clone --recursive --branch adsk-contrib/vfx/${QT_VER} https://github.com/autodesk-forks/qtbase.git qt5/qtbase && \
@@ -359,8 +397,19 @@ RUN \
     git clone --recursive --jobs ${BUILD_THREADS} --branch 5.6 https://codereview.qt-project.org/pyside/pyside-setup && \
     cd pyside-setup && \
 
+    # Change to commit 8913156381b7dc51f903b9e459c143fb25097cab
+    # https://codereview.qt-project.org/gitweb?p=pyside/pyside-setup.git;a=commit;h=8913156381b7dc51f903b9e459c143fb25097cab
+    # or choose another commit from here: https://codereview.qt-project.org/gitweb?p=pyside/pyside-setup.git;a=shortlog;h=refs/heads/5.6;pg=3
+
+    # Sources at the time of commit 8913156381b7dc51f903b9e459c143fb25097cab
+    # pyside2: c764273e64896215730e44eb907cd3535596ade4
+    # shiboken2: c764273e64896215730e44eb907cd3535596ade4
+
+    # "git checkout --recurse-submodules" requires git 2.14
+    git checkout --recurse-submodules 8913156381b7dc51f903b9e459c143fb25097cab && \
+
     # Fix bug in order to build PySide2.QtUiTools: https://bugreports.qt.io/browse/PYSIDE-552
-    sed -i.bak $'s/if(Qt5Designer_FOUND)/find_package(Qt5Designer)\\\nif(Qt5Designer_FOUND)/g' sources/pyside2/CMakeLists.txt && \
+    # sed -i.bak $'s/if(Qt5Designer_FOUND)/find_package(Qt5Designer)\\\nif(Qt5Designer_FOUND)/g' sources/pyside2/CMakeLists.txt && \
     # cat sources/pyside2/CMakeLists.txt && \
 
     python${PYTHON_VER} setup.py \
