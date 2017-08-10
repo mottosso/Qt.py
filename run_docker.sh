@@ -1,1 +1,1 @@
-docker run -ti --rm -v $(pwd):/Qt.py qtpyshim/vfxplatform:2018dev
+docker run -ti --rm -v $(pwd):/Qt.py fredrikaverpil/qtpy:2018dev
