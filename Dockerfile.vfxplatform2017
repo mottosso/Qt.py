@@ -160,8 +160,8 @@ ENV ADSK_QTX11EXTRAS_GIT_COMMIT=d86b59059f0340f3707dad008a8f632b070de4e6
 
 RUN \
     cd /workdir/qt5 && \
-    git checkout QT_GIT_COMMIT && \
-    git submodule update --init --recursive && \
+    git checkout ${QT_GIT_COMMIT} && \
+    git submodule update --recursive && \
     cd /workdir && \
     # Remove qtbase, qtx11extras
     rm -rf qt5/qtbase && \
@@ -202,7 +202,7 @@ ENV QTCREATOR_GIT_COMMIT=7f07ec41abb8194cafa19863af183e5e7f971edf
 RUN git clone --recursive --branch ${QTCREATOR_VER} -j${BUILD_THREADS} https://code.qt.io/qt-creator/qt-creator.git && \
     mkdir qt-creator-build && \
     git checkout ${QTCREATOR_GIT_COMMIT} && \
-    git submodule update --init --recursive && \
+    git submodule update --recursive && \
     cd qt-creator-build && \
     /usr/local/Qt-${QT_VER}/bin/qmake -r /workdir/qt-creator/qtcreator.pro && \
     make -j${BUILD_THREADS} && \
@@ -459,7 +459,7 @@ RUN \
 
 
     git checkout ${PYSIDE2_GIT_COMMIT} && \
-    git submodule update --init --recursive && \
+    git submodule update --recursive && \
 
     # Verify current commit hash
     git rev-parse --verify HEAD && \
@@ -493,7 +493,7 @@ RUN \
     cd pyside-setup && \
 
     git checkout ${PYSIDE2_GIT_COMMIT} && \
-    git submodule update --init --recursive && \
+    git submodule update --recursive && \
 
     # # Fix bug in order to build PySide2.QtUiTools: https://bugreports.qt.io/browse/PYSIDE-552
     # sed -i.bak $'s/if(Qt5Designer_FOUND)/find_package(Qt5Designer)\\\nif(Qt5Designer_FOUND)/g' sources/pyside2/CMakeLists.txt && \
