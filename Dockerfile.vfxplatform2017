@@ -140,12 +140,17 @@ ENV PATH="/usr/local/git/bin:${PATH}"
 
 
 # Qt 5.6.1, Autodesk-modified
+# Qt5 5.6 git commits: http://code.qt.io/cgit/qt/qt5.git/log/?h=5.6
 ENV QT_VER=5.6.1
 ENV QT_GIT_TAG=v5.6.1
+ENV QT_GIT_COMMIT=
 ENV AUTODESK_GIT_TAG=v5.6.1
 RUN \
     # Clone Qt5 repo
-    git clone --recursive --jobs ${BUILD_THREADS} --branch ${QT_VER} https://code.qt.io/qt/qt5.git && \
+    git clone --recursive --jobs ${BUILD_THREADS} --branch ${QT_VER} https://code.qt.io/qt/qt5.git
+    #&& \
+
+RUN \
     # Revert to previous tag
     # All Qt5 tags: http://code.qt.io/cgit/qt/qt5.git/refs/tags
     cd /workdir/qt5 && \
@@ -434,7 +439,7 @@ RUN \
     git ls-tree @ shiboken2 && \
     cd .. && \
 
-    # Change to commit 8913156381b7dc51f903b9e459c143fb25097cab
+    # Change to commit 8913156381b7dc51f903b9e459c143fb25097cab from Fri, 29 Jul 2016
     # https://codereview.qt-project.org/gitweb?p=pyside/pyside-setup.git;a=commit;h=8913156381b7dc51f903b9e459c143fb25097cab
     # or choose another commit from here: https://codereview.qt-project.org/gitweb?p=pyside/pyside-setup.git;a=shortlog;h=refs/heads/5.6;pg=3
     git checkout 8913156381b7dc51f903b9e459c143fb25097cab && \
