@@ -141,24 +141,55 @@ ENV PATH="/usr/local/git/bin:${PATH}"
 
 # Qt 5.6.1, Autodesk-modified
 ENV QT_VER=5.6.1
-RUN git clone --recursive --jobs ${BUILD_THREADS} --branch ${QT_VER} https://code.qt.io/qt/qt5.git && \
+ENV QT_GIT_TAG=v5.6.1
+ENV AUTODESK_GIT_TAG=v5.6.1
+RUN \
+    # Clone Qt5 repo
+    git clone --recursive --jobs ${BUILD_THREADS} --branch ${QT_VER} https://code.qt.io/qt/qt5.git && \
+    # Revert to previous tag
+    # All Qt5 tags: http://code.qt.io/cgit/qt/qt5.git/refs/tags
+    cd /workdir/qt5 && \
+    git checkout tags/${QT_GIT_TAG} && \
+    git submodule update --init --recursive && \
+    cd /workdir && \
+    # Remove qtbase, qtx11extras
     rm -rf qt5/qtbase && \
     rm -rf qt5/qtx11extras && \
-    git clone --recursive --branch adsk-contrib/vfx/${QT_VER} https://github.com/autodesk-forks/qtbase.git qt5/qtbase && \
-    git clone --recursive --branch adsk-contrib/vfx/${QT_VER} https://github.com/autodesk-forks/qtx11extras.git qt5/qtx11extras && \
-    cd qt5 && \
+    # Clone Autodesk's qtbase, qtx11extras
+    mkdir adsk && \
+    git clone --recursive --branch adsk-contrib/vfx/${QT_VER} https://github.com/autodesk-forks/qtbase.git adsk/qtbase && \
+    git clone --recursive --branch adsk-contrib/vfx/${QT_VER} https://github.com/autodesk-forks/qtx11extras.git adsk/qtx11extras && \
+    # Revert to previous tag
+    # All Autodesk tags: https://github.com/autodesk-forks/qtbase/tags
+        # Revert to tag for qtbase
+        cd /workdir/adsk/qtbase && \
+        git checkout tags/${AUTODESK_GIT_TAG} && \
+        # Revert to tag for qtx11extras
+        cd /workdir/adsk/qtx11extras && \
+        git checkout tags/${AUTODESK_GIT_TAG} && \
+    # Move Autodesk sources into qt5
+    cd /workdir && \
+    mv /workdir/adsk/qtbase /workdir/qt5 && \
+    mv /workdir/adsk/qtx11extras /workdir/qt5 && \
+    # Build
+    cd /workdir/qt5 && \
     # ./configure -help && \
     ./configure -opensource -confirm-license -nomake examples -nomake tests && \
     make -j${BUILD_THREADS} && \
     make install && \
-    cd .. && rm -rf qt5
+    cd /workdir && rm -rf qt5
 
 
 # Qt Creator
 # https://wiki.qt.io/Building_Qt_Creator_from_Git
 # Required for PySide2.QtUiTools
+ENV QTCREATOR_GIT_TAG=v4.0.2
 RUN git clone --recursive --branch 4.4 -j${BUILD_THREADS} https://code.qt.io/qt-creator/qt-creator.git && \
+    # Revert to previous tag
+    # All tags: http://code.qt.io/cgit/qt-creator/qt-creator.git/refs/tags
     mkdir qt-creator-build && \
+    git checkout tags/${QTCREATOR_GIT_TAG} && \
+    git submodule update --init --recursive && \
     cd qt-creator-build && \
     /usr/local/Qt-${QT_VER}/bin/qmake -r /workdir/qt-creator/qtcreator.pro && \
     make -j${BUILD_THREADS} && \
@@ -397,16 +428,43 @@ RUN \
     git clone --recursive --jobs ${BUILD_THREADS} --branch 5.6 https://codereview.qt-project.org/pyside/pyside-setup && \
     cd pyside-setup && \
 
+    # Show current hashes
+    cd sources && \
+    git ls-tree @ pyside2 && \
+    git ls-tree @ shiboken2 && \
+    cd .. && \
+
     # Change to commit 8913156381b7dc51f903b9e459c143fb25097cab
     # https://codereview.qt-project.org/gitweb?p=pyside/pyside-setup.git;a=commit;h=8913156381b7dc51f903b9e459c143fb25097cab
     # or choose another commit from here: https://codereview.qt-project.org/gitweb?p=pyside/pyside-setup.git;a=shortlog;h=refs/heads/5.6;pg=3
+    git checkout 8913156381b7dc51f903b9e459c143fb25097cab && \
 
-    # Sources at the time of commit 8913156381b7dc51f903b9e459c143fb25097cab
-    # pyside2: c764273e64896215730e44eb907cd3535596ade4
-    # shiboken2: c764273e64896215730e44eb907cd3535596ade4
+    git submodule update --init --recursive && \
+    # This should say something like...
+    # Submodule 'sources/pyside2' (https://codereview.qt-project.org/pyside/pyside.git) registered for path 'sources/pyside2'
+    # Submodule 'sources/shiboken2' (https://codereview.qt-project.org/pyside/shiboken.git) registered for path 'sources/shiboken2'
+    # Cloning into '/Users/fredrik/code/repos/pyside-setup/sources/pyside2'...
+    # Cloning into '/Users/fredrik/code/repos/pyside-setup/sources/shiboken2'...
+    # Submodule path 'sources/pyside2': checked out '23d77136da1f249f0a78c8c7e8124adc8c604230'
+    # Submodule path 'sources/pyside2-examples': checked out 'c8c9f64eb4657c54f063f01f00116732cb3fc100'
+    # Submodule path 'sources/pyside2-tools': checked out 'c8608f268f6461c421055ff3df1fd72d616cb646'
+    # Submodule path 'sources/shiboken2': checked out '6a3f6544ec0b5a1bc3f8bbaf9269217a2072168f'
 
-    # "git checkout --recurse-submodules" requires git 2.14
-    git checkout --recurse-submodules 8913156381b7dc51f903b9e459c143fb25097cab && \
+    # Verify current commit hash
+    git rev-parse --verify HEAD && \
+    # Should say 8913156381b7dc51f903b9e459c143fb25097cab
+
+    # Verify commit hashes of submodules
+    cd sources && \
+    git ls-tree @ pyside2 && \
+    # 23d77136da1f249f0a78c8c7e8124adc8c604230
+    git ls-tree @ shiboken2 && \
+    # 6a3f6544ec0b5a1bc3f8bbaf9269217a2072168f
+    cd .. && \
+
+    # Autodesk zip:
+    # https://www.autodesk.com/content/dam/autodesk/www/Company/files/PySide2.zip
+
 
     # Fix bug in order to build PySide2.QtUiTools: https://bugreports.qt.io/browse/PYSIDE-552
     # sed -i.bak $'s/if(Qt5Designer_FOUND)/find_package(Qt5Designer)\\\nif(Qt5Designer_FOUND)/g' sources/pyside2/CMakeLists.txt && \
