@@ -1,3 +1,5 @@
+
+
 FROM centos:6
 
 RUN yum install deltarpm -y && \
@@ -7,9 +9,9 @@ RUN yum install deltarpm -y && \
     yum install -y \
         # cmake3 requirements
             epel-release && \
-    yum install -y \
-        # PySide2 requirement
-            cmake3 && \
+    # yum install -y \
+    #     # PySide2 requirement
+    #         cmake3 && \
     yum install -y \
         # glibc requirements
         glibc-devel.i686 glibc-i686 sudo \
@@ -31,6 +33,9 @@ RUN yum install deltarpm -y && \
                     alsa-lib alsa-lib-devel gstreamer gstreamer-devel gstreamer-plugins-base gstreamer-plugins-base-devel \
                 # libICU
                     libicu-devel \
+        # QtQuick requirements; OpenGL
+        # https://access.redhat.com/solutions/56301
+            mesa-*-devel \
         # QtWebEngine requirements (disabled because of error during make)
             # http://doc.qt.io/qt-5/qtwebengine-platform-notes.html
                 # bison* flex* gperf* \
@@ -63,7 +68,7 @@ RUN yum install deltarpm -y && \
                 libxslt libxml2 libxml2-devel libxslt-devel cmake3 openssl* \
         # PySide
             # cmake gcc gcc-c++ make python-devel python-pip \
-            qt-devel qt-webkit-devel libxml2-devel libxslt-devel rpmdevtools \
+            libxml2-devel libxslt-devel rpmdevtools \
         # Xvfb etc
             Xvfb \
             xorg-x11-server-Xvfb \
@@ -76,8 +81,11 @@ RUN yum install deltarpm -y && \
             # gcc \
             curl-devel expat-devel gettext-devel openssl-devel zlib-devel \
             perl-ExtUtils-MakeMaker \
+        # dbus
+        dbus \
         # general
-        xz wget && \
+        xz wget \
+        && \
     yum clean all
 
 # Parallel build processes (set to cores +1)
@@ -104,7 +112,8 @@ WORKDIR /workdir
 # https://github.com/FezVrasta/ark-server-tools/wiki/Install-of-required-versions-of-glibc-and-gcc-on-RHEL-CentOS
 # https://gcc.gnu.org/install/configure.html
 ENV GCC_VER=4.8.3
-RUN wget ftp://ftp.gnu.org/pub/gnu/gcc/gcc-${GCC_VER}/gcc-${GCC_VER}.tar.bz2 && \
+RUN \
+    wget ftp://ftp.gnu.org/pub/gnu/gcc/gcc-${GCC_VER}/gcc-${GCC_VER}.tar.bz2 && \
     tar xvfj gcc-${GCC_VER}.tar.bz2 && \
     cd gcc-${GCC_VER} && \
     ./contrib/download_prerequisites && \
@@ -121,17 +130,36 @@ ENV PATH="/usr/local/gcc-${GCC_VER}/bin:${PATH}"
 ENV CC=/usr/local/gcc-${GCC_VER}/bin/gcc
 ENV CXX=/usr/local/gcc-${GCC_VER}/bin/g++
 
+
 # # Check gcc version
 # RUN gcc --version
 # # Check glibc
 # RUN ldd --version
 
 
-# Git 2.14 with "git clone -j" functionality and "git checkout --recurse-submodules"
+# Cmake3
+# https://cmake.org/install/
+ENV CMAKE_VER=3.6.1
+RUN \
+    wget https://cmake.org/files/v3.6/cmake-${CMAKE_VER}.tar.gz && \
+    tar xzf cmake-${CMAKE_VER}.tar.gz && \
+    cd cmake-${CMAKE_VER} && \
+    ./bootstrap && \
+    make && \
+    make install && \
+    cd .. && rm -rf cmake-${CMAKE_VER} && rm -f *.tar.gz
+
+
+# # Check cmake version
+# RUN cmake --version
+
+
+# Git 2.14 with "git clone --jobs" functionality and "git checkout --recurse-submodules"
 # https://tecadmin.net/install-git-2-0-on-centos-rhel-fedora/
 # https://stackoverflow.com/a/44249558/2448495
 ENV GIT_VER=2.14.1
-RUN wget https://www.kernel.org/pub/software/scm/git/git-${GIT_VER}.tar.gz && \
+RUN \
+    wget https://www.kernel.org/pub/software/scm/git/git-${GIT_VER}.tar.gz && \
     tar xzf git-${GIT_VER}.tar.gz && \
     cd git-${GIT_VER} && \
     make -j${BUILD_THREADS} prefix=/usr/local/git all && \
@@ -140,37 +168,52 @@ RUN wget https://www.kernel.org/pub/software/scm/git/git-${GIT_VER}.tar.gz && \
 ENV PATH="/usr/local/git/bin:${PATH}"
 
 
+# Qt 4.8
+# http://doc.qt.io/qt-4.8/requirements-x11.html
+# Commits: http://code.qt.io/cgit/qt/qt.git/log/
+ENV QT4_VER=4.8
+RUN \
+    git clone --recursive --jobs ${BUILD_THREADS} --branch ${QT4_VER} https://code.qt.io/qt/qt.git && \
+    cd qt && \
+   ./configure \
+        -opensource \
+        -confirm-license \
+        -nomake examples \
+        -nomake tests && \
+    make -j${BUILD_THREADS} && \
+    # Install
+    make install && \
+    # Clean up
+    cd /workdir && rm -rf qt
+
+
 # Qt 5.6.1, Autodesk-modified (cannot be newer than PySide2 commit SHA)
 # Qt5 5.6 git commits: http://code.qt.io/cgit/qt/qt5.git/log/?h=5.6
 # Autodesk qtbase git commits: https://github.com/autodesk-forks/qtbase/commits/adsk-contrib/vfx/5.6.1
 # Autodesk qtx11extras git commits: https://github.com/autodesk-forks/qtx11extras/commits/adsk-contrib/vfx/5.6.1
-ENV QT_VER=5.6.1
-
-RUN \
-    # Clone Qt5 repo
-    git clone --recursive --jobs ${BUILD_THREADS} --branch ${QT_VER} https://code.qt.io/qt/qt5.git
-    #&& \
-
+ENV QT5_VER=5.6.1
 # Cherry-picked commits
 # Qt5: http://code.qt.io/cgit/qt/qt5.git/commit/?h=v5.6.1&id=adf7bcc0b1785c451b06f13c049e5b946b393705
 # Adsk qtbase: https://github.com/autodesk-forks/qtbase/commit/72e3fbb0d27e5d91b1676312ab6a7f6a979ed4e7
 # Adsk qtx11extras: https://github.com/autodesk-forks/qtx11extras/commit/d86b59059f0340f3707dad008a8f632b070de4e6
-ENV QT_GIT_COMMIT=adf7bcc0b1785c451b06f13c049e5b946b393705
+ENV QT5_GIT_COMMIT=adf7bcc0b1785c451b06f13c049e5b946b393705
 ENV ADSK_QTBASE_GIT_COMMIT=72e3fbb0d27e5d91b1676312ab6a7f6a979ed4e7
 ENV ADSK_QTX11EXTRAS_GIT_COMMIT=d86b59059f0340f3707dad008a8f632b070de4e6
-
 RUN \
+    git clone --recursive --jobs ${BUILD_THREADS} --branch ${QT5_VER} https://code.qt.io/qt/qt5.git && \
+    # Revert to commit SHA
     cd /workdir/qt5 && \
-    git checkout ${QT_GIT_COMMIT} && \
+    git checkout ${QT5_GIT_COMMIT} && \
     git submodule update --init --recursive && \
-    cd /workdir && \
     # Remove qtbase, qtx11extras
-    rm -rf qt5/qtbase && \
-    rm -rf qt5/qtx11extras && \
+    cd /workdir && \
+    rm -rf /workdir/qt5/qtbase && \
+    rm -rf /workdir/qt5/qtx11extras && \
     # Clone Autodesk's qtbase, qtx11extras
-    mkdir adsk && \
-    git clone --recursive --branch adsk-contrib/vfx/${QT_VER} https://github.com/autodesk-forks/qtbase.git adsk/qtbase && \
-    git clone --recursive --branch adsk-contrib/vfx/${QT_VER} https://github.com/autodesk-forks/qtx11extras.git adsk/qtx11extras && \
+    cd /workdir && \
+    mkdir -p /workdir/adsk && \
+    git clone --recursive --branch adsk-contrib/vfx/${QT5_VER} https://github.com/autodesk-forks/qtbase.git /workdir/adsk/qtbase && \
+    git clone --recursive --branch adsk-contrib/vfx/${QT5_VER} https://github.com/autodesk-forks/qtx11extras.git /workdir/adsk/qtx11extras && \
     # Revert to commit SHA for qtbase
     cd /workdir/adsk/qtbase && \
     git checkout ${ADSK_QTBASE_GIT_COMMIT} && \
@@ -178,35 +221,39 @@ RUN \
     cd /workdir/adsk/qtx11extras && \
     git checkout ${ADSK_QTX11EXTRAS_GIT_COMMIT} && \
     # Move Autodesk sources into qt5
-    cd /workdir && \
     mv /workdir/adsk/qtbase /workdir/qt5 && \
     mv /workdir/adsk/qtx11extras /workdir/qt5 && \
     # Build
     cd /workdir/qt5 && \
     # ./configure -help && \
-    ./configure -opensource -confirm-license -nomake examples -nomake tests && \
+    ./configure \
+        -opensource \
+        -confirm-license \
+        -nomake examples \
+        -nomake tests && \
     make -j${BUILD_THREADS} && \
     # Install
     make install && \
     # Clean up
-    cd /workdir && rm -rf qt5
+    cd /workdir && rm -rf qt5 && rm -rf adsk
 
 
-# Qt Creator (cannot be newer than PySide2 commit SHA)
+# Qt5 Creator (cannot be newer than PySide2 commit SHA)
 # https://wiki.qt.io/Building_Qt_Creator_from_Git
 # Required for PySide2.QtUiTools
 # qt-creator git commits: http://code.qt.io/cgit/qt-creator/qt-creator.git/log/?h=4.0
-ENV QTCREATOR_VER=4.0
+ENV QT5CREATOR_VER=4.0
 # Cherry-picked commits
-# qt-creator: http://code.qt.io/cgit/qt-creator/qt-creator.git/commit/?h=4.0&id=7f07ec41abb8194cafa19863af183e5e7f971edf
-ENV QTCREATOR_GIT_COMMIT=7f07ec41abb8194cafa19863af183e5e7f971edf
-RUN git clone --recursive --branch ${QTCREATOR_VER} --jobs ${BUILD_THREADS} https://code.qt.io/qt-creator/qt-creator.git && \
+# qt-creator: http://code.qt.io/cgit/qt-creator/qt-creator.git/commit/?h=v4.0.2&id=47b4f2c73834dd971a5ce418368b5d991d08a666
+ENV QT5CREATOR_GIT_COMMIT=47b4f2c73834dd971a5ce418368b5d991d08a666
+RUN \
+    git clone --recursive --branch ${QT5CREATOR_VER} --jobs ${BUILD_THREADS} https://code.qt.io/qt-creator/qt-creator.git && \
     cd /workdir/qt-creator && \
-    git checkout ${QTCREATOR_GIT_COMMIT} && \
+    git checkout ${QT5CREATOR_GIT_COMMIT} && \
     git submodule update --init --recursive && \
     mkdir /workdir/qt-creator-build && \
     cd /workdir/qt-creator-build && \
-    /usr/local/Qt-${QT_VER}/bin/qmake -r /workdir/qt-creator/qtcreator.pro && \
+    /usr/local/Qt-${QT5_VER}/bin/qmake -r /workdir/qt-creator/qtcreator.pro && \
     make -j${BUILD_THREADS} && \
     make install INSTALL_ROOT=/usr/local/qtcreator && \
     cd .. && rm -rf qt-creator && rm -rf qt-creator-build
@@ -220,25 +267,25 @@ RUN git clone --recursive --branch ${QTCREATOR_VER} --jobs ${BUILD_THREADS} http
 #     http://blog.dscpl.com.au/2015/06/installing-custom-python-version-into.html
 #     https://stackoverflow.com/questions/37345044/issue-with-installing-python-2-7-8-alongside-2-7-5-on-rhel-7-2
 #
-ENV PYTHON_VER_FULL=2.7.12
-ENV PYTHON_VER=2.7
+ENV PYTHON2_VER_FULL=2.7.12
+ENV PYTHON2_VER=2.7
 ENV PYTHON3_VER_FULL=3.4.5
 ENV PYTHON3_VER=3.4
 RUN \
     # Python 2
-    mkdir -p /usr/local/python${PYTHON_VER}/lib && \
-    wget https://www.python.org/ftp/python/${PYTHON_VER_FULL}/Python-${PYTHON_VER_FULL}.tgz && \
-    tar xzf Python-${PYTHON_VER_FULL}.tgz && \
-    cd Python-${PYTHON_VER_FULL} && \
+    mkdir -p /usr/local/python${PYTHON2_VER}/lib && \
+    wget https://www.python.org/ftp/python/${PYTHON2_VER_FULL}/Python-${PYTHON2_VER_FULL}.tgz && \
+    tar xzf Python-${PYTHON2_VER_FULL}.tgz && \
+    cd Python-${PYTHON2_VER_FULL} && \
     # Get the configure arguments from an already existing CentOS 7-installation:
     # $ python
     # >>> from distutils.sysconfig import get_config_var
     # >>> print get_config_var('CONFIG_ARGS')
     ./configure \
-        --prefix=/usr/local/python${PYTHON_VER} \
+        --prefix=/usr/local/python${PYTHON2_VER} \
         --enable-shared \
         --enable-unicode=ucs4 \
-        LDFLAGS="-Wl,-rpath /usr/local/python${PYTHON_VER}/lib" \
+        LDFLAGS="-Wl,-rpath /usr/local/python${PYTHON2_VER}/lib" \
 
         --build=x86_64-redhat-linux-gnu \
         --host=x86_64-redhat-linux-gnu \
@@ -256,9 +303,9 @@ RUN \
     make altinstall && \
     cd /workdir && \
     wget https://bootstrap.pypa.io/get-pip.py && \
-    /usr/local/python${PYTHON_VER}/bin/python${PYTHON_VER} get-pip.py && \
-    /usr/local/python${PYTHON_VER}/bin/pip${PYTHON_VER} install -U pip && \
-    rm -rf Python-${PYTHON_VER_FULL} && rm -f Python-${PYTHON_VER_FULL}.tgz && rm -f get-pip.py && \
+    /usr/local/python${PYTHON2_VER}/bin/python${PYTHON2_VER} get-pip.py && \
+    /usr/local/python${PYTHON2_VER}/bin/pip${PYTHON2_VER} install -U pip && \
+    rm -rf Python-${PYTHON2_VER_FULL} && rm -f Python-${PYTHON2_VER_FULL}.tgz && rm -f get-pip.py && \
 
     # Python 3.x
     mkdir -p /usr/local/python${PYTHON3_VER}/lib && \
@@ -301,10 +348,10 @@ RUN \
 # Register Python as default (without replacing system-python and without breaking e.g. yum)
 RUN \
     # Python 2
-    ln -s /usr/local/python${PYTHON_VER}/bin/python${PYTHON_VER} /usr/local/bin/python && \
-    ln -s /usr/local/python${PYTHON_VER}/bin/python${PYTHON_VER} /usr/local/bin/python${PYTHON_VER} && \
-    ln -s /usr/local/python${PYTHON_VER}/bin/pip${PYTHON_VER} /usr/local/bin/pip && \
-    ln -s /usr/local/python${PYTHON_VER}/bin/pip${PYTHON_VER} /usr/local/bin/pip${PYTHON_VER} && \
+    ln -s /usr/local/python${PYTHON2_VER}/bin/python${PYTHON2_VER} /usr/local/bin/python && \
+    ln -s /usr/local/python${PYTHON2_VER}/bin/python${PYTHON2_VER} /usr/local/bin/python${PYTHON2_VER} && \
+    ln -s /usr/local/python${PYTHON2_VER}/bin/pip${PYTHON2_VER} /usr/local/bin/pip && \
+    ln -s /usr/local/python${PYTHON2_VER}/bin/pip${PYTHON2_VER} /usr/local/bin/pip${PYTHON2_VER} && \
     # Python 3
     ln -s /usr/local/python${PYTHON3_VER}/bin/python${PYTHON3_VER} /usr/local/bin/python${PYTHON3_VER} && \
     ln -s /usr/local/python${PYTHON3_VER}/bin/pip${PYTHON3_VER} /usr/local/bin/pip${PYTHON3_VER}
@@ -314,7 +361,7 @@ ENV PATH="/usr/local/bin:${PATH}"
 # Pip packages
 RUN \
     # Python 2
-    pip${PYTHON_VER} install -U \
+    pip${PYTHON2_VER} install -U \
         # Qt.py testing (nosepipe)
         nose \
         nosepipe \
@@ -331,55 +378,19 @@ RUN \
         # General build
         setuptools \
         wheel && \
-    ln -s /usr/local/python${PYTHON_VER}/bin/nosetests /usr/local/bin/nosetests${PYTHON_VER} && \
+    ln -s /usr/local/python${PYTHON2_VER}/bin/nosetests /usr/local/bin/nosetests${PYTHON2_VER} && \
     ln -s /usr/local/python${PYTHON3_VER}/bin/nosetests /usr/local/bin/nosetests${PYTHON3_VER}
 
 
-# PySide
-# http://pyside.readthedocs.io/en/latest/building/options.html
-# PySide commits: https://github.com/pyside/pyside-setup/commits/master
-
-# Cherry-picked commits
-# PySide: 7860bda363438e96fa9e810def0858635a9766cc
-ENV PYSIDE_GIT_COMMIT=7860bda363438e96fa9e810def0858635a9766cc
-RUN \
-    # PySide for Python 2
-    git clone --recursive --jobs ${BUILD_THREADS} https://github.com/pyside/pyside-setup.git && \
-    cd pyside-setup && \
-    git checkout ${PYSIDE_GIT_COMMIT} && \
-    git submodule update --init --recursive && \
-    python${PYTHON_VER} setup.py \
-        install \
-            --qmake=/usr/bin/qmake-qt4 \
-            # --qmake=/usr/local/Trolltech/Qt-4.8.7/bin/qmake \
-            --cmake=/usr/bin/cmake3 \
-            --openssl=/usr/bin/openssl \
-            --jobs=${BUILD_THREADS} && \
-    cd .. && rm -rf pyside-setup && \
-
-    # PySide for Python 3
-    git clone --recursive --jobs ${BUILD_THREADS} https://github.com/pyside/pyside-setup.git && \
-    cd pyside-setup && \
-    git checkout ${PYSIDE_GIT_COMMIT} && \
-    git submodule update --init --recursive && \
-    python${PYTHON3_VER} setup.py \
-        install \
-            --qmake=/usr/bin/qmake-qt4 \
-            # --qmake=/usr/local/Trolltech/Qt-4.8.7/bin/qmake \
-            --cmake=/usr/bin/cmake3 \
-            --openssl=/usr/bin/openssl \
-            --jobs=${BUILD_THREADS} && \
-    cd .. && rm -rf pyside-setup
-
-
-# Sip
+# Sip (for PyQt4 and PyQt5)
+# http://pyqt.sourceforge.net/Docs/sip4/
 ENV SIP_VER=4.18.1
 RUN \
     # Python 2
     wget http://sourceforge.net/projects/pyqt/files/sip/sip-${SIP_VER}/sip-${SIP_VER}.tar.gz && \
     tar -xvf sip-${SIP_VER}.tar.gz && \
     cd sip-${SIP_VER} && \
-    python${PYTHON_VER} configure.py && \
+    python${PYTHON2_VER} configure.py && \
     make -j${BUILD_THREADS} && \
     make install && \
     cd .. && rm -rf sip-${SIP_VER} && rm -f *.tar.gz && \
@@ -394,24 +405,6 @@ RUN \
     cd .. && rm -rf sip-${SIP_VER} && rm -f *.tar.gz
 
 
-# Qt 4.8
-# http://doc.qt.io/qt-4.8/requirements-x11.html
-# Commits: http://code.qt.io/cgit/qt/qt.git/log/
-ENV QT4_VER=4.8
-RUN git clone --recursive --jobs ${BUILD_THREADS} --branch ${QT4_VER} https://code.qt.io/qt/qt.git
-RUN cd qt && \
-   ./configure \
-        -opensource \
-        -confirm-license \
-        -nomake examples \
-        -nomake tests && \
-    make -j${BUILD_THREADS} && \
-    # Install
-    make install && \
-    # Clean up
-    cd /workdir && rm -rf qt
-
-
 # PyQt4
 # The version of PyQt4 must be compatible with the SIP version used to build PyQt5
 # http://pyqt.sourceforge.net/Docs/PyQt4/installation.html
@@ -421,13 +414,13 @@ RUN \
     wget http://sourceforge.net/projects/pyqt/files/PyQt4/PyQt-${PYQT4_VER}/PyQt-x11-gpl-${PYQT4_VER}.tar.gz && \
     tar -xvf PyQt-x11-gpl-${PYQT4_VER}.tar.gz && \
     cd PyQt-x11-gpl-${PYQT4_VER} && \
-    # python${PYTHON_VER} configure-ng.py \
-    python${PYTHON_VER} configure.py \
+    # python${PYTHON2_VER} configure-ng.py \
+    python${PYTHON2_VER} configure.py \
         # --verbose \
         --confirm-license \
         # --qmake=/usr/bin/qmake-qt4 \
         --qmake=/usr/local/Trolltech/Qt-4.8.7/bin/qmake && \
-        # --sip=/usr/local/python${PYTHON_VER}/bin/sip && \
+        # --sip=/usr/local/python${PYTHON2_VER}/bin/sip && \
     make -j${BUILD_THREADS} && \
     make install && \
     cd .. && rm -rf PyQt-x11-gpl-${PYQT4_VER} && rm -f *.tar.gz && \
@@ -442,10 +435,45 @@ RUN \
         --confirm-license \
         # --qmake=/usr/bin/qmake-qt4 \
         --qmake=/usr/local/Trolltech/Qt-4.8.7/bin/qmake && \
-        # --sip=/usr/local/python${PYTHON_VER}/bin/sip && \
+        # --sip=/usr/local/python${PYTHON2_VER}/bin/sip && \
     make -j${BUILD_THREADS} && \
     make install && \
     cd .. && rm -rf PyQt-x11-gpl-${PYQT4_VER} && rm -f *.tar.gz
+
+
+# PySide
+# Note: requires cmake3
+# http://pyside.readthedocs.io/en/latest/building/options.html
+# PySide commits: https://github.com/pyside/pyside-setup/commits/master
+# Cherry-picked commits
+# PySide: 7860bda363438e96fa9e810def0858635a9766cc
+ENV PYSIDE_GIT_COMMIT=7860bda363438e96fa9e810def0858635a9766cc
+RUN \
+    # PySide for Python 2
+    git clone --recursive --jobs ${BUILD_THREADS} https://github.com/pyside/pyside-setup.git && \
+    cd pyside-setup && \
+    git checkout ${PYSIDE_GIT_COMMIT} && \
+    git submodule update --init --recursive && \
+    python${PYTHON2_VER} setup.py \
+        install \
+            --qmake=/usr/local/Trolltech/Qt-4.8.7/bin/qmake \
+            --cmake=/usr/local/bin/cmake \
+            --openssl=/usr/bin/openssl \
+            --jobs=${BUILD_THREADS} && \
+    cd .. && rm -rf pyside-setup && \
+
+    # PySide for Python 3
+    git clone --recursive --jobs ${BUILD_THREADS} https://github.com/pyside/pyside-setup.git && \
+    cd pyside-setup && \
+    git checkout ${PYSIDE_GIT_COMMIT} && \
+    git submodule update --init --recursive && \
+    python${PYTHON3_VER} setup.py \
+        install \
+            --qmake=/usr/local/Trolltech/Qt-4.8.7/bin/qmake \
+            --cmake=/usr/local/bin/cmake \
+            --openssl=/usr/bin/openssl \
+            --jobs=${BUILD_THREADS} && \
+    cd .. && rm -rf pyside-setup
 
 
 # PyQt5
@@ -456,11 +484,11 @@ RUN \
     wget http://sourceforge.net/projects/pyqt/files/PyQt5/PyQt-${PYQT5_VER}/PyQt5_gpl-${PYQT5_VER}.tar.gz && \
     tar -xvf PyQt5_gpl-${PYQT5_VER}.tar.gz && \
     cd PyQt5_gpl-${PYQT5_VER} && \
-    python${PYTHON_VER} configure.py \
+    python${PYTHON2_VER} configure.py \
         # --verbose \
         --confirm-license \
-        --qmake=/usr/local/Qt-${QT_VER}/bin/qmake \
-        --sip=/usr/local/python${PYTHON_VER}/bin/sip && \
+        --qmake=/usr/local/Qt-${QT5_VER}/bin/qmake \
+        --sip=/usr/local/python${PYTHON2_VER}/bin/sip && \
     make -j${BUILD_THREADS} && \
     make install && \
     cd .. && rm -rf PyQt5_gpl-${PYQT5_VER} && rm -f *.tar.gz && \
@@ -472,7 +500,7 @@ RUN \
     python${PYTHON3_VER} configure.py \
         # --verbose \
         --confirm-license \
-        --qmake=/usr/local/Qt-${QT_VER}/bin/qmake \
+        --qmake=/usr/local/Qt-${QT5_VER}/bin/qmake \
         --sip=/usr/local/python${PYTHON3_VER}/bin/sip && \
     make -j${BUILD_THREADS} && \
     make install && \
@@ -494,39 +522,19 @@ RUN \
     # PySide2 for Python 2
     git clone --recursive --jobs ${BUILD_THREADS} --branch ${PYSIDE2_GIT_BRANCH} https://codereview.qt-project.org/pyside/pyside-setup && \
     cd pyside-setup && \
-
-    # Show current hashes
-    cd sources && \
-    git ls-tree @ pyside2 && \
-    git ls-tree @ shiboken2 && \
-    cd .. && \
-
-
     git checkout ${PYSIDE2_GIT_COMMIT} && \
     git submodule update --init --recursive && \
-
-    # Verify current commit hash
-    git rev-parse --verify HEAD && \
-    # Should say 8913156381b7dc51f903b9e459c143fb25097cab
-
-    # Verify commit hashes of submodules
-    cd sources && \
-    git ls-tree @ pyside2 && \
-    # 23d77136da1f249f0a78c8c7e8124adc8c604230
-    git ls-tree @ shiboken2 && \
-    # 6a3f6544ec0b5a1bc3f8bbaf9269217a2072168f
-    cd .. && \
 
     # Fix bug in order to build PySide2.QtUiTools: https://bugreports.qt.io/browse/PYSIDE-552
     # sed -i.bak $'s/if(Qt5Designer_FOUND)/find_package(Qt5Designer)\\\nif(Qt5Designer_FOUND)/g' sources/pyside2/CMakeLists.txt && \
     # cat sources/pyside2/CMakeLists.txt && \
 
-    python${PYTHON_VER} setup.py \
+    python${PYTHON2_VER} setup.py \
         # bdist_wheel \
         install \
             --ignore-git \
-            --qmake=/usr/local/Qt-${QT_VER}/bin/qmake \
-            --cmake=/usr/bin/cmake3 \
+            --qmake=/usr/local/Qt-${QT5_VER}/bin/qmake \
+            --cmake=/usr/local/bin/cmake \
             --openssl=/usr/bin/openssl \
             --jobs=${BUILD_THREADS} && \
     # pip install /workdir/pyside-setup/dist/*.whl
@@ -547,22 +555,23 @@ RUN \
         # bdist_wheel \
         install \
             --ignore-git \
-            --qmake=/usr/local/Qt-${QT_VER}/bin/qmake \
-            --cmake=/usr/bin/cmake3 \
+            --qmake=/usr/local/Qt-${QT5_VER}/bin/qmake \
+            --cmake=/usr/local/bin/cmake \
             --openssl=/usr/bin/openssl \
             --jobs=${BUILD_THREADS} && \
     # pip install /workdir/pyside-setup/dist/*.whl
     cd .. && rm -rf pyside-setup
 
-RUN yum install -y dbus
+# Fix dbus error
+# http://www.torkwrench.com/2011/12/16/d-bus-library-appears-to-be-incorrectly-set-up-failed-to-read-machine-uuid-failed-to-open-varlibdbusmachine-id/
 RUN dbus-uuidgen > /var/lib/dbus/machine-id
 
 # Ugly fix to make PySide2 find the Qt libs
-ENV LD_LIBRARY_PATH="/usr/local/Qt-${QT_VER}/lib:${LD_LIBRARY_PATH}"
+ENV LD_LIBRARY_PATH="/usr/local/Qt-${QT5_VER}/lib:${LD_LIBRARY_PATH}"
 
 
 # Enable additional output from Qt.py
-ENV QT_VERBOSE true
+ENV QT5_VERBOSE true
 ENV QT_TESTING true
 
 # Xvfb
