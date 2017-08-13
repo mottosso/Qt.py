@@ -35,7 +35,7 @@ RUN yum install deltarpm -y && \
                     libicu-devel \
         # QtQuick requirements; OpenGL
         # https://access.redhat.com/solutions/56301
-            mesa-*-devel \
+            mesa-libGL mesa-libGL-devel \
         # QtWebEngine requirements (disabled because of error during make)
             # http://doc.qt.io/qt-5/qtwebengine-platform-notes.html
                 # bison* flex* gperf* \
@@ -200,7 +200,9 @@ ENV QT5_GIT_COMMIT=adf7bcc0b1785c451b06f13c049e5b946b393705
 ENV ADSK_QTBASE_GIT_COMMIT=72e3fbb0d27e5d91b1676312ab6a7f6a979ed4e7
 ENV ADSK_QTX11EXTRAS_GIT_COMMIT=d86b59059f0340f3707dad008a8f632b070de4e6
 RUN \
-    git clone --recursive --jobs ${BUILD_THREADS} --branch ${QT5_VER} https://code.qt.io/qt/qt5.git && \
+    git clone --recursive --jobs ${BUILD_THREADS} --branch ${QT5_VER} https://code.qt.io/qt/qt5.git
+
+RUN \
     # Revert to commit SHA
     cd /workdir/qt5 && \
     git checkout ${QT5_GIT_COMMIT} && \
