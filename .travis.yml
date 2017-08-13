@@ -1,14 +1,24 @@
 matrix:
   include:
 
-  # VFX Platform 2018 (in development)
+  # # VFX Platform 2018 (in development)
+  # - os: linux
+  #   env:
+  #   - VFXPLATFORM=2018dev
+  #   - PYTHON=2.7
+  # - os: linux
+  #   env:
+  #   - VFXPLATFORM=2018dev
+  #   - PYTHON=3.4
+
+  # VFX Platform 2017 (in development)
   - os: linux
     env:
-    - VFXPLATFORM=2018dev
+    - VFXPLATFORM=2017dev
     - PYTHON=2.7
   - os: linux
     env:
-    - VFXPLATFORM=2018dev
+    - VFXPLATFORM=2017dev
     - PYTHON=3.4
 
 
