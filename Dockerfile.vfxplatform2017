@@ -125,7 +125,7 @@ RUN \
     mv /usr/lib64/libstdc++.so.6 /usr/lib64/libstdc++.so.6.bak && \
     mv /usr/local/gcc-${GCC_VER}/lib64/libstdc++.so.6 /usr/lib64/libstdc++.so.6 && \
     mv /usr/local/gcc-${GCC_VER}/lib64/libstdc++.so.6.0.19 /usr/lib64/libstdc++.so.6.0.19 && \
-    cd /workdir && rm -rf gcc-${GCC_VER} && rm -f gcc-${GCC_VER}.tar.bz2
+    rm -rf /workdir/*
 ENV PATH="/usr/local/gcc-${GCC_VER}/bin:${PATH}"
 ENV CC=/usr/local/gcc-${GCC_VER}/bin/gcc
 ENV CXX=/usr/local/gcc-${GCC_VER}/bin/g++
@@ -147,7 +147,7 @@ RUN \
     ./bootstrap && \
     make && \
     make install && \
-    cd .. && rm -rf cmake-${CMAKE_VER} && rm -f *.tar.gz
+    rm -rf /workdir/*
 
 
 # # Check cmake version
@@ -164,7 +164,7 @@ RUN \
     cd git-${GIT_VER} && \
     make -j${BUILD_THREADS} prefix=/usr/local/git all && \
     make prefix=/usr/local/git install && \
-    cd .. && rm -rf git-${GIT_VER} && rm -f git-${GIT_VER}.tar.gz
+    rm -rf /workdir/*
 ENV PATH="/usr/local/git/bin:${PATH}"
 
 
@@ -184,7 +184,7 @@ RUN \
     # Install
     make install && \
     # Clean up
-    cd /workdir && rm -rf qt
+    rm -rf /workdir/*
 
 
 # Qt 5.6.1, Autodesk-modified (cannot be newer than PySide2 commit SHA)
@@ -200,9 +200,7 @@ ENV QT5_GIT_COMMIT=adf7bcc0b1785c451b06f13c049e5b946b393705
 ENV ADSK_QTBASE_GIT_COMMIT=72e3fbb0d27e5d91b1676312ab6a7f6a979ed4e7
 ENV ADSK_QTX11EXTRAS_GIT_COMMIT=d86b59059f0340f3707dad008a8f632b070de4e6
 RUN \
-    git clone --recursive --jobs ${BUILD_THREADS} --branch ${QT5_VER} https://code.qt.io/qt/qt5.git
-
-RUN \
+    git clone --recursive --jobs ${BUILD_THREADS} --branch ${QT5_VER} https://code.qt.io/qt/qt5.git && \
     # Revert to commit SHA
     cd /workdir/qt5 && \
     git checkout ${QT5_GIT_COMMIT} && \
@@ -237,7 +235,7 @@ RUN \
     # Install
     make install && \
     # Clean up
-    cd /workdir && rm -rf qt5 && rm -rf adsk
+    rm -rf /workdir/*
 
 
 # Qt5 Creator (cannot be newer than PySide2 commit SHA)
@@ -258,7 +256,7 @@ RUN \
     /usr/local/Qt-${QT5_VER}/bin/qmake -r /workdir/qt-creator/qtcreator.pro && \
     make -j${BUILD_THREADS} && \
     make install INSTALL_ROOT=/usr/local/qtcreator && \
-    cd .. && rm -rf qt-creator && rm -rf qt-creator-build
+    rm -rf /workdir/*
 
 
 # --------------- !!!!!!!!!!!! Re-run build config for Python2/3 and add args...
@@ -307,7 +305,7 @@ RUN \
     wget https://bootstrap.pypa.io/get-pip.py && \
     /usr/local/python${PYTHON2_VER}/bin/python${PYTHON2_VER} get-pip.py && \
     /usr/local/python${PYTHON2_VER}/bin/pip${PYTHON2_VER} install -U pip && \
-    rm -rf Python-${PYTHON2_VER_FULL} && rm -f Python-${PYTHON2_VER_FULL}.tgz && rm -f get-pip.py && \
+    rm -rf /workdir/* && \
 
     # Python 3.x
     mkdir -p /usr/local/python${PYTHON3_VER}/lib && \
@@ -344,7 +342,7 @@ RUN \
     wget https://bootstrap.pypa.io/get-pip.py && \
     /usr/local/python${PYTHON3_VER}/bin/python${PYTHON3_VER} get-pip.py && \
     /usr/local/python${PYTHON3_VER}/bin/pip${PYTHON3_VER} install -U pip && \
-    rm -rf Python-${PYTHON3_VER_FULL} && rm -f Python-${PYTHON3_VER_FULL}.tgz && rm -f get-pip.py
+    rm -rf /workdir/*
 
 
 # Register Python as default (without replacing system-python and without breaking e.g. yum)
@@ -397,7 +395,7 @@ RUN \
     python${PYTHON2_VER} configure.py && \
     make -j${BUILD_THREADS} && \
     make install && \
-    cd .. && rm -rf sip-${SIP_VER} && rm -f *.tar.gz && \
+    rm -rf /workdir/* && \
 
     # Python 3
     wget http://sourceforge.net/projects/pyqt/files/sip/sip-${SIP_VER}/sip-${SIP_VER}.tar.gz && \
@@ -406,7 +404,7 @@ RUN \
     python${PYTHON3_VER} configure.py && \
     make -j${BUILD_THREADS} && \
     make install && \
-    cd .. && rm -rf sip-${SIP_VER} && rm -f *.tar.gz
+    rm -rf /workdir/*
 
 
 # PyQt4
@@ -427,7 +425,7 @@ RUN \
         # --sip=/usr/local/python${PYTHON2_VER}/bin/sip && \
     make -j${BUILD_THREADS} && \
     make install && \
-    cd .. && rm -rf PyQt-x11-gpl-${PYQT4_VER} && rm -f *.tar.gz && \
+    rm -rf /workdir/* && \
 
     # PyQt4 for Python 3
     wget http://sourceforge.net/projects/pyqt/files/PyQt4/PyQt-${PYQT4_VER}/PyQt-x11-gpl-${PYQT4_VER}.tar.gz && \
@@ -442,7 +440,7 @@ RUN \
         # --sip=/usr/local/python${PYTHON2_VER}/bin/sip && \
     make -j${BUILD_THREADS} && \
     make install && \
-    cd .. && rm -rf PyQt-x11-gpl-${PYQT4_VER} && rm -f *.tar.gz
+    rm -rf /workdir/*
 
 
 # PySide
@@ -464,7 +462,7 @@ RUN \
             --cmake=/usr/local/bin/cmake \
             --openssl=/usr/bin/openssl \
             --jobs=${BUILD_THREADS} && \
-    cd .. && rm -rf pyside-setup && \
+    rm -rf /workdir/* && \
 
     # PySide for Python 3
     git clone --recursive --jobs ${BUILD_THREADS} https://github.com/pyside/pyside-setup.git && \
@@ -477,7 +475,7 @@ RUN \
             --cmake=/usr/local/bin/cmake \
             --openssl=/usr/bin/openssl \
             --jobs=${BUILD_THREADS} && \
-    cd .. && rm -rf pyside-setup
+    rm -rf /workdir/*
 # Ugly fix to make PySide find the Qt4 libs
 ENV LD_LIBRARY_PATH="/usr/local/Trolltech/Qt-4.8.7/lib:${LD_LIBRARY_PATH}"
 
@@ -497,7 +495,7 @@ RUN \
         --sip=/usr/local/python${PYTHON2_VER}/bin/sip && \
     make -j${BUILD_THREADS} && \
     make install && \
-    cd .. && rm -rf PyQt5_gpl-${PYQT5_VER} && rm -f *.tar.gz && \
+    rm -rf /workdir/* && \
 
     # PyQt5 for Python 3
     wget http://sourceforge.net/projects/pyqt/files/PyQt5/PyQt-${PYQT5_VER}/PyQt5_gpl-${PYQT5_VER}.tar.gz && \
@@ -510,7 +508,7 @@ RUN \
         --sip=/usr/local/python${PYTHON3_VER}/bin/sip && \
     make -j${BUILD_THREADS} && \
     make install && \
-    cd .. && rm -rf PyQt5_gpl-${PYQT5_VER} && rm -f *.tar.gz
+    rm -rf /workdir/*
 
 
 # PySide2
@@ -544,7 +542,7 @@ RUN \
             --openssl=/usr/bin/openssl \
             --jobs=${BUILD_THREADS} && \
     # pip install /workdir/pyside-setup/dist/*.whl
-    cd .. && rm -rf pyside-setup && \
+    rm -rf /workdir/* && \
 
     # PySide2 for Python 3
     git clone --recursive --jobs ${BUILD_THREADS} --branch ${PYSIDE2_GIT_BRANCH} https://codereview.qt-project.org/pyside/pyside-setup && \
@@ -566,7 +564,7 @@ RUN \
             --openssl=/usr/bin/openssl \
             --jobs=${BUILD_THREADS} && \
     # pip install /workdir/pyside-setup/dist/*.whl
-    cd .. && rm -rf pyside-setup
+    rm -rf /workdir/*
 # Ugly fix to make PySide2 find the Qt5 libs
 ENV LD_LIBRARY_PATH="/usr/local/Qt-${QT5_VER}/lib:${LD_LIBRARY_PATH}"
 
