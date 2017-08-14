@@ -29,11 +29,11 @@ CentOS-based images are built and stored in [Dockerhub](https://hub.docker.com/r
 
 **Software versions**
 
-We freeze the code around the time of [SIGGRAPH](http://www.siggraph.org) (usually July/August) each year. This is usually when the VFX Reference Platform is updated.
+We freeze the source code built in each image around the time of [SIGGRAPH](http://www.siggraph.org) (usually July/August) each year. This is usually when the VFX Reference Platform is updated.
 
-In order to be able to re-build our images from a certain point in time, we check out commits or download specific source archives rather than going for the always-latest version of software.
+In order to be able to re-build our images from a certain point in time, we cherry-pick commit SHAs or source archives rather than going for the always-latest version of software. We then set up new images as required and add them to our continous integration tests.
 
-There are two rules for choosing the commit SHAs:
+There are two rules for choosing commit SHAs:
 
 - No commit SHA can be newer than the commit SHA from PySide2
 - No binding's commit SHA can be older than their respective Qt commit SHA
