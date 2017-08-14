@@ -89,7 +89,7 @@ RUN yum install deltarpm -y && \
     yum clean all
 
 # Parallel build processes (set to cores +1)
-ENV BUILD_THREADS=9
+ENV BUILD_THREADS=17
 
 WORKDIR /workdir
 
@@ -476,6 +476,8 @@ RUN \
             --openssl=/usr/bin/openssl \
             --jobs=${BUILD_THREADS} && \
     cd .. && rm -rf pyside-setup
+# Ugly fix to make PySide find the Qt4 libs
+ENV LD_LIBRARY_PATH="/usr/local/Trolltech/Qt-4.8.7/lib:${LD_LIBRARY_PATH}"
 
 
 # PyQt5
@@ -563,17 +565,16 @@ RUN \
             --jobs=${BUILD_THREADS} && \
     # pip install /workdir/pyside-setup/dist/*.whl
     cd .. && rm -rf pyside-setup
+# Ugly fix to make PySide2 find the Qt5 libs
+ENV LD_LIBRARY_PATH="/usr/local/Qt-${QT5_VER}/lib:${LD_LIBRARY_PATH}"
+
 
 # Fix dbus error
 # http://www.torkwrench.com/2011/12/16/d-bus-library-appears-to-be-incorrectly-set-up-failed-to-read-machine-uuid-failed-to-open-varlibdbusmachine-id/
 RUN dbus-uuidgen > /var/lib/dbus/machine-id
 
-# Ugly fix to make PySide2 find the Qt libs
-ENV LD_LIBRARY_PATH="/usr/local/Qt-${QT5_VER}/lib:${LD_LIBRARY_PATH}"
-
-
 # Enable additional output from Qt.py
-ENV QT5_VERBOSE true
+ENV QT_VERBOSE true
 ENV QT_TESTING true
 
 # Xvfb
