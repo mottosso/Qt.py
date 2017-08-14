@@ -158,7 +158,7 @@ TypeError: bytes or ASCII string expected not 'NoneType'
 PySide cannot accept any arguments. In PyQt4, `QAction.triggered` signal requires a bool arg.
 
 ```python
-# PySide
+# PySide, untested
 >>> from Qt import QtCore, QtWidgets
 >>> obj = QtCore.QObject()
 >>> action = QtWidgets.QAction(obj)
@@ -171,7 +171,7 @@ TypeError: triggered() only accepts 0 arguments, 2 given!
 ```
 
 ```python
-# PyQt4
+# PyQt4, untested
 >>> from Qt import QtCore, QtWidgets
 >>> obj = QtCore.QObject()
 >>> action = QtWidgets.QAction(obj)
