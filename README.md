@@ -81,6 +81,7 @@ Qt.py is a single file and can either be [copy/pasted](https://raw.githubusercon
 $ pip install Qt.py
 ```
 
+- Pro tip: **Never use the latest commit for production**. Instead, use [the latest release](https://github.com/mottosso/Qt.py/releases). That way, when you read bug reports or make one for yourself you will be able to match a version with the problem without which you will not know which fixes apply to you nor would we be able to help you. Installing via pip as above ensures you are provided the latest *stable* release. Unstable releases are suffixed with a `.b`, e.g. `1.1.0.b3`.
 - Pro tip: Supports [vendoring](https://fredrikaverpil.github.io/2017/05/04/vendoring-qt-py/)
 
 <br>
@@ -128,25 +129,38 @@ All members of `Qt` stem directly from those available via PySide2, along with t
 'PyQt5'
 ```
 
+### Compatibility
+
 Qt.py also provides compatibility wrappers for critical functionality that differs across bindings, these can be found in the added `QtCompat` submodule.
 
 | Attribute                                 | Returns     | Description
 |:------------------------------------------|:------------|:------------
 | `loadUi(uifile=str, baseinstance=QWidget)`| `QObject`   | Minimal wrapper of PyQt4.loadUi and PySide equivalent
 | `translate(...)`        					| `function`  | Compatibility wrapper around [QCoreApplication.translate][]
-| `setSectionResizeMode()`					| `method`    | Compatibility wrapper around [QAbstractItemView.setSectionResizeMode][]
 | `wrapInstance(addr=long, type=QObject)`   | `QObject`   | Wrapper around `shiboken2.wrapInstance` and PyQt equivalent
 | `getCppPointer(object=QObject)`           | `long`      | Wrapper around `shiboken2.getCppPointer` and PyQt equivalent
 
 [QCoreApplication.translate]: https://doc.qt.io/qt-5/qcoreapplication.html#translate
-[QAbstractItemView.setSectionResizeMode]: https://doc.qt.io/qt-5/qheaderview.html#setSectionResizeMode
 
 **Example**
 
 ```python
 >>> from Qt import QtCompat
->>> QtCompat.setSectionResizeMode
+>>> QtCompat.loadUi
 ```
+
+#### Class specific compatibility objects
+
+Between Qt4 and Qt5 there have been many classes and class members that are obsolete. Under Qt.QtCompat there are many classes with names matching the classes they provide compatibility functions. These will match the PySide2 naming convention.
+
+```python
+from Qt import QtCore, QtWidgets, QtCompat
+header = QtWidgets.QHeaderView(QtCore.Qt.Horizontal)
+QtCompat.QHeaderView.setSectionsMovable(header, False)
+movable = QtCompat.QHeaderView.sectionsMovable(header)
+```
+
+This also covers inconsistencies between bindings. For example PyQt4's QFileDialog matches Qt4's return value of the selected. While all other bindings return the selected filename and the file filter the user used to select the file. `Qt.QtCompat.QFileDialog` ensures that getOpenFileName(s) and getSaveFileName always return the tuple.
 
 <br>
 
@@ -220,13 +234,11 @@ If you need to expose a module that isn't included in Qt.py by default or wish t
 ```python
 # QtSiteConfig.py
 def update_members(members):
-	"""Called by Qt.py at run-time to modify the modules it makes available.
+    """Called by Qt.py at run-time to modify the modules it makes available.
 
     Arguments:
         members (dict): The members considered by Qt.py
-
     """
-
     members.pop("QtCore")
 ```
 
@@ -373,6 +385,7 @@ Send us a pull-request with your studio here.
 - [CGRU](http://cgru.info/)
 - [MPC](http://www.moving-picture.com)
 - [Rising Sun Pictures](https://rsp.com.au)
+- [Blur Studio](http://www.blur.com)
 
 Presented at Siggraph 2016, BOF!
 

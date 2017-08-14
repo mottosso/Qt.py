@@ -264,7 +264,7 @@ Use compatibility wrapper.
 >>> app = QtWidgets.QApplication(sys.argv)
 >>> view = QtWidgets.QTreeWidget()
 >>> header = view.header()
->>> QtCompat.setSectionResizeMode(header, QtWidgets.QHeaderView.Fixed)
+>>> QtCompat.QHeaderView.setSectionResizeMode(header, QtWidgets.QHeaderView.Fixed)
 ```
 
 Or a conditional.
@@ -281,6 +281,10 @@ Or a conditional.
 ...   header.setSectionResizeMode(QtWidgets.QHeaderView.Fixed)
 ```
 
+Note: Qt.QtCompat.setSectionResizeMode is a older way this was handled and has been left in for now, but this will likely be removed in the future.
+
+<br>
+<br>
 
 #### QtWidgets.qApp
 
