@@ -1,8 +1,9 @@
 ## Docker
 
-In order to successfully test Qt.py against the different bindings of different versions, we use Travis-CI to run Docker containers.
+In order to successfully test Qt.py against the different bindings of different versions, we use Travis-CI to run Docker containers based on [pre-built CentOS-based images](https://hub.docker.com/r/fredrikaverpil/qt.py/tags/).
 
-CentOS-based images are built and stored in [Dockerhub](https://hub.docker.com/r/fredrikaverpil/qt.py/tags/). They follow the [VFX Reference Platform specifications](http://www.vfxplatform.com/) with some additionals, and are quite jam-packed.
+The Docker images follow the [VFX Reference Platform specifications](http://www.vfxplatform.com/) with some additionals, and are quite jam-packed.
+
 
 <br>
 <br>
@@ -42,6 +43,7 @@ Other noteworthy things:
 
 - PySide cannot be built with anything newer than Python 3.4.
 - SIP is used by both PyQt4 and PyQt5 and its version must therefore be chosen carefully.
+- PySide2 does not have a maintained `__version__` string.
 
 <br>
 <br>
