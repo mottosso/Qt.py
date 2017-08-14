@@ -8,25 +8,26 @@ def build_membership():
 
     from PySide2 import __all__
 
-    # These modules were not available in previous versions of PySide2.
-    # The VFXPLATFORM environment variable is set when running
-    # the Docker container to perform tests on Qt.py.
-    vfx_platform = os.environ.get('VFXPLATFORM')
-    if version.parse(vfx_platform) < version.parse('2018'):
-        __all__.remove("QtOpenGL")
-
     # These modules do not exist pre-Qt 5,
     # so do not bother testing for them.
     __all__.remove("QtSql")
     __all__.remove("QtSvg")
 
-    # These should be present in PySide2,
-    # but are not as of this writing.
-    for missing in ("QtWidgets",
-                    "QtXml",
-                    "QtHelp",
-                    "QtPrintSupport"):
-        __all__.append(missing)
+    vfx_platform = os.environ.get('VFXPLATFORM')
+
+    if version.parse(vfx_platform) < version.parse('2018'):
+        # NOTE: PySide2, as of this writing, is incomplete.
+        # In it's __all__ module is a module, `QtOpenGL`
+        # that does no exists. This causes `import *` to fail.
+        __all__.remove("QtOpenGL")
+
+        # These should be present in PySide2,
+        # but are not as of this writing.
+        for missing in ("QtWidgets",
+                        "QtXml",
+                        "QtHelp",
+                        "QtPrintSupport"):
+            __all__.append(missing)
 
     # Import modules
     for module in __all__:
@@ -103,9 +104,7 @@ def test_{binding}_members():
                         "QtPrintSupport"):
             __all__.append(missing)
 
-    # Import modules
-    for module in __all__:
-        exec('from PySide2 import ' + module)
+    from Qt import *
 
     if "PySide" == "{Binding}":
         # TODO: This needs a more robust implementation.
@@ -139,11 +138,10 @@ def test_{binding}_members():
 
 """
 
-    tests = list(test.format(Binding=binding,
-                             binding=binding.lower())
-                 for binding in ["PyQt5",
-                                 "PyQt4",
-                                 "PySide"])
+    tests = list(
+        test.format(
+            Binding=binding, binding=binding.lower())
+        for binding in ["PyQt5", "PyQt4", "PySide"])
 
     with open("test_membership.py", "w") as f:
         contents = header + "\n".join(tests)
@@ -209,7 +207,6 @@ excluded = {
         "SIGNAL",
         "SLOT",
     ],
-
     "QtGui": [
         # missing from PySide
         "QGuiApplication",  # (2) unique to Qt 5
@@ -240,7 +237,6 @@ excluded = {
         "QOpenGLBuffer",
         "QScreen",
     ],
-
     "QtWebKit": [
         # missing from PyQt4
         "WebCore",
@@ -251,7 +247,6 @@ excluded = {
         "__name__",
         "__package__",
     ],
-
     "QtScript": [
         # missing from PyQt4
         "QScriptExtensionInterface",
@@ -274,12 +269,10 @@ excluded = {
         "__name__",
         "__package__",
     ],
-
     "QtNetwork": [
         # missing from Qt 4
         "QIPv6Address",
     ],
-
     "QtPrintSupport": [
         # PyQt4
         "QAbstractPrintDialog",
@@ -291,7 +284,6 @@ excluded = {
         "QPrinter",
         "QPrinterInfo",
     ],
-
     "QtWidgets": [
         # PyQt4
         "QTileRules",
@@ -299,10 +291,8 @@ excluded = {
         # PyQt5
         "QGraphicsItemAnimation",
         "QTileRules",
-
         "qApp",  # See Issue #171
     ],
-
     "QtHelp": [
         # PySide
         "QHelpContentItem",
@@ -317,7 +307,6 @@ excluded = {
         "QHelpSearchQueryWidget",
         "QHelpSearchResultWidget",
     ],
-
     "QtXml": [
         # PySide
         "QDomAttr",
@@ -352,7 +341,6 @@ excluded = {
         "QXmlReader",
         "QXmlSimpleReader",
     ],
-
     "QtTest": [
         # missing from PySide
         "QTest",
