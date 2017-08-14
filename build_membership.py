@@ -1,4 +1,6 @@
 import json
+import os
+from packaging import version
 
 
 def build_membership():
@@ -6,10 +8,17 @@ def build_membership():
 
     from PySide2 import __all__
 
+    # This environment variable is set when running the Docker container
+    vfx_platform = os.environ.get('VFXPLATFORM')
+
     # These modules do not exist pre-Qt 5,
     # so do not bother testing for them.
     __all__.remove("QtSql")
     __all__.remove("QtSvg")
+
+    # These modules were not available in previous versions of PySide2
+    if version.parse(vfx_platform) < version.parse('2018'):
+        __all__.remove("QtOpenGL")
 
     # These should be present in PySide2,
     # but are not as of this writing.
