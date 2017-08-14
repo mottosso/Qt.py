@@ -104,6 +104,7 @@ def test_{binding}_members():
             __all__.append(missing)
 
     # Import modules
+    from Qt import __all__
     for module in __all__:
         exec('from PySide2 import ' + module)
 
