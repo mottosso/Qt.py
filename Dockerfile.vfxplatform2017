@@ -364,19 +364,21 @@ ENV PATH="/usr/local/bin:${PATH}"
 RUN \
     # Python 2
     pip${PYTHON2_VER} install -U \
-        # Qt.py testing (nosepipe)
+        # Qt.py testing (nosepipe etc)
         nose \
         nosepipe \
         six \
+        packaging \
         # General build
         setuptools \
         wheel && \
     # Python 3
     pip${PYTHON3_VER} install -U \
-        # Qt.py testing (nosepipe)
+        # Qt.py testing (nosepipe etc)
         nose \
         nosepipe \
         six \
+        packaging \
         # General build
         setuptools \
         wheel && \
