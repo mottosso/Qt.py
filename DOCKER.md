@@ -62,7 +62,6 @@ Using YYYY-MM-DD.
 | Software | Date | Details |
 | -------- | ---- | --------------- |
 | PySide2 | 2016-06-03 | [commit](https://codereview.qt-project.org/gitweb?p=pyside/pyside-setup.git;a=commit;h=8913156381b7dc51f903b9e459c143fb25097cab) |
-
 | PySide | latest | [commit log](https://github.com/pyside/pyside-setup/commits/master) |
 | SIP | 2016-07-25 | [v4.18.1](https://sourceforge.net/projects/pyqt/files/sip/) |
 | PyQt5 | 2016-04-25 | [v5.6](https://sourceforge.net/projects/pyqt/files/PyQt5/) |
