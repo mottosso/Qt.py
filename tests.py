@@ -123,9 +123,10 @@ def binding(binding):
 
 
 def test_environment():
-    """Tests require all bindings to be installed"""
+    """Tests require all bindings to be installed (except PySide on py3.5+)"""
 
-    imp.find_module("PySide")
+    if sys.version_info <= (3, 4):
+        imp.find_module("PySide")
     imp.find_module("PySide2")
     imp.find_module("PyQt4")
     imp.find_module("PyQt5")
