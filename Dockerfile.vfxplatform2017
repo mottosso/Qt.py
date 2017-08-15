@@ -173,9 +173,12 @@ ENV PATH="/usr/local/git/bin:${PATH}"
 # http://doc.qt.io/qt-4.8/requirements-x11.html
 # Commits: http://code.qt.io/cgit/qt/qt.git/log/
 ENV QT4_VER=4.8
+ENV QT4_GIT_COMMIT=0a2f2382541424726168804be2c90b91381608c6
 RUN \
     git clone --recursive --jobs ${BUILD_THREADS} --branch ${QT4_VER} https://code.qt.io/qt/qt.git && \
     cd qt && \
+    git checkout ${QT4_GIT_COMMIT} && \
+    git submodule update --init --recursive && \
    ./configure \
         -opensource \
         -confirm-license \
@@ -192,11 +195,12 @@ RUN \
 # Qt5 5.6 git commits: http://code.qt.io/cgit/qt/qt5.git/log/?h=5.6
 # Autodesk qtbase git commits: https://github.com/autodesk-forks/qtbase/commits/adsk-contrib/vfx/5.6.1
 # Autodesk qtx11extras git commits: https://github.com/autodesk-forks/qtx11extras/commits/adsk-contrib/vfx/5.6.1
-ENV QT5_VER=5.6.1
-# Cherry-picked commits
+# ---
+# Cherry-picked commits:
 # Qt5: http://code.qt.io/cgit/qt/qt5.git/commit/?h=v5.6.1&id=adf7bcc0b1785c451b06f13c049e5b946b393705
 # Adsk qtbase: https://github.com/autodesk-forks/qtbase/commit/72e3fbb0d27e5d91b1676312ab6a7f6a979ed4e7
 # Adsk qtx11extras: https://github.com/autodesk-forks/qtx11extras/commit/d86b59059f0340f3707dad008a8f632b070de4e6
+ENV QT5_VER=5.6.1
 ENV QT5_GIT_COMMIT=adf7bcc0b1785c451b06f13c049e5b946b393705
 ENV ADSK_QTBASE_GIT_COMMIT=72e3fbb0d27e5d91b1676312ab6a7f6a979ed4e7
 ENV ADSK_QTX11EXTRAS_GIT_COMMIT=d86b59059f0340f3707dad008a8f632b070de4e6
@@ -243,9 +247,8 @@ RUN \
 # https://wiki.qt.io/Building_Qt_Creator_from_Git
 # Required for PySide2.QtUiTools
 # qt-creator git commits: http://code.qt.io/cgit/qt-creator/qt-creator.git/log/?h=4.0
+# Commit: http://code.qt.io/cgit/qt-creator/qt-creator.git/commit/?h=v4.0.2&id=47b4f2c73834dd971a5ce418368b5d991d08a666
 ENV QT5CREATOR_VER=4.0
-# Cherry-picked commits
-# qt-creator: http://code.qt.io/cgit/qt-creator/qt-creator.git/commit/?h=v4.0.2&id=47b4f2c73834dd971a5ce418368b5d991d08a666
 ENV QT5CREATOR_GIT_COMMIT=47b4f2c73834dd971a5ce418368b5d991d08a666
 RUN \
     git clone --recursive --branch ${QT5CREATOR_VER} --jobs ${BUILD_THREADS} https://code.qt.io/qt-creator/qt-creator.git && \
@@ -387,7 +390,7 @@ RUN \
 
 # Register Python as default (without replacing system-python and without breaking e.g. yum)
 RUN \
-    # Python 2
+    # Python 2.7
     ln -s /usr/local/python${PYTHON27_VER}/bin/python${PYTHON27_VER} /usr/local/bin/python && \
     ln -s /usr/local/python${PYTHON27_VER}/bin/python${PYTHON27_VER} /usr/local/bin/python${PYTHON27_VER} && \
     ln -s /usr/local/python${PYTHON27_VER}/bin/pip${PYTHON27_VER} /usr/local/bin/pip && \
@@ -403,7 +406,7 @@ ENV PATH="/usr/local/bin:${PATH}"
 
 # Pip packages
 RUN \
-    # Python 2
+    # Python 2.7
     pip${PYTHON27_VER} install -U \
         # Qt.py testing (nosepipe etc)
         nose \
@@ -444,7 +447,7 @@ RUN \
 # http://pyqt.sourceforge.net/Docs/sip4/
 ENV SIP_VER=4.18.1
 RUN \
-    # Python 2
+    # Python 2.7
     wget http://sourceforge.net/projects/pyqt/files/sip/sip-${SIP_VER}/sip-${SIP_VER}.tar.gz && \
     tar -xvf sip-${SIP_VER}.tar.gz && \
     cd sip-${SIP_VER} && \
@@ -531,8 +534,7 @@ RUN \
 # Note: requires cmake3
 # http://pyside.readthedocs.io/en/latest/building/options.html
 # PySide commits: https://github.com/pyside/pyside-setup/commits/master
-# Cherry-picked commits
-# PySide: https://github.com/pyside/pyside-setup/commit/7860bda363438e96fa9e810def0858635a9766cc
+# Commit: https://github.com/pyside/pyside-setup/commit/7860bda363438e96fa9e810def0858635a9766cc
 ENV PYSIDE_GIT_COMMIT=7860bda363438e96fa9e810def0858635a9766cc
 RUN \
     # PySide for Python 2
@@ -611,11 +613,10 @@ RUN \
     rm -rf /workdir/*
 
 
-# PySide2
-ENV PYSIDE2_GIT_BRANCH=5.6
+# PySide2 (has no maintained semantic versioning)
 # PySide2 5.6 git commits: https://codereview.qt-project.org/gitweb?p=pyside/pyside-setup.git;a=shortlog;h=refs/heads/5.6
-# Cherry picked commits
 # PySide2: https://codereview.qt-project.org/gitweb?p=pyside/pyside-setup.git;a=commit;h=8913156381b7dc51f903b9e459c143fb25097cab
+ENV PYSIDE2_GIT_BRANCH=5.6
 ENV PYSIDE2_GIT_COMMIT=8913156381b7dc51f903b9e459c143fb25097cab
 RUN \
     # PySide2 for Python 2

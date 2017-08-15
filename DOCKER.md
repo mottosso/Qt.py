@@ -80,8 +80,8 @@ If there happens to be an update inbetween VFX Platform specifications, a revisi
 | Adsk Qt5 `qtbase` | 2016-06-28 | [commit](https://github.com/autodesk-forks/qtbase/commit/72e3fbb0d27e5d91b1676312ab6a7f6a979ed4e7) |
 | Adsk Qt5 `qtx11extras` | 2016-06-28 | [commit](https://github.com/autodesk-forks/qtx11extras/commit/d86b59059f0340f3707dad008a8f632b070de4e6) |
 | Qt5 Creator | 2016-06-09 | [commit](http://code.qt.io/cgit/qt-creator/qt-creator.git/commit/?h=v4.0.2&id=47b4f2c73834dd971a5ce418368b5d991d08a666) |
-| Qt4 | latest | [commit log](http://code.qt.io/cgit/qt/qt.git/log/) |
+| Qt4 | 2015-10-23 | [commit](http://code.qt.io/cgit/qt/qt.git/commit/?id=0a2f2382541424726168804be2c90b91381608c6) |
 | cmake | 2016-04-15 | [v3.5.2](https://cmake.org/files/) |
-| glibc | 2010 (pre-installed in CentOS 6) | 2.12.x |
+| glibc | 2010 (pre-installed in CentOS 6) | 2.12 |
 | gcc | 2014-05-12 | [v4.8.3](ftp://ftp.gnu.org/pub/gnu/gcc/) |
 
