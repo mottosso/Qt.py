@@ -54,6 +54,15 @@ Other noteworthy things:
 <br>
 <br>
 
+**Image tagging**
+
+A new image should be tagged like `repo/qt.py:YYYY`. For CY2017, this translates into `fredrikaverpil/qt.py:2017`.
+
+If there happens to be an update inbetween VFX Platform specifications, a revision version number could be added: `repo/qt.py:YYYY-update1`.
+
+<br>
+<br>
+
 
 **CY2017 details**
 
