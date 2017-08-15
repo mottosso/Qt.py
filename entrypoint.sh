@@ -9,7 +9,6 @@ done
 
 printf "#\n# Running tests in Python ${PYTHON}\n"
 export NOSETESTS_BINARY=nosetests${PYTHON}
-
 printf "#\n# Testing implementation..\n"
     python${PYTHON} -u run_tests.py
 printf "#\n# Testing caveats..\n"
@@ -19,11 +18,13 @@ printf "#\n# Testing caveats..\n"
         --with-doctest \
         --with-process-isolation \
         test_caveats.py
-printf "#\n# Testing membership..\n"
-    python${PYTHON} build_membership.py
-    nosetests${PYTHON} \
-        --verbose \
-        test_membership.py
+if [ "$PYTHON" = "2.7" ]; then
+    printf "#\n# Testing membership..\n"
+        python${PYTHON} build_membership.py
+        nosetests${PYTHON} \
+            --verbose \
+            test_membership.py
+fi
 printf "#\n# Testing examples..\n"
     nosetests${PYTHON} \
     --verbose \
@@ -31,4 +32,5 @@ printf "#\n# Testing examples..\n"
     --with-doctest \
     --exe \
         examples/*/*.py
+
 printf Done
