@@ -74,8 +74,9 @@ If there happens to be an update inbetween VFX Platform specifications, a revisi
 | SIP | 2016-07-25 | [v4.18.1](https://sourceforge.net/projects/pyqt/files/sip/) |
 | PyQt5 | 2016-04-25 | [v5.6](https://sourceforge.net/projects/pyqt/files/PyQt5/) |
 | PyQt4 | 2015-08-01 | [v4.11.4](https://sourceforge.net/projects/pyqt/files/PyQt4/) |
-| Python 2 | 2015-12-05 | [v2.7.11](https://www.python.org/downloads/source/) |
-| Python 3 | 2015-12-07 | [v3.5.1](https://www.python.org/downloads/source/) |
+| Python 2.7 | 2015-12-05 | [v2.7.11](https://www.python.org/downloads/source/) |
+| Python 3.4 | 2016-06-27 | [v3.4.5](https://www.python.org/downloads/source/) |
+| Python 3.5 | 2015-12-07 | [v3.5.1](https://www.python.org/downloads/source/) |
 | Qt5 | 2016-06-01 | [commit](http://code.qt.io/cgit/qt/qt5.git/commit/?h=v5.6.1&id=adf7bcc0b1785c451b06f13c049e5b946b393705) |
 | Adsk Qt5 `qtbase` | 2016-06-28 | [commit](https://github.com/autodesk-forks/qtbase/commit/72e3fbb0d27e5d91b1676312ab6a7f6a979ed4e7) |
 | Adsk Qt5 `qtx11extras` | 2016-06-28 | [commit](https://github.com/autodesk-forks/qtx11extras/commit/d86b59059f0340f3707dad008a8f632b070de4e6) |
