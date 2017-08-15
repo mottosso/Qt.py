@@ -447,7 +447,7 @@ RUN \
     rm -rf /workdir/*
 
 
-# PySid fork, where Python version check is removed
+# PySide fork, where Python version check is removed
 # Note: requires cmake3
 # http://pyside.readthedocs.io/en/latest/building/options.html
 # PySide commits: https://github.com/fredrikaverpil/pyside-setup/commits/master
