@@ -439,6 +439,7 @@ _common_members = {
         "QMetaObject",
         "QMetaProperty",
         "QMimeData",
+        "QMimeData",
         "QModelIndex",
         "QMutex",
         "QMutexLocker",
