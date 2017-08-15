@@ -66,8 +66,6 @@ If there happens to be an update inbetween VFX Platform specifications, a revisi
 
 **CY2017 details**
 
-Using YYYY-MM-DD.
-
 | Software | Date | Details |
 | -------- | ---- | --------------- |
 | PySide2 | 2016-06-03 | [commit](https://codereview.qt-project.org/gitweb?p=pyside/pyside-setup.git;a=commit;h=8913156381b7dc51f903b9e459c143fb25097cab) |
@@ -75,9 +73,14 @@ Using YYYY-MM-DD.
 | SIP | 2016-07-25 | [v4.18.1](https://sourceforge.net/projects/pyqt/files/sip/) |
 | PyQt5 | 2016-04-25 | [v5.6](https://sourceforge.net/projects/pyqt/files/PyQt5/) |
 | PyQt4 | 2015-08-01 | [v4.11.4](https://sourceforge.net/projects/pyqt/files/PyQt4/) |
+| Python 2 | 2015-12-05 | [v2.7.11](https://www.python.org/downloads/source/) |
+| Python 3 | 2015-12-21 | [v3.4.4](https://www.python.org/downloads/source/) |
 | Qt5 | 2016-06-01 | [commit](http://code.qt.io/cgit/qt/qt5.git/commit/?h=v5.6.1&id=adf7bcc0b1785c451b06f13c049e5b946b393705) |
 | Adsk Qt5 `qtbase` | 2016-06-28 | [commit](https://github.com/autodesk-forks/qtbase/commit/72e3fbb0d27e5d91b1676312ab6a7f6a979ed4e7) |
 | Adsk Qt5 `qtx11extras` | 2016-06-28 | [commit](https://github.com/autodesk-forks/qtx11extras/commit/d86b59059f0340f3707dad008a8f632b070de4e6) |
 | Qt5 Creator | 2016-06-09 | [commit](http://code.qt.io/cgit/qt-creator/qt-creator.git/commit/?h=v4.0.2&id=47b4f2c73834dd971a5ce418368b5d991d08a666) |
 | Qt4 | latest | [commit log](http://code.qt.io/cgit/qt/qt.git/log/) |
-| cmake | 2016-07-22 | [v3.6.1](https://cmake.org/files/v3.6/) |
+| cmake | 2016-04-15 | [v3.5.2](https://cmake.org/files/) |
+| glibc | 2010 (pre-installed in CentOS 6) | 2.12.x |
+| gcc | 2014-05-12 | [v4.8.3](ftp://ftp.gnu.org/pub/gnu/gcc/) |
+

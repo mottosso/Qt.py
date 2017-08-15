@@ -139,9 +139,10 @@ ENV CXX=/usr/local/gcc-${GCC_VER}/bin/g++
 
 # Cmake3
 # https://cmake.org/install/
-ENV CMAKE_VER=3.6.1
+# https://cmake.org/files/
+ENV CMAKE_VER=3.5.2
 RUN \
-    wget https://cmake.org/files/v3.6/cmake-${CMAKE_VER}.tar.gz && \
+    wget https://cmake.org/files/v3.5/cmake-${CMAKE_VER}.tar.gz && \
     tar xzf cmake-${CMAKE_VER}.tar.gz && \
     cd cmake-${CMAKE_VER} && \
     ./bootstrap && \
@@ -267,9 +268,9 @@ RUN \
 #     http://blog.dscpl.com.au/2015/06/installing-custom-python-version-into.html
 #     https://stackoverflow.com/questions/37345044/issue-with-installing-python-2-7-8-alongside-2-7-5-on-rhel-7-2
 #
-ENV PYTHON2_VER_FULL=2.7.12
+ENV PYTHON2_VER_FULL=2.7.11
 ENV PYTHON2_VER=2.7
-ENV PYTHON3_VER_FULL=3.4.5
+ENV PYTHON3_VER_FULL=3.4.4
 ENV PYTHON3_VER=3.4
 RUN \
     # Python 2
