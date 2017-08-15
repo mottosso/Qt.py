@@ -706,4 +706,4 @@ WORKDIR /workdir/Qt.py
 
 # Put chmod command in here, in case we change the entrypoint in the future using
 # docker run --entrypoint=...
-ENTRYPOINT chmod +x entrypoint.sh && ./entrypoint.sh
+ENTRYPOINT cp -r /Qt.py /workdir && chmod +x entrypoint.sh && ./entrypoint.sh

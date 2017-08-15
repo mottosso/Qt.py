@@ -19,6 +19,10 @@ matrix:
   - os: linux
     env:
     - VFXPLATFORM=2017
+    - PYTHON=3.4
+  - os: linux
+    env:
+    - VFXPLATFORM=2017
     - PYTHON=3.5
 
 
@@ -30,7 +34,7 @@ services:
   - docker
 
 script:
-  - docker run --rm -v $(pwd):/Qt.py -e PYTHON=${PYTHON} -e VFXPLATFORM=${VFXPLATFORM} fredrikaverpil/qt.py:${VFXPLATFORM}
+  - docker run --rm -v $(pwd):/Qt.py -e PYTHON=${PYTHON} fredrikaverpil/qt.py:${VFXPLATFORM}
 
 deploy:
   provider: pypi
