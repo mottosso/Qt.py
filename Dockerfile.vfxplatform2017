@@ -699,8 +699,6 @@ ENV QT_XKB_CONFIG_ROOT=/usr/share/X11/xkb
 # Warnings are exceptions
 ENV PYTHONWARNINGS="ignore"
 
-# This should reflect the Docker image tag
-ENV VFXPLATFORM=2017
 
 WORKDIR /workdir/Qt.py
 
