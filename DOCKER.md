@@ -44,7 +44,6 @@ There are non-strict rules (guidelines) for choosing software versions to build:
 
 - No commit SHA can be newer than the commit SHA from PySide2
 - No binding's commit SHA can be older than their respective Qt commit SHA
-- Cmake should probably not be newer than any of the binding sources
 
 Other noteworthy things:
 
