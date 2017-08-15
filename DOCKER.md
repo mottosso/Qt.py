@@ -20,7 +20,7 @@ The Docker images follow the [VFX Reference Platform specifications](http://www.
 * Qt5 Creator<sup>1, 5</sup>
 * SIP<sup>4</sup>
 * PyQt4<sup>4</sup>
-* PySide<sup>4</sup>
+* PySide<sup>4, 6</sup>
 * PyQt5<sup>1</sup>
 * PySide2<sup>1</sup>
 
@@ -29,6 +29,7 @@ The Docker images follow the [VFX Reference Platform specifications](http://www.
 <sup>3</sup> cmake 3.x required to build PySide2  
 <sup>4</sup> Required for Qt.py testing  
 <sup>5</sup> Required for `PySide2.QtUiTools`
+<sup>6</sup> A [fork of PySide](https://github.com/fredrikaverpil/pyside-setup) is used, where Python version check is removed
 
 <br>
 <br>
@@ -47,7 +48,7 @@ There are non-strict rules (guidelines) for choosing software versions to build:
 
 Other noteworthy things:
 
-- PySide cannot be built with anything newer than Python 3.4.
+- PySide cannot be built with anything newer than Python 3.4, but this version check was removed in the PySide fork used.
 - SIP is used by both PyQt4 and PyQt5 and its version must therefore be chosen carefully.
 - PySide2 does not have a maintained `__version__` string.
 
@@ -69,12 +70,12 @@ If there happens to be an update inbetween VFX Platform specifications, a revisi
 | Software | Date | Details |
 | -------- | ---- | --------------- |
 | PySide2 | 2016-06-03 | [commit](https://codereview.qt-project.org/gitweb?p=pyside/pyside-setup.git;a=commit;h=8913156381b7dc51f903b9e459c143fb25097cab) |
-| PySide | latest | [commit log](https://github.com/pyside/pyside-setup/commits/master) |
+| PySide | latest (fork) | [commit log](https://github.com/fredrikaverpil/pyside-setup/commits/master) |
 | SIP | 2016-07-25 | [v4.18.1](https://sourceforge.net/projects/pyqt/files/sip/) |
 | PyQt5 | 2016-04-25 | [v5.6](https://sourceforge.net/projects/pyqt/files/PyQt5/) |
 | PyQt4 | 2015-08-01 | [v4.11.4](https://sourceforge.net/projects/pyqt/files/PyQt4/) |
 | Python 2 | 2015-12-05 | [v2.7.11](https://www.python.org/downloads/source/) |
-| Python 3 | 2015-12-21 | [v3.4.4](https://www.python.org/downloads/source/) |
+| Python 3 | 2015-12-07 | [v3.5.1](https://www.python.org/downloads/source/) |
 | Qt5 | 2016-06-01 | [commit](http://code.qt.io/cgit/qt/qt5.git/commit/?h=v5.6.1&id=adf7bcc0b1785c451b06f13c049e5b946b393705) |
 | Adsk Qt5 `qtbase` | 2016-06-28 | [commit](https://github.com/autodesk-forks/qtbase/commit/72e3fbb0d27e5d91b1676312ab6a7f6a979ed4e7) |
 | Adsk Qt5 `qtx11extras` | 2016-06-28 | [commit](https://github.com/autodesk-forks/qtx11extras/commit/d86b59059f0340f3707dad008a8f632b070de4e6) |

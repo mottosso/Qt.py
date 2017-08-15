@@ -270,8 +270,8 @@ RUN \
 #
 ENV PYTHON2_VER_FULL=2.7.11
 ENV PYTHON2_VER=2.7
-ENV PYTHON3_VER_FULL=3.4.4
-ENV PYTHON3_VER=3.4
+ENV PYTHON3_VER_FULL=3.5.1
+ENV PYTHON3_VER=3.5
 RUN \
     # Python 2
     mkdir -p /usr/local/python${PYTHON2_VER}/lib && \
@@ -447,33 +447,33 @@ RUN \
     rm -rf /workdir/*
 
 
-# PySide
+# PySid fork, where Python version check is removed
 # Note: requires cmake3
 # http://pyside.readthedocs.io/en/latest/building/options.html
-# PySide commits: https://github.com/pyside/pyside-setup/commits/master
+# PySide commits: https://github.com/fredrikaverpil/pyside-setup/commits/master
 # Cherry-picked commits
-# PySide: 7860bda363438e96fa9e810def0858635a9766cc
-ENV PYSIDE_GIT_COMMIT=7860bda363438e96fa9e810def0858635a9766cc
+# PySide: https://github.com/fredrikaverpil/pyside-setup/commit/4ba2219d7c98a21c516738387b7678d65cff9fb8
+ENV PYSIDE_GIT_COMMIT=4ba2219d7c98a21c516738387b7678d65cff9fb8
 RUN \
-    # PySide for Python 2
-    git clone --recursive --jobs ${BUILD_THREADS} https://github.com/pyside/pyside-setup.git && \
-    cd pyside-setup && \
-    git checkout ${PYSIDE_GIT_COMMIT} && \
-    git submodule update --init --recursive && \
-    python${PYTHON2_VER} setup.py \
-        install \
-            --qmake=/usr/local/Trolltech/Qt-4.8.7/bin/qmake \
-            --cmake=/usr/local/bin/cmake \
-            --openssl=/usr/bin/openssl \
-            --jobs=${BUILD_THREADS} && \
-    rm -rf /workdir/* && \
+    # # PySide for Python 2
+    # git clone --recursive --jobs ${BUILD_THREADS} https://github.com/fredrikaverpil/pyside-setup.git && \
+    # cd pyside-setup && \
+    # git checkout ${PYSIDE_GIT_COMMIT} && \
+    # git submodule update --init --recursive && \
+    # python${PYTHON2_VER} setup.py \
+    #     install \
+    #         --qmake=/usr/local/Trolltech/Qt-4.8.7/bin/qmake \
+    #         --cmake=/usr/local/bin/cmake \
+    #         --openssl=/usr/bin/openssl \
+    #         --jobs=${BUILD_THREADS} && \
+    # rm -rf /workdir/* && \
 
-    # PySide for Python 3
-    cd /workdir && \
-    git clone --recursive --jobs ${BUILD_THREADS} https://github.com/pyside/pyside-setup.git && \
+    # # PySide for Python 3
+    # cd /workdir && \
+    git clone --recursive --jobs ${BUILD_THREADS} https://github.com/fredrikaverpil/pyside-setup.git && \
     cd pyside-setup && \
-    git checkout ${PYSIDE_GIT_COMMIT} && \
-    git submodule update --init --recursive && \
+    # git checkout ${PYSIDE_GIT_COMMIT} && \
+    # git submodule update --init --recursive && \
     python${PYTHON3_VER} setup.py \
         install \
             --qmake=/usr/local/Trolltech/Qt-4.8.7/bin/qmake \

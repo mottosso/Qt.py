@@ -19,7 +19,7 @@ matrix:
   - os: linux
     env:
     - VFXPLATFORM=2017
-    - PYTHON=3.4
+    - PYTHON=3.5
 
 
 language: python
