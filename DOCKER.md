@@ -64,7 +64,7 @@ If there happens to be an update inbetween VFX Platform specifications, a revisi
 <br>
 
 
-**CY2017 details**
+**Dockerfile.vfxplatform2017 details**
 
 | Software | Date | Details |
 | -------- | ---- | --------------- |
