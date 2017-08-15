@@ -703,6 +703,6 @@ ENV VFXPLATFORM=2017
 
 WORKDIR /workdir/Qt.py
 
-RUN chmod +x entrypoint.sh
-
-ENTRYPOINT ./entrypoint.sh
+# Put chmod command in here, in case we change the entrypoint in the future using
+# docker run --entrypoint=...
+ENTRYPOINT chmod +x entrypoint.sh && ./entrypoint.sh
