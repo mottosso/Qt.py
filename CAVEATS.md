@@ -157,6 +157,8 @@ TypeError: bytes or ASCII string expected not 'NoneType'
 
 PySide cannot accept any arguments. In PyQt4, `QAction.triggered` signal requires a bool arg.
 
+**Note**: This is not included on our tests, as we cannot reproduce this using PyQt4 4.11.4, CY2017. It's likely that this issue persists in e.g. Maya version < 2017.
+
 ```python
 # PySide, untested
 >>> from Qt import QtCore, QtWidgets
