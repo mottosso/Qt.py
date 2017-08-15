@@ -483,7 +483,7 @@ Below are some of the conventions that used throughout the Qt.py module and test
 
 Due to the nature of multiple bindings and multiple interpreter support, setting up a development environment in which to properly test your contraptions can be challenging. So here is a guide for how to do just that using **Docker**.
 
-With Docker setup, here's what you do.
+With Docker setup, here's what you do. Please note this will pull down a ~1 GB image.
 
 ```bash
 cd Qt.py
@@ -508,5 +508,7 @@ docker run --rm -v %CD%:/Qt.py -e PYTHON=3.4 fredrikaverpil/qt.py:2017
 ```
 
 Now both you and Travis are operating on the same assumptions which means that when the tests pass on your machine, they pass on Travis. And everybody wins!
+
+For details on the Docker image for testing, see [`DOCKER.md`](DOCKER.md).
 
 See [`CONTRIBUTING.md`](CONTRIBUTING.md) for more of the good stuff.
