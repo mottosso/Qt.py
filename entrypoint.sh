@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Exit with non-zero code if errors in script
+set -e
+
 # Start Xvfb
 Xvfb :99 -screen 0 1024x768x16 2>/dev/null &
 while ! ps aux | grep -q '[0]:00 Xvfb :99 -screen 0 1024x768x16'; do
