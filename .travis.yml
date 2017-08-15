@@ -11,14 +11,14 @@ matrix:
   #   - VFXPLATFORM=2018dev
   #   - PYTHON=3.4
 
-  # VFX Platform 2017 (in development)
+  # VFX Platform 2017
   - os: linux
     env:
-    - VFXPLATFORM=2017dev
+    - VFXPLATFORM=2017
     - PYTHON=2.7
   - os: linux
     env:
-    - VFXPLATFORM=2017dev
+    - VFXPLATFORM=2017
     - PYTHON=3.4
 
 
