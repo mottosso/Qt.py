@@ -11,18 +11,23 @@ The Docker images follow the [VFX Reference Platform specifications](http://www.
 
 **Software built from source**
 
-* glibc
-* gcc
-* git
-* cmake
-* Qt4
-* Qt5 + Autodesk-modifications
-* Qt5 Creator (required for `QtUiTools`)
-* SIP
-* PyQt4
-* PySide
-* PyQt5
-* PySide2
+* glibc<sup>1</sup>
+* gcc<sup>1</sup>
+* git<sup>2</sup>
+* cmake<sup>3</sup>
+* Qt4<sup>4</sup>
+* Qt5 + Autodesk-modifications<sup>1</sup>
+* Qt5 Creator (required for `QtUiTools`)<sup>1</sup>
+* SIP<sup>4</sup>
+* PyQt4<sup>4</sup>
+* PySide<sup>4</sup>
+* PyQt5<sup>1</sup>
+* PySide2<sup>1</sup>
+
+<sup>1</sup> Per specification from VFX Platform  
+<sup>2</sup> Adds possibility to faster clone large repositories  
+<sup>3</sup> cmake 3.x required to build PySide2  
+<sup>4</sup> Required for Qt.py testing
 
 <br>
 <br>
@@ -56,6 +61,7 @@ Using YYYY-MM-DD.
 | Software | Date | Details |
 | -------- | ---- | --------------- |
 | PySide2 | 2016-06-03 | [commit](https://codereview.qt-project.org/gitweb?p=pyside/pyside-setup.git;a=commit;h=8913156381b7dc51f903b9e459c143fb25097cab) |
+
 | PySide | latest | [commit log](https://github.com/pyside/pyside-setup/commits/master) |
 | SIP | 2016-07-25 | [v4.18.1](https://sourceforge.net/projects/pyqt/files/sip/) |
 | PyQt5 | 2016-04-25 | [v5.6](https://sourceforge.net/projects/pyqt/files/PyQt5/) |
@@ -65,3 +71,4 @@ Using YYYY-MM-DD.
 | Adsk Qt5 `qtx11extras` | 2016-06-28 | [commit](https://github.com/autodesk-forks/qtx11extras/commit/d86b59059f0340f3707dad008a8f632b070de4e6) |
 | Qt5 Creator | 2016-06-09 | [commit](http://code.qt.io/cgit/qt-creator/qt-creator.git/commit/?h=v4.0.2&id=47b4f2c73834dd971a5ce418368b5d991d08a666) |
 | Qt4 | latest | [commit log](http://code.qt.io/cgit/qt/qt.git/log/) |
+| cmake | 2016-07-22 | [v3.6.1](https://cmake.org/files/v3.6/) |
