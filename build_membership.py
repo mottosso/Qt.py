@@ -80,12 +80,13 @@ def test_{binding}_members():
     # Initialise Qt.py, this is especially important for PyQt4
     # which sets sip to 2.0 upon loading Qt.py
     import Qt
+    from Qt import __all__
 
     if "PyQt" in "{Binding}":
         # PyQt4 and 5 performs some magic here
         # that must take place before attempting
-        # to import with wildcard.
-        from {Binding} import Qt as _
+        # to import PyQt modules.
+        from Qt import QtWidgets
 
     if "PySide2" == "{Binding}":
         # PySide2, as of this writing, doesn't include
@@ -100,7 +101,6 @@ def test_{binding}_members():
             __all__.append(missing)
 
     # Import modules
-    from Qt import __all__
     for module in __all__:
         exec('from Qt import ' + module)
 
