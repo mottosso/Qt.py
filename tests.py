@@ -600,13 +600,13 @@ if binding("PySide2"):
         """Qt.py may be use alongside the actual binding"""
 
         from Qt import QtCore
-        import PySide.QtGui
+        import PySide2.QtGui
 
         # Qt remaps QStringListModel
         assert QtCore.QStringListModel
 
         # But does not delete the original
-        assert PySide.QtGui.QStringListModel
+        assert PySide2.QtGui.QStringListModel
 
 
 if binding("PyQt4") or binding("PyQt5"):
