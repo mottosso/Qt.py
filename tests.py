@@ -126,6 +126,7 @@ def test_environment():
     """Tests require all bindings to be installed (except PySide on py3.5+)"""
 
     if sys.version_info <= (3, 4):
+        # PySide is not available for Python > 3.4
         imp.find_module("PySide")
     imp.find_module("PySide2")
     imp.find_module("PyQt4")
