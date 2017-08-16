@@ -454,7 +454,8 @@ def test_cli():
     assert out.startswith(b"usage: Qt.py"), "\n%s" % out
 
 
-if not (PYTHON == 3 and binding("PySide")):
+if sys.version_info <= (3, 4):
+    # PySide is not available for Python > 3.4
     # Shiboken(1) doesn't support Python 3.5
     # https://github.com/PySide/shiboken-setup/issues/3
 
