@@ -609,7 +609,6 @@ if binding("PySide2"):
         assert PySide.QtGui.QStringListModel
 
 
-
 if binding("PyQt4") or binding("PyQt5"):
     def test_multiple_preferred():
         """QT_PREFERRED_BINDING = more than one binding excludes others"""
