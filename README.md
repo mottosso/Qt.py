@@ -490,10 +490,12 @@ cd Qt.py
 
 # Run nosetests (Linux/OSX)
 docker run --rm -v $(pwd):/Qt.py -e PYTHON=2.7 fredrikaverpil/qt.py:2017
+docker run --rm -v $(pwd):/Qt.py -e PYTHON=3.4 fredrikaverpil/qt.py:2017
 docker run --rm -v $(pwd):/Qt.py -e PYTHON=3.5 fredrikaverpil/qt.py:2017
 
 # Run nosetests (Windows)
 docker run --rm -v %CD%:/Qt.py -e PYTHON=2.7 fredrikaverpil/qt.py:2017
+docker run --rm -v %CD%:/Qt.py -e PYTHON=3.4 fredrikaverpil/qt.py:2017
 docker run --rm -v %CD%:/Qt.py -e PYTHON=3.5 fredrikaverpil/qt.py:2017
 
 # Doctest: test_caveats.test_1_qtgui_qabstractitemmodel_createindex ... ok
