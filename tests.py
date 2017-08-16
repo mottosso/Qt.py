@@ -609,15 +609,16 @@ if binding("PySide2"):
         assert PySide.QtGui.QStringListModel
 
 
-if binding("PySide") or binding("PySide2"):
+
+if binding("PyQt4") or binding("PyQt5"):
     def test_multiple_preferred():
         """QT_PREFERRED_BINDING = more than one binding excludes others"""
 
         # PySide is the more desirable binding
         os.environ["QT_PREFERRED_BINDING"] = os.pathsep.join(
-            ["PySide", "PySide2"])
+            ["PyQt4", "PyQt5"])
 
         import Qt
-        assert Qt.__binding__ == "PySide", (
-            "PySide should have been picked, "
+        assert Qt.__binding__ == "PyQt4", (
+            "PyQt4 should have been picked, "
             "instead got %s" % Qt.__binding__)
