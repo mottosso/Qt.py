@@ -94,7 +94,6 @@ def format_(blocks):
     function_count = 0  # For each test to have a unique name
 
     for block in blocks:
-        function_count += 1
 
         # Validate docstring format of body
         if not any(line[:3] == ">>>" for line in block["body"]):
@@ -114,11 +113,11 @@ def format_(blocks):
             skip_caveat = False
 
         if not skip_caveat:
+            function_count += 1
             block["header"] = block["header"]
             block["count"] = str(function_count)
             block["body"] = "    ".join(block["body"])
-
-        tests.append("""\
+            tests.append("""\
 
 def test_{count}_{header}():
     '''Test {header}
