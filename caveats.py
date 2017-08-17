@@ -108,11 +108,8 @@ def format_(blocks):
 
         if sys.version_info > (3, 4) and block["binding"] in ("PySide"):
             # Skip caveat test if it requires PySide on Python > 3.4
-            skip_caveat = True
+            continue
         else:
-            skip_caveat = False
-
-        if not skip_caveat:
             function_count += 1
             block["header"] = block["header"]
             block["count"] = str(function_count)
