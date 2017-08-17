@@ -107,9 +107,16 @@ def format_(blocks):
             block["body"].insert(0, ">>> assert False, "
                                  "'Invalid binding'\n")
 
-        block["header"] = block["header"]
-        block["count"] = str(function_count)
-        block["body"] = "    ".join(block["body"])
+        if sys.version_info > (3, 4) and block["binding"] in ("PySide"):
+            # Skip caveat test if it requires PySide on Python > 3.4
+            skip_caveat = True
+        else:
+            skip_caveat = False
+
+        if not skip_caveat:
+            block["header"] = block["header"]
+            block["count"] = str(function_count)
+            block["body"] = "    ".join(block["body"])
 
         tests.append("""\
 
