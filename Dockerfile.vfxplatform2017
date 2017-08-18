@@ -196,7 +196,7 @@ RUN \
 # Autodesk qtbase git commits: https://github.com/autodesk-forks/qtbase/commits/adsk-contrib/vfx/5.6.1
 # Autodesk qtx11extras git commits: https://github.com/autodesk-forks/qtx11extras/commits/adsk-contrib/vfx/5.6.1
 # ---
-# Cherry-picked commits:
+# Commits:
 # Qt5: http://code.qt.io/cgit/qt/qt5.git/commit/?h=v5.6.1&id=adf7bcc0b1785c451b06f13c049e5b946b393705
 # Adsk qtbase: https://github.com/autodesk-forks/qtbase/commit/72e3fbb0d27e5d91b1676312ab6a7f6a979ed4e7
 # Adsk qtx11extras: https://github.com/autodesk-forks/qtx11extras/commit/d86b59059f0340f3707dad008a8f632b070de4e6

@@ -38,7 +38,7 @@ The Docker images follow the [VFX Reference Platform specifications](http://www.
 
 We use source code from around the time of [SIGGRAPH](http://www.siggraph.org) (usually July/August) each year. This is usually when the VFX Reference Platform is updated.
 
-In order to be able to re-build our images from a certain point in time, we cherry-pick commit SHAs or source archives rather than going for the always-latest version of software. We then set up new images as required and add them to our continous integration tests.
+In order to be able to re-build our images from a certain point in time, we checkout specific commit SHAs or source archives rather than going for the always-latest version of software. We then set up new images as required and add them to our continous integration tests.
 
 There are non-strict rules (guidelines) for choosing software versions to build:
 
