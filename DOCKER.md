@@ -49,7 +49,7 @@ Other noteworthy things:
 
 - PySide cannot be built with anything newer than Python 3.4.
 - SIP is used by both PyQt4 and PyQt5 and its version must therefore be chosen carefully.
-- PySide2 does not have a maintained `__version__` string.
+- PySide2 does not have a maintained `__version__` string as of Qt.py v1.1.0.b3.
 
 <br>
 <br>
