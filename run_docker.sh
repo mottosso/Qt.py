@@ -1,1 +1,1 @@
-docker run -ti --rm -v $(pwd):/Qt.py --entrypoint bash mottosso/qt.py27
+docker run -ti --rm -v $(pwd):/Qt.py --entrypoint bash fredrikaverpil/qt.py:2017

@@ -1,20 +1,30 @@
-language: python
+matrix:
+  include:
 
+  # VFX Platform 2017
+  - os: linux
+    env:
+    - VFXPLATFORM=2017
+    - PYTHON=2.7
+  - os: linux
+    env:
+    - VFXPLATFORM=2017
+    - PYTHON=3.4
+  - os: linux
+    env:
+    - VFXPLATFORM=2017
+    - PYTHON=3.5
+
+
+language: python
 sudo: required
 dist: trusty
-
-python:
-  - 2.7
-  - 3.5
 
 services:
   - docker
 
-install:
-  - docker build -f Dockerfile-py${TRAVIS_PYTHON_VERSION} -t mottosso/qt.py .
-
 script:
-  - docker run --rm -v $(pwd):/Qt.py mottosso/qt.py
+  - docker run --rm -v $(pwd):/Qt.py -e PYTHON=${PYTHON} fredrikaverpil/qt.py:${VFXPLATFORM}
 
 deploy:
   provider: pypi

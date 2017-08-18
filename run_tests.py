@@ -25,8 +25,9 @@ def binding(binding):
 
 
 if __name__ == "__main__":
+
     argv = [
-        "nosetests",
+        os.environ.get('NOSETESTS_BINARY'),
         "--verbose",
         "--with-process-isolation",
         "--exe",
@@ -41,8 +42,9 @@ if __name__ == "__main__":
     with binding("PyQt4"):
         errors += subprocess.call(argv)
 
-    with binding("PySide"):
-        errors += subprocess.call(argv)
+    if sys.version_info <= (3, 4):
+        with binding("PySide"):
+            errors += subprocess.call(argv)
 
     with binding("PyQt5"):
         errors += subprocess.call(argv)

@@ -123,9 +123,11 @@ def binding(binding):
 
 
 def test_environment():
-    """Tests require all bindings to be installed"""
+    """Tests require all bindings to be installed (except PySide on py3.5+)"""
 
-    imp.find_module("PySide")
+    if sys.version_info <= (3, 4):
+        # PySide is not available for Python > 3.4
+        imp.find_module("PySide")
     imp.find_module("PySide2")
     imp.find_module("PyQt4")
     imp.find_module("PyQt5")
@@ -452,7 +454,8 @@ def test_cli():
     assert out.startswith(b"usage: Qt.py"), "\n%s" % out
 
 
-if not (PYTHON == 3 and binding("PySide")):
+if sys.version_info <= (3, 4):
+    # PySide is not available for Python > 3.4
     # Shiboken(1) doesn't support Python 3.5
     # https://github.com/PySide/shiboken-setup/issues/3
 
@@ -597,24 +600,24 @@ if binding("PySide2"):
         """Qt.py may be use alongside the actual binding"""
 
         from Qt import QtCore
-        import PySide.QtGui
+        import PySide2.QtGui
 
         # Qt remaps QStringListModel
         assert QtCore.QStringListModel
 
         # But does not delete the original
-        assert PySide.QtGui.QStringListModel
+        assert PySide2.QtGui.QStringListModel
 
 
-if binding("PySide") or binding("PySide2"):
+if binding("PyQt4") or binding("PyQt5"):
     def test_multiple_preferred():
         """QT_PREFERRED_BINDING = more than one binding excludes others"""
 
         # PySide is the more desirable binding
         os.environ["QT_PREFERRED_BINDING"] = os.pathsep.join(
-            ["PySide", "PySide2"])
+            ["PyQt4", "PyQt5"])
 
         import Qt
-        assert Qt.__binding__ == "PySide", (
-            "PySide should have been picked, "
+        assert Qt.__binding__ == "PyQt4", (
+            "PyQt4 should have been picked, "
             "instead got %s" % Qt.__binding__)

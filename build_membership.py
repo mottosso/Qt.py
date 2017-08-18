@@ -4,11 +4,11 @@ import json
 def build_membership():
     """Generate a .json file with all members of PySide2"""
 
+    from PySide2 import __all__
+
     # NOTE: PySide2, as of this writing, is incomplete.
     # In it's __all__ module is a module, `QtOpenGL`
     # that does no exists. This causes `import *` to fail.
-
-    from PySide2 import __all__
     __all__.remove("QtOpenGL")
 
     # These modules do not exist pre-Qt 5,
@@ -24,16 +24,9 @@ def build_membership():
                     "QtPrintSupport"):
         __all__.append(missing)
 
-    # Why `import *`?
-    #
-    # PySide, and PyQt, perform magic that triggers via Python's
-    # import mechanism. If we try and sidestep it in any way, say
-    # by using `imp.load_module` or `__import__`, the mechanism
-    # will not trigger and the compiled libraries will not get loaded.
-    #
-    # Wildcard was the only way I could think of to import everything,
-    # without hardcoding the members, such as QtCore into the function.
-    from PySide2 import *
+    # Import modules
+    for module in __all__:
+        exec('from PySide2 import ' + module)
 
     # Serialise members
     members = {}
@@ -87,12 +80,13 @@ def test_{binding}_members():
     # Initialise Qt.py, this is especially important for PyQt4
     # which sets sip to 2.0 upon loading Qt.py
     import Qt
+    from Qt import __all__
 
     if "PyQt" in "{Binding}":
         # PyQt4 and 5 performs some magic here
         # that must take place before attempting
-        # to import with wildcard.
-        from {Binding} import Qt as _
+        # to import PyQt modules.
+        from Qt import QtWidgets
 
     if "PySide2" == "{Binding}":
         # PySide2, as of this writing, doesn't include
@@ -106,7 +100,9 @@ def test_{binding}_members():
                         "QtPrintSupport"):
             __all__.append(missing)
 
-    from Qt import *
+    # Import modules
+    for module in __all__:
+        exec('from Qt import ' + module)
 
     if "PySide" == "{Binding}":
         # TODO: This needs a more robust implementation.
