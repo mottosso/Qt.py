@@ -64,6 +64,20 @@ If there happens to be an update inbetween VFX Platform specifications, a revisi
 <br>
 
 
+**Enter the container**
+
+For debugging reasons, you can enter the container like this:
+
+```bash
+docker run --rm --interactive --tty --entrypoint=bash fredrikaverpil/qt.py:2017
+```
+
+You can then run `python2.7`, `python3.4`, `python3.5` and so on (depending on which Python versions were built).
+
+<br>
+<br>
+
+
 **Dockerfile.vfxplatform2017**
 
 | Software | Date | Details |
