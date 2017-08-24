@@ -386,6 +386,7 @@ Send us a pull-request with your studio here.
 - [MPC](http://www.moving-picture.com)
 - [Rising Sun Pictures](https://rsp.com.au)
 - [Blur Studio](http://www.blur.com)
+- [Mikros Image](http://www.mikrosimage.com/)
 
 Presented at Siggraph 2016, BOF!
 
