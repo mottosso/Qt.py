@@ -158,11 +158,11 @@ RUN \
 # Autodesk qtx11extras git commits: https://github.com/autodesk-forks/qtx11extras/commits/adsk-contrib/vfx/5.6.1
 # ---
 # Hand-picked commits:
-# Qt5: http://code.qt.io/cgit/qt/qt5.git/commit/?h=5.6&id=15b608cbc559ba3dfa7fc04d16e4677ff5c265db
+# Qt5: http://code.qt.io/cgit/qt/qt5.git/commit/?h=5.6&id=bd3ddeddd256557a8b0820f0958b630347344c25
 # Adsk qtbase: https://github.com/autodesk-forks/qtbase/commit/72e3fbb0d27e5d91b1676312ab6a7f6a979ed4e7
 # Adsk qtx11extras: https://github.com/autodesk-forks/qtx11extras/commit/d86b59059f0340f3707dad008a8f632b070de4e6
 ENV QT5_GIT_BRANCH=5.6.1
-ENV QT5_GIT_COMMIT=15b608cbc559ba3dfa7fc04d16e4677ff5c265db
+ENV QT5_GIT_COMMIT=bd3ddeddd256557a8b0820f0958b630347344c25
 ENV ADSK_QTBASE_GIT_COMMIT=72e3fbb0d27e5d91b1676312ab6a7f6a979ed4e7
 ENV ADSK_QTX11EXTRAS_GIT_COMMIT=d86b59059f0340f3707dad008a8f632b070de4e6
 RUN \
