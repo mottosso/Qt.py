@@ -158,19 +158,19 @@ RUN \
 # Autodesk qtx11extras git commits: https://github.com/autodesk-forks/qtx11extras/commits/adsk-contrib/vfx/5.6.1
 # ---
 # Cherry-picked commits:
-# Qt5:
+# Qt5: http://code.qt.io/cgit/qt/qt5.git/commit/?h=5.6&id=5df417aeb9fe5fa8b8613abdd3b32bc79e32f49e
 # Adsk qtbase: https://github.com/autodesk-forks/qtbase/commit/72e3fbb0d27e5d91b1676312ab6a7f6a979ed4e7
 # Adsk qtx11extras: https://github.com/autodesk-forks/qtx11extras/commit/d86b59059f0340f3707dad008a8f632b070de4e6
 ENV QT5_VER=5.6.1
-# ENV QT5_GIT_COMMIT=
+ENV QT5_GIT_COMMIT=5df417aeb9fe5fa8b8613abdd3b32bc79e32f49e
 ENV ADSK_QTBASE_GIT_COMMIT=72e3fbb0d27e5d91b1676312ab6a7f6a979ed4e7
 ENV ADSK_QTX11EXTRAS_GIT_COMMIT=d86b59059f0340f3707dad008a8f632b070de4e6
 RUN \
     git clone --recursive --jobs ${BUILD_THREADS} --branch ${QT5_VER} https://code.qt.io/qt/qt5.git && \
     # Revert to commit SHA
-    # cd /workdir/qt5 && \
-    # git checkout ${QT5_GIT_COMMIT} && \
-    # git submodule update --init --recursive && \
+    cd /workdir/qt5 && \
+    git checkout ${QT5_GIT_COMMIT} && \
+    git submodule update --init --recursive && \
     # Remove qtbase, qtx11extras
     cd /workdir && \
     rm -rf /workdir/qt5/qtbase && \
@@ -208,14 +208,14 @@ RUN \
 # https://wiki.qt.io/Building_Qt_Creator_from_Git
 # Required for PySide2.QtUiTools
 # qt-creator git commits: http://code.qt.io/cgit/qt-creator/qt-creator.git/log/?h=4.0
-# Commit:
+# Commit: http://code.qt.io/cgit/qt-creator/qt-creator.git/commit/?h=4.3&id=a094841bdda5461ebeaeab4620dde8222fa8312d
 ENV QT5CREATOR_VER=4.3
-# ENV QT5CREATOR_GIT_COMMIT=
+ENV QT5CREATOR_GIT_COMMIT=a094841bdda5461ebeaeab4620dde8222fa8312d
 RUN \
     git clone --recursive --branch ${QT5CREATOR_VER} --jobs ${BUILD_THREADS} https://code.qt.io/qt-creator/qt-creator.git && \
     cd /workdir/qt-creator && \
-    # git checkout ${QT5CREATOR_GIT_COMMIT} && \
-    # git submodule update --init --recursive && \
+    git checkout ${QT5CREATOR_GIT_COMMIT} && \
+    git submodule update --init --recursive && \
     mkdir /workdir/qt-creator-build && \
     cd /workdir/qt-creator-build && \
     /usr/local/Qt-${QT5_VER}/bin/qmake -r /workdir/qt-creator/qtcreator.pro && \
