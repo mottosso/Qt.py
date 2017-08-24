@@ -84,7 +84,7 @@ RUN yum install deltarpm -y && \
     yum clean all
 
 # Parallel build processes (set to cores +1)
-ENV BUILD_THREADS=9
+ENV BUILD_THREADS=17
 
 WORKDIR /workdir
 
@@ -672,15 +672,15 @@ RUN \
 
 # PySide2 (has no maintained semantic versioning)
 # PySide2 5.6 git commits: https://codereview.qt-project.org/gitweb?p=pyside/pyside-setup.git;a=shortlog;h=refs/heads/5.6
-# PySide2 commit:
+# PySide2 commit: http://code.qt.io/cgit/pyside/pyside-setup.git/commit/?h=5.6&id=8aca0dec116c6b321373f5636b34036530ac6e4b
 ENV PYSIDE2_GIT_BRANCH=5.6
-# ENV PYSIDE2_GIT_COMMIT=
+ENV PYSIDE2_GIT_COMMIT=8aca0dec116c6b321373f5636b34036530ac6e4b
 RUN \
     # PySide2 for Python 2
     git clone --recursive --jobs ${BUILD_THREADS} --branch ${PYSIDE2_GIT_BRANCH} https://codereview.qt-project.org/pyside/pyside-setup && \
     cd pyside-setup && \
-    # git checkout ${PYSIDE2_GIT_COMMIT} && \
-    # git submodule update --init --recursive && \
+    git checkout ${PYSIDE2_GIT_COMMIT} && \
+    git submodule update --init --recursive && \
 
     # Fix bug in order to build PySide2.QtUiTools: https://bugreports.qt.io/browse/PYSIDE-552
     sed -i.bak $'s/if(Qt5Designer_FOUND)/find_package(Qt5Designer)\\\nif(Qt5Designer_FOUND)/g' sources/pyside2/CMakeLists.txt && \
@@ -701,8 +701,8 @@ RUN \
     cd /workdir && \
     git clone --recursive --jobs ${BUILD_THREADS} --branch ${PYSIDE2_GIT_BRANCH} https://codereview.qt-project.org/pyside/pyside-setup && \
     cd pyside-setup && \
-    # git checkout ${PYSIDE2_GIT_COMMIT} && \
-    # git submodule update --init --recursive && \
+    git checkout ${PYSIDE2_GIT_COMMIT} && \
+    git submodule update --init --recursive && \
 
     # Fix bug in order to build PySide2.QtUiTools: https://bugreports.qt.io/browse/PYSIDE-552
     sed -i.bak $'s/if(Qt5Designer_FOUND)/find_package(Qt5Designer)\\\nif(Qt5Designer_FOUND)/g' sources/pyside2/CMakeLists.txt && \
@@ -723,8 +723,8 @@ RUN \
     cd /workdir && \
     git clone --recursive --jobs ${BUILD_THREADS} --branch ${PYSIDE2_GIT_BRANCH} https://codereview.qt-project.org/pyside/pyside-setup && \
     cd pyside-setup && \
-    # git checkout ${PYSIDE2_GIT_COMMIT} && \
-    # git submodule update --init --recursive && \
+    git checkout ${PYSIDE2_GIT_COMMIT} && \
+    git submodule update --init --recursive && \
 
     # Fix bug in order to build PySide2.QtUiTools: https://bugreports.qt.io/browse/PYSIDE-552
     sed -i.bak $'s/if(Qt5Designer_FOUND)/find_package(Qt5Designer)\\\nif(Qt5Designer_FOUND)/g' sources/pyside2/CMakeLists.txt && \
@@ -745,8 +745,8 @@ RUN \
     cd /workdir && \
     git clone --recursive --jobs ${BUILD_THREADS} --branch ${PYSIDE2_GIT_BRANCH} https://codereview.qt-project.org/pyside/pyside-setup && \
     cd pyside-setup && \
-    # git checkout ${PYSIDE2_GIT_COMMIT} && \
-    # git submodule update --init --recursive && \
+    git checkout ${PYSIDE2_GIT_COMMIT} && \
+    git submodule update --init --recursive && \
 
     # Fix bug in order to build PySide2.QtUiTools: https://bugreports.qt.io/browse/PYSIDE-552
     sed -i.bak $'s/if(Qt5Designer_FOUND)/find_package(Qt5Designer)\\\nif(Qt5Designer_FOUND)/g' sources/pyside2/CMakeLists.txt && \
