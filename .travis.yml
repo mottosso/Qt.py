@@ -4,19 +4,19 @@ matrix:
   # VFX Platform 2018
   - os: linux
     env:
-    - VFXPLATFORM=2018dev
+    - VFXPLATFORM=2018
     - PYTHON=2.7
   - os: linux
     env:
-    - VFXPLATFORM=2018dev
+    - VFXPLATFORM=2018
     - PYTHON=3.4
   - os: linux
     env:
-    - VFXPLATFORM=2018dev
+    - VFXPLATFORM=2018
     - PYTHON=3.5
   - os: linux
     env:
-    - VFXPLATFORM=2018dev
+    - VFXPLATFORM=2018
     - PYTHON=3.6
 
   # VFX Platform 2017
