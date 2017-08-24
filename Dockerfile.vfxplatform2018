@@ -161,12 +161,12 @@ RUN \
 # Qt5: http://code.qt.io/cgit/qt/qt5.git/commit/?h=5.6&id=5df417aeb9fe5fa8b8613abdd3b32bc79e32f49e
 # Adsk qtbase: https://github.com/autodesk-forks/qtbase/commit/72e3fbb0d27e5d91b1676312ab6a7f6a979ed4e7
 # Adsk qtx11extras: https://github.com/autodesk-forks/qtx11extras/commit/d86b59059f0340f3707dad008a8f632b070de4e6
-ENV QT5_VER=5.6.1
+ENV QT5_GIT_BRANCH=5.6.1
 ENV QT5_GIT_COMMIT=5df417aeb9fe5fa8b8613abdd3b32bc79e32f49e
 ENV ADSK_QTBASE_GIT_COMMIT=72e3fbb0d27e5d91b1676312ab6a7f6a979ed4e7
 ENV ADSK_QTX11EXTRAS_GIT_COMMIT=d86b59059f0340f3707dad008a8f632b070de4e6
 RUN \
-    git clone --recursive --jobs ${BUILD_THREADS} --branch ${QT5_VER} https://code.qt.io/qt/qt5.git && \
+    git clone --recursive --jobs ${BUILD_THREADS} --branch ${QT5_GIT_BRANCH} https://code.qt.io/qt/qt5.git && \
     # Revert to commit SHA
     cd /workdir/qt5 && \
     git checkout ${QT5_GIT_COMMIT} && \
@@ -178,8 +178,8 @@ RUN \
     # Clone Autodesk's qtbase, qtx11extras
     cd /workdir && \
     mkdir -p /workdir/adsk && \
-    git clone --recursive --branch adsk-contrib/vfx/${QT5_VER} https://github.com/autodesk-forks/qtbase.git /workdir/adsk/qtbase && \
-    git clone --recursive --branch adsk-contrib/vfx/${QT5_VER} https://github.com/autodesk-forks/qtx11extras.git /workdir/adsk/qtx11extras && \
+    git clone --recursive --branch adsk-contrib/vfx/${QT5_GIT_BRANCH} https://github.com/autodesk-forks/qtbase.git /workdir/adsk/qtbase && \
+    git clone --recursive --branch adsk-contrib/vfx/${QT5_GIT_BRANCH} https://github.com/autodesk-forks/qtx11extras.git /workdir/adsk/qtx11extras && \
     # Revert to commit SHA for qtbase
     cd /workdir/adsk/qtbase && \
     git checkout ${ADSK_QTBASE_GIT_COMMIT} && \
@@ -218,7 +218,7 @@ RUN \
     git submodule update --init --recursive && \
     mkdir /workdir/qt-creator-build && \
     cd /workdir/qt-creator-build && \
-    /usr/local/Qt-${QT5_VER}/bin/qmake -r /workdir/qt-creator/qtcreator.pro && \
+    /usr/local/Qt-${QT5_GIT_BRANCH}/bin/qmake -r /workdir/qt-creator/qtcreator.pro && \
     make -j${BUILD_THREADS} && \
     make install INSTALL_ROOT=/usr/local/qtcreator && \
     rm -rf /workdir/*
@@ -671,13 +671,13 @@ RUN \
 
 
 # PySide2 (has no maintained semantic versioning)
-# PySide2 5.6 git commits: https://codereview.qt-project.org/gitweb?p=pyside/pyside-setup.git;a=shortlog;h=refs/heads/5.6
+# PySide2 5.6 git commits: http://code.qt.io/cgit/pyside/pyside.git/log/?h=5.6
 # PySide2 commit: http://code.qt.io/cgit/pyside/pyside-setup.git/commit/?h=5.6&id=8aca0dec116c6b321373f5636b34036530ac6e4b
 ENV PYSIDE2_GIT_BRANCH=5.6
 ENV PYSIDE2_GIT_COMMIT=8aca0dec116c6b321373f5636b34036530ac6e4b
 RUN \
     # PySide2 for Python 2
-    git clone --recursive --jobs ${BUILD_THREADS} --branch ${PYSIDE2_GIT_BRANCH} https://codereview.qt-project.org/pyside/pyside-setup && \
+    git clone --recursive --jobs ${BUILD_THREADS} --branch ${PYSIDE2_GIT_BRANCH} https://code.qt.io/pyside/pyside.git && \
     cd pyside-setup && \
     git checkout ${PYSIDE2_GIT_COMMIT} && \
     git submodule update --init --recursive && \
