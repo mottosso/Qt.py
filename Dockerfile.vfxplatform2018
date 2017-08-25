@@ -622,7 +622,7 @@ RUN \
     python${PYTHON27_VER} configure.py \
         # --verbose \
         --confirm-license \
-        --qmake=/usr/local/Qt-${QT5_VER}/bin/qmake \
+        --qmake=/usr/local/Qt-${QT5_GIT_BRANCH}/bin/qmake \
         --sip=/usr/local/python${PYTHON27_VER}/bin/sip && \
     make -j${BUILD_THREADS} && \
     make install && \
@@ -636,7 +636,7 @@ RUN \
     python${PYTHON34_VER} configure.py \
         # --verbose \
         --confirm-license \
-        --qmake=/usr/local/Qt-${QT5_VER}/bin/qmake \
+        --qmake=/usr/local/Qt-${QT5_GIT_BRANCH}/bin/qmake \
         --sip=/usr/local/python${PYTHON34_VER}/bin/sip && \
     make -j${BUILD_THREADS} && \
     make install && \
@@ -650,7 +650,7 @@ RUN \
     python${PYTHON35_VER} configure.py \
         # --verbose \
         --confirm-license \
-        --qmake=/usr/local/Qt-${QT5_VER}/bin/qmake \
+        --qmake=/usr/local/Qt-${QT5_GIT_BRANCH}/bin/qmake \
         --sip=/usr/local/python${PYTHON35_VER}/bin/sip && \
     make -j${BUILD_THREADS} && \
     make install && \
@@ -664,7 +664,7 @@ RUN \
     python${PYTHON36_VER} configure.py \
         # --verbose \
         --confirm-license \
-        --qmake=/usr/local/Qt-${QT5_VER}/bin/qmake \
+        --qmake=/usr/local/Qt-${QT5_GIT_BRANCH}/bin/qmake \
         --sip=/usr/local/python${PYTHON36_VER}/bin/sip && \
     make -j${BUILD_THREADS} && \
     make install && \
@@ -691,7 +691,7 @@ RUN \
         # bdist_wheel \
         install \
             --ignore-git \
-            --qmake=/usr/local/Qt-${QT5_VER}/bin/qmake \
+            --qmake=/usr/local/Qt-${QT5_GIT_BRANCH}/bin/qmake \
             --cmake=/usr/local/bin/cmake \
             --openssl=/usr/bin/openssl \
             --jobs=${BUILD_THREADS} && \
@@ -713,7 +713,7 @@ RUN \
         # bdist_wheel \
         install \
             --ignore-git \
-            --qmake=/usr/local/Qt-${QT5_VER}/bin/qmake \
+            --qmake=/usr/local/Qt-${QT5_GIT_BRANCH}/bin/qmake \
             --cmake=/usr/local/bin/cmake \
             --openssl=/usr/bin/openssl \
             --jobs=${BUILD_THREADS} && \
@@ -735,7 +735,7 @@ RUN \
         # bdist_wheel \
         install \
             --ignore-git \
-            --qmake=/usr/local/Qt-${QT5_VER}/bin/qmake \
+            --qmake=/usr/local/Qt-${QT5_GIT_BRANCH}/bin/qmake \
             --cmake=/usr/local/bin/cmake \
             --openssl=/usr/bin/openssl \
             --jobs=${BUILD_THREADS} && \
@@ -757,14 +757,14 @@ RUN \
         # bdist_wheel \
         install \
             --ignore-git \
-            --qmake=/usr/local/Qt-${QT5_VER}/bin/qmake \
+            --qmake=/usr/local/Qt-${QT5_GIT_BRANCH}/bin/qmake \
             --cmake=/usr/local/bin/cmake \
             --openssl=/usr/bin/openssl \
             --jobs=${BUILD_THREADS} && \
     # pip install /workdir/pyside-setup/dist/*.whl
     rm -rf /workdir/*
 # Ugly fix to make PySide2 find the Qt5 libs
-ENV LD_LIBRARY_PATH="/usr/local/Qt-${QT5_VER}/lib:${LD_LIBRARY_PATH}"
+ENV LD_LIBRARY_PATH="/usr/local/Qt-${QT5_GIT_BRANCH}/lib:${LD_LIBRARY_PATH}"
 
 
 # https://github.com/GoogleCloudPlatform/gsutil/issues/221#issuecomment-165353957
