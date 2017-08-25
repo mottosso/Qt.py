@@ -678,7 +678,7 @@ ENV PYSIDE2_GIT_BRANCH=5.6
 ENV PYSIDE2_GIT_COMMIT=117e0ff91275b4bc06dd5383f19e7028c5ef6ff8
 RUN \
     # PySide2 for Python 2
-    git clone --recursive --jobs ${BUILD_THREADS} --branch ${PYSIDE2_GIT_BRANCH} https://code.qt.io/pyside/pyside.git && \
+    git clone --recursive --jobs ${BUILD_THREADS} --branch ${PYSIDE2_GIT_BRANCH} https://code.qt.io/pyside/pyside-setup.git && \
     cd pyside-setup && \
     git checkout ${PYSIDE2_GIT_COMMIT} && \
     git submodule update --init --recursive && \
