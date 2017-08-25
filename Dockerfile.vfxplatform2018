@@ -683,10 +683,6 @@ RUN \
     git checkout ${PYSIDE2_GIT_COMMIT} && \
     git submodule update --init --recursive && \
 
-    # Fix bug in order to build PySide2.QtUiTools: https://bugreports.qt.io/browse/PYSIDE-552
-    sed -i.bak $'s/if(Qt5Designer_FOUND)/find_package(Qt5Designer)\\\nif(Qt5Designer_FOUND)/g' sources/pyside2/CMakeLists.txt && \
-    # cat sources/pyside2/CMakeLists.txt && \
-
     # Fix bug https://bugreports.qt.io/browse/PYSIDE-357
     sed -i -e "s~\b\(packages\b.*\)],~\1, 'pyside2uic.Compiler', 'pyside2uic.port_v' + str(sys.version_info[0])],~" setup.py && \
     # cat setup.py && \
@@ -708,10 +704,6 @@ RUN \
     cd pyside-setup && \
     git checkout ${PYSIDE2_GIT_COMMIT} && \
     git submodule update --init --recursive && \
-
-    # Fix bug in order to build PySide2.QtUiTools: https://bugreports.qt.io/browse/PYSIDE-552
-    sed -i.bak $'s/if(Qt5Designer_FOUND)/find_package(Qt5Designer)\\\nif(Qt5Designer_FOUND)/g' sources/pyside2/CMakeLists.txt && \
-    # cat sources/pyside2/CMakeLists.txt && \
 
     # Fix bug https://bugreports.qt.io/browse/PYSIDE-357
     sed -i -e "s~\b\(packages\b.*\)],~\1, 'pyside2uic.Compiler', 'pyside2uic.port_v' + str(sys.version_info[0])],~" setup.py && \
@@ -735,10 +727,6 @@ RUN \
     git checkout ${PYSIDE2_GIT_COMMIT} && \
     git submodule update --init --recursive && \
 
-    # Fix bug in order to build PySide2.QtUiTools: https://bugreports.qt.io/browse/PYSIDE-552
-    sed -i.bak $'s/if(Qt5Designer_FOUND)/find_package(Qt5Designer)\\\nif(Qt5Designer_FOUND)/g' sources/pyside2/CMakeLists.txt && \
-    # cat sources/pyside2/CMakeLists.txt && \
-
     # Fix bug https://bugreports.qt.io/browse/PYSIDE-357
     sed -i -e "s~\b\(packages\b.*\)],~\1, 'pyside2uic.Compiler', 'pyside2uic.port_v' + str(sys.version_info[0])],~" setup.py && \
     # cat setup.py && \
@@ -760,10 +748,6 @@ RUN \
     cd pyside-setup && \
     git checkout ${PYSIDE2_GIT_COMMIT} && \
     git submodule update --init --recursive && \
-
-    # Fix bug in order to build PySide2.QtUiTools: https://bugreports.qt.io/browse/PYSIDE-552
-    sed -i.bak $'s/if(Qt5Designer_FOUND)/find_package(Qt5Designer)\\\nif(Qt5Designer_FOUND)/g' sources/pyside2/CMakeLists.txt && \
-    # cat sources/pyside2/CMakeLists.txt && \
 
     # Fix bug https://bugreports.qt.io/browse/PYSIDE-357
     sed -i -e "s~\b\(packages\b.*\)],~\1, 'pyside2uic.Compiler', 'pyside2uic.port_v' + str(sys.version_info[0])],~" setup.py && \
