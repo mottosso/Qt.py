@@ -29,15 +29,15 @@ def _pyside2_commit_date():
     """Return the commit date of PySide2"""
 
     import PySide2
-    try:
+    if hasattr(PySide2, '__build_commit_date__'):
         commit_date = PySide2.__build_commit_date__
         datetime_object = datetime.datetime.strptime(
             commit_date[: commit_date.rfind('+')], '%Y-%m-%dT%H:%M:%S'
         )
-    except AttributeError:
-        # PySide2 version which doesn't have the attribute
-        datetime_object = None
-    return datetime_object
+        return datetime_object
+    else:
+        # Returns None if no __build_commit_date__ is available
+        return None
 
 
 @contextlib.contextmanager
@@ -517,6 +517,10 @@ if sys.version_info <= (3, 4):
                 assert widget != button
             elif binding("PySide2") and _pyside2_commit_date() is None:
                 assert widget != button
+            elif binding("PySide2") and \
+                    _pyside2_commit_date() <= datetime.datetime(
+                        2017, 8, 25):
+                assert widget == button
             else:
                 assert widget == button
 
