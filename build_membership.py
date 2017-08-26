@@ -1,4 +1,20 @@
 import json
+import datetime
+
+
+def _pyside2_commit_date():
+    """Return the commit date of PySide2"""
+
+    import PySide2
+    if hasattr(PySide2, '__build_commit_date__'):
+        commit_date = PySide2.__build_commit_date__
+        datetime_object = datetime.datetime.strptime(
+            commit_date[: commit_date.rfind('+')], '%Y-%m-%dT%H:%M:%S'
+        )
+        return datetime_object
+    else:
+        # Returns None if no __build_commit_date__ is available
+        return None
 
 
 def build_membership():
@@ -147,6 +163,216 @@ def test_{binding}_members():
         f.write(contents)
 
 
+def _excluded():
+    """Return exclusion dict, based on PySide2 version"""
+
+    if _pyside2_commit_date() is None:
+        # PySide2 does not have git commit date
+        exclude_dict = {
+            "QtCore": [
+                # missing from PySide
+                "Connection",
+                "QBasicMutex",
+                "QFileDevice",
+                "QItemSelectionRange",
+                "QJsonArray",
+                "QJsonDocument",
+                "QJsonParseError",
+                "QJsonValue",
+                "QMessageLogContext",
+                "QtInfoMsg",
+                "qInstallMessageHandler",
+                "QT_TRANSLATE_NOOP",
+                "QT_TR_NOOP",
+                "QT_TR_NOOP_UTF8",
+
+                # missing from PyQt4
+                "ClassInfo",
+                "MetaFunction",
+                "QFactoryInterface",
+                "QSortFilterProxyModel",
+                "QStringListModel",
+                "QT_TRANSLATE_NOOP3",
+                "QT_TRANSLATE_NOOP_UTF8",
+                "__moduleShutdown",
+                "__version__",  # (2) unique to PyQt
+                "__version_info__",  # (2) unique to PyQt
+                "qAcos",
+                "qAsin",
+                "qAtan",
+                "qAtan2",
+                "qExp",
+                "qFabs",
+                "qFastCos",
+                "qFastSin",
+                "qFuzzyIsNull",
+                "qTan",
+                "qtTrId",
+
+                # missing from all bindings
+                "QFileSelector",
+                "QMimeDatabase",
+                "QMimeType",
+
+                # missing from PyQt5
+                "SIGNAL",
+                "SLOT",
+            ],
+
+            "QtGui": [
+                # missing from PySide
+                "QGuiApplication",  # (2) unique to Qt 5
+                "QPagedPaintDevice",
+                "QSurface",
+                "QSurfaceFormat",
+                "QTouchDevice",
+                "QWindow",  # (2) unique to Qt 5
+                "QTouchEvent",  # (2) unique to Qt 5
+                "qRgba",  # (2) unique to Qt 5
+
+                # missing from PyQt4
+                "QAccessibleEvent",
+                "QToolBarChangeEvent",
+
+                # missing from PyQt5
+                "QMatrix",
+                "QPyTextObject",
+                "QStringListModel",
+
+                # missing from all bindings
+                "QAccessible",
+                "QAccessibleInterface",
+                "QExposeEvent",
+                "QOpenGLContext",
+                "QOpenGLFramebufferObject",
+                "QOpenGLShader",
+                "QOpenGLBuffer",
+                "QScreen",
+            ],
+
+            "QtWebKit": [
+                # missing from PyQt4
+                "WebCore",
+
+                # missing from PyQt5
+                "__doc__",
+                "__file__",
+                "__name__",
+                "__package__",
+            ],
+
+            "QtScript": [
+                # missing from PyQt4
+                "QScriptExtensionInterface",
+                "QScriptExtensionPlugin",
+                "QScriptProgram",
+                "QScriptable",
+
+                # missing from PyQt5
+                "QScriptClass",
+                "QScriptClassPropertyIterator",
+                "QScriptContext",
+                "QScriptContextInfo",
+                "QScriptEngine",
+                "QScriptEngineAgent",
+                "QScriptString",
+                "QScriptValue",
+                "QScriptValueIterator",
+                "__doc__",
+                "__file__",
+                "__name__",
+                "__package__",
+            ],
+
+            "QtNetwork": [
+                # missing from Qt 4
+                "QIPv6Address",
+            ],
+
+            "QtPrintSupport": [
+                # PyQt4
+                "QAbstractPrintDialog",
+                "QPageSetupDialog",
+                "QPrintDialog",
+                "QPrintEngine",
+                "QPrintPreviewDialog",
+                "QPrintPreviewWidget",
+                "QPrinter",
+                "QPrinterInfo",
+            ],
+
+            "QtWidgets": [
+                # PyQt4
+                "QTileRules",
+
+                # PyQt5
+                "QGraphicsItemAnimation",
+                "QTileRules",
+
+                "qApp",  # See Issue #171
+            ],
+
+            "QtHelp": [
+                # PySide
+                "QHelpContentItem",
+                "QHelpContentModel",
+                "QHelpContentWidget",
+                "QHelpEngine",
+                "QHelpEngineCore",
+                "QHelpIndexModel",
+                "QHelpIndexWidget",
+                "QHelpSearchEngine",
+                "QHelpSearchQuery",
+                "QHelpSearchQueryWidget",
+                "QHelpSearchResultWidget",
+            ],
+
+            "QtXml": [
+                # PySide
+                "QDomAttr",
+                "QDomCDATASection",
+                "QDomCharacterData",
+                "QDomComment",
+                "QDomDocument",
+                "QDomDocumentFragment",
+                "QDomDocumentType",
+                "QDomElement",
+                "QDomEntity",
+                "QDomEntityReference",
+                "QDomImplementation",
+                "QDomNamedNodeMap",
+                "QDomNode",
+                "QDomNodeList",
+                "QDomNotation",
+                "QDomProcessingInstruction",
+                "QDomText",
+                "QXmlAttributes",
+                "QXmlContentHandler",
+                "QXmlDTDHandler",
+                "QXmlDeclHandler",
+                "QXmlDefaultHandler",
+                "QXmlEntityResolver",
+                "QXmlErrorHandler",
+                "QXmlInputSource",
+                "QXmlLexicalHandler",
+                "QXmlLocator",
+                "QXmlNamespaceSupport",
+                "QXmlParseException",
+                "QXmlReader",
+                "QXmlSimpleReader",
+            ],
+
+            "QtTest": [
+                # missing from PySide
+                "QTest",
+            ],
+        }
+    elif _pyside2_commit_date() <= datetime.datetime(2017, 8, 25):
+        exclude_dict = {}
+
+    return exclude_dict
+
+
 # Do not consider these members.
 #
 # Some of these are either:
@@ -156,205 +382,8 @@ def test_{binding}_members():
 #
 # TODO: Clearly mark which are which. (3) should
 #   eventually be removed from this dictionary.
-excluded = {
-    "QtCore": [
-        # missing from PySide
-        "Connection",
-        "QBasicMutex",
-        "QFileDevice",
-        "QItemSelectionRange",
-        "QJsonArray",
-        "QJsonDocument",
-        "QJsonParseError",
-        "QJsonValue",
-        "QMessageLogContext",
-        "QtInfoMsg",
-        "qInstallMessageHandler",
-        "QT_TRANSLATE_NOOP",
-        "QT_TR_NOOP",
-        "QT_TR_NOOP_UTF8",
+excluded = _excluded()
 
-        # missing from PyQt4
-        "ClassInfo",
-        "MetaFunction",
-        "QFactoryInterface",
-        "QSortFilterProxyModel",
-        "QStringListModel",
-        "QT_TRANSLATE_NOOP3",
-        "QT_TRANSLATE_NOOP_UTF8",
-        "__moduleShutdown",
-        "__version__",  # (2) unique to PyQt
-        "__version_info__",  # (2) unique to PyQt
-        "qAcos",
-        "qAsin",
-        "qAtan",
-        "qAtan2",
-        "qExp",
-        "qFabs",
-        "qFastCos",
-        "qFastSin",
-        "qFuzzyIsNull",
-        "qTan",
-        "qtTrId",
-
-        # missing from all bindings
-        "QFileSelector",
-        "QMimeDatabase",
-        "QMimeType",
-
-        # missing from PyQt5
-        "SIGNAL",
-        "SLOT",
-    ],
-
-    "QtGui": [
-        # missing from PySide
-        "QGuiApplication",  # (2) unique to Qt 5
-        "QPagedPaintDevice",
-        "QSurface",
-        "QSurfaceFormat",
-        "QTouchDevice",
-        "QWindow",  # (2) unique to Qt 5
-        "QTouchEvent",  # (2) unique to Qt 5
-        "qRgba",  # (2) unique to Qt 5
-
-        # missing from PyQt4
-        "QAccessibleEvent",
-        "QToolBarChangeEvent",
-
-        # missing from PyQt5
-        "QMatrix",
-        "QPyTextObject",
-        "QStringListModel",
-
-        # missing from all bindings
-        "QAccessible",
-        "QAccessibleInterface",
-        "QExposeEvent",
-        "QOpenGLContext",
-        "QOpenGLFramebufferObject",
-        "QOpenGLShader",
-        "QOpenGLBuffer",
-        "QScreen",
-    ],
-
-    "QtWebKit": [
-        # missing from PyQt4
-        "WebCore",
-
-        # missing from PyQt5
-        "__doc__",
-        "__file__",
-        "__name__",
-        "__package__",
-    ],
-
-    "QtScript": [
-        # missing from PyQt4
-        "QScriptExtensionInterface",
-        "QScriptExtensionPlugin",
-        "QScriptProgram",
-        "QScriptable",
-
-        # missing from PyQt5
-        "QScriptClass",
-        "QScriptClassPropertyIterator",
-        "QScriptContext",
-        "QScriptContextInfo",
-        "QScriptEngine",
-        "QScriptEngineAgent",
-        "QScriptString",
-        "QScriptValue",
-        "QScriptValueIterator",
-        "__doc__",
-        "__file__",
-        "__name__",
-        "__package__",
-    ],
-
-    "QtNetwork": [
-        # missing from Qt 4
-        "QIPv6Address",
-    ],
-
-    "QtPrintSupport": [
-        # PyQt4
-        "QAbstractPrintDialog",
-        "QPageSetupDialog",
-        "QPrintDialog",
-        "QPrintEngine",
-        "QPrintPreviewDialog",
-        "QPrintPreviewWidget",
-        "QPrinter",
-        "QPrinterInfo",
-    ],
-
-    "QtWidgets": [
-        # PyQt4
-        "QTileRules",
-
-        # PyQt5
-        "QGraphicsItemAnimation",
-        "QTileRules",
-
-        "qApp",  # See Issue #171
-    ],
-
-    "QtHelp": [
-        # PySide
-        "QHelpContentItem",
-        "QHelpContentModel",
-        "QHelpContentWidget",
-        "QHelpEngine",
-        "QHelpEngineCore",
-        "QHelpIndexModel",
-        "QHelpIndexWidget",
-        "QHelpSearchEngine",
-        "QHelpSearchQuery",
-        "QHelpSearchQueryWidget",
-        "QHelpSearchResultWidget",
-    ],
-
-    "QtXml": [
-        # PySide
-        "QDomAttr",
-        "QDomCDATASection",
-        "QDomCharacterData",
-        "QDomComment",
-        "QDomDocument",
-        "QDomDocumentFragment",
-        "QDomDocumentType",
-        "QDomElement",
-        "QDomEntity",
-        "QDomEntityReference",
-        "QDomImplementation",
-        "QDomNamedNodeMap",
-        "QDomNode",
-        "QDomNodeList",
-        "QDomNotation",
-        "QDomProcessingInstruction",
-        "QDomText",
-        "QXmlAttributes",
-        "QXmlContentHandler",
-        "QXmlDTDHandler",
-        "QXmlDeclHandler",
-        "QXmlDefaultHandler",
-        "QXmlEntityResolver",
-        "QXmlErrorHandler",
-        "QXmlInputSource",
-        "QXmlLexicalHandler",
-        "QXmlLocator",
-        "QXmlNamespaceSupport",
-        "QXmlParseException",
-        "QXmlReader",
-        "QXmlSimpleReader",
-    ],
-
-    "QtTest": [
-        # missing from PySide
-        "QTest",
-    ],
-}
 
 if __name__ == '__main__':
     build_membership()
