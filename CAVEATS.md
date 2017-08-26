@@ -320,7 +320,7 @@ True
 
 `QtCompat.wrapInstance` differs across `sip` and `shiboken` in subtle ways.
 
-**Note**: This is not included on our tests, as we cannot reproduce this using PySide2 (build commit date `2017-08-24T14:05:49+00:00`), CY2017. It's likely that this issue persists in e.g. Maya version < 2018.
+**Note**: This is not included on our tests, as we cannot reproduce this using PySide2 (build commit date `2017-08-25`), CY2017. It's likely that this issue persists in e.g. Maya version < 2018.
 
 ```python
 # PySide2, untested
