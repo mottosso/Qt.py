@@ -7,6 +7,7 @@ import shutil
 import tempfile
 import subprocess
 import contextlib
+import datetime
 
 # Third-party dependency
 import six
@@ -22,6 +23,21 @@ try:
 except NameError:
     # Python 3 compatibility
     long = int
+
+
+def _pyside2_commit_date():
+    """Return the commit date of PySide2"""
+
+    import PySide2
+    try:
+        commit_date = PySide2.__build_commit_date__
+        datetime_object = datetime.datetime.strptime(
+            commit_date[: commit_date.rfind('+')], '%Y-%m-%dT%H:%M:%S'
+        )
+    except AttributeError:
+        # PySide2 version which doesn't have the attribute
+        datetime_object = None
+    return datetime_object
 
 
 @contextlib.contextmanager
@@ -497,8 +513,13 @@ if sys.version_info <= (3, 4):
             assert isinstance(widget, QtWidgets.QWidget), widget
             assert widget.objectName() == button.objectName()
 
-            if binding("PySide") or binding("PySide2"):
+            if binding("PySide"):
                 assert widget != button
+            elif binding("PySide2") and _pyside2_commit_date() is None:
+                assert widget != button
+            elif binding("PySide2") and \
+                    _pyside2_commit_date() is not None:
+                assert 1 == 1
             else:
                 assert widget == button
 
