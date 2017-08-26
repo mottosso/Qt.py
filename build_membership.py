@@ -168,7 +168,7 @@ def _excluded():
 
     if _pyside2_commit_date() is None:
         # PySide2 does not have git commit date
-        exclude_dict = {
+        excluded_members = {
             "QtCore": [
                 # missing from PySide
                 "Connection",
@@ -368,9 +368,9 @@ def _excluded():
             ],
         }
     elif _pyside2_commit_date() <= datetime.datetime(2017, 8, 25):
-        exclude_dict = {}
+        excluded_members = {}
 
-    return exclude_dict
+    return excluded_members
 
 
 # Do not consider these members.
