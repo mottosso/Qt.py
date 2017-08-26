@@ -517,9 +517,6 @@ if sys.version_info <= (3, 4):
                 assert widget != button
             elif binding("PySide2") and _pyside2_commit_date() is None:
                 assert widget != button
-            elif binding("PySide2") and \
-                    _pyside2_commit_date() is not None:
-                assert 1 == 1
             else:
                 assert widget == button
 
