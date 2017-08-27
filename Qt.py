@@ -1295,6 +1295,11 @@ def _convert(lines):
         line = line.replace("from PySide2 import", "from Qt import QtCompat,")
         line = line.replace("QtWidgets.QApplication.translate",
                             "QtCompat.translate")
+        if "QtCore.SIGNAL" in line:
+            raise NotImplementedError("QtCore.SIGNAL is missing from PyQt5 "
+                                      "and so Qt.py does not support it: you "
+                                      "should avoid defining signals inside "
+                                      "your ui files.")
         return line
 
     parsed = list()
