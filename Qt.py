@@ -438,7 +438,6 @@ _common_members = {
         "QMetaMethod",
         "QMetaObject",
         "QMetaProperty",
-        "QMetaType",
         "QMimeData",
         "QModelIndex",
         "QMutex",
@@ -596,12 +595,6 @@ _common_members = {
         "QTcpServer",
         "QTcpSocket",
         "QUdpSocket"
-    ],
-    "QtOpenGL": [
-        "QGL",
-        "QGLContext",
-        "QGLFormat",
-        "QGLWidget"
     ]
 }
 

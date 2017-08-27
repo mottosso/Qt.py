@@ -439,6 +439,7 @@ def test_qtcompat_base_class():
     QtCompat.QHeaderView.setSectionsMovable(header, True)
     assert QtCompat.QHeaderView.sectionsMovable(header) is True
 
+
 def test_cli():
     """Qt.py is available from the command-line"""
     env = os.environ.copy()
@@ -452,6 +453,24 @@ def test_cli():
 
     out, err = popen.communicate()
     assert out.startswith(b"usage: Qt.py"), "\n%s" % out
+
+
+def test_membership():
+    """All members of Qt.py exist in all bindings"""
+    import Qt
+
+    missing = list()
+    for module, members in Qt._common_members.items():
+        missing.extend(
+            member for member in members
+            if not hasattr(getattr(Qt, module), member)
+        )
+
+    binding = Qt.__binding__
+    assert not missing, (
+        "Some members did not exist in {binding}\n{missing}".format(
+            **locals())
+    )
 
 
 if sys.version_info <= (3, 4):
