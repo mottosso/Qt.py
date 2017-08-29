@@ -760,6 +760,14 @@ def _new_module(name):
     return types.ModuleType(__name__ + "." + name)
 
 
+def _import_module(name):
+    """
+    import_module is a replacement for importlib. 
+    It adds support for python 2.6
+    """
+    return importlib.import_module(name)
+
+
 def _setup(module, extras):
     """Install common submodules"""
 
@@ -767,7 +775,7 @@ def _setup(module, extras):
 
     for name in list(_common_members) + extras:
         try:
-            submodule = importlib.import_module(
+            submodule = _import_module(
                 module.__name__ + "." + name)
         except ImportError:
             continue
