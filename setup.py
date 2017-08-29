@@ -31,7 +31,7 @@ setup(
     url="https://github.com/mottosso/Qt",
     license="MIT",
     zip_safe=False,
-    data_files=['LICENSE'],
+    data_files=["LICENSE"],
     py_modules=["Qt"],
     classifiers=classifiers
 )
