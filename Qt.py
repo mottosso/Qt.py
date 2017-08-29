@@ -775,7 +775,7 @@ def _setup(module, extras):
     for name in list(_common_members) + extras:
         try:
             submodule = _import_sub_module(
-                module.__name__, name)
+                module, name)
         except ImportError:
             continue
 
