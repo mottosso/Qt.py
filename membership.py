@@ -81,7 +81,8 @@ if __name__ == '__main__':
                 basemodule = modname[:modname.rfind('.')]
                 submodule = modname[modname.rfind('.')+1:]
                 try:
-                    import_statement = 'from ' + basemodule + ' import ' + submodule
+                    import_statement = (
+                        'from ' + basemodule + ' import ' + submodule)
                     # print(import_statement)
                     exec(import_statement)
                 except (ImportError, AttributeError, SyntaxError) as error:
