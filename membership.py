@@ -17,6 +17,7 @@ if __name__ == '__main__':
             mod = modname[modname.rfind('.')+1:]
             try:
                 exec('from ' + base + ' import ' + mod)
+                raw_members = []  # avoid Hound errors
                 exec('raw_members = dir(' + mod + ')')
 
                 members = []
