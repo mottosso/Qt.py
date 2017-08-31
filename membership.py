@@ -2,6 +2,7 @@ import os
 import pkgutil
 import json
 from optparse import OptionParser
+from functools import reduce
 
 # This is where all files are read from and saved to
 PREFIX = '/Qt.py'
@@ -29,11 +30,14 @@ def write_json(dictionary, filename):
 
 def compare(dicts):
     """Compare by iteration"""
+
     common_members = {}
+    common_keys = reduce(lambda x, y: x & y, map(dict.keys, dicts))
+    for k in common_keys:
+        common_members[k] = list(
+            reduce(lambda x, y: x & y, [set(d[k]) for d in dicts]))
 
-    # To be compared...
-
-    return json.dumps(common_members)
+    return common_members
 
 
 def generate_common_members():
