@@ -197,18 +197,29 @@ def test_load_ui_signals():
 
 
 def test_load_ui_mainwindow():
-    """Tests to see if the baseinstance loading loads on
-    main windows properly
-    """
+    """Tests to see if the baseinstance loading loads main windows properly"""
     import sys
-    from Qt import QtWidgets, QtCompat
+    from Qt import QtWidgets, QtCompat, QtCore
+
+    # Install a custom Qt Message handler to silence the qWarning
+    def customHandler(mode, context, msg):
+        # explicitly skip this one message
+        if msg == 'QMainWindowLayout::count: ?':
+            return
+        err = QtCore.qFormatLogMessage(mode, context, msg)
+        sys.stderr.write('{0}\n'.format(err))
+
+    QtCore.qInstallMessageHandler(customHandler)
+
     app = QtWidgets.QApplication(sys.argv)
     win = QtWidgets.QMainWindow()
+
     QtCompat.loadUi(self.ui_qmainwindow, win)
 
     assert hasattr(win, 'lineEdit'), \
         "loadUi could not load instance to main window"
 
+    QtCore.qInstallMessageHandler(None)
     app.exit()
 
 
