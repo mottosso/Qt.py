@@ -151,15 +151,33 @@ def binding(binding):
     return os.getenv("QT_PREFERRED_BINDING") == binding
 
 
-def ignoreQtMessageHandlerFactory(msgs):
-    def ictxtMgr(*args):
+@contextlib.contextmanager
+def ignoreQtMessageHandler(msgs):
+    """A context that ignores specific qMessages for all bindings
+
+    Args:
+        msgs: list of message strings to ignore
+    """
+    from Qt import QtCore
+    def messageOutputHandler(*args):
+        # In Qt4 bindings, message handlers are passed 2 arguments
+        # In Qt5 bindings, message handlers are passed 3 arguments
+        # The first argument is a QtMsgType
+        # The last argument is the message to be printed
         msg = args[-1]
         if binding("PySide2") or binding("PyQt4"):
+            # These two bindings deliver a bytestring in Py3
+            # so decode them into normal strings
             msg = msg.decode()
         if msg in msgs:
             return
         sys.stderr.write("{0}\n".format(msg))
-    return ictxtMgr
+
+    QtCore.qInstallMessageHandler(messageOutputHandler)
+    try:
+        yield
+    finally:
+        QtCore.qInstallMessageHandler(None)
 
 
 def test_environment():
@@ -214,18 +232,15 @@ def test_load_ui_mainwindow():
     import sys
     from Qt import QtWidgets, QtCompat, QtCore
 
-    handler = ignoreQtMessageHandlerFactory(['QMainWindowLayout::count: ?'])
-    QtCore.qInstallMessageHandler(handler)
-
     app = QtWidgets.QApplication(sys.argv)
     win = QtWidgets.QMainWindow()
 
-    QtCompat.loadUi(self.ui_qmainwindow, win)
+    with ignoreQtMessageHandler(['QMainWindowLayout::count: ?']):
+        QtCompat.loadUi(self.ui_qmainwindow, win)
 
     assert hasattr(win, 'lineEdit'), \
         "loadUi could not load instance to main window"
 
-    QtCore.qInstallMessageHandler(None)
     app.exit()
 
 
