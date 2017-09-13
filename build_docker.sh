@@ -1,1 +1,1 @@
-docker build -t mottosso/qt.py27 -f Dockerfile-py2.7 .
+docker build . -f Dockerfile.vfxplatform2017 -t fredrikaverpil/qt.py:2017

@@ -43,7 +43,8 @@ import types
 import shutil
 import importlib
 
-__version__ = "1.1.0.b1"
+
+__version__ = "1.1.0.b3"
 
 # Enable support for `from Qt import *`
 __all__ = []
@@ -611,7 +612,7 @@ These members from the original submodule are misplaced relative PySide2
 
 """
 _misplaced_members = {
-    "pyside2": {
+    "PySide2": {
         "QtGui.QStringListModel": "QtCore.QStringListModel",
         "QtCore.Property": "QtCore.Property",
         "QtCore.Signal": "QtCore.Signal",
@@ -621,7 +622,7 @@ _misplaced_members = {
         "QtCore.QItemSelection": "QtCore.QItemSelection",
         "QtCore.QItemSelectionModel": "QtCore.QItemSelectionModel",
     },
-    "pyqt5": {
+    "PyQt5": {
         "QtCore.pyqtProperty": "QtCore.Property",
         "QtCore.pyqtSignal": "QtCore.Signal",
         "QtCore.pyqtSlot": "QtCore.Slot",
@@ -631,7 +632,7 @@ _misplaced_members = {
         "QtCore.QItemSelection": "QtCore.QItemSelection",
         "QtCore.QItemSelectionModel": "QtCore.QItemSelectionModel",
     },
-    "pyside": {
+    "PySide": {
         "QtGui.QAbstractProxyModel": "QtCore.QAbstractProxyModel",
         "QtGui.QSortFilterProxyModel": "QtCore.QSortFilterProxyModel",
         "QtGui.QStringListModel": "QtCore.QStringListModel",
@@ -642,7 +643,7 @@ _misplaced_members = {
         "QtCore.Slot": "QtCore.Slot",
 
     },
-    "pyqt4": {
+    "PyQt4": {
         "QtGui.QAbstractProxyModel": "QtCore.QAbstractProxyModel",
         "QtGui.QSortFilterProxyModel": "QtCore.QSortFilterProxyModel",
         "QtGui.QItemSelection": "QtCore.QItemSelection",
@@ -654,6 +655,86 @@ _misplaced_members = {
     }
 }
 
+""" Compatibility Members
+
+This dictionary is used to build Qt.QtCompat objects that provide a consistent
+interface for obsolete members, and differences in binding return values.
+
+{
+    "binding": {
+        "classname": {
+            "targetname": "binding_namespace",
+        }
+    }
+}
+"""
+_compatibility_members = {
+    "PySide2": {
+        "QHeaderView": {
+            "sectionsClickable": "QtWidgets.QHeaderView.sectionsClickable",
+            "setSectionsClickable":
+                "QtWidgets.QHeaderView.setSectionsClickable",
+            "sectionResizeMode": "QtWidgets.QHeaderView.sectionResizeMode",
+            "setSectionResizeMode":
+                "QtWidgets.QHeaderView.setSectionResizeMode",
+            "sectionsMovable": "QtWidgets.QHeaderView.sectionsMovable",
+            "setSectionsMovable": "QtWidgets.QHeaderView.setSectionsMovable",
+        },
+        "QFileDialog": {
+            "getOpenFileName": "QtWidgets.QFileDialog.getOpenFileName",
+            "getOpenFileNames": "QtWidgets.QFileDialog.getOpenFileNames",
+            "getSaveFileName": "QtWidgets.QFileDialog.getSaveFileName",
+        },
+    },
+    "PyQt5": {
+        "QHeaderView": {
+            "sectionsClickable": "QtWidgets.QHeaderView.sectionsClickable",
+            "setSectionsClickable":
+                "QtWidgets.QHeaderView.setSectionsClickable",
+            "sectionResizeMode": "QtWidgets.QHeaderView.sectionResizeMode",
+            "setSectionResizeMode":
+                "QtWidgets.QHeaderView.setSectionResizeMode",
+            "sectionsMovable": "QtWidgets.QHeaderView.sectionsMovable",
+            "setSectionsMovable": "QtWidgets.QHeaderView.setSectionsMovable",
+        },
+        "QFileDialog": {
+            "getOpenFileName": "QtWidgets.QFileDialog.getOpenFileName",
+            "getOpenFileNames": "QtWidgets.QFileDialog.getOpenFileNames",
+            "getSaveFileName": "QtWidgets.QFileDialog.getSaveFileName",
+        },
+    },
+    "PySide": {
+        "QHeaderView": {
+            "sectionsClickable": "QtWidgets.QHeaderView.isClickable",
+            "setSectionsClickable": "QtWidgets.QHeaderView.setClickable",
+            "sectionResizeMode": "QtWidgets.QHeaderView.resizeMode",
+            "setSectionResizeMode": "QtWidgets.QHeaderView.setResizeMode",
+            "sectionsMovable": "QtWidgets.QHeaderView.isMovable",
+            "setSectionsMovable": "QtWidgets.QHeaderView.setMovable",
+        },
+        "QFileDialog": {
+            "getOpenFileName": "QtWidgets.QFileDialog.getOpenFileName",
+            "getOpenFileNames": "QtWidgets.QFileDialog.getOpenFileNames",
+            "getSaveFileName": "QtWidgets.QFileDialog.getSaveFileName",
+        },
+    },
+    "PyQt4": {
+        "QHeaderView": {
+            "sectionsClickable": "QtWidgets.QHeaderView.isClickable",
+            "setSectionsClickable": "QtWidgets.QHeaderView.setClickable",
+            "sectionResizeMode": "QtWidgets.QHeaderView.resizeMode",
+            "setSectionResizeMode": "QtWidgets.QHeaderView.setResizeMode",
+            "sectionsMovable": "QtWidgets.QHeaderView.isMovable",
+            "setSectionsMovable": "QtWidgets.QHeaderView.setMovable",
+        },
+        "QFileDialog": {
+            "getOpenFileName": "QtWidgets.QFileDialog.getOpenFileName",
+            "getOpenFileNames": "QtWidgets.QFileDialog.getOpenFileNames",
+            "getSaveFileName": "QtWidgets.QFileDialog.getSaveFileName",
+        },
+    },
+}
+
 
 def _apply_site_config():
     try:
@@ -663,8 +744,16 @@ def _apply_site_config():
         # to _common_members are needed.
         pass
     else:
-        # Update _common_members with any changes made by QtSiteConfig
-        QtSiteConfig.update_members(_common_members)
+        # Provide the ability to modify the dicts used to build Qt.py
+        if hasattr(QtSiteConfig, 'update_members'):
+            QtSiteConfig.update_members(_common_members)
+
+        if hasattr(QtSiteConfig, 'update_misplaced_members'):
+            QtSiteConfig.update_misplaced_members(members=_misplaced_members)
+
+        if hasattr(QtSiteConfig, 'update_compatibility_members'):
+            QtSiteConfig.update_compatibility_members(
+                members=_compatibility_members)
 
 
 def _new_module(name):
@@ -737,10 +826,10 @@ def _wrapinstance(func, ptr, base=None):
 
 
 def _reassign_misplaced_members(binding):
-    """Parse `_misplaced_members` dict and remap
-    values based on the underlying binding.
+    """Apply misplaced members from `binding` to Qt.py
 
-    :param str binding: Top level binding in _misplaced_members.
+    Arguments:
+        binding (dict): Misplaced members
 
     """
 
@@ -766,6 +855,67 @@ def _reassign_misplaced_members(binding):
         )
 
 
+def _build_compatibility_members(binding, decorators=None):
+    """Apply `binding` to QtCompat
+
+    Arguments:
+        binding (str): Top level binding in _compatibility_members.
+        decorators (dict, optional): Provides the ability to decorate the
+            original Qt methods when needed by a binding. This can be used
+            to change the returned value to a standard value. The key should
+            be the classname, the value is a dict where the keys are the
+            target method names, and the values are the decorator functions.
+
+    """
+
+    decorators = decorators or dict()
+
+    # Allow optional site-level customization of the compatibility members.
+    # This method does not need to be implemented in QtSiteConfig.
+    try:
+        import QtSiteConfig
+    except ImportError:
+        pass
+    else:
+        if hasattr(QtSiteConfig, 'update_compatibility_decorators'):
+            QtSiteConfig.update_compatibility_decorators(binding, decorators)
+
+    _QtCompat = type("QtCompat", (object,), {})
+
+    for classname, bindings in _compatibility_members[binding].items():
+        attrs = {}
+        for target, binding in bindings.items():
+            namespaces = binding.split('.')
+            try:
+                src_object = getattr(Qt, "_" + namespaces[0])
+            except AttributeError as e:
+                _log("QtCompat: AttributeError: %s" % e)
+                # Skip reassignment of non-existing members.
+                # This can happen if a request was made to
+                # rename a member that didn't exist, for example
+                # if QtWidgets isn't available on the target platform.
+                continue
+
+            # Walk down any remaining namespace getting the object assuming
+            # that if the first namespace exists the rest will exist.
+            for namespace in namespaces[1:]:
+                src_object = getattr(src_object, namespace)
+
+            # decorate the Qt method if a decorator was provided.
+            if target in decorators.get(classname, []):
+                # staticmethod must be called on the decorated method to
+                # prevent a TypeError being raised when the decorated method
+                # is called.
+                src_object = staticmethod(
+                    decorators[classname][target](src_object))
+
+            attrs[target] = src_object
+
+        # Create the QtCompat class and install it into the namespace
+        compat_class = type(classname, (_QtCompat,), attrs)
+        setattr(Qt.QtCompat, classname, compat_class)
+
+
 def _pyside2():
     """Initialise PySide2
 
@@ -782,7 +932,13 @@ def _pyside2():
     Qt.__binding_version__ = module.__version__
 
     try:
-        import shiboken2
+        try:
+            # Before merge of PySide and shiboken
+            import shiboken2
+        except ImportError:
+            # After merge of PySide and shiboken, May 2017
+            from PySide2 import shiboken2
+
         Qt.QtCompat.wrapInstance = (
             lambda ptr, base=None: _wrapinstance(
                 shiboken2.wrapInstance, ptr, base)
@@ -804,7 +960,8 @@ def _pyside2():
         Qt.QtCompat.setSectionResizeMode = \
             Qt._QtWidgets.QHeaderView.setSectionResizeMode
 
-    _reassign_misplaced_members("pyside2")
+    _reassign_misplaced_members("PySide2")
+    _build_compatibility_members("PySide2")
 
 
 def _pyside():
@@ -816,7 +973,13 @@ def _pyside():
     Qt.__binding_version__ = module.__version__
 
     try:
-        import shiboken
+        try:
+            # Before merge of PySide and shiboken
+            import shiboken
+        except ImportError:
+            # After merge of PySide and shiboken, May 2017
+            from PySide import shiboken
+
         Qt.QtCompat.wrapInstance = (
             lambda ptr, base=None: _wrapinstance(
                 shiboken.wrapInstance, ptr, base)
@@ -850,7 +1013,8 @@ def _pyside():
             )
         )
 
-    _reassign_misplaced_members("pyside")
+    _reassign_misplaced_members("PySide")
+    _build_compatibility_members("PySide")
 
 
 def _pyqt5():
@@ -883,7 +1047,8 @@ def _pyqt5():
         Qt.QtCompat.setSectionResizeMode = \
             Qt._QtWidgets.QHeaderView.setSectionResizeMode
 
-    _reassign_misplaced_members("pyqt5")
+    _reassign_misplaced_members("PyQt5")
+    _build_compatibility_members('PyQt5')
 
 
 def _pyqt4():
@@ -963,7 +1128,32 @@ def _pyqt4():
                 n)
         )
 
-    _reassign_misplaced_members("pyqt4")
+    _reassign_misplaced_members("PyQt4")
+
+    # QFileDialog QtCompat decorator
+    def _standardizeQFileDialog(some_function):
+        """Decorator that makes PyQt4 return conform to other bindings"""
+        def wrapper(*args, **kwargs):
+            ret = (some_function(*args, **kwargs))
+
+            # PyQt4 only returns the selected filename, force it to a
+            # standard return of the selected filename, and a empty string
+            # for the selected filter
+            return ret, ''
+
+        wrapper.__doc__ = some_function.__doc__
+        wrapper.__name__ = some_function.__name__
+
+        return wrapper
+
+    decorators = {
+        "QFileDialog": {
+            "getOpenFileName": _standardizeQFileDialog,
+            "getOpenFileNames": _standardizeQFileDialog,
+            "getSaveFileName": _standardizeQFileDialog,
+        }
+    }
+    _build_compatibility_members('PyQt4', decorators)
 
 
 def _none():
@@ -1106,6 +1296,11 @@ def _convert(lines):
         line = line.replace("from PySide2 import", "from Qt import QtCompat,")
         line = line.replace("QtWidgets.QApplication.translate",
                             "QtCompat.translate")
+        if "QtCore.SIGNAL" in line:
+            raise NotImplementedError("QtCore.SIGNAL is missing from PyQt5 "
+                                      "and so Qt.py does not support it: you "
+                                      "should avoid defining signals inside "
+                                      "your ui files.")
         return line
 
     parsed = list()
@@ -1238,7 +1433,8 @@ def _install():
             setattr(our_submodule, member, their_member)
 
     # Backwards compatibility
-    Qt.QtCompat.load_ui = Qt.QtCompat.loadUi
+    if hasattr(Qt.QtCompat, 'loadUi'):
+        Qt.QtCompat.load_ui = Qt.QtCompat.loadUi
 
 
 _install()

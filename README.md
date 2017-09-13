@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/mottosso/Qt.py.svg?branch=master)](https://travis-ci.org/mottosso/Qt.py) [![PyPI version](https://badge.fury.io/py/Qt.py.svg)](https://pypi.python.org/pypi/Qt.py)
+[![Anaconda-Server Badge](https://anaconda.org/conda-forge/qt.py/badges/version.svg)](https://anaconda.org/conda-forge/qt.py)
 
 ### Qt.py
 
@@ -75,12 +76,20 @@ See [`CONTRIBUTING.md`](CONTRIBUTING.md) for more details.
 
 ### Install
 
-Qt.py is a single file and can either be [copy/pasted](https://raw.githubusercontent.com/mottosso/Qt.py/master/Qt.py) into your project, [downloaded](https://github.com/mottosso/Qt.py/archive/master.zip) as-is, cloned as-is or installed via PyPI.
+Qt.py is a single file and can either be [copy/pasted](https://raw.githubusercontent.com/mottosso/Qt.py/master/Qt.py) into your project, [downloaded](https://github.com/mottosso/Qt.py/archive/master.zip) as-is, cloned as-is or installed via `pip` or `conda`.
 
 ```bash
+# From PyPI
 $ pip install Qt.py
 ```
 
+```bash
+# From Anaconda
+$ conda config --add channels conda-forge
+$ conda install qt.py
+```
+
+- Pro tip: **Never use the latest commit for production**. Instead, use [the latest release](https://github.com/mottosso/Qt.py/releases). That way, when you read bug reports or make one for yourself you will be able to match a version with the problem without which you will not know which fixes apply to you nor would we be able to help you. Installing via pip or conda as above ensures you are provided the latest *stable* release. Unstable releases are suffixed with a `.b`, e.g. `1.1.0.b3`.
 - Pro tip: Supports [vendoring](https://fredrikaverpil.github.io/2017/05/04/vendoring-qt-py/)
 
 <br>
@@ -128,25 +137,38 @@ All members of `Qt` stem directly from those available via PySide2, along with t
 'PyQt5'
 ```
 
+### Compatibility
+
 Qt.py also provides compatibility wrappers for critical functionality that differs across bindings, these can be found in the added `QtCompat` submodule.
 
 | Attribute                                 | Returns     | Description
 |:------------------------------------------|:------------|:------------
 | `loadUi(uifile=str, baseinstance=QWidget)`| `QObject`   | Minimal wrapper of PyQt4.loadUi and PySide equivalent
 | `translate(...)`        					| `function`  | Compatibility wrapper around [QCoreApplication.translate][]
-| `setSectionResizeMode()`					| `method`    | Compatibility wrapper around [QAbstractItemView.setSectionResizeMode][]
 | `wrapInstance(addr=long, type=QObject)`   | `QObject`   | Wrapper around `shiboken2.wrapInstance` and PyQt equivalent
 | `getCppPointer(object=QObject)`           | `long`      | Wrapper around `shiboken2.getCppPointer` and PyQt equivalent
 
 [QCoreApplication.translate]: https://doc.qt.io/qt-5/qcoreapplication.html#translate
-[QAbstractItemView.setSectionResizeMode]: https://doc.qt.io/qt-5/qheaderview.html#setSectionResizeMode
 
 **Example**
 
 ```python
 >>> from Qt import QtCompat
->>> QtCompat.setSectionResizeMode
+>>> QtCompat.loadUi
 ```
+
+#### Class specific compatibility objects
+
+Between Qt4 and Qt5 there have been many classes and class members that are obsolete. Under Qt.QtCompat there are many classes with names matching the classes they provide compatibility functions. These will match the PySide2 naming convention.
+
+```python
+from Qt import QtCore, QtWidgets, QtCompat
+header = QtWidgets.QHeaderView(QtCore.Qt.Horizontal)
+QtCompat.QHeaderView.setSectionsMovable(header, False)
+movable = QtCompat.QHeaderView.sectionsMovable(header)
+```
+
+This also covers inconsistencies between bindings. For example PyQt4's QFileDialog matches Qt4's return value of the selected. While all other bindings return the selected filename and the file filter the user used to select the file. `Qt.QtCompat.QFileDialog` ensures that getOpenFileName(s) and getSaveFileName always return the tuple.
 
 <br>
 
@@ -220,13 +242,11 @@ If you need to expose a module that isn't included in Qt.py by default or wish t
 ```python
 # QtSiteConfig.py
 def update_members(members):
-	"""Called by Qt.py at run-time to modify the modules it makes available.
+    """Called by Qt.py at run-time to modify the modules it makes available.
 
     Arguments:
         members (dict): The members considered by Qt.py
-
     """
-
     members.pop("QtCore")
 ```
 
@@ -373,6 +393,8 @@ Send us a pull-request with your studio here.
 - [CGRU](http://cgru.info/)
 - [MPC](http://www.moving-picture.com)
 - [Rising Sun Pictures](https://rsp.com.au)
+- [Blur Studio](http://www.blur.com)
+- [Mikros Image](http://www.mikrosimage.com/)
 
 Presented at Siggraph 2016, BOF!
 
@@ -470,21 +492,20 @@ Below are some of the conventions that used throughout the Qt.py module and test
 
 Due to the nature of multiple bindings and multiple interpreter support, setting up a development environment in which to properly test your contraptions can be challenging. So here is a guide for how to do just that using **Docker**.
 
-With Docker setup, here's what you do.
+With Docker setup, here's what you do. Please note this will pull down a ~1 GB image.
 
 ```bash
-# Build image
 cd Qt.py
-docker build -t mottosso/qt.py27 -f Dockerfile-py2.7 .
-docker build -t mottosso/qt.py35 -f Dockerfile-py3.5 .
 
 # Run nosetests (Linux/OSX)
-docker run --rm -v $(pwd):/Qt.py mottosso/qt.py27
-docker run --rm -v $(pwd):/Qt.py mottosso/qt.py35
+docker run --rm -v $(pwd):/Qt.py -e PYTHON=2.7 fredrikaverpil/qt.py:2017
+docker run --rm -v $(pwd):/Qt.py -e PYTHON=3.4 fredrikaverpil/qt.py:2017
+docker run --rm -v $(pwd):/Qt.py -e PYTHON=3.5 fredrikaverpil/qt.py:2017
 
 # Run nosetests (Windows)
-docker run --rm -v %CD%:/Qt.py mottosso/qt.py27
-docker run --rm -v %CD%:/Qt.py mottosso/qt.py35
+docker run --rm -v %CD%:/Qt.py -e PYTHON=2.7 fredrikaverpil/qt.py:2017
+docker run --rm -v %CD%:/Qt.py -e PYTHON=3.4 fredrikaverpil/qt.py:2017
+docker run --rm -v %CD%:/Qt.py -e PYTHON=3.5 fredrikaverpil/qt.py:2017
 
 # Doctest: test_caveats.test_1_qtgui_qabstractitemmodel_createindex ... ok
 # Doctest: test_caveats.test_2_qtgui_qabstractitemmodel_createindex ... ok
@@ -498,5 +519,7 @@ docker run --rm -v %CD%:/Qt.py mottosso/qt.py35
 ```
 
 Now both you and Travis are operating on the same assumptions which means that when the tests pass on your machine, they pass on Travis. And everybody wins!
+
+For details on the Docker image for testing, see [`DOCKER.md`](DOCKER.md).
 
 See [`CONTRIBUTING.md`](CONTRIBUTING.md) for more of the good stuff.
