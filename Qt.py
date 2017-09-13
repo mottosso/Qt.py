@@ -760,8 +760,8 @@ def _new_module(name):
 
 
 def _import_sub_module(module, name):
-    """import_sub_module will mimic the functionality of importlib.import_module"""
-    module = __import__(module.__name__ + "." +  name)
+    """import_sub_module will mimic the function of importlib.import_module"""
+    module = __import__(module.__name__ + "." + name)
     for level in name.split("."):
         module = getattr(module, level)
     return module
