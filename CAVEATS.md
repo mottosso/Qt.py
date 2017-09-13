@@ -363,16 +363,18 @@ The `QMessageLogContext` argument in Qt5 is only supplied in debug builds, so it
 
 Qt warnings and messages are written to the C++ stdout, not the python stdout. This makes it impossible to redirect or capture these messages without installing a handler.
 
+This example should work in any binding
 ```python
-import sys
-from Qt import QtCore
-def handler(*args):
-    msgType = args[0]
-    msg = args[-1]
-	if msgType == QtCore.QtWarningMsg:
-		print(msg)
-	else:
-		sys.stderr.write(msg)
-
-QtCore.qInstallMessageHandler(handler)
+# PyQt5
+>>> import sys
+>>> from Qt import QtCore
+>>> def handler(*args):
+...    msgType = args[0]
+...    msg = args[-1]
+...    if msgType == QtCore.QtWarningMsg:
+...        print(msg)
+...    else:
+...        sys.stderr.write(msg)
+...
+>>> QtCore.qInstallMessageHandler(handler)
 ```
