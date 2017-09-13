@@ -152,14 +152,14 @@ def binding(binding):
 
 
 def ignoreQtMessageHandlerFactory(msgs):
-	def ictxtMgr(*args):
-		msg = args[-1]
-		if binding("PySide2"):
-			msg = msg.decode()
-		if msg in msgs:
-			return
-		sys.stderr.write("{0}\n".format(msg))
-	return ictxtMgr
+    def ictxtMgr(*args):
+        msg = args[-1]
+        if binding("PySide2"):
+            msg = msg.decode()
+        if msg in msgs:
+            return
+        sys.stderr.write("{0}\n".format(msg))
+    return ictxtMgr
 
 
 def test_environment():
