@@ -159,6 +159,7 @@ def ignoreQtMessageHandler(msgs):
         msgs: list of message strings to ignore
     """
     from Qt import QtCore
+
     def messageOutputHandler(*args):
         # In Qt4 bindings, message handlers are passed 2 arguments
         # In Qt5 bindings, message handlers are passed 3 arguments
@@ -230,7 +231,7 @@ def test_load_ui_signals():
 def test_load_ui_mainwindow():
     """Tests to see if the baseinstance loading loads main windows properly"""
     import sys
-    from Qt import QtWidgets, QtCompat, QtCore
+    from Qt import QtWidgets, QtCompat
 
     app = QtWidgets.QApplication(sys.argv)
     win = QtWidgets.QMainWindow()
