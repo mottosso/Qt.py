@@ -151,6 +151,26 @@ def binding(binding):
     return os.getenv("QT_PREFERRED_BINDING") == binding
 
 
+if binding("PyQt4") or binding("PySide"):
+    def ignoreQtMessageHandlerFactory(msgs):
+        def ictxtMgr(level, msg):
+            if msg.decode() in msgs:
+                return
+            sys.stderr.write("{0}\n".format(msg))
+        return ictxtMgr
+
+
+if binding("PyQt5") or binding("PySide2"):
+    def ignoreQtMessageHandlerFactory(msgs):
+        def ictxtMgr(level, context, msg):
+            if binding("PySide2"):
+                msg = msg.decode()
+            if msg in msgs:
+                return
+            sys.stderr.write("{0}\n".format(msg))
+        return ictxtMgr
+
+
 def test_environment():
     """Tests require all bindings to be installed (except PySide on py3.5+)"""
 
@@ -203,15 +223,8 @@ def test_load_ui_mainwindow():
     import sys
     from Qt import QtWidgets, QtCompat, QtCore
 
-    # Install a custom Qt Message handler to silence the qWarning
-    def customHandler(mode, context, msg):
-        # explicitly skip this one message
-        if msg == 'QMainWindowLayout::count: ?':
-            return
-        err = QtCore.qFormatLogMessage(mode, context, msg)
-        sys.stderr.write('{0}\n'.format(err))
-
-    QtCore.qInstallMessageHandler(customHandler)
+    handler = ignoreQtMessageHandlerFactory(['QMainWindowLayout::count: ?'])
+    QtCore.qInstallMessageHandler(handler)
 
     app = QtWidgets.QApplication(sys.argv)
     win = QtWidgets.QMainWindow()
