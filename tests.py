@@ -154,7 +154,7 @@ def binding(binding):
 def ignoreQtMessageHandlerFactory(msgs):
     def ictxtMgr(*args):
         msg = args[-1]
-        if binding("PySide2"):
+        if binding("PySide2") or binding("PyQt4"):
             msg = msg.decode()
         if msg in msgs:
             return
