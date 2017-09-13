@@ -151,24 +151,15 @@ def binding(binding):
     return os.getenv("QT_PREFERRED_BINDING") == binding
 
 
-if binding("PyQt4") or binding("PySide"):
-    def ignoreQtMessageHandlerFactory(msgs):
-        def ictxtMgr(level, msg):
-            if msg.decode() in msgs:
-                return
-            sys.stderr.write("{0}\n".format(msg))
-        return ictxtMgr
-
-
-if binding("PyQt5") or binding("PySide2"):
-    def ignoreQtMessageHandlerFactory(msgs):
-        def ictxtMgr(level, context, msg):
-            if binding("PySide2"):
-                msg = msg.decode()
-            if msg in msgs:
-                return
-            sys.stderr.write("{0}\n".format(msg))
-        return ictxtMgr
+def ignoreQtMessageHandlerFactory(msgs):
+	def ictxtMgr(*args):
+		msg = args[-1]
+		if binding("PySide2"):
+			msg = msg.decode()
+		if msg in msgs:
+			return
+		sys.stderr.write("{0}\n".format(msg))
+	return ictxtMgr
 
 
 def test_environment():
