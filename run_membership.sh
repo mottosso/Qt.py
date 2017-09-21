@@ -10,5 +10,8 @@ do
     docker run -ti --rm -v $(pwd):/Qt.py --entrypoint="python2.7" fredrikaverpil/qt.py:2017 /Qt.py/membership.py --binding=$binding
 done
 
+# Rename QtGui key to QtWidgets
+docker run -ti --rm -v $(pwd):/Qt.py --entrypoint="python3.5" fredrikaverpil/qt.py:2017 /Qt.py/membership.py --copy-qtgui
+
 # Generate common_members.json
 docker run -ti --rm -v $(pwd):/Qt.py --entrypoint="python3.5" fredrikaverpil/qt.py:2017 /Qt.py/membership.py --generate-common-members

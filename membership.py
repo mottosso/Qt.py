@@ -40,6 +40,25 @@ def compare(dicts):
     return common_members
 
 
+def copy_qtgui_to_qtwidgets():
+    """Copies the QtGui list of PySide/PyQt4 into QtWidgets"""
+
+    pyside_filepath = PREFIX + '/PySide.json'
+    pyqt4_filepath = PREFIX + '/PyQt4.json'
+    pyside = read_json(pyside_filepath)
+    pyqt4 = read_json(pyqt4_filepath)
+
+    pyside['QtWidgets'] = pyside['QtGui']
+    pyqt4['QtWidgets'] = pyqt4['QtGui']
+
+    write_json(pyside, pyside_filepath)
+    print('--> Copied QtGui to QtWidgets for ' + os.path.basename(
+        pyside_filepath))
+    write_json(pyqt4, pyqt4_filepath)
+    print('--> Copied QtGui to QtWidgets for ' + os.path.basename(
+        pyqt4_filepath))
+
+
 def generate_common_members():
     """Generate JSON with commonly shared members"""
 
@@ -58,13 +77,21 @@ if __name__ == '__main__':
     parser = OptionParser()
     parser.add_option('--binding', dest='binding', metavar='BINDING')
     parser.add_option(
+        '--copy-qtgui',
+        action='store_true',
+        dest='copy',
+        default=False)
+    parser.add_option(
         '--generate-common-members',
         action='store_true',
         dest='generate',
         default=False)
     (options, args) = parser.parse_args()
 
-    if options.generate:
+    if options.copy:
+        copy_qtgui_to_qtwidgets()
+
+    elif options.generate:
         generate_common_members()
 
     else:
