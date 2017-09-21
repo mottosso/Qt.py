@@ -41,10 +41,9 @@ import os
 import sys
 import types
 import shutil
-import importlib
 
 
-__version__ = "1.1.0.b3"
+__version__ = "1.1.0.b4"
 
 # Enable support for `from Qt import *`
 __all__ = []
@@ -760,6 +759,14 @@ def _new_module(name):
     return types.ModuleType(__name__ + "." + name)
 
 
+def _import_sub_module(module, name):
+    """import_sub_module will mimic the function of importlib.import_module"""
+    module = __import__(module.__name__ + "." + name)
+    for level in name.split("."):
+        module = getattr(module, level)
+    return module
+
+
 def _setup(module, extras):
     """Install common submodules"""
 
@@ -767,8 +774,8 @@ def _setup(module, extras):
 
     for name in list(_common_members) + extras:
         try:
-            submodule = importlib.import_module(
-                module.__name__ + "." + name)
+            submodule = _import_sub_module(
+                module, name)
         except ImportError:
             continue
 
