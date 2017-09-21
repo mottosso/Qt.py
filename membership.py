@@ -81,10 +81,6 @@ def sort_common_members():
     write_json(sorted_json_data, filename)
 
 
-
-
-
-
 def generate_common_members():
     """Generate JSON with commonly shared members"""
 
