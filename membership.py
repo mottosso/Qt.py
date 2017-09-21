@@ -24,7 +24,7 @@ def read_json(filename):
 def write_json(dictionary, filename):
     """Write dictionary to JSON"""
     with open(filename, 'w') as data_file:
-        json.dump(dictionary, data_file, indent=4)
+        json.dump(dictionary, data_file, indent=4, sort_keys=True)
     print('--> Wrote ' + os.path.basename(filename))
 
 
@@ -59,6 +59,32 @@ def copy_qtgui_to_qtwidgets():
         pyqt4_filepath))
 
 
+def sort_common_members():
+    """Sorts the keys and members"""
+
+    filename = PREFIX + '/common_members.json'
+    sorted_json_data = {}
+    json_data = read_json(filename)
+
+    all_keys = []
+    for key, value in json_data.items():
+        all_keys.append(key)
+    sorted_keys = sorted(all_keys)
+
+    for key in sorted_keys:
+        if len(json_data[key]) > 0:
+            # Only add modules which have common members
+            sorted_json_data[key] = sorted(json_data[key])
+
+    print('--> Sorted/cleaned ' + os.path.basename(filename))
+
+    write_json(sorted_json_data, filename)
+
+
+
+
+
+
 def generate_common_members():
     """Generate JSON with commonly shared members"""
 
@@ -86,6 +112,11 @@ if __name__ == '__main__':
         action='store_true',
         dest='generate',
         default=False)
+    parser.add_option(
+        '--sort-common-members',
+        action='store_true',
+        dest='sort',
+        default=False)
     (options, args) = parser.parse_args()
 
     if options.copy:
@@ -93,6 +124,9 @@ if __name__ == '__main__':
 
     elif options.generate:
         generate_common_members()
+
+    elif options.sort:
+        sort_common_members()
 
     else:
 

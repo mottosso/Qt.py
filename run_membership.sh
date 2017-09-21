@@ -15,3 +15,6 @@ docker run -ti --rm -v $(pwd):/Qt.py --entrypoint="python3.5" fredrikaverpil/qt.
 
 # Generate common_members.json
 docker run -ti --rm -v $(pwd):/Qt.py --entrypoint="python3.5" fredrikaverpil/qt.py:2017 /Qt.py/membership.py --generate-common-members
+
+# Sort common members
+docker run -ti --rm -v $(pwd):/Qt.py --entrypoint="python3.5" fredrikaverpil/qt.py:2017 /Qt.py/membership.py --sort-common-members
