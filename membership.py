@@ -7,8 +7,14 @@ from functools import reduce
 # This is where all files are read from and saved to
 PREFIX = '/Qt.py'
 
-# These are not only imported but also executed
-SKIP = ['PyQt4.uic.pyuic', 'PyQt5.uic.pyuic']
+
+SKIP_MODULES = [
+    'PyQt4.uic.pyuic',  # Problematic as it is executed on import
+    'PyQt5.uic.pyuic'  # Problematic as it is executed on import
+]
+SKIP_MEMBERS = [
+    'qApp'  # See main README.md on qApp
+]
 
 # Will contain all modules for the current binding
 MODULES = []
@@ -133,27 +139,40 @@ if __name__ == '__main__':
                 path=binding.__path__,
                 prefix=binding.__name__ + '.',
                 onerror=lambda x: None):
-            if modname not in SKIP:
+            if modname not in SKIP_MODULES:
                 MODULES.append(modname)
                 basemodule = modname[:modname.rfind('.')]
                 submodule = modname[modname.rfind('.')+1:]
                 try:
                     import_statement = (
                         'from ' + basemodule + ' import ' + submodule)
-                    # print(import_statement)
                     exec(import_statement)
+                    # print(import_statement)
                 except (ImportError, AttributeError, SyntaxError) as error:
-                    print('IMPORT SKIP', modname, error)
+                    # SyntaxError catched here because e.g. _port3
+                    # running on Python 2...
+                    print('WARNING: Skipped import', modname, error)
 
                 try:
                     raw_members = []  # avoid Hound errors
                     exec('raw_members = dir(' + submodule + ')')
                     members = []
                     for member in raw_members:
-                        if not member.startswith('_'):
-                            MODULES.append(modname + '.' + member)
+                        if member not in SKIP_MEMBERS and \
+                                not member.startswith('_'):
+                            try:
+                                import_statement = (
+                                    'from ' + basemodule + '.' + submodule +
+                                    ' import ' + member)
+                                exec(import_statement)
+                                # print(import_statement)
+                                MODULES.append(modname + '.' + member)
+                            except (AttributeError, SyntaxError) as error:
+                                # SyntaxError catched here because e.g. _port3
+                                # running on Python 2...
+                                print('WARNING: Skipped import', modname, error)
                 except (NameError) as error:
-                    print('DIR SKIP', modname, error)
+                    print('WARNING: Skipped dir() command', modname, error)
 
         # Remove duplicates and sort
         MODULES = sorted(list(set(MODULES)))
