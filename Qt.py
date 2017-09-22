@@ -218,6 +218,7 @@ _common_members = {
         "QConicalGradient",
         "QContextMenuEvent",
         "QCursor",
+        "QDesktopServices",
         "QDoubleValidator",
         "QDrag",
         "QDragEnterEvent",
@@ -346,6 +347,17 @@ _common_members = {
         "QHelpSearchQueryWidget",
         "QHelpSearchResultWidget"
     ],
+    "QtMultimedia": [
+        "QAbstractVideoBuffer",
+        "QAbstractVideoSurface",
+        "QAudio",
+        "QAudioDeviceInfo",
+        "QAudioFormat",
+        "QAudioInput",
+        "QAudioOutput",
+        "QVideoFrame",
+        "QVideoSurfaceFormat"
+    ],
     "QtNetwork": [
         "QAbstractNetworkCache",
         "QAbstractSocket",
@@ -373,6 +385,12 @@ _common_members = {
         "QTcpServer",
         "QTcpSocket",
         "QUdpSocket"
+    ],
+    "QtOpenGL": [
+        "QGL",
+        "QGLContext",
+        "QGLFormat",
+        "QGLWidget"
     ],
     "QtSql": [
         "QSql",
