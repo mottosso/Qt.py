@@ -170,7 +170,8 @@ if __name__ == '__main__':
                             except (AttributeError, SyntaxError) as error:
                                 # SyntaxError catched here because e.g. _port3
                                 # running on Python 2...
-                                print('WARNING: Skipped import', modname, error)
+                                print('WARNING: Skipped import',
+                                      modname, error)
                 except (NameError) as error:
                     print('WARNING: Skipped dir() command', modname, error)
 
