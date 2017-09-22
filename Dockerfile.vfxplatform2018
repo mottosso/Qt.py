@@ -133,6 +133,7 @@ ENV PATH="/usr/local/git/bin:${PATH}"
 # Qt 4.8
 # http://doc.qt.io/qt-4.8/requirements-x11.html
 # Commits: http://code.qt.io/cgit/qt/qt.git/log/
+# Commit: http://code.qt.io/cgit/qt/qt.git/commit/?id=0a2f2382541424726168804be2c90b91381608c6
 ENV QT4_VER=4.8
 ENV QT4_GIT_COMMIT=0a2f2382541424726168804be2c90b91381608c6
 RUN \
