@@ -591,8 +591,7 @@ _common_members = {
         "QWidgetAction",
         "QWidgetItem",
         "QWizard",
-        "QWizardPage",
-        "qApp"
+        "QWizardPage"
     ],
     "QtXml": [
         "QDomAttr",
