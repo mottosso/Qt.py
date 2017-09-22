@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/mottosso/Qt.py.svg?branch=master)](https://travis-ci.org/mottosso/Qt.py) [![PyPI version](https://badge.fury.io/py/Qt.py.svg)](https://pypi.python.org/pypi/Qt.py)
+[![Anaconda-Server Badge](https://anaconda.org/conda-forge/qt.py/badges/version.svg)](https://anaconda.org/conda-forge/qt.py)
 
 ### Qt.py
 
@@ -75,13 +76,20 @@ See [`CONTRIBUTING.md`](CONTRIBUTING.md) for more details.
 
 ### Install
 
-Qt.py is a single file and can either be [copy/pasted](https://raw.githubusercontent.com/mottosso/Qt.py/master/Qt.py) into your project, [downloaded](https://github.com/mottosso/Qt.py/archive/master.zip) as-is, cloned as-is or installed via PyPI.
+Qt.py is a single file and can either be [copy/pasted](https://raw.githubusercontent.com/mottosso/Qt.py/master/Qt.py) into your project, [downloaded](https://github.com/mottosso/Qt.py/archive/master.zip) as-is, cloned as-is or installed via `pip` or `conda`.
 
 ```bash
+# From PyPI
 $ pip install Qt.py
 ```
 
-- Pro tip: **Never use the latest commit for production**. Instead, use [the latest release](https://github.com/mottosso/Qt.py/releases). That way, when you read bug reports or make one for yourself you will be able to match a version with the problem without which you will not know which fixes apply to you nor would we be able to help you. Installing via pip as above ensures you are provided the latest *stable* release. Unstable releases are suffixed with a `.b`, e.g. `1.1.0.b3`.
+```bash
+# From Anaconda
+$ conda config --add channels conda-forge
+$ conda install qt.py
+```
+
+- Pro tip: **Never use the latest commit for production**. Instead, use [the latest release](https://github.com/mottosso/Qt.py/releases). That way, when you read bug reports or make one for yourself you will be able to match a version with the problem without which you will not know which fixes apply to you nor would we be able to help you. Installing via pip or conda as above ensures you are provided the latest *stable* release. Unstable releases are suffixed with a `.b`, e.g. `1.1.0.b3`.
 - Pro tip: Supports [vendoring](https://fredrikaverpil.github.io/2017/05/04/vendoring-qt-py/)
 
 <br>
