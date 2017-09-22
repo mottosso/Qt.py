@@ -3,6 +3,8 @@ import pkgutil
 import json
 from optparse import OptionParser
 from functools import reduce
+from pprint import pprint
+
 
 # This is where all files are read from and saved to
 PREFIX = '/Qt.py'
@@ -18,6 +20,9 @@ SKIP_MEMBERS = [
 
 # Will contain all modules for the current binding
 MODULES = []
+
+# Flags from environment variables
+QT_VERBOSE = bool(os.getenv("QT_VERBOSE"))
 
 
 def read_json(filename):
@@ -178,9 +183,10 @@ if __name__ == '__main__':
         # Remove duplicates and sort
         MODULES = sorted(list(set(MODULES)))
 
-        # Print all modules (for debugging)
-        # for module in MODULES:
-        #     print(module)
+        if QT_VERBOSE:
+            # Print all modules (for debugging)
+            for module in MODULES:
+                print(module)
 
         # Create dictionary
         members = {}
@@ -199,8 +205,9 @@ if __name__ == '__main__':
         for key, value in members.copy().items():
             sorted_members[key] = sorted(list(set(value)))
 
-        # Debug
-        # pprint(sorted_output)
+        if QT_VERBOSE:
+            # Debug
+            pprint(sorted_members)
 
         # Write to disk
         filepath = PREFIX + '/' + binding.__name__ + '.json'
