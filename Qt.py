@@ -183,6 +183,7 @@ _common_members = {
         "QTextTableCell",
         "QTextTableCellFormat",
         "QTextTableFormat",
+        "QTouchEvent",
         "QTransform",
         "QValidator",
         "QVector2D",
@@ -198,7 +199,7 @@ _common_members = {
         "qIsGray",
         "qRed",
         "qRgb",
-        "qRgb",
+        "qRgba"
     ],
     "QtWidgets": [
         "QAbstractButton",
@@ -391,6 +392,7 @@ _common_members = {
         "QWidgetItem",
         "QWizard",
         "QWizardPage",
+        "qApp"
     ],
     "QtCore": [
         "QAbstractAnimation",
@@ -471,6 +473,9 @@ _common_members = {
         "QStateMachine",
         "QSysInfo",
         "QSystemSemaphore",
+        "QT_TRANSLATE_NOOP",
+        "QT_TR_NOOP",
+        "QT_TR_NOOP_UTF8",
         "QTemporaryFile",
         "QTextBoundaryFinder",
         "QTextCodec",
@@ -520,7 +525,7 @@ _common_members = {
         "qVersion",
         "qWarning",
         "qrand",
-        "qsrand",
+        "qsrand"
     ],
     "QtXml": [
         "QDomAttr",
@@ -595,6 +600,49 @@ _common_members = {
         "QTcpServer",
         "QTcpSocket",
         "QUdpSocket"
+    ],
+    "QtSql": [
+        "QSql",
+        "QSqlDatabase",
+        "QSqlDriver",
+        "QSqlDriverCreatorBase",
+        "QSqlError",
+        "QSqlField",
+        "QSqlIndex",
+        "QSqlQuery",
+        "QSqlQueryModel",
+        "QSqlRecord",
+        "QSqlRelation",
+        "QSqlRelationalDelegate",
+        "QSqlRelationalTableModel",
+        "QSqlResult",
+        "QSqlTableModel"
+    ],
+    "QtSvg": [
+        "QGraphicsSvgItem",
+        "QSvgGenerator",
+        "QSvgRenderer",
+        "QSvgWidget"
+    ],
+    "QtTest": [
+        "QTest"
+    ],
+    "QtXmlPatterns": [
+        "QAbstractMessageHandler",
+        "QAbstractUriResolver",
+        "QAbstractXmlNodeModel",
+        "QAbstractXmlReceiver",
+        "QSourceLocation",
+        "QXmlFormatter",
+        "QXmlItem",
+        "QXmlName",
+        "QXmlNamePool",
+        "QXmlNodeModelIndex",
+        "QXmlQuery",
+        "QXmlResultItems",
+        "QXmlSchema",
+        "QXmlSchemaValidator",
+        "QXmlSerializer"
     ]
 }
 
