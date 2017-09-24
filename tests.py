@@ -472,11 +472,19 @@ def test_cli():
 
 
 def test_membership():
-    """All members of Qt.py exist in all bindings"""
+    """Common members of Qt.py exist in all bindings, excl exceptions"""
     import Qt
 
+    common_members = Qt._common_members.copy()
+
+    if os.environ.get('VFXPLATFORM') == '2017':
+        # For CY2017, skip the following
+        common_members['QtGui'].remove('QDesktopServices')
+        common_members.pop('QtOpenGL', None)
+        common_members.pop('QtMultimedia', None)
+
     missing = list()
-    for module, members in Qt._common_members.items():
+    for module, members in common_members.items():
         missing.extend(
             member for member in members
             if not hasattr(getattr(Qt, module), member)
