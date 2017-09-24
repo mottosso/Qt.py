@@ -781,6 +781,10 @@ RUN localedef -i en_US -f UTF-8 en_US.UTF-8
 # http://www.torkwrench.com/2011/12/16/d-bus-library-appears-to-be-incorrectly-set-up-failed-to-read-machine-uuid-failed-to-open-varlibdbusmachine-id/
 RUN dbus-uuidgen > /var/lib/dbus/machine-id
 
+
+# VFX Platform
+ENV VFXPLATFORM 2018
+
 # Enable additional output from Qt.py
 ENV QT_VERBOSE true
 ENV QT_TESTING true
