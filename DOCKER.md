@@ -36,9 +36,9 @@ The Docker images follow the [VFX Reference Platform specifications](http://www.
 
 **Software versions**
 
-We use source code from around the time of [SIGGRAPH](http://www.siggraph.org) (usually July/August) each year. This is usually when the VFX Reference Platform is updated.
+We create new Docker containers when the VFX Reference Platform is updated; around the time of [SIGGRAPH](http://www.siggraph.org) (usually July/August) each year.
 
-In order to be able to re-build our images from a certain point in time, we checkout specific commit SHAs or source archives rather than going for the always-latest version of software. We then set up new images as required and add them to our continous integration tests.
+We abide the software versions stipulated by the VFX Platform reference. But for other software required by Qt.py, we checkout specific commit SHAs or source archives rather than going for the always-latest version of software. This also helps to re-build Docker images later, if needed.
 
 There are non-strict rules (guidelines) for choosing software versions to build:
 
@@ -72,7 +72,7 @@ For debugging reasons, you can enter the container like this:
 docker run --rm --interactive --tty --entrypoint=bash fredrikaverpil/qt.py:2017
 ```
 
-You can then run `python2.7`, `python3.4`, `python3.5` and so on (depending on which Python versions were built).
+You can then run `python2.7`, `python3.4`, `python3.5`, `python3.6` and so on (depending on which Python versions were built).
 
 <br>
 <br>
