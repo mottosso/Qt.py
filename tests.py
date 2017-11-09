@@ -38,18 +38,7 @@ def captured_output():
 self = sys.modules[__name__]
 
 
-def setup():
-    """Module-wide initialisation
-
-    This function runs once, followed by teardown() below once
-    all tests have completed.
-
-    """
-    self.tempdir = tempfile.mkdtemp()
-
-    self.ui_qwidget = os.path.join(self.tempdir, "qwidget.ui")
-    with io.open(self.ui_qwidget, "w", encoding="utf-8") as f:
-        f.write(u"""\
+qwidget_ui = u"""\
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>Form</class>
@@ -101,11 +90,10 @@ def setup():
   </connection>
  </connections>
 </ui>
-""")
+"""
 
-    self.ui_qmainwindow = os.path.join(self.tempdir, "qmainwindow.ui")
-    with io.open(self.ui_qmainwindow, "w", encoding="utf-8") as f:
-        f.write(u"""\
+
+qmainwindow_ui = u"""\
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>MainWindow</class>
@@ -132,7 +120,86 @@ def setup():
  <resources/>
  <connections/>
 </ui>
-""")
+"""
+
+
+qdialog_ui = u"""\
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Dialog</class>
+ <widget class="QDialog" name="Dialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>186</width>
+    <height>38</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QLineEdit" name="lineEdit"/>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
+"""
+
+
+qdockwidget_ui = u"""\
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>DockWidget</class>
+ <widget class="QDockWidget" name="DockWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>169</width>
+    <height>60</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>DockWidget</string>
+  </property>
+  <widget class="QWidget" name="dockWidgetContents">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <widget class="QLineEdit" name="lineEdit"/>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
+"""
+
+
+def setup():
+    """Module-wide initialisation
+
+    This function runs once, followed by teardown() below once
+    all tests have completed.
+
+    """
+    self.tempdir = tempfile.mkdtemp()
+
+    def saveUiFile(filename, ui_template):
+        filename = os.path.join(self.tempdir, filename)
+        with io.open(filename, "w", encoding="utf-8") as f:
+            f.write(ui_template)
+        return filename
+
+    self.ui_qwidget = saveUiFile("qwidget.ui", qwidget_ui)
+    self.ui_qmainwindow = saveUiFile("qmainwindow.ui", qmainwindow_ui)
+    self.ui_qdialog = saveUiFile("qdialog.ui", qdialog_ui)
+    self.ui_qdockwidget = saveUiFile("qdockwidget.ui", qdockwidget_ui)
 
 def teardown():
     shutil.rmtree(self.tempdir)
@@ -238,6 +305,38 @@ def test_load_ui_mainwindow():
 
     with ignoreQtMessageHandler(['QMainWindowLayout::count: ?']):
         QtCompat.loadUi(self.ui_qmainwindow, win)
+
+    assert hasattr(win, 'lineEdit'), \
+        "loadUi could not load instance to main window"
+
+    app.exit()
+
+
+def test_load_ui_dialog():
+    """Tests to see if the baseinstance loading loads dialogs properly"""
+    import sys
+    from Qt import QtWidgets, QtCompat
+
+    app = QtWidgets.QApplication(sys.argv)
+    win = QtWidgets.QDialog()
+
+    QtCompat.loadUi(self.ui_qdialog, win)
+
+    assert hasattr(win, 'lineEdit'), \
+        "loadUi could not load instance to main window"
+
+    app.exit()
+
+
+def test_load_ui_dockwidget():
+    """Tests to see if the baseinstance loading loads dialogs properly"""
+    import sys
+    from Qt import QtWidgets, QtCompat
+
+    app = QtWidgets.QApplication(sys.argv)
+    win = QtWidgets.QDockWidget()
+
+    QtCompat.loadUi(self.ui_qdockwidget, win)
 
     assert hasattr(win, 'lineEdit'), \
         "loadUi could not load instance to main window"
