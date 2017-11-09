@@ -335,6 +335,7 @@ def test_load_ui_dockwidget():
 
     app = QtWidgets.QApplication(sys.argv)
     win = QtWidgets.QDockWidget()
+    print('layout Count: {}, Empty: {}'.format(win.layout().count(), win.layout().isEmpty()) )
 
     QtCompat.loadUi(self.ui_qdockwidget, win)
 
