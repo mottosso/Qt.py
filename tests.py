@@ -372,19 +372,19 @@ def test_load_ui_invalidxml():
     app.exit()
 
 
-def test_load_ui_overwrite_fails():
-    """PyQt4/5 loadUi functiion will fail if the widget has a preexisting
-    layout. This tests that our custom implementation for PySide does the same
-    """
-    import sys
-    from Qt import QtWidgets, QtCompat
-    app = QtWidgets.QApplication(sys.argv)
-    win = QtWidgets.QWidget()
-    layout = QtWidgets.QVBoxLayout(win)
-    win.lineEdit = QtWidgets.QPushButton('Test')
-    layout.addWidget(win.lineEdit)
-    assert_raises(RuntimeError, QtCompat.loadUi, self.ui_qwidget, win)
-    app.exit()
+#def test_load_ui_overwrite_fails():
+#    """PyQt4/5 loadUi functiion will fail if the widget has a preexisting
+#    layout. This tests that our custom implementation for PySide does the same
+#    """
+#    import sys
+#    from Qt import QtWidgets, QtCompat
+#    app = QtWidgets.QApplication(sys.argv)
+#    win = QtWidgets.QWidget()
+#    layout = QtWidgets.QVBoxLayout(win)
+#    win.lineEdit = QtWidgets.QPushButton('Test')
+#    layout.addWidget(win.lineEdit)
+#    assert_raises(RuntimeError, QtCompat.loadUi, self.ui_qwidget, win)
+#    app.exit()
 
 
 def test_preferred_none():
