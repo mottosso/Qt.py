@@ -303,8 +303,8 @@ def test_load_ui_mainwindow():
     app = QtWidgets.QApplication(sys.argv)
     win = QtWidgets.QMainWindow()
 
-    with ignoreQtMessageHandler(['QMainWindowLayout::count: ?']):
-        QtCompat.loadUi(self.ui_qmainwindow, win)
+    #with ignoreQtMessageHandler(['QMainWindowLayout::count: ?']):
+    QtCompat.loadUi(self.ui_qmainwindow, win)
 
     assert hasattr(win, 'lineEdit'), \
         "loadUi could not load instance to main window"
