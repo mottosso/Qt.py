@@ -271,7 +271,7 @@ def test_load_ui_returntype():
 
 
 def test_load_ui_baseinstance():
-    """Tests to see if the baseinstance loading loads widgets on properly"""
+    """Tests to see if the baseinstance loading loads a QWidget on properly"""
     import sys
     from Qt import QtWidgets, QtCompat
     app = QtWidgets.QApplication(sys.argv)
@@ -282,7 +282,7 @@ def test_load_ui_baseinstance():
 
 
 def test_load_ui_signals():
-    """Tests to see if the baseinstance loading loads widgets on properly"""
+    """Tests to see if the baseinstance connects signals properly"""
     import sys
     from Qt import QtWidgets, QtCompat
     app = QtWidgets.QApplication(sys.argv)
@@ -296,7 +296,7 @@ def test_load_ui_signals():
 
 
 def test_load_ui_mainwindow():
-    """Tests to see if the baseinstance loading loads main windows properly"""
+    """Tests to see if the baseinstance loading loads a QMainWindow properly"""
     import sys
     from Qt import QtWidgets, QtCompat
 
@@ -313,7 +313,7 @@ def test_load_ui_mainwindow():
 
 
 def test_load_ui_dialog():
-    """Tests to see if the baseinstance loading loads dialogs properly"""
+    """Tests to see if the baseinstance loading loads a QDialog properly"""
     import sys
     from Qt import QtWidgets, QtCompat
 
@@ -329,13 +329,12 @@ def test_load_ui_dialog():
 
 
 def test_load_ui_dockwidget():
-    """Tests to see if the baseinstance loading loads dock widgets properly"""
+    """Tests to see if the baseinstance loading loads a QDockWidget properly"""
     import sys
     from Qt import QtWidgets, QtCompat
 
     app = QtWidgets.QApplication(sys.argv)
     win = QtWidgets.QDockWidget()
-    print('layout Count: {}, Empty: {}'.format(win.layout().count(), win.layout().isEmpty()) )
 
     QtCompat.loadUi(self.ui_qdockwidget, win)
 
