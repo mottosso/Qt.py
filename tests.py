@@ -329,7 +329,7 @@ def test_load_ui_dialog():
 
 
 def test_load_ui_dockwidget():
-    """Tests to see if the baseinstance loading loads dialogs properly"""
+    """Tests to see if the baseinstance loading loads dock widgets properly"""
     import sys
     from Qt import QtWidgets, QtCompat
 
