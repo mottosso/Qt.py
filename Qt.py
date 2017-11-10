@@ -107,6 +107,7 @@ _common_members = {
         "QIconDragEvent",
         "QIconEngine",
         "QImage",
+        "QItemSelectionRange",
         "QImageIOHandler",
         "QImageReader",
         "QImageWriter",
@@ -621,6 +622,7 @@ _misplaced_members = {
         "QtCore.QSortFilterProxyModel": "QtCore.QSortFilterProxyModel",
         "QtCore.QItemSelection": "QtCore.QItemSelection",
         "QtCore.QItemSelectionModel": "QtCore.QItemSelectionModel",
+        "QtCore.QItemSelectionRange": "QtCore.QItemSelectionRange",
     },
     "PyQt5": {
         "QtCore.pyqtProperty": "QtCore.Property",
@@ -631,6 +633,7 @@ _misplaced_members = {
         "QtCore.QStringListModel": "QtCore.QStringListModel",
         "QtCore.QItemSelection": "QtCore.QItemSelection",
         "QtCore.QItemSelectionModel": "QtCore.QItemSelectionModel",
+        "QtCore.QItemSelectionRange": "QtCore.QItemSelectionRange",
     },
     "PySide": {
         "QtGui.QAbstractProxyModel": "QtCore.QAbstractProxyModel",
@@ -641,6 +644,7 @@ _misplaced_members = {
         "QtCore.Property": "QtCore.Property",
         "QtCore.Signal": "QtCore.Signal",
         "QtCore.Slot": "QtCore.Slot",
+        "QtGui.QItemSelectionRange": "QtCore.QItemSelectionRange",
 
     },
     "PyQt4": {
@@ -652,6 +656,7 @@ _misplaced_members = {
         "QtCore.pyqtProperty": "QtCore.Property",
         "QtCore.pyqtSignal": "QtCore.Signal",
         "QtCore.pyqtSlot": "QtCore.Slot",
+        "QtGui.QItemSelectionRange": "QtCore.QItemSelectionRange",
     }
 }
 
