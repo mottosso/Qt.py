@@ -43,7 +43,7 @@ import types
 import shutil
 
 
-__version__ = "1.1.0.b6"
+__version__ = "1.1.0.b7"
 
 # Enable support for `from Qt import *`
 __all__ = []
@@ -593,6 +593,9 @@ _common_members = {
         "QWizard",
         "QWizardPage"
     ],
+    "QtX11Extras": [
+        "QX11Info"
+    ],
     "QtXml": [
         "QDomAttr",
         "QDomCDATASection",
@@ -1048,6 +1051,9 @@ def _pyside():
     if hasattr(Qt, "_QtGui"):
         setattr(Qt, "QtWidgets", _new_module("QtWidgets"))
         setattr(Qt, "_QtWidgets", Qt._QtGui)
+        if hasattr(Qt._QtGui, "QX11Info"):
+            setattr(Qt, "QtX11Extras", _new_module("QtX11Extras"))
+            Qt.QtX11Extras.QX11Info = Qt._QtGui.QX11Info
 
         Qt.QtCompat.setSectionResizeMode = Qt._QtGui.QHeaderView.setResizeMode
 
@@ -1161,6 +1167,9 @@ def _pyqt4():
     if hasattr(Qt, "_QtGui"):
         setattr(Qt, "QtWidgets", _new_module("QtWidgets"))
         setattr(Qt, "_QtWidgets", Qt._QtGui)
+        if hasattr(Qt._QtGui, "QX11Info"):
+            setattr(Qt, "QtX11Extras", _new_module("QtX11Extras"))
+            Qt.QtX11Extras.QX11Info = Qt._QtGui.QX11Info
 
         Qt.QtCompat.setSectionResizeMode = \
             Qt._QtGui.QHeaderView.setResizeMode
