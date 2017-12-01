@@ -303,7 +303,7 @@ def test_load_ui_mainwindow():
     app = QtWidgets.QApplication(sys.argv)
     win = QtWidgets.QMainWindow()
 
-    #with ignoreQtMessageHandler(['QMainWindowLayout::count: ?']):
+    # with ignoreQtMessageHandler(['QMainWindowLayout::count: ?']):
     QtCompat.loadUi(self.ui_qmainwindow, win)
 
     assert hasattr(win, 'lineEdit'), \
@@ -371,7 +371,7 @@ def test_load_ui_invalidxml():
     app.exit()
 
 
-#def test_load_ui_overwrite_fails():
+# def test_load_ui_overwrite_fails():
 #    """PyQt4/5 loadUi functiion will fail if the widget has a preexisting
 #    layout. This tests that our custom implementation for PySide does the same
 #    """
