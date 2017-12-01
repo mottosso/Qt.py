@@ -43,7 +43,7 @@ import types
 import shutil
 
 
-__version__ = "1.1.0.b5"
+__version__ = "1.1.0.b7"
 
 # Enable support for `from Qt import *`
 __all__ = []
@@ -109,6 +109,7 @@ _common_members = {
         "QGenericArgument",
         "QGenericReturnArgument",
         "QHistoryState",
+        "QItemSelectionRange",
         "QIODevice",
         "QLibraryInfo",
         "QLine",
@@ -592,6 +593,9 @@ _common_members = {
         "QWizard",
         "QWizardPage"
     ],
+    "QtX11Extras": [
+        "QX11Info"
+    ],
     "QtXml": [
         "QDomAttr",
         "QDomCDATASection",
@@ -660,6 +664,7 @@ _misplaced_members = {
         "QtCore.QSortFilterProxyModel": "QtCore.QSortFilterProxyModel",
         "QtCore.QItemSelection": "QtCore.QItemSelection",
         "QtCore.QItemSelectionModel": "QtCore.QItemSelectionModel",
+        "QtCore.QItemSelectionRange": "QtCore.QItemSelectionRange",
         "QtCore.qInstallMessageHandler": "QtCore.qInstallMessageHandler",
     },
     "PyQt5": {
@@ -671,6 +676,7 @@ _misplaced_members = {
         "QtCore.QStringListModel": "QtCore.QStringListModel",
         "QtCore.QItemSelection": "QtCore.QItemSelection",
         "QtCore.QItemSelectionModel": "QtCore.QItemSelectionModel",
+        "QtCore.QItemSelectionRange": "QtCore.QItemSelectionRange",
         "QtCore.qInstallMessageHandler": "QtCore.qInstallMessageHandler",
     },
     "PySide": {
@@ -682,6 +688,7 @@ _misplaced_members = {
         "QtCore.Property": "QtCore.Property",
         "QtCore.Signal": "QtCore.Signal",
         "QtCore.Slot": "QtCore.Slot",
+        "QtGui.QItemSelectionRange": "QtCore.QItemSelectionRange",
         "QtCore.qInstallMsgHandler": "QtCore.qInstallMessageHandler",
     },
     "PyQt4": {
@@ -693,6 +700,7 @@ _misplaced_members = {
         "QtCore.pyqtProperty": "QtCore.Property",
         "QtCore.pyqtSignal": "QtCore.Signal",
         "QtCore.pyqtSlot": "QtCore.Slot",
+        "QtGui.QItemSelectionRange": "QtCore.QItemSelectionRange",
         "QtCore.qInstallMsgHandler": "QtCore.qInstallMessageHandler",
     }
 }
@@ -1046,6 +1054,9 @@ def _pyside():
     if hasattr(Qt, "_QtGui"):
         setattr(Qt, "QtWidgets", _new_module("QtWidgets"))
         setattr(Qt, "_QtWidgets", Qt._QtGui)
+        if hasattr(Qt._QtGui, "QX11Info"):
+            setattr(Qt, "QtX11Extras", _new_module("QtX11Extras"))
+            Qt.QtX11Extras.QX11Info = Qt._QtGui.QX11Info
 
         Qt.QtCompat.setSectionResizeMode = Qt._QtGui.QHeaderView.setResizeMode
 
@@ -1159,6 +1170,9 @@ def _pyqt4():
     if hasattr(Qt, "_QtGui"):
         setattr(Qt, "QtWidgets", _new_module("QtWidgets"))
         setattr(Qt, "_QtWidgets", Qt._QtGui)
+        if hasattr(Qt._QtGui, "QX11Info"):
+            setattr(Qt, "QtX11Extras", _new_module("QtX11Extras"))
+            Qt.QtX11Extras.QX11Info = Qt._QtGui.QX11Info
 
         Qt.QtCompat.setSectionResizeMode = \
             Qt._QtGui.QHeaderView.setResizeMode
