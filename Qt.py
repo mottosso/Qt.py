@@ -732,8 +732,8 @@ _compatibility_members = {
             "getOpenFileNames": "QtWidgets.QFileDialog.getOpenFileNames",
             "getSaveFileName": "QtWidgets.QFileDialog.getSaveFileName",
         },
-        "QStyleOptionViewItemV4":{
-            'GET':"QtGui.QStyleOptionViewItem",
+        "QStyleOptionViewItemV4": {
+            'GET': "QtGui.QStyleOptionViewItem",
         },
     },
     "PyQt5": {
@@ -752,8 +752,8 @@ _compatibility_members = {
             "getOpenFileNames": "QtWidgets.QFileDialog.getOpenFileNames",
             "getSaveFileName": "QtWidgets.QFileDialog.getSaveFileName",
         },
-        "QStyleOptionViewItemV4":{
-            'GET':"QtGui.QStyleOptionViewItem",
+        "QStyleOptionViewItemV4": {
+            'GET': "QtGui.QStyleOptionViewItem",
         },
     },
     "PySide": {
@@ -770,8 +770,8 @@ _compatibility_members = {
             "getOpenFileNames": "QtWidgets.QFileDialog.getOpenFileNames",
             "getSaveFileName": "QtWidgets.QFileDialog.getSaveFileName",
         },
-        "QStyleOptionViewItemV4":{
-            'GET':"QtGui.QStyleOptionViewItemV4",
+        "QStyleOptionViewItemV4": {
+            'GET': "QtGui.QStyleOptionViewItemV4",
         },
     },
     "PyQt4": {
@@ -788,8 +788,8 @@ _compatibility_members = {
             "getOpenFileNames": "QtWidgets.QFileDialog.getOpenFileNames",
             "getSaveFileName": "QtWidgets.QFileDialog.getSaveFileName",
         },
-        "QStyleOptionViewItemV4":{
-            'GET':"QtGui.QStyleOptionViewItemV4",
+        "QStyleOptionViewItemV4": {
+            'GET': "QtGui.QStyleOptionViewItemV4",
         },
     },
 }

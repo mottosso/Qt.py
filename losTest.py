@@ -5,6 +5,7 @@ Created on Dec 2, 2017
 '''
 #from PySide import QtGui
 from Qt import QtGui, QtCore, QtWidgets, QtCompat
-print QtCompat.QStyleOptionViewItemV4.GET()
+options = QtCompat.QStyleOptionViewItemV4.GET()
+print options
 #print QtGui.QStyleOptionViewItemV4 
 #print QtGui.QStyleOptionViewItem
