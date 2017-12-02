@@ -1259,11 +1259,6 @@ def _loadUi(uifile, baseinstance=None):
         return the newly created instance of the user interface.
 
     """
-#    if hasattr(baseinstance, "layout") and baseinstance.layout() \
-#            and not baseinstance.layout().isEmpty():
-#        message = ("QLayout: Attempting to add Layout to %s which "
-#                   "already has a non-empty layout")
-#        raise RuntimeError(message % (baseinstance))
 
     if hasattr(Qt, "_uic"):
         return Qt._uic.loadUi(uifile, baseinstance)
