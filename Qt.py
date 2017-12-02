@@ -733,7 +733,7 @@ _compatibility_members = {
             "getSaveFileName": "QtWidgets.QFileDialog.getSaveFileName",
         },
         "QStyleOptionViewItemV4": {
-            'GET': "QtGui.QStyleOptionViewItem",
+            'GET': "QtWidgets.QStyleOptionViewItem",
         },
     },
     "PyQt5": {
@@ -753,7 +753,7 @@ _compatibility_members = {
             "getSaveFileName": "QtWidgets.QFileDialog.getSaveFileName",
         },
         "QStyleOptionViewItemV4": {
-            'GET': "QtGui.QStyleOptionViewItem",
+            'GET': "QtWidgets.QStyleOptionViewItem",
         },
     },
     "PySide": {
