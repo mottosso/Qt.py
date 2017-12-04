@@ -370,6 +370,24 @@ def test_load_ui_invalidxml():
     app.exit()
 
 
+def test_load_ui_existingLayout():
+    """Tests to see if loading a ui onto a layout works properly"""
+    import sys
+    from Qt import QtWidgets, QtCompat
+
+    app = QtWidgets.QApplication(sys.argv)
+    win = QtWidgets.QDialog()
+    box = QtWidgets.QComboBox(win)
+    lay = QtWidgets.QHBoxLayout(win)
+
+    QtCompat.loadUi(self.ui_qdialog, win)
+
+    assert hasattr(win, 'lineEdit'), \
+        "loadUi could not load instance to main window"
+
+    app.exit()
+
+
 def test_preferred_none():
     """Preferring None shouldn't import anything"""
 
