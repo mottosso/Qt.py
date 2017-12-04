@@ -370,6 +370,23 @@ def test_load_ui_invalidxml():
     app.exit()
 
 
+def test_load_ui_existingLayout():
+    """Tests to see if loading a ui onto a layout works properly"""
+    import sys
+    from Qt import QtWidgets, QtCompat
+
+    msgs = 'QLayout: Attempting to add QLayout "" to QDialog ' \
+        '"Dialog", which already has a layout'
+
+    with ignoreQtMessageHandler([msgs]):
+        app = QtWidgets.QApplication(sys.argv)
+        win = QtWidgets.QDialog()
+        QtWidgets.QComboBox(win)
+        QtWidgets.QHBoxLayout(win)
+        QtCompat.loadUi(self.ui_qdialog, win)
+    app.exit()
+
+
 def test_preferred_none():
     """Preferring None shouldn't import anything"""
 
