@@ -375,16 +375,15 @@ def test_load_ui_existingLayout():
     import sys
     from Qt import QtWidgets, QtCompat
 
-    app = QtWidgets.QApplication(sys.argv)
-    win = QtWidgets.QDialog()
-    box = QtWidgets.QComboBox(win)
-    lay = QtWidgets.QHBoxLayout(win)
+    msgs = 'QLayout: Attempting to add QLayout "" to QDialog ' \
+        '"Dialog", which already has a layout'
 
-    QtCompat.loadUi(self.ui_qdialog, win)
-
-    assert hasattr(win, 'lineEdit'), \
-        "loadUi could not load instance to main window"
-
+    with ignoreQtMessageHandler([msgs]):
+        app = QtWidgets.QApplication(sys.argv)
+        win = QtWidgets.QDialog()
+        box = QtWidgets.QComboBox(win)
+        lay = QtWidgets.QHBoxLayout(win)
+        QtCompat.loadUi(self.ui_qdialog, win)
     app.exit()
 
 
