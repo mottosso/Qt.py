@@ -41,7 +41,6 @@ import os
 import sys
 import types
 import shutil
-import functools
 
 
 __version__ = "1.1.0.b7"
@@ -1345,7 +1344,6 @@ def _qInstallMessageHandler(handler):
     Args:
         handler: A function that takes 3 arguments, or None
     """
-    @functools.wraps(handler)
     def messageOutputHandler(*args):
         # In Qt4 bindings, message handlers are passed 2 arguments
         # In Qt5 bindings, message handlers are passed 3 arguments
