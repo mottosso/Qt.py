@@ -396,11 +396,11 @@ def test_load_ui_existingLayoutOnMainWindow():
         '"Dialog", which already has a layout'
 
     # with ignoreQtMessageHandler([msgs]):
-	app = QtWidgets.QApplication(sys.argv)
-	win = QtWidgets.QMainWindow()
-	QtWidgets.QComboBox(win)
-	QtWidgets.QHBoxLayout(win)
-	QtCompat.loadUi(self.ui_qmainwindow, win)
+    app = QtWidgets.QApplication(sys.argv)
+    win = QtWidgets.QMainWindow()
+    QtWidgets.QComboBox(win)
+    QtWidgets.QHBoxLayout(win)
+    QtCompat.loadUi(self.ui_qmainwindow, win)
     app.exit()
 
 
@@ -413,11 +413,11 @@ def test_load_ui_existingLayoutOnDockWidget():
         '"Dialog", which already has a layout'
 
     # with ignoreQtMessageHandler([msgs]):
-	app = QtWidgets.QApplication(sys.argv)
-	win = QtWidgets.QDockWidget()
-	QtWidgets.QComboBox(win)
-	QtWidgets.QHBoxLayout(win)
-	QtCompat.loadUi(self.ui_qdockwidget, win)
+    app = QtWidgets.QApplication(sys.argv)
+    win = QtWidgets.QDockWidget()
+    QtWidgets.QComboBox(win)
+    QtWidgets.QHBoxLayout(win)
+    QtCompat.loadUi(self.ui_qdockwidget, win)
     app.exit()
 
 
@@ -430,11 +430,11 @@ def test_load_ui_existingLayoutOnWidget():
         '"Dialog", which already has a layout'
 
     # with ignoreQtMessageHandler([msgs]):
-	app = QtWidgets.QApplication(sys.argv)
-	win = QtWidgets.QDockWidget()
-	QtWidgets.QComboBox(win)
-	QtWidgets.QHBoxLayout(win)
-	QtCompat.loadUi(self.ui_qdockwidget, win)
+    app = QtWidgets.QApplication(sys.argv)
+    win = QtWidgets.QDockWidget()
+    QtWidgets.QComboBox(win)
+    QtWidgets.QHBoxLayout(win)
+    QtCompat.loadUi(self.ui_qdockwidget, win)
     app.exit()
 
 
