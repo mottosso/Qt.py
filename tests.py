@@ -370,8 +370,8 @@ def test_load_ui_invalidxml():
     app.exit()
 
 
-def test_load_ui_existingLayout():
-    """Tests to see if loading a ui onto a layout works properly"""
+def test_load_ui_existingLayoutOnDialog():
+    """Tests to see if loading a ui onto a layout in a Dialog works"""
     import sys
     from Qt import QtWidgets, QtCompat
 
@@ -384,6 +384,57 @@ def test_load_ui_existingLayout():
         QtWidgets.QComboBox(win)
         QtWidgets.QHBoxLayout(win)
         QtCompat.loadUi(self.ui_qdialog, win)
+    app.exit()
+
+
+def test_load_ui_existingLayoutOnMainWindow():
+    """Tests to see if loading a ui onto a layout in a MainWindow works"""
+    import sys
+    from Qt import QtWidgets, QtCompat
+
+    msgs = 'QLayout: Attempting to add QLayout "" to QMainWindow ' \
+        '"", which already has a layout'
+
+    with ignoreQtMessageHandler([msgs]):
+        app = QtWidgets.QApplication(sys.argv)
+        win = QtWidgets.QMainWindow()
+        QtWidgets.QComboBox(win)
+        QtWidgets.QHBoxLayout(win)
+        QtCompat.loadUi(self.ui_qmainwindow, win)
+    app.exit()
+
+
+def test_load_ui_existingLayoutOnDockWidget():
+    """Tests to see if loading a ui onto a layout in a DockWidget works"""
+    import sys
+    from Qt import QtWidgets, QtCompat
+
+    msgs = 'QLayout: Attempting to add QLayout "" to QDockWidget ' \
+        '"", which already has a layout'
+
+    with ignoreQtMessageHandler([msgs]):
+        app = QtWidgets.QApplication(sys.argv)
+        win = QtWidgets.QDockWidget()
+        QtWidgets.QComboBox(win)
+        QtWidgets.QHBoxLayout(win)
+        QtCompat.loadUi(self.ui_qdockwidget, win)
+    app.exit()
+
+
+def test_load_ui_existingLayoutOnWidget():
+    """Tests to see if loading a ui onto a layout in a Widget works"""
+    import sys
+    from Qt import QtWidgets, QtCompat
+
+    msgs = 'QLayout: Attempting to add QLayout "" to QWidget ' \
+        '"Form", which already has a layout'
+
+    with ignoreQtMessageHandler([msgs]):
+        app = QtWidgets.QApplication(sys.argv)
+        win = QtWidgets.QWidget()
+        QtWidgets.QComboBox(win)
+        QtWidgets.QHBoxLayout(win)
+        QtCompat.loadUi(self.ui_qwidget, win)
     app.exit()
 
 
