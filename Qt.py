@@ -665,6 +665,7 @@ _misplaced_members = {
         "QtCore.QItemSelection": "QtCore.QItemSelection",
         "QtCore.QItemSelectionModel": "QtCore.QItemSelectionModel",
         "QtCore.QItemSelectionRange": "QtCore.QItemSelectionRange",
+        "QtWidgets.QStyleOptionViewItem": "QtCompat.QStyleOptionViewItem",
     },
     "PyQt5": {
         "QtCore.pyqtProperty": "QtCore.Property",
@@ -676,6 +677,7 @@ _misplaced_members = {
         "QtCore.QItemSelection": "QtCore.QItemSelection",
         "QtCore.QItemSelectionModel": "QtCore.QItemSelectionModel",
         "QtCore.QItemSelectionRange": "QtCore.QItemSelectionRange",
+        "QtWidgets.QStyleOptionViewItem": "QtCompat.QStyleOptionViewItem",
     },
     "PySide": {
         "QtGui.QAbstractProxyModel": "QtCore.QAbstractProxyModel",
@@ -687,6 +689,7 @@ _misplaced_members = {
         "QtCore.Signal": "QtCore.Signal",
         "QtCore.Slot": "QtCore.Slot",
         "QtGui.QItemSelectionRange": "QtCore.QItemSelectionRange",
+        "QtGui.QStyleOptionViewItemV4": "QtCompat.QStyleOptionViewItem",
 
     },
     "PyQt4": {
@@ -699,6 +702,7 @@ _misplaced_members = {
         "QtCore.pyqtSignal": "QtCore.Signal",
         "QtCore.pyqtSlot": "QtCore.Slot",
         "QtGui.QItemSelectionRange": "QtCore.QItemSelectionRange",
+        "QtGui.QStyleOptionViewItemV4": "QtCompat.QStyleOptionViewItem",
     }
 }
 
