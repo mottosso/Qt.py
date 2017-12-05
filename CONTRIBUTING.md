@@ -80,33 +80,6 @@ We believe neither approach is right or wrong - this is simply the approach take
 
 <br>
 
-##### No bugs
-
-This may seem like an impossible requirement, but hear me out. Bugs stem from implementations. Therefore, if there are no implementations, there can be no bugs.
-
-Qt.py merely maps one binding to look like another. Implementations are left to the source developers.
-
-```python
-# Wrong
-def QWidget(source_binding, *args, **kwargs):
-    # Potential bug 1
-    if kwargs["__special_option"] == 0x1336:
-        kwargs["__magic"] = 0x1337
-
-    # Potential bug 2
-    return getattr(source_binding, "QWidget")(*args, *kwargs)
-
-# Potential bug 3
-QtWidgets.QWidget = lambda *args, **kwargs: QWidget(PySide, *args, **kwargs)
-```
-
-```python
-# Right
-QtWidgets.QWidget = QtGui.QWidget  # No bugs
-```
-
-<br>
-
 ## How can I contribute?
 
 Contribution comes in many flavors, some of which is simply notifying us of problems or successes, so we know what to change and not to change.
@@ -198,5 +171,66 @@ The release is then automatically uploaded to PyPI.
 ```bash
 $ pip install Qt.py
 ```
+
+### QtCompat
+
+QtCompat provides aliases to members of Qt whereby the original member remains in place.
+
+```python
+from Qt import QtWidgets, QtCompat
+QtWidgets.QStyleOptionViewItem == QtCompat.QStyleOptionViewItem
+```
+
+It can either reference a member directly, via the [`_misplaced_members`](https://github.com/mottosso/Qt.py/blob/720238a0df576371257156c6f99fecfd82219bd6/Qt.py#L657) dictionary, or instantiate a mock class of an existing objects and inherit some of its methods via the [`_compatibility_members`](https://github.com/mottosso/Qt.py/blob/720238a0df576371257156c6f99fecfd82219bd6/Qt.py#L718) dictionary.
+
+**Adding a misplaced member**
+
+With Qt 5 as guide, when a member in QtCore should really reside in QtGui, you can add it like so.
+
+```python
+_misplaced_members = {
+    "PySide2": {
+        ...
+        #                FROM ---> TO
+        "QtCore.OriginalMember": "QtGui.ResultingMember",
+        ...
+```
+
+Do this for each binding to ensure the member is available in an identical fashion regardless of which one is being used with Qt.py.
+
+**Adding a compatibility member**
+
+Sometimes, the argument signature of a function differs between Qt 4 and 5. To account for this, you can remap individual functions to a new object.
+
+```python
+# Under Qt 4
+from Qt import QtCompat
+QtCompat.QHeaderView.sectionsClickable == QtWidgets.QHeaderView.isClickable
+```
+
+To add a new member, the schema is as follows.
+
+```json
+{
+    "binding": {
+        "classname": {
+            "targetname": "binding_namespace",
+        }
+    }
+}
+```
+
+For example..
+
+```python
+_compatibility_members = {
+    "PySide2": {
+        "QHeaderView": {
+            "sectionsClickable": "QtWidgets.QHeaderView.sectionsClickable",
+        }
+    }
+}
+```
+
 
 Good luck and see you soon!
