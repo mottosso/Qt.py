@@ -371,7 +371,7 @@ def test_load_ui_invalidxml():
 
 
 def test_load_ui_existingLayoutOnDialog():
-    """Tests to see if loading a ui onto a layout in a Dialog works properly"""
+    """Tests to see if loading a ui onto a layout in a Dialog works"""
     import sys
     from Qt import QtWidgets, QtCompat
 
@@ -388,7 +388,7 @@ def test_load_ui_existingLayoutOnDialog():
 
 
 def test_load_ui_existingLayoutOnMainWindow():
-    """Tests to see if loading a ui onto a layout in a MainWindow works properly"""
+    """Tests to see if loading a ui onto a layout in a MainWindow works"""
     import sys
     from Qt import QtWidgets, QtCompat
 
@@ -405,7 +405,7 @@ def test_load_ui_existingLayoutOnMainWindow():
 
 
 def test_load_ui_existingLayoutOnDockWidget():
-    """Tests to see if loading a ui onto a layout in a DockWidget works properly"""
+    """Tests to see if loading a ui onto a layout in a DockWidget works"""
     import sys
     from Qt import QtWidgets, QtCompat
 
@@ -422,12 +422,12 @@ def test_load_ui_existingLayoutOnDockWidget():
 
 
 def test_load_ui_existingLayoutOnWidget():
-    """Tests to see if loading a ui onto a layout in a Widget works properly"""
+    """Tests to see if loading a ui onto a layout in a Widget works"""
     import sys
     from Qt import QtWidgets, QtCompat
 
     msgs = 'QLayout: Attempting to add QLayout "" to QWidget ' \
-        '"", which already has a layout'
+        '"Form", which already has a layout'
 
     with ignoreQtMessageHandler([msgs]):
         app = QtWidgets.QApplication(sys.argv)
