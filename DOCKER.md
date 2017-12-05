@@ -95,6 +95,7 @@ You can then run `python2.7`, `python3.4`, `python3.5`, `python3.6` and so on (d
 | Qt5 | 2016-06-16 | [commit](http://code.qt.io/cgit/qt/qt5.git/commit/?h=5.6&id=4566f0ac50e5ea143943c1251028fb01c70289ce) |
 | Adsk Qt5 `qtbase` | 2017-06-07 | [commit](https://github.com/autodesk-forks/qtbase/commit/c4e51d0162f7619c83e25e623ecd3bc549932040) |
 | Adsk Qt5 `qtx11extras` | 2017-02-24 | [commit](https://github.com/autodesk-forks/qtx11extras/commit/c6c59d5d902db8be3661cab929be85a38fda0faa) |
+| Adsk Qt5 `qtdeclarative` | 2017-05-09 | [commit](https://github.com/autodesk-forks/qtdeclarative/commit/b14cd49f891327d8fa5f5607eb19288ca137c5e2) |
 | Qt5 Creator | 2017-08-09 | [commit](http://code.qt.io/cgit/qt-creator/qt-creator.git/commit/?h=4.3&id=a094841bdda5461ebeaeab4620dde8222fa8312d) |
 | Qt4 | 2015-10-23 | [commit](http://code.qt.io/cgit/qt/qt.git/commit/?id=0a2f2382541424726168804be2c90b91381608c6) |
 | cmake | 2017-07-18 | [v3.9.0](https://cmake.org/files/) |
