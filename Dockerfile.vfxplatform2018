@@ -7,8 +7,8 @@ RUN yum install deltarpm -y && \
         # cmake3 requirements
             epel-release && \
     yum install -y \
-        # gcc 5.3.1 (via Devtools which is equivalent of RedHat DTS)
-            devtoolset-4-gcc*-5.3.1 \
+        # gcc 6.3.1 (via Devtools which is equivalent of RedHat DTS)
+            devtoolset-6-gcc*-6.3.1 \
         # glibc 2.17
             glibc-*-2.17 \
         # Qt5 requirements
@@ -89,11 +89,11 @@ ENV BUILD_THREADS=17
 WORKDIR /workdir
 
 
-# Activate devtoolset-4 gcc 5.3.1
-# RUN scl enable devtoolset-4 bash
-ENV PATH="/opt/rh/devtoolset-4/root/usr/bin:${PATH}"
-ENV CC=/opt/rh/devtoolset-4/root/usr/bin/gcc
-ENV CXX=/opt/rh/devtoolset-4/root/usr/bin/g++
+# Activate devtoolset-6 gcc 6.3.1
+# RUN scl enable devtoolset-6 bash
+ENV PATH="/opt/rh/devtoolset-6/root/usr/bin:${PATH}"
+ENV CC=/opt/rh/devtoolset-6/root/usr/bin/gcc
+ENV CXX=/opt/rh/devtoolset-6/root/usr/bin/g++
 
 # # Check gcc version
 # RUN gcc --version

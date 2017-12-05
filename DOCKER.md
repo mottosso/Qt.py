@@ -99,7 +99,7 @@ You can then run `python2.7`, `python3.4`, `python3.5`, `python3.6` and so on (d
 | Qt4 | 2015-10-23 | [commit](http://code.qt.io/cgit/qt/qt.git/commit/?id=0a2f2382541424726168804be2c90b91381608c6) |
 | cmake | 2017-07-18 | [v3.9.0](https://cmake.org/files/) |
 | glibc | 2012 (installed via yum) | 2.17 |
-| gcc | 2015 (installed via devtoolset-4) | [v5.3.1] |
+| gcc | 2016-12-...? (installed via devtoolset-6) | [v6.3.1] |
 
 <br>
 <br>
