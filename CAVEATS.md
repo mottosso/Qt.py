@@ -350,31 +350,3 @@ True
 ```
 
 Note the `False` for PySide2 and `True` for PyQt5.
-
-
-#### QtCore.qInstallMessageHandler
-
-`qInstallMessageHandler` takes functions with different signatures in Qt4 and Qt5.
-
-- Qt4 signature: `handler(QtMsgType, message)`
-- Qt5 signature: `handler(QtMsgType, QMessageLogContext, message)`
-
-The `QMessageLogContext` argument in Qt5 is only supplied in debug builds, so it will generally be ignored.
-
-Qt warnings and messages are written to the C++ stdout, not the python stdout. This makes it impossible to redirect or capture these messages without installing a handler.
-
-This example should work in any binding
-```python
-# PyQt5
->>> import sys
->>> from Qt import QtCore
->>> def handler(*args):
-...    msgType = args[0]
-...    msg = args[-1]
-...    if msgType == QtCore.QtWarningMsg:
-...        print(msg)
-...    else:
-...        sys.stderr.write(msg)
-...
->>> QtCore.qInstallMessageHandler(handler)
-```
