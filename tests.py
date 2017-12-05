@@ -392,15 +392,17 @@ def test_load_ui_existingLayoutOnMainWindow():
     import sys
     from Qt import QtWidgets, QtCompat
 
-    msgs = 'QLayout: Attempting to add QLayout "" to QDialog ' \
-        '"Dialog", which already has a layout'
 
-    # with ignoreQtMessageHandler([msgs]):
-    app = QtWidgets.QApplication(sys.argv)
-    win = QtWidgets.QMainWindow()
-    QtWidgets.QComboBox(win)
-    QtWidgets.QHBoxLayout(win)
-    QtCompat.loadUi(self.ui_qmainwindow, win)
+
+    msgs = 'QLayout: Attempting to add QLayout "" to QMainWindow ' \
+        '"", which already has a layout'
+
+    with ignoreQtMessageHandler([msgs]):
+        app = QtWidgets.QApplication(sys.argv)
+        win = QtWidgets.QMainWindow()
+        QtWidgets.QComboBox(win)
+        QtWidgets.QHBoxLayout(win)
+        QtCompat.loadUi(self.ui_qmainwindow, win)
     app.exit()
 
 
@@ -409,15 +411,15 @@ def test_load_ui_existingLayoutOnDockWidget():
     import sys
     from Qt import QtWidgets, QtCompat
 
-    msgs = 'QLayout: Attempting to add QLayout "" to QDialog ' \
-        '"Dialog", which already has a layout'
+    msgs = 'QLayout: Attempting to add QLayout "" to QDockWidget ' \
+        '"", which already has a layout'
 
-    # with ignoreQtMessageHandler([msgs]):
-    app = QtWidgets.QApplication(sys.argv)
-    win = QtWidgets.QDockWidget()
-    QtWidgets.QComboBox(win)
-    QtWidgets.QHBoxLayout(win)
-    QtCompat.loadUi(self.ui_qdockwidget, win)
+    with ignoreQtMessageHandler([msgs]):
+        app = QtWidgets.QApplication(sys.argv)
+        win = QtWidgets.QDockWidget()
+        QtWidgets.QComboBox(win)
+        QtWidgets.QHBoxLayout(win)
+        QtCompat.loadUi(self.ui_qdockwidget, win)
     app.exit()
 
 
@@ -426,15 +428,15 @@ def test_load_ui_existingLayoutOnWidget():
     import sys
     from Qt import QtWidgets, QtCompat
 
-    msgs = 'QLayout: Attempting to add QLayout "" to QDialog ' \
-        '"Dialog", which already has a layout'
+    msgs = 'QLayout: Attempting to add QLayout "" to QWidget ' \
+        '"", which already has a layout'
 
-    # with ignoreQtMessageHandler([msgs]):
-    app = QtWidgets.QApplication(sys.argv)
-    win = QtWidgets.QDockWidget()
-    QtWidgets.QComboBox(win)
-    QtWidgets.QHBoxLayout(win)
-    QtCompat.loadUi(self.ui_qdockwidget, win)
+    with ignoreQtMessageHandler([msgs]):
+        app = QtWidgets.QApplication(sys.argv)
+        win = QtWidgets.QWidget()
+        QtWidgets.QComboBox(win)
+        QtWidgets.QHBoxLayout(win)
+        QtCompat.loadUi(self.ui_qdockwidget, win)
     app.exit()
 
 
