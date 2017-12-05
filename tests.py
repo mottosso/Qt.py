@@ -392,8 +392,6 @@ def test_load_ui_existingLayoutOnMainWindow():
     import sys
     from Qt import QtWidgets, QtCompat
 
-
-
     msgs = 'QLayout: Attempting to add QLayout "" to QMainWindow ' \
         '"", which already has a layout'
 
@@ -436,7 +434,7 @@ def test_load_ui_existingLayoutOnWidget():
         win = QtWidgets.QWidget()
         QtWidgets.QComboBox(win)
         QtWidgets.QHBoxLayout(win)
-        QtCompat.loadUi(self.ui_qdockwidget, win)
+        QtCompat.loadUi(self.ui_qwidget, win)
     app.exit()
 
 
