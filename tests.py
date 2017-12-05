@@ -225,27 +225,18 @@ def ignoreQtMessageHandler(msgs):
     Args:
         msgs: list of message strings to ignore
     """
-    from Qt import QtCore
+    from Qt import QtCompat
 
-    def messageOutputHandler(*args):
-        # In Qt4 bindings, message handlers are passed 2 arguments
-        # In Qt5 bindings, message handlers are passed 3 arguments
-        # The first argument is a QtMsgType
-        # The last argument is the message to be printed
-        msg = args[-1]
-        if binding("PySide2") or binding("PyQt4"):
-            # These two bindings deliver a bytestring in Py3
-            # so decode them into normal strings
-            msg = msg.decode()
+    def messageOutputHandler(msgType, logContext, msg):
         if msg in msgs:
             return
         sys.stderr.write("{0}\n".format(msg))
 
-    QtCore.qInstallMessageHandler(messageOutputHandler)
+    QtCompat.qInstallMessageHandler(messageOutputHandler)
     try:
         yield
     finally:
-        QtCore.qInstallMessageHandler(None)
+        QtCompat.qInstallMessageHandler(None)
 
 
 def test_environment():
