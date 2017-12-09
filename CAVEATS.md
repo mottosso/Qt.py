@@ -320,8 +320,10 @@ True
 
 `QtCompat.wrapInstance` differs across `sip` and `shiboken` in subtle ways.
 
+**Note**: This is not included on our tests, as we cannot reproduce this using PySide2 (build commit date `2017-08-25`), CY2018. It's likely that this issue persists in e.g. Maya version < 2018.
+
 ```python
-# PySide2
+# PySide2, untested
 >>> from Qt import QtCompat, QtWidgets
 >>> app = QtWidgets.QApplication(sys.argv)
 >>> button = QtWidgets.QPushButton("Hello world")

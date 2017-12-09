@@ -69,7 +69,8 @@ This is where each member of Qt.py is explicitly defined.
 It is based on a "lowest common denominator" of all bindings;
 including members found in each of the 4 bindings.
 
-Find or add excluded members in build_membership.py
+The "_common_members" dictionary is generated using the
+build_membership.sh script.
 
 """
 
@@ -219,6 +220,7 @@ _common_members = {
         "QConicalGradient",
         "QContextMenuEvent",
         "QCursor",
+        "QDesktopServices",
         "QDoubleValidator",
         "QDrag",
         "QDragEnterEvent",
@@ -347,6 +349,17 @@ _common_members = {
         "QHelpSearchQueryWidget",
         "QHelpSearchResultWidget"
     ],
+    "QtMultimedia": [
+        "QAbstractVideoBuffer",
+        "QAbstractVideoSurface",
+        "QAudio",
+        "QAudioDeviceInfo",
+        "QAudioFormat",
+        "QAudioInput",
+        "QAudioOutput",
+        "QVideoFrame",
+        "QVideoSurfaceFormat"
+    ],
     "QtNetwork": [
         "QAbstractNetworkCache",
         "QAbstractSocket",
@@ -374,6 +387,12 @@ _common_members = {
         "QTcpServer",
         "QTcpSocket",
         "QUdpSocket"
+    ],
+    "QtOpenGL": [
+        "QGL",
+        "QGLContext",
+        "QGLFormat",
+        "QGLWidget"
     ],
     "QtSql": [
         "QSql",
