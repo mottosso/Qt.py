@@ -7,8 +7,8 @@ RUN yum install deltarpm -y && \
         # cmake3 requirements
             epel-release && \
     yum install -y \
-        # gcc 5.3.1 (via Devtools which is equivalent of RedHat DTS)
-            devtoolset-4-gcc*-5.3.1 \
+        # gcc 6.3.1 (via Devtools which is equivalent of RedHat DTS)
+            devtoolset-6-gcc*-6.3.1 \
         # glibc 2.17
             glibc-*-2.17 \
         # Qt5 requirements
@@ -89,11 +89,11 @@ ENV BUILD_THREADS=17
 WORKDIR /workdir
 
 
-# Activate devtoolset-4 gcc 5.3.1
-# RUN scl enable devtoolset-4 bash
-ENV PATH="/opt/rh/devtoolset-4/root/usr/bin:${PATH}"
-ENV CC=/opt/rh/devtoolset-4/root/usr/bin/gcc
-ENV CXX=/opt/rh/devtoolset-4/root/usr/bin/g++
+# Activate devtoolset-6 gcc 6.3.1
+# RUN scl enable devtoolset-6 bash
+ENV PATH="/opt/rh/devtoolset-6/root/usr/bin:${PATH}"
+ENV CC=/opt/rh/devtoolset-6/root/usr/bin/gcc
+ENV CXX=/opt/rh/devtoolset-6/root/usr/bin/g++
 
 # # Check gcc version
 # RUN gcc --version
@@ -145,10 +145,14 @@ RUN \
         -opensource \
         -confirm-license \
         -nomake examples \
-        -nomake tests && \
-    make -j${BUILD_THREADS} && \
+        -nomake tests
+RUN \
+    cd qt && \
+    gmake -j${BUILD_THREADS}
     # Install
-    make install && \
+RUN \
+    cd qt && \
+    gmake install && \
     # Clean up
     rm -rf /workdir/*
 
@@ -162,10 +166,12 @@ RUN \
 # Qt5: http://code.qt.io/cgit/qt/qt5.git/commit/?h=5.6&id=4566f0ac50e5ea143943c1251028fb01c70289ce
 # Adsk qtbase: https://github.com/autodesk-forks/qtbase/commit/c4e51d0162f7619c83e25e623ecd3bc549932040
 # Adsk qtx11extras: https://github.com/autodesk-forks/qtx11extras/commit/c6c59d5d902db8be3661cab929be85a38fda0faa
+# Adsk qtdeclarative: https://github.com/autodesk-forks/qtdeclarative/commit/b14cd49f891327d8fa5f5607eb19288ca137c5e2
 ENV QT5_GIT_BRANCH=5.6.1
 ENV QT5_GIT_COMMIT=4566f0ac50e5ea143943c1251028fb01c70289ce
 ENV ADSK_QTBASE_GIT_COMMIT=c4e51d0162f7619c83e25e623ecd3bc549932040
 ENV ADSK_QTX11EXTRAS_GIT_COMMIT=c6c59d5d902db8be3661cab929be85a38fda0faa
+ENV ADSK_QTDECLARATIVE_GIT_COMMIT=b14cd49f891327d8fa5f5607eb19288ca137c5e2
 
 RUN \
     git clone --recursive --jobs ${BUILD_THREADS} --branch ${QT5_GIT_BRANCH} https://code.qt.io/qt/qt5.git && \
@@ -182,15 +188,20 @@ RUN \
     mkdir -p /workdir/adsk && \
     git clone --recursive --branch adsk-contrib/vfx/${QT5_GIT_BRANCH} https://github.com/autodesk-forks/qtbase.git /workdir/adsk/qtbase && \
     git clone --recursive --branch adsk-contrib/vfx/${QT5_GIT_BRANCH} https://github.com/autodesk-forks/qtx11extras.git /workdir/adsk/qtx11extras && \
+    git clone --recursive --branch adsk-contrib/vfx/${QT5_GIT_BRANCH} https://github.com/autodesk-forks/qtdeclarative.git /workdir/adsk/qtdeclarative && \
     # Revert to commit SHA for qtbase
     cd /workdir/adsk/qtbase && \
     git checkout ${ADSK_QTBASE_GIT_COMMIT} && \
     # Revert to commit SHA for qtx11extras
     cd /workdir/adsk/qtx11extras && \
     git checkout ${ADSK_QTX11EXTRAS_GIT_COMMIT} && \
+    # Revert to commit SHA for qtdeclarative
+    cd /workdir/adsk/qtdeclarative && \
+    git checkout ${ADSK_QTDECLARATIVE_GIT_COMMIT} && \
     # Move Autodesk sources into qt5
     mv /workdir/adsk/qtbase /workdir/qt5 && \
     mv /workdir/adsk/qtx11extras /workdir/qt5 && \
+    mv /workdir/adsk/qtdeclarative /workdir/qt5 && \
     # Build
     cd /workdir/qt5 && \
     # ./configure -help && \
