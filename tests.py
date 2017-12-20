@@ -7,6 +7,7 @@ import shutil
 import tempfile
 import subprocess
 import contextlib
+import datetime
 
 # Third-party dependency
 import six
@@ -22,6 +23,21 @@ try:
 except NameError:
     # Python 3 compatibility
     long = int
+
+
+def _pyside2_commit_date():
+    """Return the commit date of PySide2"""
+
+    import PySide2
+    if hasattr(PySide2, '__build_commit_date__'):
+        commit_date = PySide2.__build_commit_date__
+        datetime_object = datetime.datetime.strptime(
+            commit_date[: commit_date.rfind('+')], '%Y-%m-%dT%H:%M:%S'
+        )
+        return datetime_object
+    else:
+        # Returns None if no __build_commit_date__ is available
+        return None
 
 
 @contextlib.contextmanager
@@ -674,11 +690,19 @@ def test_cli():
 
 
 def test_membership():
-    """All members of Qt.py exist in all bindings"""
+    """Common members of Qt.py exist in all bindings, excl exceptions"""
     import Qt
 
+    common_members = Qt._common_members.copy()
+
+    if os.environ.get('VFXPLATFORM') == '2017':
+        # For CY2017, skip the following
+        common_members['QtGui'].remove('QDesktopServices')
+        common_members.pop('QtOpenGL', None)
+        common_members.pop('QtMultimedia', None)
+
     missing = list()
-    for module, members in Qt._common_members.items():
+    for module, members in common_members.items():
         missing.extend(
             member for member in members
             if not hasattr(getattr(Qt, module), member)
@@ -734,8 +758,14 @@ if sys.version_info <= (3, 4):
             assert isinstance(widget, QtWidgets.QWidget), widget
             assert widget.objectName() == button.objectName()
 
-            if binding("PySide") or binding("PySide2"):
+            if binding("PySide"):
                 assert widget != button
+            elif binding("PySide2") and _pyside2_commit_date() is None:
+                assert widget != button
+            elif binding("PySide2") and \
+                    _pyside2_commit_date() <= datetime.datetime(
+                        2017, 8, 25):
+                assert widget == button
             else:
                 assert widget == button
 
