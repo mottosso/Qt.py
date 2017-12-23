@@ -10,6 +10,7 @@ There are cases where Qt.py is not handling incompatibility issues.
 - [QtWidgets.QHeaderView.setResizeMode](#qtwidgetsqheaderviewsetresizemode)
 - [QtWidgets.qApp](#qtwidgetsqapp)
 - [QtCompat.wrapInstance](#qtcompatwrapinstance)
+- [QtCore.qInstallMessageHandler](#qtcoreqinstallmessagehandler)
 
 <br>
 <br>
