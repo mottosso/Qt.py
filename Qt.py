@@ -43,7 +43,7 @@ import types
 import shutil
 
 
-__version__ = "1.1.0.b9"
+__version__ = "1.1.0.b10"
 
 # Enable support for `from Qt import *`
 __all__ = []
@@ -1545,6 +1545,9 @@ def _install():
                 continue
 
             setattr(our_submodule, member, their_member)
+
+    # Enable direct import of QtCompat
+    sys.modules['Qt.QtCompat'] = Qt.QtCompat
 
     # Backwards compatibility
     if hasattr(Qt.QtCompat, 'loadUi'):
