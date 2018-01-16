@@ -910,16 +910,34 @@ def _reassign_misplaced_members(binding):
         src_module, src_member = src.split(".")
         dst_module, dst_member = dst.split(".")
 
+        # Get the member we want to store in the namesapce.
+        try:
+            dst_value = getattr(getattr(Qt, "_" + src_module), src_member)
+        except AttributeError:
+            # If the member we want to store in the namespace does not exist,
+            # there is no need to continue. This can happen if a request was
+            # made to rename a member that didn't exist, for example
+            # if QtWidgets isn't available on the target platform.
+            _log("Misplaced member has no source: {}".format(src))
+            continue
+
         try:
             src_object = getattr(Qt, dst_module)
         except AttributeError:
-            # Skip reassignment of non-existing members.
-            # This can happen if a request was made to
-            # rename a member that didn't exist, for example
-            # if QtWidgets isn't available on the target platform.
-            continue
-
-        dst_value = getattr(getattr(Qt, "_" + src_module), src_member)
+            if dst_module not in _common_members:
+                # Only create the Qt parent module if its listed in
+                # _common_members. Without this check, if you remove QtCore
+                # from _common_members, the default _misplaced_members will add
+                # Qt.QtCore so it can add Signal, Slot, etc.
+                msg = 'Not creating missing member module "{m}" for "{c}"'
+                _log(msg.format(m=dst_module, c=dst_member))
+                continue
+            # If the dst is valid but the Qt parent module does not exist
+            # then go ahead and create a new module to contain the member.
+            setattr(Qt, dst_module, _new_module(dst_module))
+            src_object = getattr(Qt, dst_module)
+            # Enable direct import of the new module
+            sys.modules[__name__ + "." + dst_module] = src_object
 
         setattr(
             src_object,

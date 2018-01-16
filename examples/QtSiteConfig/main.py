@@ -30,6 +30,18 @@ def test():
     assert QtGui.QColorTest == QtGui.QColor, \
         "QtGui.QColor was not mapped to QtGui.QColorTest"
 
+    # Test that Qt.QtPrintSupport module was created correctly in all bindings
+    from Qt import QtPrintSupport
+    assert QtPrintSupport.QPrintPreviewWidget.__name__ == 'QPrintPreviewWidget', \
+        "Qt.QtPrintSupport.QPrintPreviewWidget was not correctly mapped"
+    assert QtPrintSupport.QPrinter.__name__ == 'QPrinter', \
+        "Qt.QtPrintSupport.QPrinter was not correctly mapped"
+    # Test that we can import classes from inside QtPrintSupport
+    from Qt.QtPrintSupport import QPrintPreviewWidget, QPrinter
+    # Suppress imported but unused warnings
+    QPrintPreviewWidget
+    QPrinter
+
     # Test _compatibility_members is applied correctly
     title = "Test Widget"
     from Qt import QtWidgets, QtCompat
