@@ -394,6 +394,16 @@ _common_members = {
         "QGLFormat",
         "QGLWidget"
     ],
+    "QtPrintSupport": [
+        "QAbstractPrintDialog",
+        "QPageSetupDialog",
+        "QPrintDialog",
+        "QPrintEngine",
+        "QPrintPreviewDialog",
+        "QPrintPreviewWidget",
+        "QPrinter",
+        "QPrinterInfo",
+    ],
     "QtSql": [
         "QSql",
         "QSqlDatabase",
