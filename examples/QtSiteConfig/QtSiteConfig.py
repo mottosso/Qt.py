@@ -9,9 +9,9 @@ def update_members(members):
         members (dict): The members considered by Qt.py
     """
     # By default Qt.py does not include QtPrintSupport, so lets add it.
-    members['QtPrintSupport'] = [
-        'QPrintPreviewWidget',
-        'QPrinter',
+    members["QtPrintSupport"] = [
+        "QPrintPreviewWidget",
+        "QPrinter",
     ]
 
     # Contrived example used for unit testing. This makes the QtCore module
@@ -28,12 +28,14 @@ def update_misplaced_members(members):
         members (dict): The members considered by Qt.py
     """
     # Printer support in Qt4 was stored under QtGui instead of QtPrintSupport
-    members['PyQt4']['QtGui.QPrintPreviewWidget'] = \
-        'QtPrintSupport.QPrintPreviewWidget'
-    members['PyQt4']['QtGui.QPrinter'] = 'QtPrintSupport.QPrinter'
-    members['PySide']['QtGui.QPrintPreviewWidget'] = \
-        'QtPrintSupport.QPrintPreviewWidget'
-    members['PySide']['QtGui.QPrinter'] = 'QtPrintSupport.QPrinter'
+    members["PyQt4"]["QtGui.QPrintPreviewWidget"] = (
+        "QtPrintSupport.QPrintPreviewWidget"
+    )
+    members["PyQt4"]["QtGui.QPrinter"] = "QtPrintSupport.QPrinter"
+    members["PySide"]["QtGui.QPrintPreviewWidget"] = (
+        "QtPrintSupport.QPrintPreviewWidget"
+    )
+    members["PySide"]["QtGui.QPrinter"] = "QtPrintSupport.QPrinter"
 
     # Create Qt.QtGui.QColorTest that points to Qtgui.QColor for unit testing.
     members["PySide2"]["QtGui.QColor"] = "QtGui.QColorTest"
@@ -97,7 +99,9 @@ def update_compatibility_decorators(binding, decorators):
         wrapper.__doc__ = some_function.__doc__
         wrapper.__name__ = some_function.__name__
         return wrapper
-    decorators.setdefault("QWidget", {})["windowTitleDecorator"] = \
+    decorators.setdefault("QWidget", {})["windowTitleDecorator"] = (
         _widgetDecorator
-    decorators.setdefault("QMainWindow", {})["windowTitleDecorator"] = \
+    )
+    decorators.setdefault("QMainWindow", {})["windowTitleDecorator"] = (
         _mainWindowDecorator
+    )
