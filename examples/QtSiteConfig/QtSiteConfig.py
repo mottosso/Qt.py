@@ -8,12 +8,6 @@ def update_members(members):
     Arguments:
         members (dict): The members considered by Qt.py
     """
-    # By default Qt.py does not include QtPrintSupport, so lets add it.
-    members["QtPrintSupport"] = [
-        "QPrintPreviewWidget",
-        "QPrinter",
-    ]
-
     # Contrived example used for unit testing. This makes the QtCore module
     # not accessible. I chose this so it can be tested everywhere, for a
     # more realistic example see the README
@@ -27,16 +21,6 @@ def update_misplaced_members(members):
     Arguments:
         members (dict): The members considered by Qt.py
     """
-    # Printer support in Qt4 was stored under QtGui instead of QtPrintSupport
-    members["PyQt4"]["QtGui.QPrintPreviewWidget"] = (
-        "QtPrintSupport.QPrintPreviewWidget"
-    )
-    members["PyQt4"]["QtGui.QPrinter"] = "QtPrintSupport.QPrinter"
-    members["PySide"]["QtGui.QPrintPreviewWidget"] = (
-        "QtPrintSupport.QPrintPreviewWidget"
-    )
-    members["PySide"]["QtGui.QPrinter"] = "QtPrintSupport.QPrinter"
-
     # Create Qt.QtGui.QColorTest that points to Qtgui.QColor for unit testing.
     members["PySide2"]["QtGui.QColor"] = "QtGui.QColorTest"
     members["PyQt5"]["QtGui.QColor"] = "QtGui.QColorTest"

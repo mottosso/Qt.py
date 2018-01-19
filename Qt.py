@@ -394,6 +394,16 @@ _common_members = {
         "QGLFormat",
         "QGLWidget"
     ],
+    "QtPrintSupport": [
+        "QAbstractPrintDialog",
+        "QPageSetupDialog",
+        "QPrintDialog",
+        "QPrintEngine",
+        "QPrintPreviewDialog",
+        "QPrintPreviewWidget",
+        "QPrinter",
+        "QPrinterInfo"
+    ],
     "QtSql": [
         "QSql",
         "QSqlDatabase",
@@ -706,6 +716,14 @@ _misplaced_members = {
         "QtCore.Signal": "QtCore.Signal",
         "QtCore.Slot": "QtCore.Slot",
         "QtGui.QItemSelectionRange": "QtCore.QItemSelectionRange",
+        "QtGui.QAbstractPrintDialog": "QtPrintSupport.QAbstractPrintDialog",
+        "QtGui.QPageSetupDialog": "QtPrintSupport.QPageSetupDialog",
+        "QtGui.QPrintDialog": "QtPrintSupport.QPrintDialog",
+        "QtGui.QPrintEngine": "QtPrintSupport.QPrintEngine",
+        "QtGui.QPrintPreviewDialog": "QtPrintSupport.QPrintPreviewDialog",
+        "QtGui.QPrintPreviewWidget": "QtPrintSupport.QPrintPreviewWidget",
+        "QtGui.QPrinter": "QtPrintSupport.QPrinter",
+        "QtGui.QPrinterInfo": "QtPrintSupport.QPrinterInfo",
     },
     "PyQt4": {
         "QtGui.QAbstractProxyModel": "QtCore.QAbstractProxyModel",
@@ -717,6 +735,14 @@ _misplaced_members = {
         "QtCore.pyqtSignal": "QtCore.Signal",
         "QtCore.pyqtSlot": "QtCore.Slot",
         "QtGui.QItemSelectionRange": "QtCore.QItemSelectionRange",
+        "QtGui.QAbstractPrintDialog": "QtPrintSupport.QAbstractPrintDialog",
+        "QtGui.QPageSetupDialog": "QtPrintSupport.QPageSetupDialog",
+        "QtGui.QPrintDialog": "QtPrintSupport.QPrintDialog",
+        "QtGui.QPrintEngine": "QtPrintSupport.QPrintEngine",
+        "QtGui.QPrintPreviewDialog": "QtPrintSupport.QPrintPreviewDialog",
+        "QtGui.QPrintPreviewWidget": "QtPrintSupport.QPrintPreviewWidget",
+        "QtGui.QPrinter": "QtPrintSupport.QPrinter",
+        "QtGui.QPrinterInfo": "QtPrintSupport.QPrinterInfo",
     }
 }
 
