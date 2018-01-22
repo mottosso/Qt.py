@@ -420,6 +420,7 @@ Send us a pull-request with your project here.
 - [PythonForMayaSamples](https://github.com/dgovil/PythonForMayaSamples)
 - [Kraken](https://github.com/fabric-engine/Kraken)
 - [AFANASY](http://cgru.info/afanasy/afanasy)
+- [Syncplay](https://github.com/Syncplay/syncplay)
 
 <br>
 <br>
