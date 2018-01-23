@@ -67,11 +67,11 @@ def copy_qtgui_to_modules():
     pyqt4['QtPrintSupport'] = pyqt4['QtGui']
 
     write_json(pyside, pyside_filepath)
-    print('--> Copied QtGui to QtWidgets for ' + os.path.basename(
-        pyside_filepath))
+    print('--> Copied QtGui to QtWidgets and QtPrintSupport for {0}'.format(
+        os.path.basename(pyside_filepath)))
     write_json(pyqt4, pyqt4_filepath)
-    print('--> Copied QtGui to QtWidgets for ' + os.path.basename(
-        pyqt4_filepath))
+    print('--> Copied QtGui to QtWidgets and QtPrintSupport for {0}'.format(
+        os.path.basename(pyqt4_filepath)))
 
 
 def sort_common_members():
