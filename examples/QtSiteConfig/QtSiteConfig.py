@@ -8,7 +8,6 @@ def update_members(members):
     Arguments:
         members (dict): The members considered by Qt.py
     """
-
     # Contrived example used for unit testing. This makes the QtCore module
     # not accessible. I chose this so it can be tested everywhere, for a
     # more realistic example see the README
@@ -22,6 +21,7 @@ def update_misplaced_members(members):
     Arguments:
         members (dict): The members considered by Qt.py
     """
+    # Create Qt.QtGui.QColorTest that points to Qtgui.QColor for unit testing.
     members["PySide2"]["QtGui.QColor"] = "QtGui.QColorTest"
     members["PyQt5"]["QtGui.QColor"] = "QtGui.QColorTest"
     members["PySide"]["QtGui.QColor"] = "QtGui.QColorTest"
@@ -83,7 +83,9 @@ def update_compatibility_decorators(binding, decorators):
         wrapper.__doc__ = some_function.__doc__
         wrapper.__name__ = some_function.__name__
         return wrapper
-    decorators.setdefault("QWidget", {})["windowTitleDecorator"] = \
+    decorators.setdefault("QWidget", {})["windowTitleDecorator"] = (
         _widgetDecorator
-    decorators.setdefault("QMainWindow", {})["windowTitleDecorator"] = \
+    )
+    decorators.setdefault("QMainWindow", {})["windowTitleDecorator"] = (
         _mainWindowDecorator
+    )

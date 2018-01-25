@@ -27,8 +27,9 @@ def test():
 
     # Test _misplaced_members is applied correctly
     from Qt import QtGui
-    assert QtGui.QColorTest == QtGui.QColor, \
+    assert QtGui.QColorTest == QtGui.QColor, (
         "QtGui.QColor was not mapped to QtGui.QColorTest"
+    )
 
     # Test _compatibility_members is applied correctly
     title = "Test Widget"
@@ -38,20 +39,23 @@ def test():
     wid.setWindowTitle(title)
 
     # Verify that our simple remapping of QWidget.windowTitle works
-    assert QtCompat.QWidget.windowTitleTest(wid) == title, \
+    assert QtCompat.QWidget.windowTitleTest(wid) == title, (
         "Non-decorated function was added to QtCompat.QWidget"
+    )
     # Verify that our decorated remapping of QWidget.windowTitle works
     check = "Test: {}".format(title)
-    assert QtCompat.QWidget.windowTitleDecorator(wid) == check, \
+    assert QtCompat.QWidget.windowTitleDecorator(wid) == check, (
         "Decorated method was not added to QtCompat.QWidget"
+    )
 
     # Verify that our decorated remapping of QMainWindow.windowTitle is
     # different than the QWidget version.
     win = QtWidgets.QMainWindow()
     win.setWindowTitle(title)
     check = "QMainWindow Test: {}".format(title)
-    assert QtCompat.QMainWindow.windowTitleDecorator(win) == check, \
+    assert QtCompat.QMainWindow.windowTitleDecorator(win) == check, (
         "Decorated method was added to QtCompat.QMainWindow"
+    )
     # Suppress "app" imported but unused warning
     app
 
