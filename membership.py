@@ -51,7 +51,7 @@ def compare(dicts):
     return common_members
 
 
-def copy_qtgui_to_qtwidgets():
+def copy_qtgui_to_modules():
     """Copies the QtGui list of PySide/PyQt4 into QtWidgets"""
 
     pyside_filepath = PREFIX + '/PySide.json'
@@ -59,15 +59,19 @@ def copy_qtgui_to_qtwidgets():
     pyside = read_json(pyside_filepath)
     pyqt4 = read_json(pyqt4_filepath)
 
+    # When Qt4 was moved to Qt5, they split QtGui into QtGui, QtWidgets, and
+    # QtPrintSupport.
     pyside['QtWidgets'] = pyside['QtGui']
     pyqt4['QtWidgets'] = pyqt4['QtGui']
+    pyside['QtPrintSupport'] = pyside['QtGui']
+    pyqt4['QtPrintSupport'] = pyqt4['QtGui']
 
     write_json(pyside, pyside_filepath)
-    print('--> Copied QtGui to QtWidgets for ' + os.path.basename(
-        pyside_filepath))
+    print('--> Copied QtGui to QtWidgets and QtPrintSupport for {0}'.format(
+        os.path.basename(pyside_filepath)))
     write_json(pyqt4, pyqt4_filepath)
-    print('--> Copied QtGui to QtWidgets for ' + os.path.basename(
-        pyqt4_filepath))
+    print('--> Copied QtGui to QtWidgets and QtPrintSupport for {0}'.format(
+        os.path.basename(pyqt4_filepath)))
 
 
 def sort_common_members():
@@ -127,7 +131,7 @@ if __name__ == '__main__':
     (options, args) = parser.parse_args()
 
     if options.copy:
-        copy_qtgui_to_qtwidgets()
+        copy_qtgui_to_modules()
 
     elif options.generate:
         generate_common_members()

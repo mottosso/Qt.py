@@ -606,6 +606,12 @@ def test_import_from_qtwidgets():
     assert QPushButton.__name__ == "QPushButton", QPushButton
 
 
+def test_import_from_qtcompat():
+    """ `from Qt.QtCompat import XXX` works """
+    from Qt.QtCompat import loadUi
+    assert loadUi.__name__ == "_loadUi", loadUi
+
+
 def test_i158_qtcore_direct_import():
     """import Qt.QtCore works on all bindings
 
