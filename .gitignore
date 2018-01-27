@@ -3,7 +3,9 @@
 build
 dist
 test_caveats.py
-
+losTest.py
+.project
+.pydevpropject
 # Development
 .vscode
 .idea
