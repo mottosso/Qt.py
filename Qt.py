@@ -801,8 +801,8 @@ _compatibility_members = {
         },
     },
     "PySide": {
-        "QPixmap": {
-            "grabWidget": "QtWidgets.QWidget.grab",
+        "QWidget": {
+            "grab": "QtWidgets.QPixmap.grabWidget",
         },
         "QHeaderView": {
             "sectionsClickable": "QtWidgets.QHeaderView.isClickable",
@@ -819,8 +819,8 @@ _compatibility_members = {
         },
     },
     "PyQt4": {
-        "QPixmap": {
-            "grabWidget": "QtWidgets.QWidget.grab",
+        "QWidget": {
+            "grab": "QtWidgets.QPixmap.grabWidget",
         },
         "QHeaderView": {
             "sectionsClickable": "QtWidgets.QHeaderView.isClickable",
