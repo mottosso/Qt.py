@@ -1,5 +1,6 @@
 [![Build Status](https://travis-ci.org/mottosso/Qt.py.svg?branch=master)](https://travis-ci.org/mottosso/Qt.py) [![PyPI version](https://badge.fury.io/py/Qt.py.svg)](https://pypi.python.org/pypi/Qt.py)
 [![Anaconda-Server Badge](https://anaconda.org/conda-forge/qt.py/badges/version.svg)](https://anaconda.org/conda-forge/qt.py) [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/Qt-py/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fmottosso%2FQt.py.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fmottosso%2FQt.py?ref=badge_shield)
 
 ### <img width=260 src=logo.svg>
 
@@ -535,3 +536,7 @@ Now both you and Travis are operating on the same assumptions which means that w
 For details on the Docker image for testing, see [`DOCKER.md`](DOCKER.md).
 
 See [`CONTRIBUTING.md`](CONTRIBUTING.md) for more of the good stuff.
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fmottosso%2FQt.py.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fmottosso%2FQt.py?ref=badge_large)
