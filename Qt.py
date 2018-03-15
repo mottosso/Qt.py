@@ -43,7 +43,7 @@ import types
 import shutil
 
 
-__version__ = "1.1.0"
+__version__ = "1.2.0.b1"
 
 # Enable support for `from Qt import *`
 __all__ = []
@@ -761,6 +761,9 @@ interface for obsolete members, and differences in binding return values.
 """
 _compatibility_members = {
     "PySide2": {
+        "QWidget": {
+            "grab": "QtWidgets.QWidget.grab",
+        },
         "QHeaderView": {
             "sectionsClickable": "QtWidgets.QHeaderView.sectionsClickable",
             "setSectionsClickable":
@@ -778,6 +781,9 @@ _compatibility_members = {
         },
     },
     "PyQt5": {
+        "QWidget": {
+            "grab": "QtWidgets.QWidget.grab",
+        },
         "QHeaderView": {
             "sectionsClickable": "QtWidgets.QHeaderView.sectionsClickable",
             "setSectionsClickable":
@@ -795,6 +801,9 @@ _compatibility_members = {
         },
     },
     "PySide": {
+        "QWidget": {
+            "grab": "QtWidgets.QPixmap.grabWidget",
+        },
         "QHeaderView": {
             "sectionsClickable": "QtWidgets.QHeaderView.isClickable",
             "setSectionsClickable": "QtWidgets.QHeaderView.setClickable",
@@ -810,6 +819,9 @@ _compatibility_members = {
         },
     },
     "PyQt4": {
+        "QWidget": {
+            "grab": "QtWidgets.QPixmap.grabWidget",
+        },
         "QHeaderView": {
             "sectionsClickable": "QtWidgets.QHeaderView.isClickable",
             "setSectionsClickable": "QtWidgets.QHeaderView.setClickable",
