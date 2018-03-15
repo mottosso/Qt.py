@@ -43,7 +43,7 @@ import types
 import shutil
 
 
-__version__ = "1.1.0"
+__version__ = "1.2.0.b1"
 
 # Enable support for `from Qt import *`
 __all__ = []
