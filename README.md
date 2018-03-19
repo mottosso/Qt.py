@@ -400,6 +400,7 @@ Send us a pull-request with your studio here.
 - [Blur Studio](http://www.blur.com)
 - [Mikros Image](http://www.mikrosimage.com/)
 - [Mackevision](http://www.mackevision.com/)
+- [Epic Games](https://www.epicgames.com/)
 
 Presented at Siggraph 2016, BOF!
 
