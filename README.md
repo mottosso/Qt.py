@@ -401,6 +401,7 @@ Send us a pull-request with your studio here.
 - [Mikros Image](http://www.mikrosimage.com/)
 - [Mackevision](http://www.mackevision.com/)
 - [Epic Games](https://www.epicgames.com/)
+- [Digital Domain](https://www.digitaldomain.com/)
 
 Presented at Siggraph 2016, BOF!
 
