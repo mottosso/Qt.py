@@ -402,6 +402,7 @@ Send us a pull-request with your studio here.
 - [Mackevision](http://www.mackevision.com/)
 - [Epic Games](https://www.epicgames.com/)
 - [Digital Domain](https://www.digitaldomain.com/)
+- [Overmind Studios](https://www.overmind-studios.de/)
 
 Presented at Siggraph 2016, BOF!
 
@@ -425,6 +426,7 @@ Send us a pull-request with your project here.
 - [Kraken](https://github.com/fabric-engine/Kraken)
 - [AFANASY](http://cgru.info/afanasy/afanasy)
 - [Syncplay](https://github.com/Syncplay/syncplay)
+- [BlenderUpdater](https://github.com/overmindstudios/BlenderUpdater)
 
 <br>
 <br>
