@@ -430,6 +430,11 @@ _common_members = {
     "QtTest": [
         "QTest"
     ],
+    "QtWebEngineWidgets": [
+        "QWebEnginePage",
+        "QWebEngineView",
+        "QWebEngineSettings"
+    ],
     "QtWidgets": [
         "QAbstractButton",
         "QAbstractGraphicsShapeItem",
@@ -694,6 +699,10 @@ _misplaced_members = {
         "QtCore.QItemSelection": "QtCore.QItemSelection",
         "QtCore.QItemSelectionModel": "QtCore.QItemSelectionModel",
         "QtCore.QItemSelectionRange": "QtCore.QItemSelectionRange",
+        "QtWebEngineWidgets.QWebPage": "QtWebEngineWidgets.QWebEnginePage",
+        "QtWebEngineWidgets.QWebView": "QtWebEngineWidgets.QWebEngineView",
+        "QtWebKitWidgets.QWebPage": "QtWebEngineWidgets.QWebEnginePage",
+        "QtWebKitWidgets.QWebView": "QtWebEngineWidgets.QWebEngineView"
     },
     "PyQt5": {
         "QtCore.pyqtProperty": "QtCore.Property",
@@ -705,6 +714,11 @@ _misplaced_members = {
         "QtCore.QItemSelection": "QtCore.QItemSelection",
         "QtCore.QItemSelectionModel": "QtCore.QItemSelectionModel",
         "QtCore.QItemSelectionRange": "QtCore.QItemSelectionRange",
+        "QtWebEngineWidgets.QWebPage": "QtWebEngineWidgets.QWebEnginePage",
+        "QtWebEngineWidgets.QWebView": "QtWebEngineWidgets.QWebEngineView",
+        "QtWebKitWidgets.QWebPage": "QtWebEngineWidgets.QWebEnginePage",
+        "QtWebKitWidgets.QWebView": "QtWebEngineWidgets.QWebEngineView",
+        "QtWebKit.QWebSettings": "QtWebEngineWidgets.QWebEngineSettings"
     },
     "PySide": {
         "QtGui.QAbstractProxyModel": "QtCore.QAbstractProxyModel",
@@ -724,6 +738,9 @@ _misplaced_members = {
         "QtGui.QPrintPreviewWidget": "QtPrintSupport.QPrintPreviewWidget",
         "QtGui.QPrinter": "QtPrintSupport.QPrinter",
         "QtGui.QPrinterInfo": "QtPrintSupport.QPrinterInfo",
+        "QtWebKit.QWebPage": "QtWebEngineWidgets.QWebEnginePage",
+        "QtWebKit.QWebView": "QtWebEngineWidgets.QWebEngineView",
+        "QtWebKit.QWebSettings": "QtWebEngineWidgets.QWebEngineSettings"
     },
     "PyQt4": {
         "QtGui.QAbstractProxyModel": "QtCore.QAbstractProxyModel",
@@ -743,6 +760,9 @@ _misplaced_members = {
         "QtGui.QPrintPreviewWidget": "QtPrintSupport.QPrintPreviewWidget",
         "QtGui.QPrinter": "QtPrintSupport.QPrinter",
         "QtGui.QPrinterInfo": "QtPrintSupport.QPrinterInfo",
+        "QtWebKit.QWebPage": "QtWebEngineWidgets.QWebEnginePage",
+        "QtWebKit.QWebView": "QtWebEngineWidgets.QWebEngineView",
+        "QtWebKit.QWebSettings": "QtWebEngineWidgets.QWebEngineSettings"
     }
 }
 
