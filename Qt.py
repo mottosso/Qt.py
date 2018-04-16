@@ -1339,7 +1339,6 @@ def _pyside2():
 
     if hasattr(Qt, "_QtCore"):
         Qt.__qt_version__ = Qt._QtCore.qVersion()
-        # Qt.QtCompat.qInstallMessageHandler = _qInstallMessageHandler
         # Qt.QtCompat.translate = Qt._QtCore.QCoreApplication.translate
 
     if hasattr(Qt, "_QtWidgets"):
@@ -1391,7 +1390,6 @@ def _pyside():
     if hasattr(Qt, "_QtCore"):
         Qt.__qt_version__ = Qt._QtCore.qVersion()
         QCoreApplication = Qt._QtCore.QCoreApplication
-        # Qt.QtCompat.qInstallMessageHandler = _qInstallMessageHandler
         # Qt.QtCompat.translate = (
         #     lambda context, sourceText, disambiguation, n:
         #     QCoreApplication.translate(
@@ -1431,7 +1429,6 @@ def _pyqt5():
     if hasattr(Qt, "_QtCore"):
         Qt.__binding_version__ = Qt._QtCore.PYQT_VERSION_STR
         Qt.__qt_version__ = Qt._QtCore.QT_VERSION_STR
-        # Qt.QtCompat.qInstallMessageHandler = _qInstallMessageHandler
         # Qt.QtCompat.translate = Qt._QtCore.QCoreApplication.translate
 
     if hasattr(Qt, "_QtWidgets"):
@@ -1511,7 +1508,6 @@ def _pyqt4():
         Qt.__binding_version__ = Qt._QtCore.PYQT_VERSION_STR
         Qt.__qt_version__ = Qt._QtCore.QT_VERSION_STR
         # QCoreApplication = Qt._QtCore.QCoreApplication
-        # Qt.QtCompat.qInstallMessageHandler = _qInstallMessageHandler
         # Qt.QtCompat.translate = (
         #     lambda context, sourceText, disambiguation, n:
         #     QCoreApplication.translate(
