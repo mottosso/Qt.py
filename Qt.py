@@ -685,6 +685,123 @@ _common_members = {
     ]
 }
 
+
+def _qInstallMessageHandler(handler):
+    """Install a message handler that works in all bindings
+
+    Args:
+        handler: A function that takes 3 arguments, or None
+    """
+    def messageOutputHandler(*args):
+        # In Qt4 bindings, message handlers are passed 2 arguments
+        # In Qt5 bindings, message handlers are passed 3 arguments
+        # The first argument is a QtMsgType
+        # The last argument is the message to be printed
+        # The Middle argument (if passed) is a QMessageLogContext
+        if len(args) == 3:
+            msgType, logContext, msg = args
+        elif len(args) == 2:
+            msgType, msg = args
+            logContext = None
+        else:
+            raise TypeError(
+                "handler expected 2 or 3 arguments, got {0}".format(len(args)))
+
+        if isinstance(msg, bytes):
+            # In python 3, some bindings pass a bytestring, which cannot be
+            # used elsewhere. Decoding a python 2 or 3 bytestring object will
+            # consistently return a unicode object.
+            msg = msg.decode()
+
+        handler(msgType, logContext, msg)
+
+    passObject = messageOutputHandler if handler else handler
+    if Qt.IsPySide or Qt.IsPyQt4:
+        return Qt._QtCore.qInstallMsgHandler(passObject)
+    elif Qt.IsPySide2 or Qt.IsPyQt5:
+        return Qt._QtCore.qInstallMessageHandler(passObject)
+
+
+def _wrapinstance(func, ptr, base=None):
+    """Enable implicit cast of pointer to most suitable class
+
+    This behaviour is available in sip per default.
+
+    Based on http://nathanhorne.com/pyqtpyside-wrap-instance
+
+    Usage:
+        This mechanism kicks in under these circumstances.
+        1. Qt.py is using PySide 1 or 2.
+        2. A `base` argument is not provided.
+
+        See :func:`QtCompat.wrapInstance()`
+
+    Arguments:
+        func (function): Original function
+        ptr (long): Pointer to QObject in memory
+        base (QObject, optional): Base class to wrap with. Defaults to QObject,
+            which should handle anything.
+
+    """
+
+    assert isinstance(ptr, long), "Argument 'ptr' must be of type <long>"
+    assert (base is None) or issubclass(base, Qt.QtCore.QObject), (
+        "Argument 'base' must be of type <QObject>")
+
+    if base is None:
+        q_object = func(long(ptr), Qt.QtCore.QObject)
+        meta_object = q_object.metaObject()
+        class_name = meta_object.className()
+        super_class_name = meta_object.superClass().className()
+
+        if hasattr(Qt.QtWidgets, class_name):
+            base = getattr(Qt.QtWidgets, class_name)
+
+        elif hasattr(Qt.QtWidgets, super_class_name):
+            base = getattr(Qt.QtWidgets, super_class_name)
+
+        else:
+            base = Qt.QtCore.QObject
+
+    return func(long(ptr), base)
+
+
+def _translate(context, sourceText, *args):
+    # In Qt4 bindings, translate can be passed 2 or 3 arguments
+    # In Qt5 bindings, translate can be passed 2 arguments
+    # The first argument is disambiguation[str]
+    # The last argument is n[int]
+    # The middle argument can be encoding[QtCore.QCoreApplication.Encoding]
+    if len(args) == 3:
+        disambiguation, encoding, n = args
+    elif len(args) == 2:
+        disambiguation, n = args
+        encoding = None
+    else:
+        raise TypeError(
+            "Expected 4 or 5 arguments, got {0}.".format(len(args)+2))
+
+    if hasattr(Qt.QtCore, "QCoreApplication"):
+        app = getattr(Qt.QtCore, "QCoreApplication")
+    else:
+        raise NotImplementedError(
+            "Missing QCoreApplication implementation for {binding}".format(
+                binding=Qt.__binding__,
+            )
+        )
+    if Qt.__binding__ in ("PySide2", "PyQt5"):
+        sanitized_args = [context, sourceText, disambiguation, n]
+    else:
+        sanitized_args = [
+            context,
+            sourceText,
+            disambiguation,
+            encoding or app.CodecForTr,
+            n
+        ]
+    return app.translate(*sanitized_args)
+
+
 def _loadUi(uifile, baseinstance=None):
     """Dynamically load a user interface from the given `uifile`
 
@@ -1422,43 +1539,6 @@ def _none():
 def _log(text):
     if QT_VERBOSE:
         sys.stdout.write(text + "\n")
-
-
-def _qInstallMessageHandler(handler):
-    """Install a message handler that works in all bindings
-
-    Args:
-        handler: A function that takes 3 arguments, or None
-    """
-    def messageOutputHandler(*args):
-        # In Qt4 bindings, message handlers are passed 2 arguments
-        # In Qt5 bindings, message handlers are passed 3 arguments
-        # The first argument is a QtMsgType
-        # The last argument is the message to be printed
-        # The Middle argument (if passed) is a QMessageLogContext
-        if len(args) == 3:
-            msgType, logContext, msg = args
-        elif len(args) == 2:
-            msgType, msg = args
-            logContext = None
-        else:
-            raise TypeError(
-                "handler expected 2 or 3 arguments, got {0}".format(len(args)))
-
-        if isinstance(msg, bytes):
-            # In python 3, some bindings pass a bytestring, which cannot be
-            # used elsewhere. Decoding a python 2 or 3 bytestring object will
-            # consistently return a unicode object.
-            msg = msg.decode()
-
-        handler(msgType, logContext, msg)
-
-    passObject = messageOutputHandler if handler else handler
-    if Qt.IsPySide or Qt.IsPyQt4:
-        return Qt._QtCore.qInstallMsgHandler(passObject)
-    elif Qt.IsPySide2 or Qt.IsPyQt5:
-        return Qt._QtCore.qInstallMessageHandler(passObject)
-
 
 
 def _convert(lines):
