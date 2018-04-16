@@ -1339,7 +1339,6 @@ def _pyside2():
 
     if hasattr(Qt, "_QtCore"):
         Qt.__qt_version__ = Qt._QtCore.qVersion()
-        # Qt.QtCompat.translate = Qt._QtCore.QCoreApplication.translate
 
     if hasattr(Qt, "_QtWidgets"):
         Qt.QtCompat.setSectionResizeMode = \
@@ -1389,17 +1388,6 @@ def _pyside():
 
     if hasattr(Qt, "_QtCore"):
         Qt.__qt_version__ = Qt._QtCore.qVersion()
-        QCoreApplication = Qt._QtCore.QCoreApplication
-        # Qt.QtCompat.translate = (
-        #     lambda context, sourceText, disambiguation, n:
-        #     QCoreApplication.translate(
-        #         context,
-        #         sourceText,
-        #         disambiguation,
-        #         QCoreApplication.CodecForTr,
-        #         n
-        #     )
-        # )
 
     _reassign_misplaced_members("PySide")
     _build_compatibility_members("PySide")
@@ -1429,7 +1417,6 @@ def _pyqt5():
     if hasattr(Qt, "_QtCore"):
         Qt.__binding_version__ = Qt._QtCore.PYQT_VERSION_STR
         Qt.__qt_version__ = Qt._QtCore.QT_VERSION_STR
-        # Qt.QtCompat.translate = Qt._QtCore.QCoreApplication.translate
 
     if hasattr(Qt, "_QtWidgets"):
         Qt.QtCompat.setSectionResizeMode = \
@@ -1507,16 +1494,6 @@ def _pyqt4():
     if hasattr(Qt, "_QtCore"):
         Qt.__binding_version__ = Qt._QtCore.PYQT_VERSION_STR
         Qt.__qt_version__ = Qt._QtCore.QT_VERSION_STR
-        # QCoreApplication = Qt._QtCore.QCoreApplication
-        # Qt.QtCompat.translate = (
-        #     lambda context, sourceText, disambiguation, n:
-        #     QCoreApplication.translate(
-        #         context,
-        #         sourceText,
-        #         disambiguation,
-        #         QCoreApplication.CodecForTr,
-        #         n)
-        # )
 
     _reassign_misplaced_members("PyQt4")
 
