@@ -677,6 +677,107 @@ _common_members = {
     ]
 }
 
+def _loadUi(uifile, baseinstance=None):
+    """Dynamically load a user interface from the given `uifile`
+
+    This function calls `uic.loadUi` if using PyQt bindings,
+    else it implements a comparable binding for PySide.
+
+    Documentation:
+        http://pyqt.sourceforge.net/Docs/PyQt5/designer.html#PyQt5.uic.loadUi
+
+    Arguments:
+        uifile (str): Absolute path to Qt Designer file.
+        baseinstance (QWidget): Instantiated QWidget or subclass thereof
+
+    Return:
+        baseinstance if `baseinstance` is not `None`. Otherwise
+        return the newly created instance of the user interface.
+
+    """
+    if hasattr(baseinstance, "layout") and baseinstance.layout():
+        message = ("QLayout: Attempting to add Layout to %s which "
+                   "already has a layout")
+        raise RuntimeError(message % (baseinstance))
+
+    if hasattr(Qt, "_uic"):
+        return Qt._uic.loadUi(uifile, baseinstance)
+
+    elif hasattr(Qt, "_QtUiTools"):
+        # Implement `PyQt5.uic.loadUi` for PySide(2)
+
+        class _UiLoader(Qt._QtUiTools.QUiLoader):
+            """Create the user interface in a base instance.
+
+            Unlike `Qt._QtUiTools.QUiLoader` itself this class does not
+            create a new instance of the top-level widget, but creates the user
+            interface in an existing instance of the top-level class if needed.
+
+            This mimics the behaviour of `PyQt5.uic.loadUi`.
+
+            """
+
+            def __init__(self, baseinstance):
+                super(_UiLoader, self).__init__(baseinstance)
+                self.baseinstance = baseinstance
+
+            def load(self, uifile, *args, **kwargs):
+                from xml.etree.ElementTree import ElementTree
+
+                # For whatever reason, if this doesn't happen then
+                # reading an invalid or non-existing .ui file throws
+                # a RuntimeError.
+                etree = ElementTree()
+                etree.parse(uifile)
+
+                widget = Qt._QtUiTools.QUiLoader.load(
+                    self, uifile, *args, **kwargs)
+
+                # Workaround for PySide 1.0.9, see issue #208
+                widget.parentWidget()
+
+                return widget
+
+            def createWidget(self, class_name, parent=None, name=""):
+                """Called for each widget defined in ui file
+
+                Overridden here to populate `baseinstance` instead.
+
+                """
+
+                if parent is None and self.baseinstance:
+                    # Supposed to create the top-level widget,
+                    # return the base instance instead
+                    return self.baseinstance
+
+                # For some reason, Line is not in the list of available
+                # widgets, but works fine, so we have to special case it here.
+                if class_name in self.availableWidgets() + ["Line"]:
+                    # Create a new widget for child widgets
+                    widget = Qt._QtUiTools.QUiLoader.createWidget(self,
+                                                                  class_name,
+                                                                  parent,
+                                                                  name)
+
+                else:
+                    raise Exception("Custom widget '%s' not supported"
+                                    % class_name)
+
+                if self.baseinstance:
+                    # Set an attribute for the new child widget on the base
+                    # instance, just like PyQt5.uic.loadUi does.
+                    setattr(self.baseinstance, name, widget)
+
+                return widget
+
+        widget = _UiLoader(baseinstance).load(uifile)
+        Qt.QtCore.QMetaObject.connectSlotsByName(widget)
+
+        return widget
+
+    else:
+        raise NotImplementedError("No implementation available for loadUi")
+
 
 """Misplaced members
 
@@ -1313,104 +1414,6 @@ def _none():
 def _log(text):
     if QT_VERBOSE:
         sys.stdout.write(text + "\n")
-
-
-def _loadUi(uifile, baseinstance=None):
-    """Dynamically load a user interface from the given `uifile`
-
-    This function calls `uic.loadUi` if using PyQt bindings,
-    else it implements a comparable binding for PySide.
-
-    Documentation:
-        http://pyqt.sourceforge.net/Docs/PyQt5/designer.html#PyQt5.uic.loadUi
-
-    Arguments:
-        uifile (str): Absolute path to Qt Designer file.
-        baseinstance (QWidget): Instantiated QWidget or subclass thereof
-
-    Return:
-        baseinstance if `baseinstance` is not `None`. Otherwise
-        return the newly created instance of the user interface.
-
-    """
-
-    if hasattr(Qt, "_uic"):
-        return Qt._uic.loadUi(uifile, baseinstance)
-
-    elif hasattr(Qt, "_QtUiTools"):
-        # Implement `PyQt5.uic.loadUi` for PySide(2)
-
-        class _UiLoader(Qt._QtUiTools.QUiLoader):
-            """Create the user interface in a base instance.
-
-            Unlike `Qt._QtUiTools.QUiLoader` itself this class does not
-            create a new instance of the top-level widget, but creates the user
-            interface in an existing instance of the top-level class if needed.
-
-            This mimics the behaviour of `PyQt5.uic.loadUi`.
-
-            """
-
-            def __init__(self, baseinstance):
-                super(_UiLoader, self).__init__(baseinstance)
-                self.baseinstance = baseinstance
-
-            def load(self, uifile, *args, **kwargs):
-                from xml.etree.ElementTree import ElementTree
-
-                # For whatever reason, if this doesn't happen then
-                # reading an invalid or non-existing .ui file throws
-                # a RuntimeError.
-                etree = ElementTree()
-                etree.parse(uifile)
-
-                widget = Qt._QtUiTools.QUiLoader.load(
-                    self, uifile, *args, **kwargs)
-
-                # Workaround for PySide 1.0.9, see issue #208
-                widget.parentWidget()
-
-                return widget
-
-            def createWidget(self, class_name, parent=None, name=""):
-                """Called for each widget defined in ui file
-
-                Overridden here to populate `baseinstance` instead.
-
-                """
-
-                if parent is None and self.baseinstance:
-                    # Supposed to create the top-level widget,
-                    # return the base instance instead
-                    return self.baseinstance
-
-                # For some reason, Line is not in the list of available
-                # widgets, but works fine, so we have to special case it here.
-                if class_name in self.availableWidgets() + ["Line"]:
-                    # Create a new widget for child widgets
-                    widget = Qt._QtUiTools.QUiLoader.createWidget(self,
-                                                                  class_name,
-                                                                  parent,
-                                                                  name)
-
-                else:
-                    raise Exception("Custom widget '%s' not supported"
-                                    % class_name)
-
-                if self.baseinstance:
-                    # Set an attribute for the new child widget on the base
-                    # instance, just like PyQt5.uic.loadUi does.
-                    setattr(self.baseinstance, name, widget)
-
-                return widget
-
-        widget = _UiLoader(baseinstance).load(uifile)
-        Qt.QtCore.QMetaObject.connectSlotsByName(widget)
-
-        return widget
-
-    else:
-        raise NotImplementedError("No implementation available for loadUi")
 
 
 def _qInstallMessageHandler(handler):
