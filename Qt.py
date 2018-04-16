@@ -1169,7 +1169,6 @@ def _setup(module, extras):
             setattr(Qt, name, _new_module(name))
 
 
-
 def _reassign_misplaced_members(binding):
     """Apply misplaced members from `binding` to Qt.py
 
@@ -1179,12 +1178,30 @@ def _reassign_misplaced_members(binding):
     """
 
     for src, dst in _misplaced_members[binding].items():
-        src_module, src_member = src.split(".")
-        dst_module, dst_member = dst.split(".")
+        dst_value = None
+
+        src_parts = src.split(".")
+        src_module = src_parts[0]
+        src_member = None
+        if len(src_parts) > 1:
+            src_member = src_parts[1:]
+
+        if isinstance(dst, (list, tuple)):
+            dst, dst_value = dst
+
+        dst_parts = dst.split(".")
+        dst_module = dst_parts[0]
+        dst_member = None
+        if len(dst_parts) > 1:
+            dst_member = dst_parts[1]
 
         # Get the member we want to store in the namesapce.
         try:
-            dst_value = getattr(getattr(Qt, "_" + src_module), src_member)
+            _part = getattr(Qt, "_" + src_module)
+            while src_member:
+                member = src_member.pop(0)
+                _part = getattr(_part, member)
+            dst_value = _part
         except AttributeError:
             # If the member we want to store in the namespace does not exist,
             # there is no need to continue. This can happen if a request was
@@ -1211,9 +1228,14 @@ def _reassign_misplaced_members(binding):
             # Enable direct import of the new module
             sys.modules[__name__ + "." + dst_module] = src_object
 
+        if not dst_value:
+            dst_value = getattr(Qt, "_" + src_module)
+            if src_member:
+                dst_value = getattr(dst_value, src_member)
+
         setattr(
             src_object,
-            dst_member,
+            dst_member or dst_module,
             dst_value
         )
 
