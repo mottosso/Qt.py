@@ -1118,49 +1118,6 @@ def _setup(module, extras):
             setattr(Qt, name, _new_module(name))
 
 
-def _wrapinstance(func, ptr, base=None):
-    """Enable implicit cast of pointer to most suitable class
-
-    This behaviour is available in sip per default.
-
-    Based on http://nathanhorne.com/pyqtpyside-wrap-instance
-
-    Usage:
-        This mechanism kicks in under these circumstances.
-        1. Qt.py is using PySide 1 or 2.
-        2. A `base` argument is not provided.
-
-        See :func:`QtCompat.wrapInstance()`
-
-    Arguments:
-        func (function): Original function
-        ptr (long): Pointer to QObject in memory
-        base (QObject, optional): Base class to wrap with. Defaults to QObject,
-            which should handle anything.
-
-    """
-
-    assert isinstance(ptr, long), "Argument 'ptr' must be of type <long>"
-    assert (base is None) or issubclass(base, Qt.QtCore.QObject), (
-        "Argument 'base' must be of type <QObject>")
-
-    if base is None:
-        q_object = func(long(ptr), Qt.QtCore.QObject)
-        meta_object = q_object.metaObject()
-        class_name = meta_object.className()
-        super_class_name = meta_object.superClass().className()
-
-        if hasattr(Qt.QtWidgets, class_name):
-            base = getattr(Qt.QtWidgets, class_name)
-
-        elif hasattr(Qt.QtWidgets, super_class_name):
-            base = getattr(Qt.QtWidgets, super_class_name)
-
-        else:
-            base = Qt.QtCore.QObject
-
-    return func(long(ptr), base)
-
 
 def _reassign_misplaced_members(binding):
     """Apply misplaced members from `binding` to Qt.py
