@@ -920,6 +920,18 @@ _misplaced_members = {
         "QtCore.QItemSelection": "QtCore.QItemSelection",
         "QtCore.QItemSelectionModel": "QtCore.QItemSelectionModel",
         "QtCore.QItemSelectionRange": "QtCore.QItemSelectionRange",
+        "QtUiTools.load_ui": ["QtCompat.loadUi", _loadUi],
+        "shiboken2.wrapInstance": ["QtCompat.wrapInstance", _wrapinstance],
+        "QtWidgets.qApp": "QtWidgets.QApplication.instance()",
+        "QtCore.QCoreApplication.translate": [
+            "QtCompat.translate", _translate
+        ],
+        "QtWidgets.QApplication.translate": [
+            "QtCompat.translate", _translate
+        ],
+        "QtCore.qInstallMessageHandler": [
+            "QtCompat.qInstallMessageHandler", _qInstallMessageHandler
+        ],
     },
     "PyQt5": {
         "QtCore.pyqtProperty": "QtCore.Property",
@@ -931,6 +943,19 @@ _misplaced_members = {
         "QtCore.QItemSelection": "QtCore.QItemSelection",
         "QtCore.QItemSelectionModel": "QtCore.QItemSelectionModel",
         "QtCore.QItemSelectionRange": "QtCore.QItemSelectionRange",
+        "uic.loadUi": ["QtCompat.loadUi", _loadUi],
+        "sip.wrapinstance": ["QtCompat.wrapInstance", _wrapinstance],
+        "QtCore.QString": "str",
+        "QtWidgets.qApp": "QtWidgets.QApplication.instance()",
+        "QtCore.QCoreApplication.translate": [
+            "QtCompat.translate", _translate
+        ],
+        "QtWidgets.QApplication.translate": [
+            "QtCompat.translate", _translate
+        ],
+        "QtCore.qInstallMessageHandler": [
+            "QtCompat.qInstallMessageHandler", _qInstallMessageHandler
+        ],
     },
     "PySide": {
         "QtGui.QAbstractProxyModel": "QtCore.QAbstractProxyModel",
@@ -950,6 +975,18 @@ _misplaced_members = {
         "QtGui.QPrintPreviewWidget": "QtPrintSupport.QPrintPreviewWidget",
         "QtGui.QPrinter": "QtPrintSupport.QPrinter",
         "QtGui.QPrinterInfo": "QtPrintSupport.QPrinterInfo",
+        "QtUiTools.load_ui": ["QtCompat.loadUi", _loadUi],
+        "shiboken.wrapInstance": ["QtCompat.wrapInstance", _wrapinstance],
+        "QtGui.qApp": "QtWidgets.QApplication.instance()",
+        "QtCore.QCoreApplication.translate": [
+            "QtCompat.translate", _translate
+        ],
+        "QtGui.QApplication.translate": [
+            "QtCompat.translate", _translate
+        ],
+        "QtCore.qInstallMsgHandler": [
+            "QtCompat.qInstallMessageHandler", _qInstallMessageHandler
+        ],
     },
     "PyQt4": {
         "QtGui.QAbstractProxyModel": "QtCore.QAbstractProxyModel",
@@ -969,6 +1006,20 @@ _misplaced_members = {
         "QtGui.QPrintPreviewWidget": "QtPrintSupport.QPrintPreviewWidget",
         "QtGui.QPrinter": "QtPrintSupport.QPrinter",
         "QtGui.QPrinterInfo": "QtPrintSupport.QPrinterInfo",
+        "QtCore.pyqtSignature": "QtCore.Slot",
+        "uic.loadUi": ["QtCompat.loadUi", _loadUi],
+        "sip.wrapinstance": ["QtCompat.wrapInstance", _wrapinstance],
+        "QtCore.QString": "str",
+        "QtGui.qApp": "QtWidgets.QApplication.instance()",
+        "QtCore.QCoreApplication.translate": [
+            "QtCompat.translate", _translate
+        ],
+        "QtGui.QApplication.translate": [
+            "QtCompat.translate", _translate
+        ],
+        "QtCore.qInstallMsgHandler": [
+            "QtCompat.qInstallMessageHandler", _qInstallMessageHandler
+        ],
     }
 }
 
