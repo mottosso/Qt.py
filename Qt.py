@@ -63,6 +63,14 @@ except NameError:
     # Python 3 compatibility
     long = int
 
+
+"""Default binding ordering.
+
+Brought into globals so I can introspect against it
+    -AH
+"""
+_QT_PREFERRED_BINDING_DEFAULT_ORDER = ("PySide2", "PyQt5", "PySide", "PyQt4")
+
 """Common members of all bindings
 
 This is where each member of Qt.py is explicitly defined.
@@ -1540,12 +1548,11 @@ def _cli(args):
 
 def _install():
     # Default order (customise order and content via QT_PREFERRED_BINDING)
-    default_order = ("PySide2", "PyQt5", "PySide", "PyQt4")
     preferred_order = list(
         b for b in QT_PREFERRED_BINDING.split(os.pathsep) if b
     )
 
-    order = preferred_order or default_order
+    order = preferred_order or _QT_PREFERRED_BINDING_DEFAULT_ORDER
 
     available = {
         "PySide2": _pyside2,
