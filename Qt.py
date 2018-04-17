@@ -1182,6 +1182,9 @@ def _setup(module, extras):
         except ImportError:
             try:
                 submodule = module = __import__(name)
+                if "." in name:
+                    name = name.replace(Qt.__binding__, "").lstrip(".")
+                    submodule = getattr(module, name)
             except ImportError:
                 continue
 
