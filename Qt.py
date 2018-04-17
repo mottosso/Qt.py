@@ -757,11 +757,11 @@ def _wrapinstance(ptr, base=None):
     assert (base is None) or issubclass(base, Qt.QtCore.QObject), (
         "Argument 'base' must be of type <QObject>")
 
-    if Qt.isPyQt4 or Qt.isPyQt5:
+    if Qt.IsPyQt4 or Qt.IsPyQt5:
         func = getattr(Qt, "_sip").wrapinstance
-    elif Qt.isPySide2:
+    elif Qt.IsPySide2:
         func = getattr(Qt, "_shiboken2").wrapInstance
-    elif Qt.isPySide:
+    elif Qt.IsPySide:
         func = getattr(Qt, "_shiboken").wrapInstance
     else:
         raise AttributeError("'module' has no attribute 'wrapInstance'")
