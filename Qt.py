@@ -722,6 +722,16 @@ def _qInstallMessageHandler(handler):
         return Qt._QtCore.qInstallMessageHandler(passObject)
 
 
+def _getcpppointer(object):
+    if hasattr(Qt, "_shiboken2"):
+        return getattr(Qt, "_shiboken2").getCppPointer(object)[0]
+    elif hasattr(Qt, "_shiboken"):
+        return getattr(Qt, "_shiboken").getCppPointer(object)[0]
+    elif hasattr(Qt, "_sip"):
+        return getattr(Qt, "_sip").unwrapinstance(object)
+    raise AttributeError("'module' has no attribute 'getCppPointer'")
+
+
 def _wrapinstance(func, ptr, base=None):
     """Enable implicit cast of pointer to most suitable class
 
@@ -920,8 +930,9 @@ _misplaced_members = {
         "QtCore.QItemSelection": "QtCore.QItemSelection",
         "QtCore.QItemSelectionModel": "QtCore.QItemSelectionModel",
         "QtCore.QItemSelectionRange": "QtCore.QItemSelectionRange",
-        "QtUiTools.load_ui": ["QtCompat.loadUi", _loadUi],
+        "QtUiTools.QUiLoader": ["QtCompat.loadUi", _loadUi],
         "shiboken2.wrapInstance": ["QtCompat.wrapInstance", _wrapinstance],
+        "shiboken2.getCppPointer": ["QtCompat.getCppPointer", _getcpppointer],
         "QtWidgets.qApp": "QtWidgets.QApplication.instance()",
         "QtCore.QCoreApplication.translate": [
             "QtCompat.translate", _translate
@@ -945,7 +956,7 @@ _misplaced_members = {
         "QtCore.QItemSelectionRange": "QtCore.QItemSelectionRange",
         "uic.loadUi": ["QtCompat.loadUi", _loadUi],
         "sip.wrapinstance": ["QtCompat.wrapInstance", _wrapinstance],
-        "QtCore.QString": "str",
+        "sip.unwrapinstance": ["QtCompat.getCppPointer", _getcpppointer],
         "QtWidgets.qApp": "QtWidgets.QApplication.instance()",
         "QtCore.QCoreApplication.translate": [
             "QtCompat.translate", _translate
@@ -975,8 +986,9 @@ _misplaced_members = {
         "QtGui.QPrintPreviewWidget": "QtPrintSupport.QPrintPreviewWidget",
         "QtGui.QPrinter": "QtPrintSupport.QPrinter",
         "QtGui.QPrinterInfo": "QtPrintSupport.QPrinterInfo",
-        "QtUiTools.load_ui": ["QtCompat.loadUi", _loadUi],
+        "QtUiTools.QUiLoader": ["QtCompat.loadUi", _loadUi],
         "shiboken.wrapInstance": ["QtCompat.wrapInstance", _wrapinstance],
+        "shiboken.unwrapInstance": ["QtCompat.getCppPointer", _getcpppointer],
         "QtGui.qApp": "QtWidgets.QApplication.instance()",
         "QtCore.QCoreApplication.translate": [
             "QtCompat.translate", _translate
@@ -1009,6 +1021,7 @@ _misplaced_members = {
         "QtCore.pyqtSignature": "QtCore.Slot",
         "uic.loadUi": ["QtCompat.loadUi", _loadUi],
         "sip.wrapinstance": ["QtCompat.wrapInstance", _wrapinstance],
+        "sip.unwrapinstance": ["QtCompat.getCppPointer", _getcpppointer],
         "QtCore.QString": "str",
         "QtGui.qApp": "QtWidgets.QApplication.instance()",
         "QtCore.QCoreApplication.translate": [
@@ -1158,7 +1171,10 @@ def _setup(module, extras):
             submodule = _import_sub_module(
                 module, name)
         except ImportError:
-            continue
+            try:
+                submodule = module = __import__(name)
+            except ImportError:
+                continue
 
         setattr(Qt, "_" + name, submodule)
 
@@ -1312,10 +1328,7 @@ def _pyside2():
     """
 
     import PySide2 as module
-    _setup(module, ["QtUiTools"])
-
-    Qt.__binding_version__ = module.__version__
-
+    extras = ["QtUiTools"]
     try:
         try:
             # Before merge of PySide and shiboken
@@ -1323,16 +1336,19 @@ def _pyside2():
         except ImportError:
             # After merge of PySide and shiboken, May 2017
             from PySide2 import shiboken2
+        extras.append(shiboken2.__name__)
+    except ImportError:
+        shiboken2 = None
 
+    _setup(module, extras)
+    Qt.__binding_version__ = module.__version__
+
+    if hasattr(Qt, "_shiboken2"):
         Qt.QtCompat.wrapInstance = (
             lambda ptr, base=None: _wrapinstance(
                 shiboken2.wrapInstance, ptr, base)
         )
-        Qt.QtCompat.getCppPointer = lambda object: \
-            shiboken2.getCppPointer(object)[0]
-
-    except ImportError:
-        pass  # Optional
+        Qt.QtCompat.getCppPointer = _getcpppointer
 
     if hasattr(Qt, "_QtUiTools"):
         Qt.QtCompat.loadUi = _loadUi
@@ -1352,10 +1368,7 @@ def _pyside():
     """Initialise PySide"""
 
     import PySide as module
-    _setup(module, ["QtUiTools"])
-
-    Qt.__binding_version__ = module.__version__
-
+    extras = ["QtUiTools"]
     try:
         try:
             # Before merge of PySide and shiboken
@@ -1363,16 +1376,19 @@ def _pyside():
         except ImportError:
             # After merge of PySide and shiboken, May 2017
             from PySide import shiboken
+        extras.append(shiboken.__name__)
+    except ImportError:
+        shiboken = None
 
+    _setup(module, extras)
+    Qt.__binding_version__ = module.__version__
+
+    if hasattr(Qt, "_shiboken"):
         Qt.QtCompat.wrapInstance = (
             lambda ptr, base=None: _wrapinstance(
                 shiboken.wrapInstance, ptr, base)
         )
-        Qt.QtCompat.getCppPointer = lambda object: \
-            shiboken.getCppPointer(object)[0]
-
-    except ImportError:
-        pass  # Optional
+        Qt.QtCompat.getCppPointer = _getcpppointer
 
     if hasattr(Qt, "_QtUiTools"):
         Qt.QtCompat.loadUi = _loadUi
@@ -1397,19 +1413,20 @@ def _pyqt5():
     """Initialise PyQt5"""
 
     import PyQt5 as module
-    _setup(module, ["uic"])
-
+    extras = ["uic"]
     try:
         import sip
+        extras.append(sip.__name__)
+    except ImportError:
+        sip = None
+
+    _setup(module, extras)
+    if hasattr(Qt, "_sip"):
         Qt.QtCompat.wrapInstance = (
             lambda ptr, base=None: _wrapinstance(
                 sip.wrapinstance, ptr, base)
         )
-        Qt.QtCompat.getCppPointer = lambda object: \
-            sip.unwrapinstance(object)
-
-    except ImportError:
-        pass  # Optional
+        Qt.QtCompat.getCppPointer = _getcpppointer
 
     if hasattr(Qt, "_uic"):
         Qt.QtCompat.loadUi = _loadUi
@@ -1464,19 +1481,20 @@ def _pyqt4():
                 )
 
     import PyQt4 as module
-    _setup(module, ["uic"])
-
+    extras = ["uic"]
     try:
         import sip
+        extras.append(sip.__name__)
+    except ImportError:
+        sip = None
+
+    _setup(module, extras)
+    if hasattr(Qt, "_sip"):
         Qt.QtCompat.wrapInstance = (
             lambda ptr, base=None: _wrapinstance(
                 sip.wrapinstance, ptr, base)
         )
-        Qt.QtCompat.getCppPointer = lambda object: \
-            sip.unwrapinstance(object)
-
-    except ImportError:
-        pass  # Optional
+        Qt.QtCompat.getCppPointer = _getcpppointer
 
     if hasattr(Qt, "_uic"):
         Qt.QtCompat.loadUi = _loadUi
