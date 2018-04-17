@@ -732,7 +732,7 @@ def _getcpppointer(object):
     raise AttributeError("'module' has no attribute 'getCppPointer'")
 
 
-def _wrapinstance(func, ptr, base=None):
+def _wrapinstance(ptr, base=None):
     """Enable implicit cast of pointer to most suitable class
 
     This behaviour is available in sip per default.
@@ -747,7 +747,6 @@ def _wrapinstance(func, ptr, base=None):
         See :func:`QtCompat.wrapInstance()`
 
     Arguments:
-        func (function): Original function
         ptr (long): Pointer to QObject in memory
         base (QObject, optional): Base class to wrap with. Defaults to QObject,
             which should handle anything.
@@ -757,6 +756,15 @@ def _wrapinstance(func, ptr, base=None):
     assert isinstance(ptr, long), "Argument 'ptr' must be of type <long>"
     assert (base is None) or issubclass(base, Qt.QtCore.QObject), (
         "Argument 'base' must be of type <QObject>")
+
+    if Qt.isPyQt4 or Qt.isPyQt5:
+        func = getattr(Qt, "_sip").wrapinstance
+    elif Qt.isPySide2:
+        func = getattr(Qt, "_shiboken2").wrapInstance
+    elif Qt.isPySide:
+        func = getattr(Qt, "_shiboken").wrapInstance
+    else:
+        raise AttributeError("'module' has no attribute 'wrapInstance'")
 
     if base is None:
         q_object = func(long(ptr), Qt.QtCore.QObject)
@@ -1346,10 +1354,7 @@ def _pyside2():
     Qt.__binding_version__ = module.__version__
 
     if hasattr(Qt, "_shiboken2"):
-        Qt.QtCompat.wrapInstance = (
-            lambda ptr, base=None: _wrapinstance(
-                shiboken2.wrapInstance, ptr, base)
-        )
+        Qt.QtCompat.wrapInstance = _wrapinstance
         Qt.QtCompat.getCppPointer = _getcpppointer
 
     if hasattr(Qt, "_QtUiTools"):
@@ -1386,10 +1391,7 @@ def _pyside():
     Qt.__binding_version__ = module.__version__
 
     if hasattr(Qt, "_shiboken"):
-        Qt.QtCompat.wrapInstance = (
-            lambda ptr, base=None: _wrapinstance(
-                shiboken.wrapInstance, ptr, base)
-        )
+        Qt.QtCompat.wrapInstance = _wrapinstance
         Qt.QtCompat.getCppPointer = _getcpppointer
 
     if hasattr(Qt, "_QtUiTools"):
@@ -1424,10 +1426,7 @@ def _pyqt5():
 
     _setup(module, extras)
     if hasattr(Qt, "_sip"):
-        Qt.QtCompat.wrapInstance = (
-            lambda ptr, base=None: _wrapinstance(
-                sip.wrapinstance, ptr, base)
-        )
+        Qt.QtCompat.wrapInstance = _wrapinstance
         Qt.QtCompat.getCppPointer = _getcpppointer
 
     if hasattr(Qt, "_uic"):
@@ -1492,10 +1491,7 @@ def _pyqt4():
 
     _setup(module, extras)
     if hasattr(Qt, "_sip"):
-        Qt.QtCompat.wrapInstance = (
-            lambda ptr, base=None: _wrapinstance(
-                sip.wrapinstance, ptr, base)
-        )
+        Qt.QtCompat.wrapInstance = _wrapinstance
         Qt.QtCompat.getCppPointer = _getcpppointer
 
     if hasattr(Qt, "_uic"):
