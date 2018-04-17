@@ -1212,19 +1212,20 @@ def _reassign_misplaced_members(binding):
             dst_member = dst_parts[1]
 
         # Get the member we want to store in the namesapce.
-        try:
-            _part = getattr(Qt, "_" + src_module)
-            while src_member:
-                member = src_member.pop(0)
-                _part = getattr(_part, member)
-            dst_value = _part
-        except AttributeError:
-            # If the member we want to store in the namespace does not exist,
-            # there is no need to continue. This can happen if a request was
-            # made to rename a member that didn't exist, for example
-            # if QtWidgets isn't available on the target platform.
-            _log("Misplaced member has no source: {}".format(src))
-            continue
+        if not dst_value:
+            try:
+                _part = getattr(Qt, "_" + src_module)
+                while src_member:
+                    member = src_member.pop(0)
+                    _part = getattr(_part, member)
+                dst_value = _part
+            except AttributeError:
+                # If the member we want to store in the namespace does not exist,
+                # there is no need to continue. This can happen if a request was
+                # made to rename a member that didn't exist, for example
+                # if QtWidgets isn't available on the target platform.
+                _log("Misplaced member has no source: {}".format(src))
+                continue
 
         try:
             src_object = getattr(Qt, dst_module)
