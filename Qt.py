@@ -64,11 +64,6 @@ except NameError:
     long = int
 
 
-"""Default binding ordering.
-
-Brought into globals so I can introspect against it
-    -AH
-"""
 _QT_PREFERRED_BINDING_DEFAULT_ORDER = ("PySide2", "PyQt5", "PySide", "PyQt4")
 
 """Common members of all bindings
