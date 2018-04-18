@@ -1337,7 +1337,7 @@ def _pyside2():
             from PySide2 import shiboken2
         extras.append("shiboken2")
     except ImportError:
-        shiboken2 = None
+        pass
 
     _setup(module, extras)
     Qt.__binding_version__ = module.__version__
@@ -1374,7 +1374,7 @@ def _pyside():
             from PySide import shiboken
         extras.append("shiboken")
     except ImportError:
-        shiboken = None
+        pass
 
     _setup(module, extras)
     Qt.__binding_version__ = module.__version__
