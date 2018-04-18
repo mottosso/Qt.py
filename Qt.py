@@ -1170,10 +1170,9 @@ def _setup(module, extras):
                 module, name)
         except ImportError:
             try:
-                submodule = module = __import__(name)
-                if "." in name:
-                    name = name.replace(Qt.__binding__, "").lstrip(".")
-                    submodule = getattr(module, name)
+                # For extra modules like sip and shiboken that may not be
+                # children of the binding.
+                submodule = __import__(name)
             except ImportError:
                 continue
 
@@ -1338,7 +1337,7 @@ def _pyside2():
         except ImportError:
             # After merge of PySide and shiboken, May 2017
             from PySide2 import shiboken2
-        extras.append(shiboken2.__name__)
+        extras.append("shiboken2")
     except ImportError:
         shiboken2 = None
 
@@ -1375,7 +1374,7 @@ def _pyside():
         except ImportError:
             # After merge of PySide and shiboken, May 2017
             from PySide import shiboken
-        extras.append(shiboken.__name__)
+        extras.append("shiboken")
     except ImportError:
         shiboken = None
 
