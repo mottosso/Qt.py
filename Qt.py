@@ -1018,6 +1018,8 @@ def _pyside2():
         )
         Qt.QtCompat.getCppPointer = lambda object: \
             shiboken2.getCppPointer(object)[0]
+        Qt.QtCompat.delete = lambda object: \
+            shiboken2.delete(object)
 
     except ImportError:
         pass  # Optional
@@ -1060,6 +1062,8 @@ def _pyside():
         )
         Qt.QtCompat.getCppPointer = lambda object: \
             shiboken.getCppPointer(object)[0]
+        Qt.QtCompat.delete = lambda object: \
+            shiboken.delete(object)
 
     except ImportError:
         pass  # Optional
@@ -1109,6 +1113,8 @@ def _pyqt5():
         )
         Qt.QtCompat.getCppPointer = lambda object: \
             sip.unwrapinstance(object)
+        Qt.QtCompat.delete = lambda object: \
+            sip.delete(object)
 
     except ImportError:
         pass  # Optional
@@ -1178,6 +1184,8 @@ def _pyqt4():
         )
         Qt.QtCompat.getCppPointer = lambda object: \
             sip.unwrapinstance(object)
+        Qt.QtCompat.delete = lambda object: \
+            sip.delete(object)
 
     except ImportError:
         pass  # Optional
