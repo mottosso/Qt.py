@@ -679,6 +679,11 @@ def test_qtcompat_base_class():
     QtCompat.QHeaderView.setSectionsMovable(header, True)
     assert QtCompat.QHeaderView.sectionsMovable(header) is True
 
+    # Verify that the grab function actually generates a non-null image
+    button = QtWidgets.QPushButton('TestImage')
+    pixmap = QtCompat.QWidget.grab(button)
+    assert not pixmap.isNull()
+
 
 def test_cli():
     """Qt.py is available from the command-line"""

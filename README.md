@@ -1,7 +1,7 @@
-[![Build Status](https://travis-ci.org/mottosso/Qt.py.svg?branch=master)](https://travis-ci.org/mottosso/Qt.py) [![PyPI version](https://badge.fury.io/py/Qt.py.svg)](https://pypi.python.org/pypi/Qt.py)
-[![Anaconda-Server Badge](https://anaconda.org/conda-forge/qt.py/badges/version.svg)](https://anaconda.org/conda-forge/qt.py)
+<img width=260 src=logo.svg>
 
-### Qt.py
+[![Build Status](https://travis-ci.org/mottosso/Qt.py.svg?branch=master)](https://travis-ci.org/mottosso/Qt.py) [![PyPI version](https://badge.fury.io/py/Qt.py.svg)](https://pypi.python.org/pypi/Qt.py)
+[![Anaconda-Server Badge](https://anaconda.org/conda-forge/qt.py/badges/version.svg)](https://anaconda.org/conda-forge/qt.py) [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/Qt-py/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 Qt.py enables you to write software that runs on any of the 4 supported bindings - PySide2, PyQt5, PySide and PyQt4.
 
@@ -11,6 +11,7 @@ Qt.py enables you to write software that runs on any of the 4 supported bindings
 
 | Date     | Version   | Event
 |:---------|:----------|:----------
+| Jan 2018 | [1.1.0][] | Adds new test suite, new members
 | Mar 2017 | [1.0.0][] | Increased safety, **backwards incompatible**
 | Sep 2016 | [0.6.9][] | Stable release
 | Sep 2016 | [0.5.0][] | Alpha release of `--convert`
@@ -22,6 +23,7 @@ Qt.py enables you to write software that runs on any of the 4 supported bindings
 [0.5.0]: https://github.com/mottosso/Qt.py/releases/tag/0.5.0
 [0.6.9]: https://github.com/mottosso/Qt.py/releases/tag/0.6.9
 [1.0.0]: https://github.com/mottosso/Qt.py/releases/tag/1.0.0
+[1.1.0]: https://github.com/mottosso/Qt.py/releases/tag/1.1.0
 
 ##### Guides
 
@@ -398,6 +400,9 @@ Send us a pull-request with your studio here.
 - [Blur Studio](http://www.blur.com)
 - [Mikros Image](http://www.mikrosimage.com/)
 - [Mackevision](http://www.mackevision.com/)
+- [Epic Games](https://www.epicgames.com/)
+- [Digital Domain](https://www.digitaldomain.com/)
+- [Overmind Studios](https://www.overmind-studios.de/)
 
 Presented at Siggraph 2016, BOF!
 
@@ -421,6 +426,7 @@ Send us a pull-request with your project here.
 - [Kraken](https://github.com/fabric-engine/Kraken)
 - [AFANASY](http://cgru.info/afanasy/afanasy)
 - [Syncplay](https://github.com/Syncplay/syncplay)
+- [BlenderUpdater](https://github.com/overmindstudios/BlenderUpdater)
 
 <br>
 <br>
@@ -452,6 +458,8 @@ Send us a pull-request with your project here.
 <br>
 
 ### Developer Guide
+
+- [Chat with us](https://gitter.im/Qt-py/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 Tests are performed on each aspect of the shim.
 

@@ -10,6 +10,7 @@ There are cases where Qt.py is not handling incompatibility issues.
 - [QtWidgets.QHeaderView.setResizeMode](#qtwidgetsqheaderviewsetresizemode)
 - [QtWidgets.qApp](#qtwidgetsqapp)
 - [QtCompat.wrapInstance](#qtcompatwrapinstance)
+- [QtGui.QPixmap.grabWidget](#qtguiqpixmapgrabwidget)
 - [QtCore.qInstallMessageHandler](#qtcoreqinstallmessagehandler)
 
 <br>
@@ -63,7 +64,7 @@ True
 
 I had been using the id as an index into a list. But the unexpected return value from PyQt4 broke it by being invalid. The workaround was to always check that the returned id was between 0 and the max size I expect.  
 
-– @justinfx
+\- @justinfx
 
 
 <br>
@@ -352,3 +353,37 @@ True
 ```
 
 Note the `False` for PySide2 and `True` for PyQt5.
+
+#### QtGui.QPixmap.grabWidget
+
+The method of capturing a widget to a pixmap changed between Qt4 and Qt5.
+
+PySide and PyQt4:
+```python
+# PySide
+>>> from Qt import QtGui, QtWidgets
+>>> app = QtWidgets.QApplication(sys.argv)
+>>> button = QtWidgets.QPushButton("Hello world")
+>>> pixmap = QtGui.QPixmap.grabWidget(button)
+```
+
+PySide2 and PyQt5
+```python
+# PySide2
+>>> from Qt import QtGui, QtWidgets
+>>> app = QtWidgets.QApplication(sys.argv)
+>>> button = QtWidgets.QPushButton("Hello world")
+>>> pixmap = button.grab()
+```
+
+##### Workaround
+
+Use compatibility wrapper.
+
+```python
+# PySide2
+>>> from Qt import QtCompat, QtWidgets
+>>> app = QtWidgets.QApplication(sys.argv)
+>>> button = QtWidgets.QPushButton("Hello world")
+>>> pixmap = QtCompat.QWidget.grab(button)
+```
