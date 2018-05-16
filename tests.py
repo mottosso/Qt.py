@@ -839,10 +839,10 @@ if binding("PyQt5") or binding("PySide2"):
         app = QtCore.QCoreApplication.instance() or QtCore.QCoreApplication([])
         translate = QtCompat.translate
         codec = app.CodecForTr
-        
+
         # # # # # # # # # # # # # # # # # # # # #
         # Matching the Qt5 syntax               #
-        # # # # # # # # # # # # # # # # # # # # #       
+        # # # # # # # # # # # # # # # # # # # # #
         # translate(context, sourceText)
         assert translate("TestSuite", "Words") == u"Words"
         # translate(context, sourceText, disambiguation)
@@ -852,7 +852,7 @@ if binding("PyQt5") or binding("PySide2"):
 
         # # # # # # # # # # # # # # # # # # # # #
         # Matching the Qt4 syntax               #
-        # # # # # # # # # # # # # # # # # # # # #       
+        # # # # # # # # # # # # # # # # # # # # #
         # translate(context, sourceText)
         assert translate("TestSuite", "Words") == u"Words"
         # translate(context, sourceText, disambiguation)
@@ -871,14 +871,14 @@ if binding("PyQt4") or binding("PySide"):
         import Qt
         from Qt import QtCompat, QtCore
         assert Qt.__binding__ in ("PyQt4", "PySide")
-        
+
         app = QtCore.QCoreApplication.instance() or QtCore.QCoreApplication([])
         translate = QtCompat.translate
         codec = app.CodecForTr
-        
+
         # # # # # # # # # # # # # # # # # # # # #
         # Matching the Qt5 syntax               #
-        # # # # # # # # # # # # # # # # # # # # #       
+        # # # # # # # # # # # # # # # # # # # # #
         # translate(context, sourceText)
         assert translate("TestSuite", "Words") == u"Words"
         # translate(context, sourceText, disambiguation)
@@ -888,7 +888,7 @@ if binding("PyQt4") or binding("PySide"):
 
         # # # # # # # # # # # # # # # # # # # # #
         # Matching the Qt4 syntax               #
-        # # # # # # # # # # # # # # # # # # # # #       
+        # # # # # # # # # # # # # # # # # # # # #
         # translate(context, sourceText)
         assert translate("TestSuite", "Words") == u"Words"
         # translate(context, sourceText, disambiguation)
