@@ -272,7 +272,10 @@ def test_load_ui_returntype():
 
     import sys
     from Qt import QtWidgets, QtCore, QtCompat
-    app = QtWidgets.QApplication.instance() or QtWidgets.QApplication(sys.argv)
+    app = (
+        QtWidgets.QApplication.instance() or 
+        QtWidgets.QApplication(sys.argv)
+    )
     obj = QtCompat.loadUi(self.ui_qwidget)
     assert isinstance(obj, QtCore.QObject)
     app.exit()
@@ -282,7 +285,10 @@ def test_load_ui_baseinstance():
     """Tests to see if the baseinstance loading loads a QWidget on properly"""
     import sys
     from Qt import QtWidgets, QtCompat
-    app = QtWidgets.QApplication.instance() or QtWidgets.QApplication(sys.argv)
+    app = (
+        QtWidgets.QApplication.instance() or 
+        QtWidgets.QApplication(sys.argv)
+    )
     win = QtWidgets.QWidget()
     QtCompat.loadUi(self.ui_qwidget, win)
     assert hasattr(win, 'lineEdit'), "loadUi could not load instance to win"
@@ -293,7 +299,10 @@ def test_load_ui_signals():
     """Tests to see if the baseinstance connects signals properly"""
     import sys
     from Qt import QtWidgets, QtCompat
-    app = QtWidgets.QApplication.instance() or QtWidgets.QApplication(sys.argv)
+    app = (
+        QtWidgets.QApplication.instance() or 
+        QtWidgets.QApplication(sys.argv)
+    )
     win = QtWidgets.QWidget()
     QtCompat.loadUi(self.ui_qwidget, win)
 
@@ -308,7 +317,10 @@ def test_load_ui_mainwindow():
     import sys
     from Qt import QtWidgets, QtCompat
 
-    app = QtWidgets.QApplication.instance() or QtWidgets.QApplication(sys.argv)
+    app = (
+        QtWidgets.QApplication.instance() or 
+        QtWidgets.QApplication(sys.argv)
+    )
     win = QtWidgets.QMainWindow()
 
     QtCompat.loadUi(self.ui_qmainwindow, win)
@@ -324,7 +336,10 @@ def test_load_ui_dialog():
     import sys
     from Qt import QtWidgets, QtCompat
 
-    app = QtWidgets.QApplication.instance() or QtWidgets.QApplication(sys.argv)
+    app = (
+        QtWidgets.QApplication.instance() or 
+        QtWidgets.QApplication(sys.argv)
+    )
     win = QtWidgets.QDialog()
 
     QtCompat.loadUi(self.ui_qdialog, win)
@@ -340,7 +355,10 @@ def test_load_ui_dockwidget():
     import sys
     from Qt import QtWidgets, QtCompat
 
-    app = QtWidgets.QApplication.instance() or QtWidgets.QApplication(sys.argv)
+    app = (
+        QtWidgets.QApplication.instance() or 
+        QtWidgets.QApplication(sys.argv)
+    )
     win = QtWidgets.QDockWidget()
 
     QtCompat.loadUi(self.ui_qdockwidget, win)
@@ -355,7 +373,10 @@ def test_load_ui_invalidpath():
     """Tests to see if loadUi successfully fails on invalid paths"""
     import sys
     from Qt import QtWidgets, QtCompat
-    app = QtWidgets.QApplication.instance() or QtWidgets.QApplication(sys.argv)
+    app = (
+        QtWidgets.QApplication.instance() or 
+        QtWidgets.QApplication(sys.argv)
+    )
     assert_raises(IOError, QtCompat.loadUi, 'made/up/path')
     app.exit()
 
@@ -684,7 +705,10 @@ def test_qtcompat_base_class():
     import Qt
     from Qt import QtWidgets
     from Qt import QtCompat
-    app = QtWidgets.QApplication.instance() or QtWidgets.QApplication(sys.argv)
+    app = (
+        QtWidgets.QApplication.instance() or 
+        QtWidgets.QApplication(sys.argv)
+    )
     # suppress `local variable 'app' is assigned to but never used`
     app
     header = QtWidgets.QHeaderView(Qt.QtCore.Qt.Horizontal)
