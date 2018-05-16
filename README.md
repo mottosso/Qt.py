@@ -31,6 +31,7 @@ Qt.py enables you to write software that runs on any of the 4 supported bindings
 - [Dealing with Maya 2017 and PySide2](https://fredrikaverpil.github.io/2016/07/25/dealing-with-maya-2017-and-pyside2/)
 - [Vendoring Qt.py](https://fredrikaverpil.github.io/2017/05/04/vendoring-qt-py/)
 - [Udemy Course](https://www.udemy.com/python-for-maya/learn/v4/t/lecture/6027394)
+- [PythonBytes #77](https://pythonbytes.fm/episodes/show/77/you-don-t-have-to-be-a-workaholic-to-win) (Starts at 5:00)
 
 ##### Table of contents
 
