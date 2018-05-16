@@ -826,7 +826,7 @@ def _translate(context, sourceText, *args):
             context,
             sourceText,
             disambiguation,
-            encoding or app.CodecForTr,
+            encoding or getattr(app, "UnicodeUTF8"),
             n
         ]
     return app.translate(*sanitized_args)
