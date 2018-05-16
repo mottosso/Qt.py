@@ -273,7 +273,7 @@ def test_load_ui_returntype():
     import sys
     from Qt import QtWidgets, QtCore, QtCompat
     app = (
-        QtWidgets.QApplication.instance() or 
+        QtWidgets.QApplication.instance() or
         QtWidgets.QApplication(sys.argv)
     )
     obj = QtCompat.loadUi(self.ui_qwidget)
@@ -286,7 +286,7 @@ def test_load_ui_baseinstance():
     import sys
     from Qt import QtWidgets, QtCompat
     app = (
-        QtWidgets.QApplication.instance() or 
+        QtWidgets.QApplication.instance() or
         QtWidgets.QApplication(sys.argv)
     )
     win = QtWidgets.QWidget()
@@ -300,7 +300,7 @@ def test_load_ui_signals():
     import sys
     from Qt import QtWidgets, QtCompat
     app = (
-        QtWidgets.QApplication.instance() or 
+        QtWidgets.QApplication.instance() or
         QtWidgets.QApplication(sys.argv)
     )
     win = QtWidgets.QWidget()
@@ -318,7 +318,7 @@ def test_load_ui_mainwindow():
     from Qt import QtWidgets, QtCompat
 
     app = (
-        QtWidgets.QApplication.instance() or 
+        QtWidgets.QApplication.instance() or
         QtWidgets.QApplication(sys.argv)
     )
     win = QtWidgets.QMainWindow()
@@ -337,7 +337,7 @@ def test_load_ui_dialog():
     from Qt import QtWidgets, QtCompat
 
     app = (
-        QtWidgets.QApplication.instance() or 
+        QtWidgets.QApplication.instance() or
         QtWidgets.QApplication(sys.argv)
     )
     win = QtWidgets.QDialog()
@@ -356,7 +356,7 @@ def test_load_ui_dockwidget():
     from Qt import QtWidgets, QtCompat
 
     app = (
-        QtWidgets.QApplication.instance() or 
+        QtWidgets.QApplication.instance() or
         QtWidgets.QApplication(sys.argv)
     )
     win = QtWidgets.QDockWidget()
@@ -374,7 +374,7 @@ def test_load_ui_invalidpath():
     import sys
     from Qt import QtWidgets, QtCompat
     app = (
-        QtWidgets.QApplication.instance() or 
+        QtWidgets.QApplication.instance() or
         QtWidgets.QApplication(sys.argv)
     )
     assert_raises(IOError, QtCompat.loadUi, 'made/up/path')
@@ -706,7 +706,7 @@ def test_qtcompat_base_class():
     from Qt import QtWidgets
     from Qt import QtCompat
     app = (
-        QtWidgets.QApplication.instance() or 
+        QtWidgets.QApplication.instance() or
         QtWidgets.QApplication(sys.argv)
     )
     # suppress `local variable 'app' is assigned to but never used`
