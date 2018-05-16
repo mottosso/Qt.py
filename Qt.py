@@ -798,7 +798,7 @@ def _translate(context, sourceText, *args):
     elif len(args):
         if isinstance(args[0], str) or args[0] is None:
             disambiguation = args.pop(0)
-        if len(args) and isinstance(args[-1], int) or args[-1] is None:
+        if len(args) and (isinstance(args[-1], int) or args[-1] is None):
             n = args.pop(-1)
         if len(args) > 1:   # There is more args than we need.
             raise TypeError(
