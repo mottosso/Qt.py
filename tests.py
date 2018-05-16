@@ -217,6 +217,7 @@ def setup():
     self.ui_qdialog = saveUiFile("qdialog.ui", qdialog_ui)
     self.ui_qdockwidget = saveUiFile("qdockwidget.ui", qdockwidget_ui)
 
+
 def teardown():
     shutil.rmtree(self.tempdir)
 
@@ -372,8 +373,10 @@ def test_load_ui_invalidxml():
 
     from xml.etree import ElementTree
     from Qt import QtWidgets, QtCompat
-    app = QtWidgets.QApplication.instance() \
-          or QtWidgets.QApplication(sys.argv)
+    app = (
+        QtWidgets.QApplication.instance() or
+        QtWidgets.QApplication(sys.argv)
+    )
     assert_raises(ElementTree.ParseError, QtCompat.loadUi, invalid_xml)
     app.exit()
 
@@ -387,8 +390,10 @@ def test_load_ui_existingLayoutOnDialog():
         '"Dialog", which already has a layout'
 
     with ignoreQtMessageHandler([msgs]):
-        app = QtWidgets.QApplication.instance() \
-              or QtWidgets.QApplication(sys.argv)
+        app = (
+            QtWidgets.QApplication.instance() or
+            QtWidgets.QApplication(sys.argv)
+        )
         win = QtWidgets.QDialog()
         QtWidgets.QComboBox(win)
         QtWidgets.QHBoxLayout(win)
@@ -405,8 +410,10 @@ def test_load_ui_existingLayoutOnMainWindow():
         '"", which already has a layout'
 
     with ignoreQtMessageHandler([msgs]):
-        app = QtWidgets.QApplication.instance() \
-              or QtWidgets.QApplication(sys.argv)
+        app = (
+            QtWidgets.QApplication.instance() or
+            QtWidgets.QApplication(sys.argv)
+        )
         win = QtWidgets.QMainWindow()
         QtWidgets.QComboBox(win)
         QtWidgets.QHBoxLayout(win)
@@ -423,8 +430,10 @@ def test_load_ui_existingLayoutOnDockWidget():
         '"", which already has a layout'
 
     with ignoreQtMessageHandler([msgs]):
-        app = QtWidgets.QApplication.instance() \
-              or QtWidgets.QApplication(sys.argv)
+        app = (
+            QtWidgets.QApplication.instance() or
+            QtWidgets.QApplication(sys.argv)
+        )
         win = QtWidgets.QDockWidget()
         QtWidgets.QComboBox(win)
         QtWidgets.QHBoxLayout(win)
@@ -441,8 +450,10 @@ def test_load_ui_existingLayoutOnWidget():
         '"Form", which already has a layout'
 
     with ignoreQtMessageHandler([msgs]):
-        app = QtWidgets.QApplication.instance() \
-              or QtWidgets.QApplication(sys.argv)
+        app = (
+            QtWidgets.QApplication.instance() or
+            QtWidgets.QApplication(sys.argv)
+        )
         win = QtWidgets.QWidget()
         QtWidgets.QComboBox(win)
         QtWidgets.QHBoxLayout(win)
@@ -741,7 +752,10 @@ if sys.version_info <= (3, 4):
         """.wrapInstance and .getCppPointer is identical across all bindings"""
         from Qt import QtCompat, QtWidgets
 
-        app = QtWidgets.QApplication.instance() or QtWidgets.QApplication(sys.argv)
+        app = (
+            QtWidgets.QApplication.instance() or
+            QtWidgets.QApplication(sys.argv)
+        )
 
         try:
             button = QtWidgets.QPushButton("Hello world")
@@ -765,7 +779,10 @@ if sys.version_info <= (3, 4):
         """.wrapInstance doesn't need the `base` argument"""
         from Qt import QtCompat, QtWidgets
 
-        app = QtWidgets.QApplication.instance() or QtWidgets.QApplication(sys.argv)
+        app = (
+            QtWidgets.QApplication.instance() or
+            QtWidgets.QApplication(sys.argv)
+        )
 
         try:
             button = QtWidgets.QPushButton("Hello world")
@@ -807,21 +824,21 @@ def test_qcompat_translate_qt4():
     from Qt import QtCompat, QtCore
     assert Qt.__binding__ in ("PyQt4", "PySide")
     app = QtCore.QCoreApplication.instance() or QtCore.QCoreApplication([])
+    translate = QtCompat.translate
+    codec = app.CodecForTr
+
     # translate(context, sourceText)
-    assert QtCompat.translate("TestSuite", "Words") == u"Words"
+    assert translate("TestSuite", "Words") == u"Words"
     # translate(context, sourceText, disambiguation)
-    assert QtCompat.translate("TestSuite", "Words", None) == u"Words"
+    assert translate("TestSuite", "Words", None) == u"Words"
     # translate(context, sourceText, disambiguation)
-    assert QtCompat.translate("TestSuite", "Words", "dis") == u"Words"
+    assert translate("TestSuite", "Words", "dis") == u"Words"
     # translate(context, sourceText, disambiguation, encoding)
-    assert QtCompat.translate("TestSuite", "Words", None, app.CodecForTr) == \
-           u"Words"
+    assert translate("TestSuite", "Words", None, codec) == u"Words"
     # translate(context, sourceText, disambiguation, encoding, n)
-    assert QtCompat.translate("TestSuite", "Words", None, app.CodecForTr, 0) \
-           == u"Words"
+    assert translate("TestSuite", "Words", None, codec, 0) == u"Words"
     # translate(context, sourceText, disambiguation, encoding, n)
-    assert QtCompat.translate("TestSuite", "Words", None, app.CodecForTr, -1) \
-           == u"Words"
+    assert translate("TestSuite", "Words", None, codec, -1) == u"Words"
 
 
 if binding("PyQt4"):
