@@ -43,7 +43,7 @@ import types
 import shutil
 
 
-__version__ = "1.2.0.b2"
+__version__ = "1.2.0.b3"
 
 # Enable support for `from Qt import *`
 __all__ = []
@@ -783,14 +783,30 @@ def _translate(context, sourceText, *args):
     # The first argument is disambiguation[str]
     # The last argument is n[int]
     # The middle argument can be encoding[QtCore.QCoreApplication.Encoding]
-    if len(args) == 3:
-        disambiguation, encoding, n = args
-    elif len(args) == 2:
-        disambiguation, n = args
-        encoding = None
-    else:
+    disambiguation = encoding = n = None
+    args = list(args)
+
+    # First arg needs to be (str, NoneType)
+    # Last arg needs to be (int, NoneType)
+    # If last arg is "n", we require "disambiguation" to be passed
+    #    In Qt4, if "n" is passed, encoding must be passed.
+    #    In Qt5
+    if len(args) > 3:
         raise TypeError(
-            "Expected 4 or 5 arguments, got {0}.".format(len(args)+2))
+                "Expected 4 or 5 arguments, got {0}.".format(len(args)+2)
+        )
+    elif len(args):
+        if isinstance(args[-1], (int, type(None))):
+            n = args.pop(-1)
+        if isinstance(args[0], (str, type(None))):
+            disambiguation = args.pop(0)
+        if len(args) > 1:   # There is more args than we need.
+            raise TypeError(
+                "Expected 4 or 5 arguments, got {0}.".format(len(args)+4)
+            )
+        else:
+            encoding = args.pop(0)
+
 
     if hasattr(Qt.QtCore, "QCoreApplication"):
         app = getattr(Qt.QtCore, "QCoreApplication")
@@ -800,6 +816,9 @@ def _translate(context, sourceText, *args):
                 binding=Qt.__binding__,
             )
         )
+    if n is None:
+        n = -1
+
     if Qt.__binding__ in ("PySide2", "PyQt5"):
         sanitized_args = [context, sourceText, disambiguation, n]
     else:
