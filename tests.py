@@ -806,39 +806,39 @@ if sys.version_info <= (3, 4):
         finally:
             app.exit()
 
+if binding("PyQt5") or binding("PySide2"):
+    def test_qtcompat_translate_qt5():
+        import Qt
+        from Qt import QtCompat
+        assert Qt.__binding__ in ("PyQt5", "PySide2")
+        # translate(context, sourceText)
+        assert QtCompat.translate("TestSuite", "Words") == u"Words"
+        # translate(context, sourceText, disambiguation)
+        assert QtCompat.translate("TestSuite", "Words", None) == u"Words"
+        # translate(context, sourceText, disambiguation, n)
+        assert QtCompat.translate("TestSuite", "Words", None, 1) == u"Words"
 
-def test_qtcompat_translate_qt5():
-    import Qt
-    from Qt import QtCompat
-    assert Qt.__binding__ in ("PyQt5", "PySide2")
-    # translate(context, sourceText)
-    assert QtCompat.translate("TestSuite", "Words") == u"Words"
-    # translate(context, sourceText, disambiguation)
-    assert QtCompat.translate("TestSuite", "Words", None) == u"Words"
-    # translate(context, sourceText, disambiguation, n)
-    assert QtCompat.translate("TestSuite", "Words", None, 1) == u"Words"
+if binding("PyQt4") or binding("PySide"):
+    def test_qcompat_translate_qt4():
+        import Qt
+        from Qt import QtCompat, QtCore
+        assert Qt.__binding__ in ("PyQt4", "PySide")
+        app = QtCore.QCoreApplication.instance() or QtCore.QCoreApplication([])
+        translate = QtCompat.translate
+        codec = app.CodecForTr
 
-
-def test_qcompat_translate_qt4():
-    import Qt
-    from Qt import QtCompat, QtCore
-    assert Qt.__binding__ in ("PyQt4", "PySide")
-    app = QtCore.QCoreApplication.instance() or QtCore.QCoreApplication([])
-    translate = QtCompat.translate
-    codec = app.CodecForTr
-
-    # translate(context, sourceText)
-    assert translate("TestSuite", "Words") == u"Words"
-    # translate(context, sourceText, disambiguation)
-    assert translate("TestSuite", "Words", None) == u"Words"
-    # translate(context, sourceText, disambiguation)
-    assert translate("TestSuite", "Words", "dis") == u"Words"
-    # translate(context, sourceText, disambiguation, encoding)
-    assert translate("TestSuite", "Words", None, codec) == u"Words"
-    # translate(context, sourceText, disambiguation, encoding, n)
-    assert translate("TestSuite", "Words", None, codec, 0) == u"Words"
-    # translate(context, sourceText, disambiguation, encoding, n)
-    assert translate("TestSuite", "Words", None, codec, -1) == u"Words"
+        # translate(context, sourceText)
+        assert translate("TestSuite", "Words") == u"Words"
+        # translate(context, sourceText, disambiguation)
+        assert translate("TestSuite", "Words", None) == u"Words"
+        # translate(context, sourceText, disambiguation)
+        assert translate("TestSuite", "Words", "dis") == u"Words"
+        # translate(context, sourceText, disambiguation, encoding)
+        assert translate("TestSuite", "Words", None, codec) == u"Words"
+        # translate(context, sourceText, disambiguation, encoding, n)
+        assert translate("TestSuite", "Words", None, codec, 0) == u"Words"
+        # translate(context, sourceText, disambiguation, encoding, n)
+        assert translate("TestSuite", "Words", None, codec, -1) == u"Words"
 
 
 if binding("PyQt4"):
