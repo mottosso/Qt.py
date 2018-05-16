@@ -838,7 +838,7 @@ if binding("PyQt5") or binding("PySide2"):
 
         app = QtCore.QCoreApplication.instance() or QtCore.QCoreApplication([])
         translate = QtCompat.translate
-        codec = app.CodecForTr
+        codec = 0  # No codec on the Qt5 apps.
 
         # # # # # # # # # # # # # # # # # # # # #
         # Matching the Qt5 syntax               #
@@ -859,6 +859,8 @@ if binding("PyQt5") or binding("PySide2"):
         assert translate("TestSuite", "Words", None) == u"Words"
         # translate(context, sourceText, disambiguation)
         assert translate("TestSuite", "Words", "dis") == u"Words"
+        
+        
         # translate(context, sourceText, disambiguation, encoding)
         assert translate("TestSuite", "Words", None, codec) == u"Words"
         # translate(context, sourceText, disambiguation, encoding, n)
