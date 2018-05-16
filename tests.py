@@ -833,7 +833,7 @@ if sys.version_info <= (3, 4):
 if binding("PyQt5") or binding("PySide2"):
     def test_qtcompat_translate_qt5():
         import Qt
-        from Qt import QtCompat, QtCore
+        from Qt import QtCompat
         assert Qt.__binding__ in ("PyQt5", "PySide2")
 
         translate = QtCompat.translate
