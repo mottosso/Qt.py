@@ -796,13 +796,13 @@ def _translate(context, sourceText, *args):
                 "Expected 4 or 5 arguments, got {0}.".format(len(args)+2)
         )
     elif len(args):
-        if isinstance(args[0], (str, type(None))):
+        if isinstance(args[0], str) or args[0] is None:
             disambiguation = args.pop(0)
-        if len(args) and isinstance(args[-1], (int, type(None))):
+        if len(args) and isinstance(args[-1], int) or args[-1] is None:
             n = args.pop(-1)
         if len(args) > 1:   # There is more args than we need.
             raise TypeError(
-                "Expected 4 or 5 arguments, got {0}.".format(len(args)+4)
+                "Expected 4 or 5 arguments, got {0}.".format(len(args) + 4)
             )
         elif len(args) == 1:
             encoding = args.pop(0)
