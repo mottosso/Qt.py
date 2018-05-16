@@ -804,7 +804,7 @@ def _translate(context, sourceText, *args):
             raise TypeError(
                 "Expected 4 or 5 arguments, got {0}.".format(len(args)+4)
             )
-        else:
+        elif len(args) == 1:
             encoding = args.pop(0)
 
 
