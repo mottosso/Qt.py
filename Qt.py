@@ -910,20 +910,6 @@ def _loadUi(uifile, baseinstance=None):
         raise NotImplementedError("No implementation available for loadUi")
 
 
-def _delete(object):
-    ''' Directly deletes QObject, available in all bindings '''
-    if isinstance(object, Qt.QtCore.QObject):
-        if hasattr(Qt, "_shiboken2"):
-            return getattr(Qt, "_shiboken2").delete(object)
-        elif hasattr(Qt, "_shiboken"):
-            return getattr(Qt, "_shiboken").delete(object)
-        elif hasattr(Qt, "_sip"):
-            return getattr(Qt, "_sip").delete(object)
-        raise AttributeError("'module' has no attribute 'delete'")
-    else:
-        raise TypeError("object to delete is not an instance of Qt.QtCore.QObject")
-
-
 """Misplaced members
 
 These members from the original submodule are misplaced relative PySide2
@@ -1359,7 +1345,7 @@ def _pyside2():
     if hasattr(Qt, "_shiboken2"):
         Qt.QtCompat.wrapInstance = _wrapinstance
         Qt.QtCompat.getCppPointer = _getcpppointer
-        Qt.QtCompat.delete = _delete
+        Qt.QtCompat.delete = shiboken2.delete
 
     if hasattr(Qt, "_QtUiTools"):
         Qt.QtCompat.loadUi = _loadUi
@@ -1397,7 +1383,7 @@ def _pyside():
     if hasattr(Qt, "_shiboken"):
         Qt.QtCompat.wrapInstance = _wrapinstance
         Qt.QtCompat.getCppPointer = _getcpppointer
-        Qt.QtCompat.delete = _delete
+        Qt.QtCompat.delete = shiboken.delete
 
     if hasattr(Qt, "_QtUiTools"):
         Qt.QtCompat.loadUi = _loadUi
@@ -1433,7 +1419,7 @@ def _pyqt5():
     if hasattr(Qt, "_sip"):
         Qt.QtCompat.wrapInstance = _wrapinstance
         Qt.QtCompat.getCppPointer = _getcpppointer
-        Qt.QtCompat.delete = _delete
+        Qt.QtCompat.delete = sip.delete
 
     if hasattr(Qt, "_uic"):
         Qt.QtCompat.loadUi = _loadUi
@@ -1499,7 +1485,7 @@ def _pyqt4():
     if hasattr(Qt, "_sip"):
         Qt.QtCompat.wrapInstance = _wrapinstance
         Qt.QtCompat.getCppPointer = _getcpppointer
-        Qt.QtCompat.delete = _delete
+        Qt.QtCompat.delete = sip.delete
 
     if hasattr(Qt, "_uic"):
         Qt.QtCompat.loadUi = _loadUi
