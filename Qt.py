@@ -790,7 +790,7 @@ def _translate(context, sourceText, *args):
         encoding = None
     else:
         raise TypeError(
-            "Expected 4 or 5 arguments, got {0}.".format(len(args)+2))
+            "Expected 4 or 5 arguments, got {0}.".format(len(args) + 2))
 
     if hasattr(Qt.QtCore, "QCoreApplication"):
         app = getattr(Qt.QtCore, "QCoreApplication")
