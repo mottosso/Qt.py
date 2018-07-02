@@ -7,8 +7,12 @@ RUN yum install deltarpm -y && \
         # cmake3 requirements
             epel-release && \
     yum install -y \
+        # gcc 5.3.1 (via Devtools which is equivalent of RedHat DTS)
+            devtoolset-4-gcc*-5.3.1 \
+            make \
         # gcc 6.3.1 (via Devtools which is equivalent of RedHat DTS)
             devtoolset-6-gcc*-6.3.1 \
+            devtoolset-6-make* \
         # glibc 2.17
             glibc-*-2.17 \
         # Qt5 requirements
@@ -60,7 +64,8 @@ RUN yum install deltarpm -y && \
             valgrind-devel \
         # PySide2 requirements
             # https://wiki.qt.io/PySide2_GettingStarted
-                libxslt libxml2 libxml2-devel libxslt-devel cmake3 openssl* \
+                libxslt libxml2 libxml2-devel libxslt-devel openssl* \
+                # cmake3 \
         # PySide
             # cmake gcc gcc-c++ make python-devel python-pip \
             libxml2-devel libxslt-devel rpmdevtools \
@@ -89,16 +94,17 @@ ENV BUILD_THREADS=17
 WORKDIR /workdir
 
 
-# Activate devtoolset-6 gcc 6.3.1
-# RUN scl enable devtoolset-6 bash
-ENV PATH="/opt/rh/devtoolset-6/root/usr/bin:${PATH}"
-ENV CC=/opt/rh/devtoolset-6/root/usr/bin/gcc
-ENV CXX=/opt/rh/devtoolset-6/root/usr/bin/g++
+# Run comand with devtoolset-6 gcc 6.3.1:
+# RUN scl enable devtoolset-6 'echo hello'
+# Run comand with devtoolset-4 gcc 5.3.1:
+# RUN scl enable devtoolset-4 'echo hello'
+
 
 # # Check gcc version
-# RUN gcc --version
+# RUN scl enable devtoolset-6 'gcc --version'
 # # Check glibc
-# RUN ldd --version
+# RUN scl enable devtoolset-6 'ldd --version'
+
 
 # Cmake3
 # https://cmake.org/install/
@@ -108,12 +114,12 @@ RUN \
     wget https://cmake.org/files/v3.9/cmake-${CMAKE_VER}.tar.gz && \
     tar xzf cmake-${CMAKE_VER}.tar.gz && \
     cd cmake-${CMAKE_VER} && \
-    ./bootstrap && \
-    make && \
-    make install && \
+    scl enable devtoolset-6 './bootstrap' && \
+    scl enable devtoolset-6 'make' && \
+    scl enable devtoolset-6 'make install' && \
     rm -rf /workdir/*
 # Check cmake version
-#RUN cmake --version
+# RUN cmake --version
 
 
 # Git 2.14 with "git clone --jobs" functionality and "git checkout --recurse-submodules"
@@ -124,8 +130,8 @@ RUN \
     wget https://www.kernel.org/pub/software/scm/git/git-${GIT_VER}.tar.gz && \
     tar xzf git-${GIT_VER}.tar.gz && \
     cd git-${GIT_VER} && \
-    make -j${BUILD_THREADS} prefix=/usr/local/git all && \
-    make prefix=/usr/local/git install && \
+    scl enable devtoolset-6 'make -j${BUILD_THREADS} prefix=/usr/local/git all' && \
+    scl enable devtoolset-6 'make prefix=/usr/local/git install' && \
     rm -rf /workdir/*
 ENV PATH="/usr/local/git/bin:${PATH}"
 
@@ -141,18 +147,14 @@ RUN \
     cd qt && \
     git checkout ${QT4_GIT_COMMIT} && \
     git submodule update --init --recursive && \
-   ./configure \
+    scl enable devtoolset-4 './configure \
         -opensource \
         -confirm-license \
         -nomake examples \
-        -nomake tests
-RUN \
-    cd qt && \
-    gmake -j${BUILD_THREADS}
+        -nomake tests' && \
+    scl enable devtoolset-4 'gmake -j${BUILD_THREADS}' && \
     # Install
-RUN \
-    cd qt && \
-    gmake install && \
+    scl enable devtoolset-4 'gmake install' && \
     # Clean up
     rm -rf /workdir/*
 
@@ -205,14 +207,14 @@ RUN \
     # Build
     cd /workdir/qt5 && \
     # ./configure -help && \
-    ./configure \
+    scl enable devtoolset-6 './configure \
         -opensource \
         -confirm-license \
         -nomake examples \
-        -nomake tests && \
-    make -j${BUILD_THREADS} && \
+        -nomake tests' && \
+    scl enable devtoolset-6 'make -j${BUILD_THREADS}' && \
     # Install
-    make install && \
+    scl enable devtoolset-6 'make install' && \
     # Clean up
     rm -rf /workdir/*
 
@@ -231,9 +233,9 @@ RUN \
     git submodule update --init --recursive && \
     mkdir /workdir/qt-creator-build && \
     cd /workdir/qt-creator-build && \
-    /usr/local/Qt-${QT5_GIT_BRANCH}/bin/qmake -r /workdir/qt-creator/qtcreator.pro && \
-    make -j${BUILD_THREADS} && \
-    make install INSTALL_ROOT=/usr/local/qtcreator && \
+    scl enable devtoolset-6 '/usr/local/Qt-${QT5_GIT_BRANCH}/bin/qmake -r /workdir/qt-creator/qtcreator.pro' && \
+    scl enable devtoolset-6 'make -j${BUILD_THREADS}' && \
+    scl enable devtoolset-6 'make install INSTALL_ROOT=/usr/local/qtcreator' && \
     rm -rf /workdir/*
 
 
@@ -261,7 +263,7 @@ RUN \
     # $ python
     # >>> from distutils.sysconfig import get_config_var
     # >>> print get_config_var('CONFIG_ARGS')
-    ./configure \
+    scl enable devtoolset-6 './configure \
         --prefix=/usr/local/python${PYTHON27_VER} \
         --enable-shared \
         --enable-unicode=ucs4 \
@@ -278,9 +280,9 @@ RUN \
         host_alias=x86_64-redhat-linux-gnu \
         CC=gcc \
         CFLAGS="-O2 -g -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector --param=ssp-buffer-size=4 -m64 -mtune=generic -D_GNU_SOURCE -fPIC -fwrapv" \
-        CPPFLAGS="-I/usr/lib64/libffi-3.0.5/include" && \
-    make -j${BUILD_THREADS} && \
-    make altinstall && \
+        CPPFLAGS="-I/usr/lib64/libffi-3.0.5/include"' && \
+    scl enable devtoolset-6 'make -j${BUILD_THREADS}' && \
+    scl enable devtoolset-6 'make altinstall' && \
     cd /workdir && \
     wget https://bootstrap.pypa.io/get-pip.py && \
     /usr/local/python${PYTHON27_VER}/bin/python${PYTHON27_VER} get-pip.py && \
@@ -297,7 +299,7 @@ RUN \
     # $ python
     # >>> from distutils.sysconfig import get_config_var
     # >>> print(get_config_var('CONFIG_ARGS'))
-    ./configure \
+    scl enable devtoolset-6 './configure \
         --prefix=/usr/local/python${PYTHON34_VER} \
         --enable-shared \
         LDFLAGS="-Wl,-rpath /usr/local/python${PYTHON34_VER}/lib" \
@@ -316,9 +318,9 @@ RUN \
         CC=gcc \
         CFLAGS="-O2 -g -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector --param=ssp-buffer-size=4 -m64 -mtune=generic -D_GNU_SOURCE -fPIC -fwrapv" \
         CPPFLAGS="-I/usr/lib64/libffi-3.0.5/include" \
-        PKG_CONFIG_PATH=":/usr/lib64/pkgconfig:/usr/share/pkgconfig" && \
-    make -j${BUILD_THREADS} && \
-    make altinstall && \
+        PKG_CONFIG_PATH=":/usr/lib64/pkgconfig:/usr/share/pkgconfig"' && \
+    scl enable devtoolset-6 'make -j${BUILD_THREADS}' && \
+    scl enable devtoolset-6 'make altinstall' && \
     cd /workdir && \
     wget https://bootstrap.pypa.io/get-pip.py && \
     /usr/local/python${PYTHON34_VER}/bin/python${PYTHON34_VER} get-pip.py && \
@@ -335,7 +337,7 @@ RUN \
     # $ python
     # >>> from distutils.sysconfig import get_config_var
     # >>> print(get_config_var('CONFIG_ARGS'))
-    ./configure \
+    scl enable devtoolset-6 './configure \
         --prefix=/usr/local/python${PYTHON35_VER} \
         --enable-shared \
         LDFLAGS="-Wl,-rpath /usr/local/python${PYTHON35_VER}/lib" \
@@ -354,9 +356,9 @@ RUN \
         CC=gcc \
         CFLAGS="-O2 -g -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector --param=ssp-buffer-size=4 -m64 -mtune=generic -D_GNU_SOURCE -fPIC -fwrapv" \
         CPPFLAGS="-I/usr/lib64/libffi-3.0.5/include" \
-        PKG_CONFIG_PATH=":/usr/lib64/pkgconfig:/usr/share/pkgconfig" && \
-    make -j${BUILD_THREADS} && \
-    make altinstall && \
+        PKG_CONFIG_PATH=":/usr/lib64/pkgconfig:/usr/share/pkgconfig"' && \
+    scl enable devtoolset-6 'make -j${BUILD_THREADS}' && \
+    scl enable devtoolset-6 'make altinstall' && \
     cd /workdir && \
     wget https://bootstrap.pypa.io/get-pip.py && \
     /usr/local/python${PYTHON35_VER}/bin/python${PYTHON35_VER} get-pip.py && \
@@ -374,7 +376,7 @@ RUN \
     # $ python
     # >>> from distutils.sysconfig import get_config_var
     # >>> print(get_config_var('CONFIG_ARGS'))
-    ./configure \
+    scl enable devtoolset-6 './configure \
         --prefix=/usr/local/python${PYTHON36_VER} \
         --enable-shared \
         LDFLAGS="-Wl,-rpath /usr/local/python${PYTHON36_VER}/lib" \
@@ -393,9 +395,9 @@ RUN \
         CC=gcc \
         CFLAGS="-O2 -g -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector --param=ssp-buffer-size=4 -m64 -mtune=generic -D_GNU_SOURCE -fPIC -fwrapv" \
         CPPFLAGS="-I/usr/lib64/libffi-3.0.5/include" \
-        PKG_CONFIG_PATH=":/usr/lib64/pkgconfig:/usr/share/pkgconfig" && \
-    make -j${BUILD_THREADS} && \
-    make altinstall && \
+        PKG_CONFIG_PATH=":/usr/lib64/pkgconfig:/usr/share/pkgconfig"' && \
+    scl enable devtoolset-6 'make -j${BUILD_THREADS}' && \
+    scl enable devtoolset-6 'make altinstall' && \
     cd /workdir && \
     wget https://bootstrap.pypa.io/get-pip.py && \
     /usr/local/python${PYTHON36_VER}/bin/python${PYTHON36_VER} get-pip.py && \
@@ -482,8 +484,8 @@ RUN \
     tar -xvf sip-${SIP_VER}.tar.gz && \
     cd sip-${SIP_VER} && \
     python${PYTHON27_VER} configure.py && \
-    make -j${BUILD_THREADS} && \
-    make install && \
+    scl enable devtoolset-6 'make -j${BUILD_THREADS}' && \
+    scl enable devtoolset-6 'make install' && \
     rm -rf /workdir/* && \
 
     # Python 3.4
@@ -492,8 +494,8 @@ RUN \
     tar -xvf sip-${SIP_VER}.tar.gz && \
     cd sip-${SIP_VER} && \
     python${PYTHON34_VER} configure.py && \
-    make -j${BUILD_THREADS} && \
-    make install && \
+    scl enable devtoolset-6 'make -j${BUILD_THREADS}' && \
+    scl enable devtoolset-6 'make install' && \
     rm -rf /workdir/* && \
 
     # Python 3.5
@@ -502,8 +504,8 @@ RUN \
     tar -xvf sip-${SIP_VER}.tar.gz && \
     cd sip-${SIP_VER} && \
     python${PYTHON35_VER} configure.py && \
-    make -j${BUILD_THREADS} && \
-    make install && \
+    scl enable devtoolset-6 'make -j${BUILD_THREADS}' && \
+    scl enable devtoolset-6 'make install' && \
     rm -rf /workdir/* && \
 
     # Python 3.6
@@ -512,8 +514,8 @@ RUN \
     tar -xvf sip-${SIP_VER}.tar.gz && \
     cd sip-${SIP_VER} && \
     python${PYTHON36_VER} configure.py && \
-    make -j${BUILD_THREADS} && \
-    make install && \
+    scl enable devtoolset-6 'make -j${BUILD_THREADS}' && \
+    scl enable devtoolset-6 'make install' && \
     rm -rf /workdir/*
 
 
@@ -527,14 +529,14 @@ RUN \
     tar -xvf PyQt-x11-gpl-${PYQT4_VER}.tar.gz && \
     cd PyQt-x11-gpl-${PYQT4_VER} && \
     # python${PYTHON27_VER} configure-ng.py \
-    python${PYTHON27_VER} configure.py \
+    scl enable devtoolset-6 'python${PYTHON27_VER} configure.py \
         # --verbose \
         --confirm-license \
         # --qmake=/usr/bin/qmake-qt4 \
         --qmake=/usr/local/Trolltech/Qt-4.8.7/bin/qmake && \
-        # --sip=/usr/local/python${PYTHON27_VER}/bin/sip && \
-    make -j${BUILD_THREADS} && \
-    make install && \
+        # --sip=/usr/local/python${PYTHON27_VER}/bin/sip' && \
+    scl enable devtoolset-6 'make -j${BUILD_THREADS}' && \
+    scl enable devtoolset-6 'make install' && \
     rm -rf /workdir/* && \
 
     # PyQt4 for Python 3.4
@@ -543,14 +545,14 @@ RUN \
     tar -xvf PyQt-x11-gpl-${PYQT4_VER}.tar.gz && \
     cd PyQt-x11-gpl-${PYQT4_VER} && \
     # python${PYTHON34_VER} configure-ng.py \
-    python${PYTHON34_VER} configure.py \
+    scl enable devtoolset-6 'python${PYTHON34_VER} configure.py \
         # --verbose \
         --confirm-license \
         # --qmake=/usr/bin/qmake-qt4 \
         --qmake=/usr/local/Trolltech/Qt-4.8.7/bin/qmake && \
-        # --sip=/usr/local/python${PYTHON27_VER}/bin/sip && \
-    make -j${BUILD_THREADS} && \
-    make install && \
+        # --sip=/usr/local/python${PYTHON27_VER}/bin/sip' && \
+    scl enable devtoolset-6 'make -j${BUILD_THREADS}' && \
+    scl enable devtoolset-6 'make install' && \
     rm -rf /workdir/* && \
 
     # PyQt4 for Python 3.5
@@ -559,14 +561,14 @@ RUN \
     tar -xvf PyQt-x11-gpl-${PYQT4_VER}.tar.gz && \
     cd PyQt-x11-gpl-${PYQT4_VER} && \
     # python${PYTHON35_VER} configure-ng.py \
-    python${PYTHON35_VER} configure.py \
+    scl enable devtoolset-6 'python${PYTHON35_VER} configure.py \
         # --verbose \
         --confirm-license \
         # --qmake=/usr/bin/qmake-qt4 \
         --qmake=/usr/local/Trolltech/Qt-4.8.7/bin/qmake && \
-        # --sip=/usr/local/python${PYTHON27_VER}/bin/sip && \
-    make -j${BUILD_THREADS} && \
-    make install && \
+        # --sip=/usr/local/python${PYTHON27_VER}/bin/sip' && \
+    scl enable devtoolset-6 'make -j${BUILD_THREADS}' && \
+    scl enable devtoolset-6 'make install' && \
     rm -rf /workdir/* && \
 
     # PyQt4 for Python 3.6
@@ -575,14 +577,14 @@ RUN \
     tar -xvf PyQt-x11-gpl-${PYQT4_VER}.tar.gz && \
     cd PyQt-x11-gpl-${PYQT4_VER} && \
     # python${PYTHON36_VER} configure-ng.py \
-    python${PYTHON36_VER} configure.py \
+    scl enable devtoolset-6 'python${PYTHON36_VER} configure.py \
         # --verbose \
         --confirm-license \
         # --qmake=/usr/bin/qmake-qt4 \
         --qmake=/usr/local/Trolltech/Qt-4.8.7/bin/qmake && \
-        # --sip=/usr/local/python${PYTHON27_VER}/bin/sip && \
-    make -j${BUILD_THREADS} && \
-    make install && \
+        # --sip=/usr/local/python${PYTHON27_VER}/bin/sip' && \
+    scl enable devtoolset-6 'make -j${BUILD_THREADS}' && \
+    scl enable devtoolset-6 'make install' && \
     rm -rf /workdir/*
 
 
@@ -598,12 +600,12 @@ RUN \
     cd pyside-setup && \
     git checkout ${PYSIDE_GIT_COMMIT} && \
     git submodule update --init --recursive && \
-    python${PYTHON27_VER} setup.py \
+    scl enable devtoolset-6 'python${PYTHON27_VER} setup.py \
         install \
             --qmake=/usr/local/Trolltech/Qt-4.8.7/bin/qmake \
             --cmake=/usr/local/bin/cmake \
             --openssl=/usr/bin/openssl \
-            --jobs=${BUILD_THREADS} && \
+            --jobs=${BUILD_THREADS}' && \
     rm -rf /workdir/* && \
 
     # PySide for Python 3.4
@@ -612,12 +614,12 @@ RUN \
     cd pyside-setup && \
     git checkout ${PYSIDE_GIT_COMMIT} && \
     git submodule update --init --recursive && \
-    python${PYTHON34_VER} setup.py \
+    scl enable devtoolset-6 'python${PYTHON34_VER} setup.py \
         install \
             --qmake=/usr/local/Trolltech/Qt-4.8.7/bin/qmake \
             --cmake=/usr/local/bin/cmake \
             --openssl=/usr/bin/openssl \
-            --jobs=${BUILD_THREADS} && \
+            --jobs=${BUILD_THREADS}' && \
     rm -rf /workdir/*
 # Ugly fix to make PySide find the Qt4 libs
 ENV LD_LIBRARY_PATH="/usr/local/Trolltech/Qt-4.8.7/lib:${LD_LIBRARY_PATH}"
@@ -631,13 +633,13 @@ RUN \
     wget http://sourceforge.net/projects/pyqt/files/PyQt5/PyQt-${PYQT5_VER}/PyQt5_gpl-${PYQT5_VER}.tar.gz && \
     tar -xvf PyQt5_gpl-${PYQT5_VER}.tar.gz && \
     cd PyQt5_gpl-${PYQT5_VER} && \
-    python${PYTHON27_VER} configure.py \
+    scl enable devtoolset-6 'python${PYTHON27_VER} configure.py \
         # --verbose \
         --confirm-license \
         --qmake=/usr/local/Qt-${QT5_GIT_BRANCH}/bin/qmake \
-        --sip=/usr/local/python${PYTHON27_VER}/bin/sip && \
-    make -j${BUILD_THREADS} && \
-    make install && \
+        --sip=/usr/local/python${PYTHON27_VER}/bin/sip' && \
+    scl enable devtoolset-6 'make -j${BUILD_THREADS}' && \
+    scl enable devtoolset-6 'make install' && \
     rm -rf /workdir/* && \
 
     # PyQt5 for Python 3.4
@@ -645,13 +647,13 @@ RUN \
     wget http://sourceforge.net/projects/pyqt/files/PyQt5/PyQt-${PYQT5_VER}/PyQt5_gpl-${PYQT5_VER}.tar.gz && \
     tar -xvf PyQt5_gpl-${PYQT5_VER}.tar.gz && \
     cd PyQt5_gpl-${PYQT5_VER} && \
-    python${PYTHON34_VER} configure.py \
+    scl enable devtoolset-6 'python${PYTHON34_VER} configure.py \
         # --verbose \
         --confirm-license \
         --qmake=/usr/local/Qt-${QT5_GIT_BRANCH}/bin/qmake \
-        --sip=/usr/local/python${PYTHON34_VER}/bin/sip && \
-    make -j${BUILD_THREADS} && \
-    make install && \
+        --sip=/usr/local/python${PYTHON34_VER}/bin/sip' && \
+    scl enable devtoolset-6 'make -j${BUILD_THREADS}' && \
+    scl enable devtoolset-6 'make install' && \
     rm -rf /workdir/* && \
 
     # PyQt5 for Python 3.5
@@ -659,13 +661,13 @@ RUN \
     wget http://sourceforge.net/projects/pyqt/files/PyQt5/PyQt-${PYQT5_VER}/PyQt5_gpl-${PYQT5_VER}.tar.gz && \
     tar -xvf PyQt5_gpl-${PYQT5_VER}.tar.gz && \
     cd PyQt5_gpl-${PYQT5_VER} && \
-    python${PYTHON35_VER} configure.py \
+    scl enable devtoolset-6 'python${PYTHON35_VER} configure.py \
         # --verbose \
         --confirm-license \
         --qmake=/usr/local/Qt-${QT5_GIT_BRANCH}/bin/qmake \
-        --sip=/usr/local/python${PYTHON35_VER}/bin/sip && \
-    make -j${BUILD_THREADS} && \
-    make install && \
+        --sip=/usr/local/python${PYTHON35_VER}/bin/sip' && \
+    scl enable devtoolset-6 'make -j${BUILD_THREADS}' && \
+    scl enable devtoolset-6 'make install' && \
     rm -rf /workdir/* && \
 
     # PyQt5 for Python 3.6
@@ -673,13 +675,13 @@ RUN \
     wget http://sourceforge.net/projects/pyqt/files/PyQt5/PyQt-${PYQT5_VER}/PyQt5_gpl-${PYQT5_VER}.tar.gz && \
     tar -xvf PyQt5_gpl-${PYQT5_VER}.tar.gz && \
     cd PyQt5_gpl-${PYQT5_VER} && \
-    python${PYTHON36_VER} configure.py \
+    scl enable devtoolset-6 'python${PYTHON36_VER} configure.py \
         # --verbose \
         --confirm-license \
         --qmake=/usr/local/Qt-${QT5_GIT_BRANCH}/bin/qmake \
-        --sip=/usr/local/python${PYTHON36_VER}/bin/sip && \
-    make -j${BUILD_THREADS} && \
-    make install && \
+        --sip=/usr/local/python${PYTHON36_VER}/bin/sip' && \
+    scl enable devtoolset-6 'make -j${BUILD_THREADS}' && \
+    scl enable devtoolset-6 'make install' && \
     rm -rf /workdir/*
 
 
@@ -699,14 +701,14 @@ RUN \
     sed -i -e "s~\b\(packages\b.*\)],~\1, 'pyside2uic.Compiler', 'pyside2uic.port_v' + str(sys.version_info[0])],~" setup.py && \
     # cat setup.py && \
 
-    python${PYTHON27_VER} setup.py \
+    scl enable devtoolset-6 'python${PYTHON27_VER} setup.py \
         # bdist_wheel \
         install \
             --ignore-git \
             --qmake=/usr/local/Qt-${QT5_GIT_BRANCH}/bin/qmake \
             --cmake=/usr/local/bin/cmake \
             --openssl=/usr/bin/openssl \
-            --jobs=${BUILD_THREADS} && \
+            --jobs=${BUILD_THREADS}' && \
     # pip install /workdir/pyside-setup/dist/*.whl
     rm -rf /workdir/* && \
 
@@ -721,14 +723,14 @@ RUN \
     sed -i -e "s~\b\(packages\b.*\)],~\1, 'pyside2uic.Compiler', 'pyside2uic.port_v' + str(sys.version_info[0])],~" setup.py && \
     # cat setup.py && \
 
-    python${PYTHON34_VER} setup.py \
+    scl enable devtoolset-6 'python${PYTHON34_VER} setup.py \
         # bdist_wheel \
         install \
             --ignore-git \
             --qmake=/usr/local/Qt-${QT5_GIT_BRANCH}/bin/qmake \
             --cmake=/usr/local/bin/cmake \
             --openssl=/usr/bin/openssl \
-            --jobs=${BUILD_THREADS} && \
+            --jobs=${BUILD_THREADS}' && \
     # pip install /workdir/pyside-setup/dist/*.whl
     rm -rf /workdir/* && \
 
@@ -743,14 +745,14 @@ RUN \
     sed -i -e "s~\b\(packages\b.*\)],~\1, 'pyside2uic.Compiler', 'pyside2uic.port_v' + str(sys.version_info[0])],~" setup.py && \
     # cat setup.py && \
 
-    python${PYTHON35_VER} setup.py \
+    scl enable devtoolset-6 'python${PYTHON35_VER} setup.py \
         # bdist_wheel \
         install \
             --ignore-git \
             --qmake=/usr/local/Qt-${QT5_GIT_BRANCH}/bin/qmake \
             --cmake=/usr/local/bin/cmake \
             --openssl=/usr/bin/openssl \
-            --jobs=${BUILD_THREADS} && \
+            --jobs=${BUILD_THREADS}' && \
     # pip install /workdir/pyside-setup/dist/*.whl
     rm -rf /workdir/* && \
 
@@ -765,14 +767,14 @@ RUN \
     sed -i -e "s~\b\(packages\b.*\)],~\1, 'pyside2uic.Compiler', 'pyside2uic.port_v' + str(sys.version_info[0])],~" setup.py && \
     # cat setup.py && \
 
-    python${PYTHON36_VER} setup.py \
+    scl enable devtoolset-6 'python${PYTHON36_VER} setup.py \
         # bdist_wheel \
         install \
             --ignore-git \
             --qmake=/usr/local/Qt-${QT5_GIT_BRANCH}/bin/qmake \
             --cmake=/usr/local/bin/cmake \
             --openssl=/usr/bin/openssl \
-            --jobs=${BUILD_THREADS} && \
+            --jobs=${BUILD_THREADS}' && \
     # pip install /workdir/pyside-setup/dist/*.whl
     rm -rf /workdir/*
 # Ugly fix to make PySide2 find the Qt5 libs
@@ -794,7 +796,7 @@ RUN dbus-uuidgen > /var/lib/dbus/machine-id
 
 
 # VFX Platform
-ENV VFXPLATFORM 2018
+ENV VFXPLATFORM 2018-update1
 
 # Enable additional output from Qt.py
 ENV QT_VERBOSE true
