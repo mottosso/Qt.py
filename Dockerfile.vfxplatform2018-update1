@@ -173,7 +173,7 @@ ENV QT5_GIT_BRANCH=5.6.1
 ENV QT5_GIT_COMMIT=4566f0ac50e5ea143943c1251028fb01c70289ce
 ENV ADSK_QTBASE_GIT_COMMIT=c4e51d0162f7619c83e25e623ecd3bc549932040
 ENV ADSK_QTX11EXTRAS_GIT_COMMIT=c6c59d5d902db8be3661cab929be85a38fda0faa
-ENV ADSK_QTDECLARATIVE_GIT_COMMIT=b14cd49f891327d8fa5f5607eb19288ca137c5e2
+# ENV ADSK_QTDECLARATIVE_GIT_COMMIT=b14cd49f891327d8fa5f5607eb19288ca137c5e2
 
 RUN \
     git clone --recursive --jobs ${BUILD_THREADS} --branch ${QT5_GIT_BRANCH} https://code.qt.io/qt/qt5.git && \
@@ -185,12 +185,13 @@ RUN \
     cd /workdir && \
     rm -rf /workdir/qt5/qtbase && \
     rm -rf /workdir/qt5/qtx11extras && \
+    # rm -rf /workdir/qt5/qtdeclarative && \
     # Clone Autodesk's qtbase, qtx11extras
     cd /workdir && \
     mkdir -p /workdir/adsk && \
     git clone --recursive --branch adsk-contrib/vfx/${QT5_GIT_BRANCH} https://github.com/autodesk-forks/qtbase.git /workdir/adsk/qtbase && \
     git clone --recursive --branch adsk-contrib/vfx/${QT5_GIT_BRANCH} https://github.com/autodesk-forks/qtx11extras.git /workdir/adsk/qtx11extras && \
-    git clone --recursive --branch adsk-contrib/vfx/${QT5_GIT_BRANCH} https://github.com/autodesk-forks/qtdeclarative.git /workdir/adsk/qtdeclarative && \
+    # git clone --recursive --branch adsk-contrib/vfx/${QT5_GIT_BRANCH} https://github.com/autodesk-forks/qtdeclarative.git /workdir/adsk/qtdeclarative && \
     # Revert to commit SHA for qtbase
     cd /workdir/adsk/qtbase && \
     git checkout ${ADSK_QTBASE_GIT_COMMIT} && \
@@ -198,12 +199,13 @@ RUN \
     cd /workdir/adsk/qtx11extras && \
     git checkout ${ADSK_QTX11EXTRAS_GIT_COMMIT} && \
     # Revert to commit SHA for qtdeclarative
-    cd /workdir/adsk/qtdeclarative && \
-    git checkout ${ADSK_QTDECLARATIVE_GIT_COMMIT} && \
+    # cd /workdir/adsk/qtdeclarative && \
+    # git checkout ${ADSK_QTDECLARATIVE_GIT_COMMIT} && \
     # Move Autodesk sources into qt5
     mv /workdir/adsk/qtbase /workdir/qt5 && \
     mv /workdir/adsk/qtx11extras /workdir/qt5 && \
-    mv /workdir/adsk/qtdeclarative /workdir/qt5 && \
+    # Cannot include qtdeclarative for some reason:
+    # mv /workdir/adsk/qtdeclarative /workdir/qt5 && \
     # Build
     cd /workdir/qt5 && \
     # ./configure -help && \
@@ -227,8 +229,9 @@ RUN \
 ENV QT5CREATOR_VER=4.3
 ENV QT5CREATOR_GIT_COMMIT=a094841bdda5461ebeaeab4620dde8222fa8312d
 RUN \
-    git clone --recursive --branch ${QT5CREATOR_VER} --jobs ${BUILD_THREADS} https://code.qt.io/qt-creator/qt-creator.git && \
+    git clone --branch ${QT5CREATOR_VER} --jobs ${BUILD_THREADS} https://code.qt.io/qt-creator/qt-creator.git && \
     cd /workdir/qt-creator && \
+    sed -i 's/qt-labs/qbs/g' .gitmodules && \
     git checkout ${QT5CREATOR_GIT_COMMIT} && \
     git submodule update --init --recursive && \
     mkdir /workdir/qt-creator-build && \
