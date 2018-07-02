@@ -533,11 +533,10 @@ RUN \
     cd PyQt-x11-gpl-${PYQT4_VER} && \
     # python${PYTHON27_VER} configure-ng.py \
     scl enable devtoolset-6 'python${PYTHON27_VER} configure.py \
-        # --verbose \
         --confirm-license \
         # --qmake=/usr/bin/qmake-qt4 \
-        --qmake=/usr/local/Trolltech/Qt-4.8.7/bin/qmake && \
-        # --sip=/usr/local/python${PYTHON27_VER}/bin/sip' && \
+        --qmake=/usr/local/Trolltech/Qt-4.8.7/bin/qmake' && \
+        # --sip=/usr/local/python${PYTHON27_VER}/bin/sip && \
     scl enable devtoolset-6 'make -j${BUILD_THREADS}' && \
     scl enable devtoolset-6 'make install' && \
     rm -rf /workdir/* && \
@@ -552,8 +551,8 @@ RUN \
         # --verbose \
         --confirm-license \
         # --qmake=/usr/bin/qmake-qt4 \
-        --qmake=/usr/local/Trolltech/Qt-4.8.7/bin/qmake && \
-        # --sip=/usr/local/python${PYTHON27_VER}/bin/sip' && \
+        --qmake=/usr/local/Trolltech/Qt-4.8.7/bin/qmake' && \
+        # --sip=/usr/local/python${PYTHON27_VER}/bin/sip && \
     scl enable devtoolset-6 'make -j${BUILD_THREADS}' && \
     scl enable devtoolset-6 'make install' && \
     rm -rf /workdir/* && \
@@ -568,8 +567,8 @@ RUN \
         # --verbose \
         --confirm-license \
         # --qmake=/usr/bin/qmake-qt4 \
-        --qmake=/usr/local/Trolltech/Qt-4.8.7/bin/qmake && \
-        # --sip=/usr/local/python${PYTHON27_VER}/bin/sip' && \
+        --qmake=/usr/local/Trolltech/Qt-4.8.7/bin/qmake' && \
+        # --sip=/usr/local/python${PYTHON27_VER}/bin/sip && \
     scl enable devtoolset-6 'make -j${BUILD_THREADS}' && \
     scl enable devtoolset-6 'make install' && \
     rm -rf /workdir/* && \
@@ -584,8 +583,8 @@ RUN \
         # --verbose \
         --confirm-license \
         # --qmake=/usr/bin/qmake-qt4 \
-        --qmake=/usr/local/Trolltech/Qt-4.8.7/bin/qmake && \
-        # --sip=/usr/local/python${PYTHON27_VER}/bin/sip' && \
+        --qmake=/usr/local/Trolltech/Qt-4.8.7/bin/qmake' && \
+        # --sip=/usr/local/python${PYTHON27_VER}/bin/sip && \
     scl enable devtoolset-6 'make -j${BUILD_THREADS}' && \
     scl enable devtoolset-6 'make install' && \
     rm -rf /workdir/*
