@@ -402,6 +402,7 @@ Send us a pull-request with your studio here.
 - [Overmind Studios](https://www.overmind-studios.de/)
 - [Psyop](http://www.psyop.com/)
 - [Rising Sun Pictures](https://rsp.com.au)
+- [Rodeo FX](https://www.rodeofx.com/en/)
 - [Sony Pictures Imageworks](http://www.imageworks.com/)
 - [Weta Digital](https://www.wetafx.co.nz/)
 
