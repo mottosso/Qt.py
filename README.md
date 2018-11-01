@@ -404,6 +404,7 @@ Send us a pull-request with your studio here.
 - [Rising Sun Pictures](https://rsp.com.au)
 - [Rodeo FX](https://www.rodeofx.com/en/)
 - [Sony Pictures Imageworks](http://www.imageworks.com/)
+- [Spin VFX](http://www.spinvfx.com/)
 - [Weta Digital](https://www.wetafx.co.nz/)
 
 Presented at Siggraph 2016, BOF!
