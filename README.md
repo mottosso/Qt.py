@@ -401,6 +401,7 @@ Send us a pull-request with your studio here.
 - [MPC](http://www.moving-picture.com)
 - [Overmind Studios](https://www.overmind-studios.de/)
 - [Psyop](http://www.psyop.com/)
+- [Raynault VFX](https://www.raynault.com/)
 - [Rising Sun Pictures](https://rsp.com.au)
 - [Rodeo FX](https://www.rodeofx.com/en/)
 - [Sony Pictures Imageworks](http://www.imageworks.com/)
