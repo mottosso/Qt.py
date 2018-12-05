@@ -431,6 +431,7 @@ Send us a pull-request with your project here.
 - [AFANASY](http://cgru.info/afanasy/afanasy)
 - [Syncplay](https://github.com/Syncplay/syncplay)
 - [BlenderUpdater](https://github.com/overmindstudios/BlenderUpdater)
+- [QtPyConvert](https://github.com/DigitalDomain/QtPyConvert)
 
 <br>
 <br>
