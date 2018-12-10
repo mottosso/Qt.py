@@ -917,6 +917,7 @@ These members from the original submodule are misplaced relative PySide2
 """
 _misplaced_members = {
     "PySide2": {
+        "QtCore.QStringListModel": "QtCore.QStringListModel",
         "QtGui.QStringListModel": "QtCore.QStringListModel",
         "QtCore.Property": "QtCore.Property",
         "QtCore.Signal": "QtCore.Signal",
