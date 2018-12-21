@@ -392,6 +392,7 @@ Send us a pull-request with your studio here.
 - [Fido](http://fido.se/)
 - [Framestore](https://framestore.com)
 - [ftrack](https://www.ftrack.com/)
+- [Futureworks](http://futureworks.in/)
 - [Industrial Brothers](http://industrialbrothers.com/)
 - [Industriromantik](http://www.industriromantik.se/)
 - [Mackevision](http://www.mackevision.com/)
