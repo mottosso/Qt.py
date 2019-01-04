@@ -41,9 +41,10 @@ import os
 import sys
 import types
 import shutil
+import importlib
 
 
-__version__ = "1.2.0.b2"
+__version__ = "1.2.0.b3"
 
 # Enable support for `from Qt import *`
 __all__ = []
@@ -851,6 +852,41 @@ def _loadUi(uifile, baseinstance=None):
             def __init__(self, baseinstance):
                 super(_UiLoader, self).__init__(baseinstance)
                 self.baseinstance = baseinstance
+                self.custom_widgets = {}
+
+            def _loadCustomWidgets(self, etree):
+                """
+                Workaround to pyside-77 bug.
+
+                From QUiLoader doc we should use registerCustomWidget method.
+                But this causes a segfault on some platforms.
+
+                Instead we fetch from customwidgets DOM node the python class
+                objects. Then we can directly use them in createWidget method.
+                """
+
+                def headerToModule(header):
+                    """
+                    Translate a header file to python module path
+                    foo/bar.h => foo.bar
+                    """
+                    # Remove header extension
+                    module = os.path.splitext(header)[0]
+
+                    # Replace os separator by python module separator
+                    return module.replace("/", ".").replace("\\", ".")
+
+                custom_widgets = etree.find("customwidgets")
+
+                if custom_widgets is None:
+                    return
+
+                for custom_widget in custom_widgets:
+                    class_name = custom_widget.find("class").text
+                    header = custom_widget.find("header").text
+                    module = importlib.import_module(headerToModule(header))
+                    self.custom_widgets[class_name] = getattr(module,
+                                                              class_name)
 
             def load(self, uifile, *args, **kwargs):
                 from xml.etree.ElementTree import ElementTree
@@ -860,6 +896,7 @@ def _loadUi(uifile, baseinstance=None):
                 # a RuntimeError.
                 etree = ElementTree()
                 etree.parse(uifile)
+                self._loadCustomWidgets(etree)
 
                 widget = Qt._QtUiTools.QUiLoader.load(
                     self, uifile, *args, **kwargs)
@@ -889,7 +926,8 @@ def _loadUi(uifile, baseinstance=None):
                                                                   class_name,
                                                                   parent,
                                                                   name)
-
+                elif class_name in self.custom_widgets:
+                    widget = self.custom_widgets[class_name](parent)
                 else:
                     raise Exception("Custom widget '%s' not supported"
                                     % class_name)
