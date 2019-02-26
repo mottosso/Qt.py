@@ -449,6 +449,7 @@ Comparison matrix.
 | [QtPy][]      | Scientific    | N/A               | MIT       |      | X         | X      |
 | [pyqode.qt][] | Scientific    | PyQt5             | MIT       | X    |           | X      |
 | [QtExt][]     | Film          | N/A               | N/A       |      | X         |        |
+| [python_qt_binding][] | Robotics | N/A            | BSD       | X    | X        | X       | X
 
 Also worth mentioning, [pyqt4topyqt5](https://github.com/rferrazz/pyqt4topyqt5); a good starting point for transitioning to Qt.py.
 
@@ -458,6 +459,7 @@ Send us a pull-request with your project here.
 [jupyter]: https://github.com/jupyter/qtconsole/blob/master/qtconsole/qt_loaders.py
 [pyqode.qt]: https://github.com/pyQode/pyqode.qt
 [QtExt]: https://bitbucket.org/ftrack/qtext
+[python_qt_binding]: https://github.com/ros-visualization/python_qt_binding
 
 <br>
 <br>
