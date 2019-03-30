@@ -778,6 +778,33 @@ def _wrapinstance(ptr, base=None):
     return func(long(ptr), base)
 
 
+def _isvalid(object):
+    """Check if the object is valid to use in Python runtime.
+
+    Usage:
+        See :func:`QtCompat.isValid()`
+
+    Arguments:
+        object (QObject): QObject to check the validity of.
+
+    """
+
+    assert isinstance(object, Qt.QtCore.QObject)
+
+    if Qt.IsPyQt4 or Qt.IsPyQt5:
+        isdeleted = getattr(Qt, "_sip").isdeleted
+        def func(obj):
+            return not isdeleted(obj)
+    elif Qt.IsPySide2:
+        func = getattr(Qt, "_shiboken2").isValid
+    elif Qt.IsPySide:
+        func = getattr(Qt, "_shiboken").isValid
+    else:
+        raise AttributeError("'module' has no attribute 'isValid'")
+
+    return func(object)
+
+
 def _translate(context, sourceText, *args):
     # In Qt4 bindings, translate can be passed 2 or 3 arguments
     # In Qt5 bindings, translate can be passed 2 arguments
@@ -968,6 +995,7 @@ _misplaced_members = {
         "QtUiTools.QUiLoader": ["QtCompat.loadUi", _loadUi],
         "shiboken2.wrapInstance": ["QtCompat.wrapInstance", _wrapinstance],
         "shiboken2.getCppPointer": ["QtCompat.getCppPointer", _getcpppointer],
+        "shiboken2.isValid": ["QtCompat.isValid", _isvalid],
         "QtWidgets.qApp": "QtWidgets.QApplication.instance()",
         "QtCore.QCoreApplication.translate": [
             "QtCompat.translate", _translate
@@ -992,6 +1020,7 @@ _misplaced_members = {
         "uic.loadUi": ["QtCompat.loadUi", _loadUi],
         "sip.wrapinstance": ["QtCompat.wrapInstance", _wrapinstance],
         "sip.unwrapinstance": ["QtCompat.getCppPointer", _getcpppointer],
+        "sip.isdeleted": ["QtCompat.isValid", _isvalid],
         "QtWidgets.qApp": "QtWidgets.QApplication.instance()",
         "QtCore.QCoreApplication.translate": [
             "QtCompat.translate", _translate
@@ -1024,6 +1053,7 @@ _misplaced_members = {
         "QtUiTools.QUiLoader": ["QtCompat.loadUi", _loadUi],
         "shiboken.wrapInstance": ["QtCompat.wrapInstance", _wrapinstance],
         "shiboken.unwrapInstance": ["QtCompat.getCppPointer", _getcpppointer],
+        "shiboken.isValid": ["QtCompat.isValid", _isvalid],
         "QtGui.qApp": "QtWidgets.QApplication.instance()",
         "QtCore.QCoreApplication.translate": [
             "QtCompat.translate", _translate
@@ -1057,6 +1087,7 @@ _misplaced_members = {
         "uic.loadUi": ["QtCompat.loadUi", _loadUi],
         "sip.wrapinstance": ["QtCompat.wrapInstance", _wrapinstance],
         "sip.unwrapinstance": ["QtCompat.getCppPointer", _getcpppointer],
+        "sip.isdeleted": ["QtCompat.isValid", _isvalid],
         "QtCore.QString": "str",
         "QtGui.qApp": "QtWidgets.QApplication.instance()",
         "QtCore.QCoreApplication.translate": [
@@ -1385,6 +1416,7 @@ def _pyside2():
         Qt.QtCompat.wrapInstance = _wrapinstance
         Qt.QtCompat.getCppPointer = _getcpppointer
         Qt.QtCompat.delete = shiboken2.delete
+        Qt.QtCompat.isValid = _isvalid
 
     if hasattr(Qt, "_QtUiTools"):
         Qt.QtCompat.loadUi = _loadUi
@@ -1423,6 +1455,7 @@ def _pyside():
         Qt.QtCompat.wrapInstance = _wrapinstance
         Qt.QtCompat.getCppPointer = _getcpppointer
         Qt.QtCompat.delete = shiboken.delete
+        Qt.QtCompat.isValid = _isvalid
 
     if hasattr(Qt, "_QtUiTools"):
         Qt.QtCompat.loadUi = _loadUi
@@ -1459,6 +1492,7 @@ def _pyqt5():
         Qt.QtCompat.wrapInstance = _wrapinstance
         Qt.QtCompat.getCppPointer = _getcpppointer
         Qt.QtCompat.delete = sip.delete
+        Qt.QtCompat.isValid = _isvalid
 
     if hasattr(Qt, "_uic"):
         Qt.QtCompat.loadUi = _loadUi
@@ -1525,6 +1559,7 @@ def _pyqt4():
         Qt.QtCompat.wrapInstance = _wrapinstance
         Qt.QtCompat.getCppPointer = _getcpppointer
         Qt.QtCompat.delete = sip.delete
+        Qt.QtCompat.isValid = _isvalid
 
     if hasattr(Qt, "_uic"):
         Qt.QtCompat.loadUi = _loadUi

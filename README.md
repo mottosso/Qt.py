@@ -150,6 +150,7 @@ Qt.py also provides compatibility wrappers for critical functionality that diffe
 | `translate(...)`        					| `function`  | Compatibility wrapper around [QCoreApplication.translate][]
 | `wrapInstance(addr=long, type=QObject)`   | `QObject`   | Wrapper around `shiboken2.wrapInstance` and PyQt equivalent
 | `getCppPointer(object=QObject)`           | `long`      | Wrapper around `shiboken2.getCppPointer` and PyQt equivalent
+| `isValid(object=QObject)`                 | `bool`      | Wrapper around `shiboken2.isValid` and PyQt equivalent
 
 [QCoreApplication.translate]: https://doc.qt.io/qt-5/qcoreapplication.html#translate
 
