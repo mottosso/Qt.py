@@ -850,6 +850,7 @@ if sys.version_info <= (3, 4):
             app.exit()
 
     def test_isValid():
+        """.isValid and .delete work in all bindings"""
         from Qt import QtCompat, QtCore
         obj = QtCore.QObject()
         assert QtCompat.isValid(obj)
