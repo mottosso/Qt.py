@@ -793,6 +793,7 @@ def _isvalid(object):
 
     if Qt.IsPyQt4 or Qt.IsPyQt5:
         isdeleted = getattr(Qt, "_sip").isdeleted
+
         def func(obj):
             return not isdeleted(obj)
     elif Qt.IsPySide2:
