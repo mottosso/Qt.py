@@ -796,6 +796,7 @@ def _isvalid(object):
 
         def func(obj):
             return not isdeleted(obj)
+
     elif Qt.IsPySide2:
         func = getattr(Qt, "_shiboken2").isValid
     elif Qt.IsPySide:
