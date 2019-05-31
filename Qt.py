@@ -1486,11 +1486,18 @@ def _pyqt5():
 
     import PyQt5 as module
     extras = ["uic"]
+
     try:
         import sip
-        extras.append(sip.__name__)
+        extras += ["sip"]
     except ImportError:
-        sip = None
+
+        # Relevant to PyQt5 5.11 and above
+        try:
+            from PyQt5 import sip
+            extras += ["sip"]
+        except ImportError:
+            sip = None
 
     _setup(module, extras)
     if hasattr(Qt, "_sip"):
