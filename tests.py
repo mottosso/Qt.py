@@ -849,6 +849,14 @@ if sys.version_info <= (3, 4):
         finally:
             app.exit()
 
+    def test_isValid():
+        """.isValid and .delete work in all bindings"""
+        from Qt import QtCompat, QtCore
+        obj = QtCore.QObject()
+        assert QtCompat.isValid(obj)
+        QtCompat.delete(obj)
+        assert not QtCompat.isValid(obj)
+
 
 if binding("PyQt4"):
     def test_preferred_pyqt4():
