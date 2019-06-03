@@ -44,7 +44,7 @@ import shutil
 import importlib
 
 
-__version__ = "1.2.0.b3"
+__version__ = "1.2.0"
 
 # Enable support for `from Qt import *`
 __all__ = []
@@ -791,20 +791,17 @@ def _isvalid(object):
 
     assert isinstance(object, Qt.QtCore.QObject)
 
-    if Qt.IsPyQt4 or Qt.IsPyQt5:
-        isdeleted = getattr(Qt, "_sip").isdeleted
+    if hasattr(Qt, "_shiboken2"):
+        return getattr(Qt, "_shiboken2").isValid(object)
 
-        def func(obj):
-            return not isdeleted(obj)
+    elif hasattr(Qt, "_shiboken"):
+        return getattr(Qt, "_shiboken").isValid(object)
 
-    elif Qt.IsPySide2:
-        func = getattr(Qt, "_shiboken2").isValid
-    elif Qt.IsPySide:
-        func = getattr(Qt, "_shiboken").isValid
+    elif hasattr(Qt, "_sip"):
+        return not getattr(Qt, "_sip").isdeleted(object)
+
     else:
-        raise AttributeError("'module' has no attribute 'isValid'")
-
-    return func(object)
+        raise AttributeError("'module' has no attribute isValid")
 
 
 def _translate(context, sourceText, *args):
@@ -1418,13 +1415,16 @@ def _pyside2():
         Qt.QtCompat.wrapInstance = _wrapinstance
         Qt.QtCompat.getCppPointer = _getcpppointer
         Qt.QtCompat.delete = shiboken2.delete
-        Qt.QtCompat.isValid = _isvalid
 
     if hasattr(Qt, "_QtUiTools"):
         Qt.QtCompat.loadUi = _loadUi
 
     if hasattr(Qt, "_QtCore"):
         Qt.__qt_version__ = Qt._QtCore.qVersion()
+        Qt.QtCompat.dataChanged = (
+            lambda self, topleft, bottomright, roles=None:
+            self.dataChanged.emit(topleft, bottomright, roles or [])
+        )
 
     if hasattr(Qt, "_QtWidgets"):
         Qt.QtCompat.setSectionResizeMode = \
@@ -1457,7 +1457,6 @@ def _pyside():
         Qt.QtCompat.wrapInstance = _wrapinstance
         Qt.QtCompat.getCppPointer = _getcpppointer
         Qt.QtCompat.delete = shiboken.delete
-        Qt.QtCompat.isValid = _isvalid
 
     if hasattr(Qt, "_QtUiTools"):
         Qt.QtCompat.loadUi = _loadUi
@@ -1473,6 +1472,10 @@ def _pyside():
 
     if hasattr(Qt, "_QtCore"):
         Qt.__qt_version__ = Qt._QtCore.qVersion()
+        Qt.QtCompat.dataChanged = (
+            lambda self, topleft, bottomright, roles=None:
+            self.dataChanged.emit(topleft, bottomright)
+        )
 
     _reassign_misplaced_members("PySide")
     _build_compatibility_members("PySide")
@@ -1483,18 +1486,24 @@ def _pyqt5():
 
     import PyQt5 as module
     extras = ["uic"]
+
     try:
         import sip
-        extras.append(sip.__name__)
+        extras += ["sip"]
     except ImportError:
-        sip = None
+
+        # Relevant to PyQt5 5.11 and above
+        try:
+            from PyQt5 import sip
+            extras += ["sip"]
+        except ImportError:
+            sip = None
 
     _setup(module, extras)
     if hasattr(Qt, "_sip"):
         Qt.QtCompat.wrapInstance = _wrapinstance
         Qt.QtCompat.getCppPointer = _getcpppointer
         Qt.QtCompat.delete = sip.delete
-        Qt.QtCompat.isValid = _isvalid
 
     if hasattr(Qt, "_uic"):
         Qt.QtCompat.loadUi = _loadUi
@@ -1502,6 +1511,10 @@ def _pyqt5():
     if hasattr(Qt, "_QtCore"):
         Qt.__binding_version__ = Qt._QtCore.PYQT_VERSION_STR
         Qt.__qt_version__ = Qt._QtCore.QT_VERSION_STR
+        Qt.QtCompat.dataChanged = (
+            lambda self, topleft, bottomright, roles=None:
+            self.dataChanged.emit(topleft, bottomright, roles or [])
+        )
 
     if hasattr(Qt, "_QtWidgets"):
         Qt.QtCompat.setSectionResizeMode = \
@@ -1561,7 +1574,6 @@ def _pyqt4():
         Qt.QtCompat.wrapInstance = _wrapinstance
         Qt.QtCompat.getCppPointer = _getcpppointer
         Qt.QtCompat.delete = sip.delete
-        Qt.QtCompat.isValid = _isvalid
 
     if hasattr(Qt, "_uic"):
         Qt.QtCompat.loadUi = _loadUi
@@ -1579,6 +1591,10 @@ def _pyqt4():
     if hasattr(Qt, "_QtCore"):
         Qt.__binding_version__ = Qt._QtCore.PYQT_VERSION_STR
         Qt.__qt_version__ = Qt._QtCore.QT_VERSION_STR
+        Qt.QtCompat.dataChanged = (
+            lambda self, topleft, bottomright, roles=None:
+            self.dataChanged.emit(topleft, bottomright)
+        )
 
     _reassign_misplaced_members("PyQt4")
 
