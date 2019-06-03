@@ -151,6 +151,7 @@ Qt.py also provides compatibility wrappers for critical functionality that diffe
 | `wrapInstance(addr=long, type=QObject)`   | `QObject`   | Wrapper around `shiboken2.wrapInstance` and PyQt equivalent
 | `getCppPointer(object=QObject)`           | `long`      | Wrapper around `shiboken2.getCppPointer` and PyQt equivalent
 | `isValid(object=QObject)`                 | `bool`      | Wrapper around `shiboken2.isValid` and PyQt equivalent
+| `dataChanged(topLeft=QModelIndex, bottomRight=QModelIndex, roles=[])` | `None` | Wrapper around `QtCore.QAbstractItemModel.dataChanged.emit`
 
 [QCoreApplication.translate]: https://doc.qt.io/qt-5/qcoreapplication.html#translate
 
