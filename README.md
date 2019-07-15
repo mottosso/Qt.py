@@ -12,6 +12,7 @@ Qt.py enables you to write software that runs on any of the 4 supported bindings
 
 | Date     | Version   | Event
 |:---------|:----------|:----------
+| Jun 2019 | [1.2.1][] | Bugfixes and [additional members](https://github.com/mottosso/Qt.py/releases/tag/1.2.0)
 | Jan 2018 | [1.1.0][] | Adds new test suite, new members
 | Mar 2017 | [1.0.0][] | Increased safety, **backwards incompatible**
 | Sep 2016 | [0.6.9][] | Stable release
@@ -25,6 +26,7 @@ Qt.py enables you to write software that runs on any of the 4 supported bindings
 [0.6.9]: https://github.com/mottosso/Qt.py/releases/tag/0.6.9
 [1.0.0]: https://github.com/mottosso/Qt.py/releases/tag/1.0.0
 [1.1.0]: https://github.com/mottosso/Qt.py/releases/tag/1.1.0
+[1.2.1]: https://github.com/mottosso/Qt.py/releases/tag/1.2.1
 
 ##### Guides
 
