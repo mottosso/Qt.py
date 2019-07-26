@@ -393,6 +393,7 @@ Send us a pull-request with your studio here.
 - [Colorbleed](http://www.colorbleed.nl/)
 - [Digital Domain](https://www.digitaldomain.com/)
 - [Disney Animation](https://www.disneyanimation.com/)
+- [Dreamworks Animation](https://github.com/dreamworksanimation)
 - [Epic Games](https://www.epicgames.com/)
 - [Fido](http://fido.se/)
 - [Framestore](https://framestore.com)
@@ -426,6 +427,7 @@ Presented at Siggraph 2016, BOF!
 
 Send us a pull-request with your project here.
 
+- [USD Manager](http://www.usdmanager.org)
 - [Cosmos](http://cosmos.toolsfrom.space/)
 - [maya-capture-gui](https://github.com/BigRoy/maya-capture-gui)
 - [pyblish-lite](https://github.com/pyblish/pyblish-lite)
