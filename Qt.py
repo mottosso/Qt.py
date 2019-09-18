@@ -927,6 +927,23 @@ def _loadUi(uifile, baseinstance=None):
                 widget = Qt._QtUiTools.QUiLoader.load(
                     self, uifile, *args, **kwargs)
 
+                if self.baseinstance:
+
+                    # copy over all the widgets and layouts from attributes
+                    for member in dir(widget):
+                        value = getattr(widget, member)
+                        if isinstance(value, Qt.QtCore.QObject):
+                            setattr(self.baseinstance, member, value)
+
+                    # poach main layouts and widgets
+                    if isinstance(widget, Qt.QtWidgets.QMainWindow):
+                        self.baseinstance.setCentralWidget(
+                                widget.centralWidget())
+                        self.baseinstance.setMenuBar(widget.menuBar())
+                        self.baseinstance.setStatusBar(widget.statusBar())
+                    else:
+                        self.baseinstance.setLayout(widget.layout())
+
                 # Workaround for PySide 1.0.9, see issue #208
                 widget.parentWidget()
 
@@ -942,7 +959,7 @@ def _loadUi(uifile, baseinstance=None):
                 if parent is None and self.baseinstance:
                     # Supposed to create the top-level widget,
                     # return the base instance instead
-                    return self.baseinstance
+                    parent = self.baseinstance
 
                 # For some reason, Line is not in the list of available
                 # widgets, but works fine, so we have to special case it here.
