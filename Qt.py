@@ -928,21 +928,14 @@ def _loadUi(uifile, baseinstance=None):
                     self, uifile, *args, **kwargs)
 
                 if self.baseinstance:
-
-                    # copy over all the widgets and layouts from attributes
-                    for member in dir(widget):
-                        value = getattr(widget, member)
-                        if isinstance(value, Qt.QtCore.QObject):
-                            setattr(self.baseinstance, member, value)
-
-                    # poach main layouts and widgets
-                    if isinstance(widget, Qt.QtWidgets.QMainWindow):
-                        self.baseinstance.setCentralWidget(
-                                widget.centralWidget())
-                        self.baseinstance.setMenuBar(widget.menuBar())
-                        self.baseinstance.setStatusBar(widget.statusBar())
-                    else:
-                        self.baseinstance.setLayout(widget.layout())
+                    # correct geometry on show
+                    parent = self.baseinstance.parentWidget()
+                    if parent and hasattr(parent, 'geometry'):
+                        geo = self.baseinstance.geometry()
+                        pgeo = parent.geometry()
+                        self.baseinstance.move(
+                                pgeo.x() + pgeo.width()/2 - geo.width()/2,
+                                pgeo.y() + pgeo.height()/2 - geo.height()/2)
 
                 # Workaround for PySide 1.0.9, see issue #208
                 widget.parentWidget()
@@ -959,7 +952,7 @@ def _loadUi(uifile, baseinstance=None):
                 if parent is None and self.baseinstance:
                     # Supposed to create the top-level widget,
                     # return the base instance instead
-                    parent = self.baseinstance
+                    return self.baseinstance
 
                 # For some reason, Line is not in the list of available
                 # widgets, but works fine, so we have to special case it here.
