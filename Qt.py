@@ -1005,6 +1005,7 @@ _misplaced_members = {
         "QtCore.qInstallMessageHandler": [
             "QtCompat.qInstallMessageHandler", _qInstallMessageHandler
         ],
+        "QtWidgets.QStyleOptionViewItem": "QtCompat.QStyleOptionViewItemV4",
     },
     "PyQt5": {
         "QtCore.pyqtProperty": "QtCore.Property",
@@ -1030,6 +1031,7 @@ _misplaced_members = {
         "QtCore.qInstallMessageHandler": [
             "QtCompat.qInstallMessageHandler", _qInstallMessageHandler
         ],
+        "QtWidgets.QStyleOptionViewItem": "QtCompat.QStyleOptionViewItemV4",
     },
     "PySide": {
         "QtGui.QAbstractProxyModel": "QtCore.QAbstractProxyModel",
@@ -1063,6 +1065,7 @@ _misplaced_members = {
         "QtCore.qInstallMsgHandler": [
             "QtCompat.qInstallMessageHandler", _qInstallMessageHandler
         ],
+        "QtGui.QStyleOptionViewItemV4": "QtCompat.QStyleOptionViewItemV4",
     },
     "PyQt4": {
         "QtGui.QAbstractProxyModel": "QtCore.QAbstractProxyModel",
@@ -1098,6 +1101,7 @@ _misplaced_members = {
         "QtCore.qInstallMsgHandler": [
             "QtCompat.qInstallMessageHandler", _qInstallMessageHandler
         ],
+        "QtGui.QStyleOptionViewItemV4": "QtCompat.QStyleOptionViewItemV4",
     }
 }
 
