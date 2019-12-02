@@ -683,7 +683,7 @@ _common_members = {
 
 This mapping describes members that have been deprecated
 in one or more bindings and have been left out of the
-_common_members mapping. 
+_common_members mapping.
 
 The member can provide an extra details string to be
 included in exceptions and warnings.
