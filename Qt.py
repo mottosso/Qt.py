@@ -679,6 +679,22 @@ _common_members = {
     ]
 }
 
+""" Missing members
+
+This mapping describes members that have been deprecated
+in one or more bindings and have been left out of the
+_common_members mapping. 
+
+The member can provide an extra details string to be
+included in exceptions and warnings.
+"""
+
+_missing_members = {
+    "QtGui": {
+        "QMatrix": "Deprecated in PyQt5",
+    },
+}
+
 
 def _qInstallMessageHandler(handler):
     """Install a message handler that works in all bindings
@@ -1734,6 +1750,36 @@ def _cli(args):
         sys.stdout.write("Successfully converted \"%s\"\n" % args.convert)
 
 
+class MissingMember(object):
+    """
+    A placeholder type for a missing Qt object not
+    included in Qt.py
+
+    Args:
+        name (str): The name of the missing type
+        details (str): An optional custom error message
+    """
+    ERR_TMPL = ("{} is not a common object across PySide2 "
+                "and the other Qt bindings. It is not included "
+                "as a common member in the Qt.py layer")
+
+    def __init__(self, name, details=''):
+        self.__name = name
+        self.__err = self.ERR_TMPL.format(name)
+
+        if details:
+            self.__err = "{}: {}".format(self.__err, details)
+
+    def __repr__(self):
+        return "<{}: {}>".format(self.__class__.__name__, self.__name)
+
+    def __getattr__(self, name):
+        raise NotImplementedError(self.__err)
+
+    def __call__(self, *a, **kw):
+        raise NotImplementedError(self.__err)
+
+
 def _install():
     # Default order (customise order and content via QT_PREFERRED_BINDING)
     default_order = ("PySide2", "PyQt5", "PySide", "PyQt4")
@@ -1800,6 +1846,22 @@ def _install():
                 continue
 
             setattr(our_submodule, member, their_member)
+
+    # Install missing member placeholders
+    for name, members in _missing_members.items():
+        our_submodule = getattr(Qt, name)
+
+        for member in members:
+
+            # If the submodule already has this member installed,
+            # either by the common members, or the site config,
+            # then skip installing this one over it.
+            if hasattr(our_submodule, member):
+                continue
+
+            placeholder = MissingMember("{}.{}".format(name, member),
+                                        details=members[member])
+            setattr(our_submodule, member, placeholder)
 
     # Enable direct import of QtCompat
     sys.modules['Qt.QtCompat'] = Qt.QtCompat
