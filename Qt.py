@@ -253,7 +253,6 @@ _common_members = {
         "QKeyEvent",
         "QKeySequence",
         "QLinearGradient",
-        "QMatrix",
         "QMatrix2x2",
         "QMatrix2x3",
         "QMatrix2x4",
