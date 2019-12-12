@@ -44,7 +44,7 @@ import shutil
 import importlib
 
 
-__version__ = "1.2.2"
+__version__ = "1.2.3"
 
 # Enable support for `from Qt import *`
 __all__ = []
