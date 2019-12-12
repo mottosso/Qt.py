@@ -792,6 +792,29 @@ def test_membership():
     )
 
 
+def test_missing():
+    """Missing members of Qt.py have been defined with placeholders"""
+    import Qt
+
+    missing_members = Qt._missing_members.copy()
+
+    missing = list()
+    for module, members in missing_members.items():
+
+        mod = getattr(Qt, module)
+        missing.extend(
+            member for member in members
+            if not hasattr(mod, member) or
+            not isinstance(getattr(mod, member), Qt.MissingMember)
+        )
+
+    binding = Qt.__binding__
+    assert not missing, (
+        "Some members did not exist in {binding} as "
+        "a Qt.MissingMember type\n{missing}".format(**locals())
+    )
+
+
 if sys.version_info <= (3, 4):
     # PySide is not available for Python > 3.4
     # Shiboken(1) doesn't support Python 3.5
