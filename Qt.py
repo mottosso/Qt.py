@@ -44,7 +44,7 @@ import shutil
 import importlib
 
 
-__version__ = "1.2.3"
+__version__ = "1.2.4"
 
 # Enable support for `from Qt import *`
 __all__ = []
@@ -1508,13 +1508,13 @@ def _pyqt5():
     extras = ["uic"]
 
     try:
-        import sip
+        # Relevant to PyQt5 5.11 and above
+        from PyQt5 import sip
         extras += ["sip"]
     except ImportError:
 
-        # Relevant to PyQt5 5.11 and above
         try:
-            from PyQt5 import sip
+            import sip
             extras += ["sip"]
         except ImportError:
             sip = None
