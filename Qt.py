@@ -1664,7 +1664,11 @@ def _none():
 
 def _log(text):
     if QT_VERBOSE:
-        sys.stdout.write(text + "\n")
+        sys.stdout.write("Qt.py [info]: %s\n" % text)
+
+
+def _warn(text):
+    sys.stderr.write("Qt.py [warning]: %s\n" % text)
 
 
 def _convert(lines):
@@ -1796,10 +1800,11 @@ def _install():
         #   {"mylibrary.vendor.Qt": ["PySide2"], "default":["PyQt5","PyQt4"]}
         try:
             preferred_bindings = json.loads(QT_PREFERRED_BINDING_JSON)
-        except ValueError as e:
+        except ValueError:
             # Python 2 raises ValueError, Python 3 raises json.JSONDecodeError
             # a subclass of ValueError
-            _log("JSONDecodeError: {}".format(e))
+            _warn("Failed to parse QT_PREFERRED_BINDING_JSON='%s'" % QT_PREFERRED_BINDING_JSON)
+            _warn("Falling back to default preferred order")
         else:
             preferred_order = preferred_bindings.get(__name__)
             # If no matching binding was used, optionally apply a default.
