@@ -605,12 +605,12 @@ def test_vendoring():
     # Check that the python subprocess exited cleanly.
     if popen.returncode != 0:
         print(out)
-        msg = 'A exception was raised'
+        msg = "An exception was raised"
         assert popen.returncode == 0, msg
 
     # Check that nothing was logged if not in verbose mode.
-    error_check = b"JSONDecodeError: Expecting property name"
-    assert error_check not in out, out
+    error_check = "Qt.py [warning]:"
+    assert not err.startswith(error_check), err
 
     print("Testing invalid QT_PREFERRED_BINDING_JSON shows in verbose..")
     # We should get debug info if using verbose mode
@@ -638,8 +638,8 @@ def test_vendoring():
     print('err ------------------')
     print(err)
 
-    # Check that a useful message was logged in verbose mode
-    assert error_check in out, out
+    # Check that a warning was logged
+    assert err.startswith(error_check), err
 
     # Check QT_PREFERRED_BINDING_JSON works as expected
     print("Testing QT_PREFERRED_BINDING_JSON is respected..")
