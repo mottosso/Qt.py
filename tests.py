@@ -578,22 +578,16 @@ def test_vendoring():
         stderr=subprocess.STDOUT,
     ) == 0
 
-    # Check QT_PREFERRED_BINDING_JSON errors as expected
-    print("Testing invalid QT_PREFERRED_BINDING_JSON is suppressed..")
-    env = os.environ.copy()
-    if 'QT_VERBOSE' in env:
-        env.pop('QT_VERBOSE')
-    # Set invalid json data
+    #
+    # Test invalid json data
+    #
     env["QT_PREFERRED_BINDING_JSON"] = '{"Qt":["PyQt5","PyQt4"],}'
-    # Allow us to check for a binding other than None
-    env["QT_PREFERRED_BINDING"] = os.pathsep.join(("PyQt5", "PyQt4"))
-    # Check that
+
     cmd = "import myproject.vendor.Qt;"
     cmd += "import Qt;"
     cmd += "assert myproject.vendor.Qt.__binding__ != 'None', 'vendor';"
     cmd += "assert Qt.__binding__ != 'None', 'Qt';"
 
-    # Make sure we were able to import both Qt modules
     popen = subprocess.Popen(
         [sys.executable, "-c", cmd],
         stdout=subprocess.PIPE,
@@ -601,45 +595,22 @@ def test_vendoring():
         cwd=self.tempdir,
         env=env
     )
+
     out, err = popen.communicate()
-    # Check that the python subprocess exited cleanly.
+
     if popen.returncode != 0:
         print(out)
         msg = "An exception was raised"
         assert popen.returncode == 0, msg
 
-    # Check that nothing was logged if not in verbose mode.
-    error_check = "Qt.py [warning]:"
-    assert not err.startswith(error_check), err
-
-    print("Testing invalid QT_PREFERRED_BINDING_JSON shows in verbose..")
-    # We should get debug info if using verbose mode
-    env["QT_VERBOSE"] = "True"
-    print('+++++++')
-    print(cmd)
-    print('+++++++')
-    popen = subprocess.Popen(
-        [sys.executable, "-c", cmd],
-        stdout=subprocess.PIPE,
-        stderr=subprocess.STDOUT,
-        cwd=self.tempdir,
-        env=env
-    )
-    out, err = popen.communicate()
-    # Check that the python subprocess exited cleanly.
-    if popen.returncode != 0:
-        print(out)
-        msg = "A exception was raised"
-        assert popen.returncode == 0, msg
+    error_check = b"Qt.py [warning]:"
+    assert err.startswith(error_check), err
 
     print('out------------------')
     print(out)
 
     print('err ------------------')
     print(err)
-
-    # Check that a warning was logged
-    assert err.startswith(error_check), err
 
     # Check QT_PREFERRED_BINDING_JSON works as expected
     print("Testing QT_PREFERRED_BINDING_JSON is respected..")
@@ -653,9 +624,13 @@ def test_vendoring():
     cmd += "assert Qt.__binding__ != 'None', 'Qt'"
 
     # If the module name is "Qt" use PyQt5 or PyQt4, otherwise use None binding
-    env["QT_PREFERRED_BINDING_JSON"] = (
-        '{"Qt":["PyQt5","PyQt4"],"default":["None"]}'
+    env["QT_PREFERRED_BINDING_JSON"] = json.dumps(
+        {
+            "Qt": ["PyQt5", "PyQt4"],
+            "default": ["None"]
+        }
     )
+
     assert subprocess.call(
         [sys.executable, "-c", cmd],
         stdout=subprocess.PIPE,
