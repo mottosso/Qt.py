@@ -550,6 +550,10 @@ def test_vendoring():
     shutil.copy(os.path.join(os.path.dirname(__file__), "Qt.py"),
                 os.path.join(vendor, "Qt.py"))
 
+    # Copy real Qt.py into the root folder
+    shutil.copy(os.path.join(os.path.dirname(__file__), "Qt.py"),
+                os.path.join(self.tempdir, "Qt.py"))
+
     print("Testing relative import..")
     assert subprocess.call(
         [sys.executable, "-c", "import myproject"],
@@ -572,6 +576,101 @@ def test_vendoring():
         cwd=self.tempdir,
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
+    ) == 0
+
+    # Check QT_PREFERRED_BINDING_JSON errors as expected
+    print("Testing invalid QT_PREFERRED_BINDING_JSON is suppressed..")
+    env = os.environ.copy()
+    if 'QT_VERBOSE' in env:
+        env.pop('QT_VERBOSE')
+    # Set invalid json data
+    env["QT_PREFERRED_BINDING_JSON"] = '{"Qt":["PyQt5","PyQt4"],}'
+    # Allow us to check for a binding other than None
+    env["QT_PREFERRED_BINDING"] = os.pathsep.join(("PyQt5", "PyQt4"))
+    # Check that
+    cmd = "import myproject.vendor.Qt;"
+    cmd += "import Qt;"
+    cmd += "assert myproject.vendor.Qt.__binding__ != 'None', 'vendor';"
+    cmd += "assert Qt.__binding__ != 'None', 'Qt';"
+
+    # Make sure we were able to import both Qt modules
+    popen = subprocess.Popen(
+        [sys.executable, "-c", cmd],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        cwd=self.tempdir,
+        env=env
+    )
+    out, err = popen.communicate()
+    # Check that the python subprocess exited cleanly.
+    if popen.returncode != 0:
+        print(out)
+        msg = 'A exception was raised'
+        assert popen.returncode == 0, msg
+
+    # Check that nothing was logged if not in verbose mode.
+    error_check = b"JSONDecodeError: Expecting property name"
+    assert error_check not in out, out
+
+    print("Testing invalid QT_PREFERRED_BINDING_JSON shows in verbose..")
+    # We should get debug info if using verbose mode
+    env["QT_VERBOSE"] = "True"
+    print('+++++++')
+    print(cmd)
+    print('+++++++')
+    popen = subprocess.Popen(
+        [sys.executable, "-c", cmd],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        cwd=self.tempdir,
+        env=env
+    )
+    out, err = popen.communicate()
+    # Check that the python subprocess exited cleanly.
+    if popen.returncode != 0:
+        print(out)
+        msg = "A exception was raised"
+        assert popen.returncode == 0, msg
+
+    print('out------------------')
+    print(out)
+
+    print('err ------------------')
+    print(err)
+
+    # Check that a useful message was logged in verbose mode
+    assert error_check in out, out
+
+    # Check QT_PREFERRED_BINDING_JSON works as expected
+    print("Testing QT_PREFERRED_BINDING_JSON is respected..")
+    env = os.environ.copy()
+    cmd = "import myproject.vendor.Qt;"
+    # Check that the "None" binding was set for `import myproject.vendor.Qt`
+    cmd += "assert myproject.vendor.Qt.__binding__ == 'None', 'vendor';"
+    cmd += "import Qt;"
+    # Check that the "None" binding was not set for `import Qt`.
+    # This should be PyQt5 or PyQt4 depending on the test environment.
+    cmd += "assert Qt.__binding__ != 'None', 'Qt'"
+
+    # If the module name is "Qt" use PyQt5 or PyQt4, otherwise use None binding
+    env["QT_PREFERRED_BINDING_JSON"] = (
+        '{"Qt":["PyQt5","PyQt4"],"default":["None"]}'
+    )
+    assert subprocess.call(
+        [sys.executable, "-c", cmd],
+        stdout=subprocess.PIPE,
+        cwd=self.tempdir,
+        env=env
+    ) == 0
+
+    print("Testing QT_PREFERRED_BINDING_JSON and QT_PREFERRED_BINDING work..")
+    env["QT_PREFERRED_BINDING_JSON"] = '{"Qt":["PyQt5","PyQt4"]}'
+    env["QT_PREFERRED_BINDING"] = "None"
+    assert subprocess.call(
+        [sys.executable, "-c", cmd],
+        stdout=subprocess.PIPE,
+        cwd=self.tempdir,
+        env=env
     ) == 0
 
 
