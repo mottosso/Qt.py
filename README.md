@@ -184,11 +184,12 @@ This also covers inconsistencies between bindings. For example PyQt4's QFileDial
 
 These are the publicly facing environment variables that in one way or another affect the way Qt.py is run.
 
-| Variable             | Type  | Description
-|:---------------------|:------|:----------
-| QT_PREFERRED_BINDING | str   | Override order and content of binding to try.
-| QT_VERBOSE           | bool  | Be a little more chatty about what's going on with Qt.py
-| QT_SIP_API_HINT      | int   | Sets the preferred SIP api version that will be attempted to set.
+| Variable                  | Type  | Description
+|:--------------------------|:------|:----------
+| QT_PREFERRED_BINDING_JSON | str   | Override order and content of binding to try. This can apply per Qt.py namespace.
+| QT_PREFERRED_BINDING      | str   | Override order and content of binding to try. Used if QT_PREFERRED_BINDING_JSON does not apply.
+| QT_VERBOSE                | bool  | Be a little more chatty about what's going on with Qt.py
+| QT_SIP_API_HINT           | int   | Sets the preferred SIP api version that will be attempted to set.
 
 <br>
 
@@ -227,11 +228,30 @@ PyQt5
 Constrain available choices and order of discovery by supplying multiple values.
 
 ```bash
-# Try PyQt first and then PySide, but nothing else.
-$ export QT_PREFERRED_BINDING=PyQt:PySide
+# Try PyQt4 first and then PySide, but nothing else.
+$ export QT_PREFERRED_BINDING=PyQt4:PySide
 ```
 
 Using the OS path separator (`os.pathsep`) which is `:` on Unix systems and `;` on Windows.
+
+If you need to control the preferred choice of a specific vendored Qt.py you can use the `QT_PREFERRED_BINDING_JSON` environment variable instead.
+
+```json
+{
+    "Qt":["PyQt5"],
+    "myproject.vendor.Qt":["PyQt5"],
+    "default":["PySide2"]
+}
+```
+
+This json data forces any code that uses `import Qt` or `import myproject.vendor.Qt` to use PyQt5(`from x import Qt` etc works too, this is based on `__name__` of the Qt.py being imported). Any other imports of a Qt module will use the "default" PySide2 only. If `"default"` is not provided or a Qt.py being used does not support `QT_PREFERRED_BINDING_JSON`, `QT_PREFERRED_BINDING` will be respected.
+
+```bash
+# Try PyQt5 first and then PyQt4 for the Qt module name space.
+$ export QT_PREFERRED_BINDING_JSON="{"Qt":["PyQt5","PyQt4"]}"
+# Use PyQt4 for any other Qt module name spaces.
+$ export QT_PREFERRED_BINDING=PySide2
+```
 
 <br>
 
