@@ -597,7 +597,7 @@ def test_vendoring():
     popen = subprocess.Popen(
         [sys.executable, "-c", cmd],
         stdout=subprocess.PIPE,
-        stderr=subprocess.STDOUT,
+        stderr=subprocess.PIPE,
         cwd=self.tempdir,
         env=env
     )
