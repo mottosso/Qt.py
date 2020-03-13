@@ -581,6 +581,7 @@ def test_vendoring():
     #
     # Test invalid json data
     #
+    env = os.environ.copy()
     env["QT_PREFERRED_BINDING_JSON"] = '{"Qt":["PyQt5","PyQt4"],}'
 
     cmd = "import myproject.vendor.Qt;"
@@ -614,7 +615,6 @@ def test_vendoring():
 
     # Check QT_PREFERRED_BINDING_JSON works as expected
     print("Testing QT_PREFERRED_BINDING_JSON is respected..")
-    env = os.environ.copy()
     cmd = "import myproject.vendor.Qt;"
     # Check that the "None" binding was set for `import myproject.vendor.Qt`
     cmd += "assert myproject.vendor.Qt.__binding__ == 'None', 'vendor';"
@@ -624,6 +624,7 @@ def test_vendoring():
     cmd += "assert Qt.__binding__ != 'None', 'Qt'"
 
     # If the module name is "Qt" use PyQt5 or PyQt4, otherwise use None binding
+    env = os.environ.copy()
     env["QT_PREFERRED_BINDING_JSON"] = json.dumps(
         {
             "Qt": ["PyQt5", "PyQt4"],
