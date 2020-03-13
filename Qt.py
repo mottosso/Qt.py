@@ -1803,7 +1803,8 @@ def _install():
         except ValueError:
             # Python 2 raises ValueError, Python 3 raises json.JSONDecodeError
             # a subclass of ValueError
-            _warn("Failed to parse QT_PREFERRED_BINDING_JSON='%s'" % QT_PREFERRED_BINDING_JSON)
+            _warn("Failed to parse QT_PREFERRED_BINDING_JSON='%s'"
+                   % QT_PREFERRED_BINDING_JSON)
             _warn("Falling back to default preferred order")
         else:
             preferred_order = preferred_bindings.get(__name__)
