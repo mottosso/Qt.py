@@ -8,6 +8,7 @@ import tempfile
 import subprocess
 import contextlib
 import datetime
+import json
 
 # Third-party dependency
 import six
