@@ -460,6 +460,7 @@ Send us a pull-request with your project here.
 - [Syncplay](https://github.com/Syncplay/syncplay)
 - [BlenderUpdater](https://github.com/overmindstudios/BlenderUpdater)
 - [QtPyConvert](https://github.com/DigitalDomain/QtPyConvert)
+- [Pyper](https://gitlab.com/brunoebe/pyper.git)
 
 <br>
 <br>
