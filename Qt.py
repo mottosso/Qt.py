@@ -43,7 +43,6 @@ import types
 import shutil
 import importlib
 import json
-import warnings
 
 
 __version__ = "1.2.5"
