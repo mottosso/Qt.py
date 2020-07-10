@@ -43,6 +43,7 @@ import types
 import shutil
 import importlib
 import json
+import warnings
 
 
 __version__ = "1.2.5"
@@ -1257,12 +1258,14 @@ def _setup(module, extras):
         try:
             submodule = _import_sub_module(
                 module, name)
-        except ImportError:
+        except ImportError as e:
             try:
                 # For extra modules like sip and shiboken that may not be
                 # children of the binding.
                 submodule = __import__(name)
-            except ImportError:
+            except ImportError as e2:
+                _warn_import_error(e)
+                _warn_import_error(e2)
                 continue
 
         setattr(Qt, "_" + name, submodule)
@@ -1665,6 +1668,22 @@ def _none():
 def _log(text):
     if QT_VERBOSE:
         sys.stdout.write("Qt.py [info]: %s\n" % text)
+
+
+def _warn_import_error(exc):
+    """Log import errors matching unexpected criteria
+
+    Arguments:
+        exc (Exception)
+    """
+    if not exc or not isinstance(exc, ImportError):
+        return
+
+    msg = str(exc)
+    if "No module named" in msg:
+        return
+
+    _warn("ImportError: %s" % msg)
 
 
 def _warn(text):
