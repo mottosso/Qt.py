@@ -1253,6 +1253,12 @@ def _setup(module, extras):
 
     Qt.__binding__ = module.__name__
 
+    def _warn_import_error(exc):
+        msg = str(exc)
+        if "No module named" in msg:
+            return
+        _warn("ImportError: %s" % msg)
+
     for name in list(_common_members) + extras:
         try:
             submodule = _import_sub_module(
@@ -1667,22 +1673,6 @@ def _none():
 def _log(text):
     if QT_VERBOSE:
         sys.stdout.write("Qt.py [info]: %s\n" % text)
-
-
-def _warn_import_error(exc):
-    """Log import errors matching unexpected criteria
-
-    Arguments:
-        exc (Exception)
-    """
-    if not exc or not isinstance(exc, ImportError):
-        return
-
-    msg = str(exc)
-    if "No module named" in msg:
-        return
-
-    _warn("ImportError: %s" % msg)
 
 
 def _warn(text):
