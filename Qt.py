@@ -45,7 +45,7 @@ import importlib
 import json
 
 
-__version__ = "1.2.5"
+__version__ = "1.2.6"
 
 # Enable support for `from Qt import *`
 __all__ = []
@@ -1253,16 +1253,24 @@ def _setup(module, extras):
 
     Qt.__binding__ = module.__name__
 
+    def _warn_import_error(exc):
+        msg = str(exc)
+        if "No module named" in msg:
+            return
+        _warn("ImportError: %s" % msg)
+
     for name in list(_common_members) + extras:
         try:
             submodule = _import_sub_module(
                 module, name)
-        except ImportError:
+        except ImportError as e:
             try:
                 # For extra modules like sip and shiboken that may not be
                 # children of the binding.
                 submodule = __import__(name)
-            except ImportError:
+            except ImportError as e2:
+                _warn_import_error(e)
+                _warn_import_error(e2)
                 continue
 
         setattr(Qt, "_" + name, submodule)
