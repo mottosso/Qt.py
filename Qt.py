@@ -971,7 +971,7 @@ def _loadUi(uifile, baseinstance=None):
                                                                   parent,
                                                                   name)
                 elif class_name in self.custom_widgets:
-                    widget = self.custom_widgets[class_name](parent)
+                    widget = self.custom_widgets[class_name](parent=parent)
                 else:
                     raise Exception("Custom widget '%s' not supported"
                                     % class_name)
