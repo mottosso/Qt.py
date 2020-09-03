@@ -781,17 +781,20 @@ def _wrapinstance(ptr, base=None):
     if base is None:
         q_object = func(long(ptr), Qt.QtCore.QObject)
         meta_object = q_object.metaObject()
-        class_name = meta_object.className()
-        super_class_name = meta_object.superClass().className()
 
-        if hasattr(Qt.QtWidgets, class_name):
-            base = getattr(Qt.QtWidgets, class_name)
+        while True:
+            class_name = meta_object.className()
 
-        elif hasattr(Qt.QtWidgets, super_class_name):
-            base = getattr(Qt.QtWidgets, super_class_name)
+            try:
+                base = getattr(QtWidgets, class_name)
+            except AttributeError:
+                try:
+                    base = getattr(QtCore, class_name)
+                except AttributeError:
+                    meta_object = meta_object.superClass()
+                    continue
 
-        else:
-            base = Qt.QtCore.QObject
+            break
 
     return func(long(ptr), base)
 
