@@ -786,10 +786,10 @@ def _wrapinstance(ptr, base=None):
             class_name = meta_object.className()
 
             try:
-                base = getattr(QtWidgets, class_name)
+                base = getattr(Qt.QtWidgets, class_name)
             except AttributeError:
                 try:
-                    base = getattr(QtCore, class_name)
+                    base = getattr(Qt.QtCore, class_name)
                 except AttributeError:
                     meta_object = meta_object.superClass()
                     continue
