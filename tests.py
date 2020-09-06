@@ -897,7 +897,7 @@ if sys.version_info < (3, 5):
     # https://github.com/PySide/shiboken-setup/issues/3
 
     def test_wrapInstance():
-        """Tests .wrapInstance cast of pointer to explicit class.
+        """Tests .wrapInstance cast of pointer to explicit class
 
         Note:
             sip.wrapInstance will ignore the explicit class if there is a more
@@ -933,11 +933,12 @@ if sys.version_info < (3, 5):
             app.exit()
 
     def test_implicit_wrapInstance_for_base_types():
-        """Tests implicit `Foo` -> `Foo` cast of `Foo` pointer to `Foo` object,
-        produced by .wrapInstance when:
+        """Tests .wrapInstance implicit cast of `Foo` pointer to `Foo` object
 
-        #. The `base` argument has a default value.
-        #. `Foo` is a standard Qt class.
+        Testing is based upon the following parameters:
+
+        1. The `base` argument has a default value.
+        2. `Foo` is a standard Qt class.
 
         """
         from Qt import QtCompat, QtWidgets
@@ -968,15 +969,19 @@ if sys.version_info < (3, 5):
             app.exit()
 
     def test_implicit_wrapInstance_for_derived_types():
-        """Tests implicit `Foo` -> `Bar` cast of `Foo` pointer to `Bar` object,
-        produced by .wrapInstance when:
+        """Tests .wrapInstance implicit cast of `Foo` pointer to `Bar` object
 
-        #. shiboken or shiboken2 is used (else mapping is `Foo` -> `Foo`).
-        #. The `base` argument has a default value.
-        #. `Bar` is a standard Qt class.
-        #. `Foo` is a strict subclass of `Bar`, separated by one or more levels
+        Testing is based upon the following parameters:
+
+        1. The `base` argument has a default value.
+        2. `Bar` is a standard Qt class.
+        3. `Foo` is a strict subclass of `Bar`, separated by one or more levels
            of inheritance.
-        #. `Foo` is not a standard Qt class.
+        4. `Foo` is not a standard Qt class.
+
+        Note:
+            For sip usage, implicit cast of `Foo` pointer always results in a
+            `Foo` object.
 
         """
         from Qt import QtCompat, QtWidgets
@@ -1011,8 +1016,7 @@ if sys.version_info < (3, 5):
             app.exit()
 
     def test_implicit_wrapInstance_expectations():
-        """Tests expectations for .wrapInstance to function correctly when the
-        `base` argument has a default value.
+        """Tests expectations for implicit usage of .wrapInstance
 
         This includes testing whether the QtCore and QtWidgets namespaces have
         any overlapping QObject subclass names.
