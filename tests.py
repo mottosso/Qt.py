@@ -305,7 +305,7 @@ def ignoreQtMessageHandler(msgs):
 def test_environment():
     """Tests require all bindings to be installed (except PySide on py3.5+)"""
 
-    if sys.version_info <= (3, 4):
+    if sys.version_info < (3, 5):
         # PySide is not available for Python > 3.4
         imp.find_module("PySide")
     imp.find_module("PySide2")
@@ -891,13 +891,19 @@ def test_missing():
     )
 
 
-if sys.version_info <= (3, 4):
+if sys.version_info < (3, 5):
     # PySide is not available for Python > 3.4
     # Shiboken(1) doesn't support Python 3.5
     # https://github.com/PySide/shiboken-setup/issues/3
 
     def test_wrapInstance():
-        """.wrapInstance and .getCppPointer is identical across all bindings"""
+        """Tests .wrapInstance cast of pointer to explicit class
+
+        Note:
+            sip.wrapInstance will ignore the explicit class if there is a more
+            suitable type available.
+
+        """
         from Qt import QtCompat, QtWidgets
 
         app = QtWidgets.QApplication(sys.argv)
@@ -908,8 +914,14 @@ if sys.version_info <= (3, 4):
             pointer = QtCompat.getCppPointer(button)
             widget = QtCompat.wrapInstance(long(pointer),
                                            QtWidgets.QWidget)
-            assert isinstance(widget, QtWidgets.QWidget), widget
+
             assert widget.objectName() == button.objectName()
+
+            if binding("PyQt4") or binding("PyQt5"):
+                # Even when we explicitly pass QWidget we will get QPushButton
+                assert type(widget) is QtWidgets.QPushButton, widget
+            else:
+                assert type(widget) is QtWidgets.QWidget, widget
 
             # IMPORTANT: this differs across sip and shiboken.
             if binding("PySide") or binding("PySide2"):
@@ -920,8 +932,15 @@ if sys.version_info <= (3, 4):
         finally:
             app.exit()
 
-    def test_implicit_wrapInstance():
-        """.wrapInstance doesn't need the `base` argument"""
+    def test_implicit_wrapInstance_for_base_types():
+        """Tests .wrapInstance implicit cast of `Foo` pointer to `Foo` object
+
+        Testing is based upon the following parameters:
+
+        1. The `base` argument has a default value.
+        2. `Foo` is a standard Qt class.
+
+        """
         from Qt import QtCompat, QtWidgets
 
         app = QtWidgets.QApplication(sys.argv)
@@ -931,8 +950,9 @@ if sys.version_info <= (3, 4):
             button.setObjectName("MySpecialButton")
             pointer = QtCompat.getCppPointer(button)
             widget = QtCompat.wrapInstance(long(pointer))
-            assert isinstance(widget, QtWidgets.QWidget), widget
+
             assert widget.objectName() == button.objectName()
+            assert type(widget) is QtWidgets.QPushButton, widget
 
             if binding("PySide"):
                 assert widget != button
@@ -947,6 +967,73 @@ if sys.version_info <= (3, 4):
 
         finally:
             app.exit()
+
+    def test_implicit_wrapInstance_for_derived_types():
+        """Tests .wrapInstance implicit cast of `Foo` pointer to `Bar` object
+
+        Testing is based upon the following parameters:
+
+        1. The `base` argument has a default value.
+        2. `Bar` is a standard Qt class.
+        3. `Foo` is a strict subclass of `Bar`, separated by one or more levels
+           of inheritance.
+        4. `Foo` is not a standard Qt class.
+
+        Note:
+            For sip usage, implicit cast of `Foo` pointer always results in a
+            `Foo` object.
+
+        """
+        from Qt import QtCompat, QtWidgets
+
+        app = QtWidgets.QApplication(sys.argv)
+
+        try:
+            class A(QtWidgets.QPushButton):
+                pass
+
+            class B(A):
+                pass
+
+            button = B("Hello world")
+            button.setObjectName("MySpecialButton")
+            pointer = QtCompat.getCppPointer(button)
+            widget = QtCompat.wrapInstance(long(pointer))
+
+            assert widget.objectName() == button.objectName()
+
+            if binding("PyQt4") or binding("PyQt5"):
+                assert type(widget) is B, widget
+            else:
+                assert type(widget) is QtWidgets.QPushButton, widget
+
+            if binding("PySide") or binding("PySide2"):
+                assert widget != button
+            else:
+                assert widget == button
+
+        finally:
+            app.exit()
+
+    def test_implicit_wrapInstance_expectations():
+        """Tests expectations for implicit usage of .wrapInstance
+
+        This includes testing whether the QtCore and QtWidgets namespaces have
+        any overlapping QObject subclass names.
+
+        """
+        import inspect
+        from Qt import QtCore, QtWidgets
+
+        core_class_names = set([attr for attr, value in QtCore.__dict__.items()
+                                if inspect.isclass(value) and
+                                issubclass(value, QtCore.QObject)])
+        widget_class_names = set([attr for attr, value in
+                                  QtWidgets.__dict__.items()
+                                  if inspect.isclass(value) and
+                                  issubclass(value, QtCore.QObject)])
+        intersecting_class_names = core_class_names & widget_class_names
+        assert not intersecting_class_names
 
     def test_isValid():
         """.isValid and .delete work in all bindings"""

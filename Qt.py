@@ -45,7 +45,7 @@ import importlib
 import json
 
 
-__version__ = "1.2.6"
+__version__ = "1.3.0"
 
 # Enable support for `from Qt import *`
 __all__ = []
@@ -779,19 +779,25 @@ def _wrapinstance(ptr, base=None):
         raise AttributeError("'module' has no attribute 'wrapInstance'")
 
     if base is None:
-        q_object = func(long(ptr), Qt.QtCore.QObject)
-        meta_object = q_object.metaObject()
-        class_name = meta_object.className()
-        super_class_name = meta_object.superClass().className()
-
-        if hasattr(Qt.QtWidgets, class_name):
-            base = getattr(Qt.QtWidgets, class_name)
-
-        elif hasattr(Qt.QtWidgets, super_class_name):
-            base = getattr(Qt.QtWidgets, super_class_name)
-
-        else:
+        if Qt.IsPyQt4 or Qt.IsPyQt5:
             base = Qt.QtCore.QObject
+        else:
+            q_object = func(long(ptr), Qt.QtCore.QObject)
+            meta_object = q_object.metaObject()
+
+            while True:
+                class_name = meta_object.className()
+
+                try:
+                    base = getattr(Qt.QtWidgets, class_name)
+                except AttributeError:
+                    try:
+                        base = getattr(Qt.QtCore, class_name)
+                    except AttributeError:
+                        meta_object = meta_object.superClass()
+                        continue
+
+                break
 
     return func(long(ptr), base)
 
