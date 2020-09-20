@@ -45,7 +45,7 @@ import importlib
 import json
 
 
-__version__ = "1.3.0"
+__version__ = "1.3.1"
 
 # Enable support for `from Qt import *`
 __all__ = []
@@ -977,7 +977,7 @@ def _loadUi(uifile, baseinstance=None):
                                                                   parent,
                                                                   name)
                 elif class_name in self.custom_widgets:
-                    widget = self.custom_widgets[class_name](parent)
+                    widget = self.custom_widgets[class_name](parent=parent)
                 else:
                     raise Exception("Custom widget '%s' not supported"
                                     % class_name)
