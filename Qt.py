@@ -45,7 +45,7 @@ import importlib
 import json
 
 
-__version__ = "1.3.1"
+__version__ = "1.3.2"
 
 # Enable support for `from Qt import *`
 __all__ = []
@@ -1259,11 +1259,11 @@ def _setup(module, extras):
 
     Qt.__binding__ = module.__name__
 
-    def _warn_import_error(exc):
+    def _warn_import_error(exc, module):
         msg = str(exc)
         if "No module named" in msg:
             return
-        _warn("ImportError: %s" % msg)
+        _warn("ImportError(%s): %s" % (module, msg))
 
     for name in list(_common_members) + extras:
         try:
@@ -1275,8 +1275,8 @@ def _setup(module, extras):
                 # children of the binding.
                 submodule = __import__(name)
             except ImportError as e2:
-                _warn_import_error(e)
-                _warn_import_error(e2)
+                _warn_import_error(e, name)
+                _warn_import_error(e2, name)
                 continue
 
         setattr(Qt, "_" + name, submodule)
