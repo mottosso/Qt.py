@@ -37,6 +37,7 @@ LICENSE
 
 """
 
+import inspect
 import os
 import sys
 import types
@@ -1813,7 +1814,7 @@ def _pyqt_enums_patch():
     }
 
     known_enums = set()
-    for attr_name, enum_class in qt_attrs.items():
+    for enum_class in qt_attrs.values():
         if inspect.isclass(enum_class) and issubclass(enum_class, int):
             known_enums.add(enum_class)
             enum_class.values = {}

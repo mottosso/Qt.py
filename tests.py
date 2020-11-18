@@ -1197,4 +1197,6 @@ if binding("PyQt4") or binding("PyQt5"):
                 cls_value = cls_values[attr_name]
                 assert value == cls_values[attr_name], (
                     "({0}) {1!r} != {2!r} ({3}[{4}])".format(
-                    attr_path, value, cls_value, values_path, attr_name))
+                        attr_path, value, cls_value, values_path, attr_name
+                    )
+                )
