@@ -1800,6 +1800,30 @@ class MissingMember(object):
         raise NotImplementedError(self.__err)
 
 
+def _pyqt_enums_patch():
+    """Patch ``PyQt*`` Qt namespace enums to behave like ``PySide*``.
+
+    i.e. ``PyQt*`` only has Qt.Checked and Qt.CheckState, but not ``PySide*``
+    Qt.CheckState.Checked attribute or Qt.CheckState.values dictionary.
+    """
+    qt_attrs = {
+        name: getattr(Qt.QtCore.Qt, name)
+        for name in dir(Qt.QtCore.Qt)
+        if not name.startswith("_")
+    }
+
+    known_enums = set()
+    for attr_name, enum_class in qt_attrs.items():
+        if inspect.isclass(enum_class) and issubclass(enum_class, int):
+            known_enums.add(enum_class)
+            enum_class.values = {}
+
+    for attr_name, attr in qt_attrs.items():
+        if isinstance(attr, int) and attr.__class__ in known_enums:
+            attr.__class__.values[attr_name] = attr
+            setattr(attr.__class__, attr_name, attr)
+
+
 def _install():
     # Default order (customize order and content via QT_PREFERRED_BINDING)
     default_order = ("PySide2", "PyQt5", "PySide", "PyQt4")
@@ -1914,6 +1938,12 @@ def _install():
     # Backwards compatibility
     if hasattr(Qt.QtCompat, 'loadUi'):
         Qt.QtCompat.load_ui = Qt.QtCompat.loadUi
+
+    if Qt.__binding__.startswith("PyQt"):
+        if getattr(getattr(Qt, "QtCore", None), "Qt", None) is None:
+            _warn("Qt.QtCore.Qt not available. Not applying enums patch.")
+        else:
+            _pyqt_enums_patch()
 
 
 _install()
