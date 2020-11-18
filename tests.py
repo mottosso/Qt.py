@@ -1171,32 +1171,30 @@ if binding("PyQt4") or binding("PyQt5"):
         for class_name, attributes in class_attributes.items():
             qt_class = getattr(QtCore.Qt, class_name)
 
-            values_path = "QtCore.Qt.{0}.{1}".format(class_name, "values")
+            values_path = "QtCore.Qt.%s.%s" % (class_name, "values")
             assert hasattr(qt_class, "values"), (
-                "{0} should exist, but is missing".format(values_path))
+                "%s should exist, but is missing" % values_path)
 
             cls_values = getattr(qt_class, "values", None)
             assert cls_values and isinstance(cls_values, dict), (
-                "{0} should be a non-empty dictionary, "
-                "not {1}".format(values_path, cls_values))
+                "%s should be a non-empty dictionary, not %s"
+                % (values_path, cls_values))
 
             for attr_name in attributes:
-                attr_path = "QtCore.Qt.{0}.{1}".format(class_name, attr_name)
+                attr_path = "QtCore.Qt.%s.%s" % (class_name, attr_name)
 
                 assert hasattr(qt_class, attr_name), (
-                    "{0} should exist, but is missing".format(attr_path))
+                    "%s should exist, but is missing" % attr_path)
 
                 value = getattr(qt_class, attr_name, None)
-                assert value is not None, (
-                    "{0} shouldn't be None".format(attr_path))
+                assert value is not None, "%s shouldn't be None" % attr_path
 
                 assert attr_name in cls_values, (
-                    "{0} key should exist in {1} "
-                    "dict".format(attr_name, values_path))
+                    "%s key should exist in %s dict" %
+                    (attr_name, values_path))
 
                 cls_value = cls_values[attr_name]
                 assert value == cls_values[attr_name], (
-                    "({0}) {1!r} != {2!r} ({3}[{4}])".format(
-                        attr_path, value, cls_value, values_path, attr_name
-                    )
+                    "(%s) %r != %r (%s[%s])" %
+                    (attr_path, value, cls_value, values_path, attr_name)
                 )
