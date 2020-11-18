@@ -1813,16 +1813,21 @@ def _pyqt_enums_patch():
         if not name.startswith("_")
     }
 
-    known_enums = set()
-    for enum_class in qt_attrs.values():
+    known_enums = {}
+    for class_name, enum_class in qt_attrs.items():
         if inspect.isclass(enum_class) and issubclass(enum_class, int):
-            known_enums.add(enum_class)
-            enum_class.values = {}
+            class EnumFlags(enum_class):
+                values = {}
+
+            known_enums[enum_class] = class_name
+            setattr(Qt.QtCompat, class_name, EnumFlags)
 
     for attr_name, attr in qt_attrs.items():
-        if isinstance(attr, int) and attr.__class__ in known_enums:
-            attr.__class__.values[attr_name] = attr
-            setattr(attr.__class__, attr_name, attr)
+        class_name = known_enums.get(attr.__class__)
+        if isinstance(attr, int) and class_name is not None:
+            enum_class = getattr(Qt.QtCompat, class_name)
+            enum_class.values[attr_name] = attr
+            setattr(enum_class, attr_name, attr)
 
 
 def _install():

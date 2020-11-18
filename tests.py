@@ -1162,16 +1162,16 @@ if binding("PyQt4") or binding("PyQt5"):
 
     def test_pyqt_enums():
         """Check some known enums/flags mappings."""
-        from Qt import QtCore
+        from Qt import QtCompat
 
         class_attributes = {  # Version agnostic flags and enums
             "CheckState": ["Checked", "Unchecked", "PartiallyChecked"],
             "Orientation": ["Horizontal", "Vertical"],
         }
         for class_name, attributes in class_attributes.items():
-            qt_class = getattr(QtCore.Qt, class_name)
+            qt_class = getattr(QtCompat, class_name)
 
-            values_path = "QtCore.Qt.%s.%s" % (class_name, "values")
+            values_path = "QtCompat.%s.%s" % (class_name, "values")
             assert hasattr(qt_class, "values"), (
                 "%s should exist, but is missing" % values_path)
 
@@ -1181,7 +1181,7 @@ if binding("PyQt4") or binding("PyQt5"):
                 % (values_path, cls_values))
 
             for attr_name in attributes:
-                attr_path = "QtCore.Qt.%s.%s" % (class_name, attr_name)
+                attr_path = "QtCompat.%s.%s" % (class_name, attr_name)
 
                 assert hasattr(qt_class, attr_name), (
                     "%s should exist, but is missing" % attr_path)
