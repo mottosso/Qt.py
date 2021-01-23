@@ -1909,7 +1909,7 @@ def _install():
             setattr(our_submodule, member, placeholder)
 
     # Enable direct import of QtCompat
-    sys.modules['Qt.QtCompat'] = Qt.QtCompat
+    sys.modules[__name__ + ".QtCompat"] = Qt.QtCompat
 
     # Backwards compatibility
     if hasattr(Qt.QtCompat, 'loadUi'):
