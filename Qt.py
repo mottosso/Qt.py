@@ -45,7 +45,7 @@ import importlib
 import json
 
 
-__version__ = "1.3.3"
+__version__ = "1.3.4"
 
 # Enable support for `from Qt import *`
 __all__ = []
@@ -1260,6 +1260,14 @@ def _setup(module, extras):
     Qt.__binding__ = module.__name__
 
     def _warn_import_error(exc, module):
+        if sys.version_info > (3, 0):
+            unicode = str
+        else:
+            try:
+                if isinstance(exc, unicode):
+                    exc = exc.encode('ascii', 'replace')
+            except (UnboundLocalError, NameError):
+                pass
         msg = str(exc)
         if "No module named" in msg:
             return
