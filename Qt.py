@@ -1263,8 +1263,11 @@ def _setup(module, extras):
         if sys.version_info > (3, 0):
             unicode = str
         else:
-            if isinstance(exc, unicode):
-                exc = exc.encode('ascii', 'replace')
+            try:
+                if isinstance(exc, unicode):
+                    exc = exc.encode('ascii', 'replace')
+            except (UnboundLocalError, NameError):
+                pass
         msg = str(exc)
         if "No module named" in msg:
             return
