@@ -1260,7 +1260,9 @@ def _setup(module, extras):
     Qt.__binding__ = module.__name__
 
     def _warn_import_error(exc, module):
-        if sys.version_info < (3, 0):
+        if sys.version_info > (3, 0):
+            unicode = str
+        else:
             if isinstance(exc, unicode):
                 exc = exc.encode('ascii', 'replace')
         msg = str(exc)
