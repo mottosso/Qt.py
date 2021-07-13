@@ -1664,7 +1664,7 @@ def _pyqt4():
     }
     _build_compatibility_members('PyQt4', decorators)
 
-ImportError.
+
 def _none():
     """Internal option (used in installer)"""
 
