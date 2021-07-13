@@ -1266,7 +1266,7 @@ def _setup(module, extras):
         msg = str(exc)
         if "No module named" in msg:
             return
-        _warn("ImportError: %s" % msg)
+        _warn("ImportError(%s): %s" % (module, msg))
 
     for name in list(_common_members) + extras:
         try:
