@@ -892,7 +892,8 @@ def test_missing():
 
 
 def test_unicode_error_messages():
-    """Test if unicode error messages with non-ascii characters throw the error reporter off"""
+    """Test if unicode error messages with non-ascii characters
+    throw the error reporter off"""
     import Qt
     message = u"DLL load failed : le module spécifié est introuvable."
     module = Qt.__binding__
