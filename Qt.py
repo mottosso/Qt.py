@@ -1255,10 +1255,11 @@ def _import_sub_module(module, name):
 
 
 def _warn_import_error(exc, module):
-    if sys.version_info < (3, 0):
-        if type(exc).__name__ == 'unicode':
-            exc = exc.encode('ascii', 'replace')
-    msg = str(exc)
+    try:
+        msg = str(exc)
+    except UnicodeEncodeError:
+        # args[0] is the message of the error
+        msg = str(exc.args[0].encode('ascii', 'replace'))
     if "No module named" in msg:
         return
     _warn("ImportError(%s): %s" % (module, msg))
@@ -1663,7 +1664,7 @@ def _pyqt4():
     }
     _build_compatibility_members('PyQt4', decorators)
 
-
+ImportError.
 def _none():
     """Internal option (used in installer)"""
 
