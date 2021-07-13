@@ -1254,19 +1254,20 @@ def _import_sub_module(module, name):
     return module
 
 
+def _warn_import_error(exc, module):
+    if sys.version_info < (3, 0):
+        if type(exc).__name__ == 'unicode':
+            exc = exc.encode('ascii', 'replace')
+    msg = str(exc)
+    if "No module named" in msg:
+        return
+    _warn("ImportError(%s): %s" % (module, msg))
+
+
 def _setup(module, extras):
     """Install common submodules"""
 
     Qt.__binding__ = module.__name__
-
-    def _warn_import_error(exc, module):
-        if sys.version_info < (3, 0):
-            if type(exc).__name__ == 'unicode':
-                exc = exc.encode('ascii', 'replace')
-        msg = str(exc)
-        if "No module named" in msg:
-            return
-        _warn("ImportError(%s): %s" % (module, msg))
 
     for name in list(_common_members) + extras:
         try:
