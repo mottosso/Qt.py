@@ -900,8 +900,9 @@ def test_unicode_error_messages():
     module = Qt.__binding__
 
     with captured_output() as out:
+        stdout, stderr = out
         Qt._warn_import_error(exc=message, module=module)
-        assert "DLL load failed" in out.getvalue()
+        assert "DLL load failed" in stderr.getvalue()
 
 
 if sys.version_info < (3, 5):
