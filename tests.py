@@ -1,3 +1,4 @@
+# coding=utf-8
 """Tests that run once"""
 import io
 import os
