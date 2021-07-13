@@ -1260,18 +1260,13 @@ def _setup(module, extras):
     Qt.__binding__ = module.__name__
 
     def _warn_import_error(exc, module):
-        if sys.version_info > (3, 0):
-            unicode = str
-        else:
-            try:
-                if isinstance(exc, unicode):
-                    exc = exc.encode('ascii', 'replace')
-            except (UnboundLocalError, NameError):
-                pass
+        if sys.version_info < (3, 0):
+            if type(exc).__name__ == 'unicode':
+                exc = exc.encode('ascii', 'replace')
         msg = str(exc)
         if "No module named" in msg:
             return
-        _warn("ImportError(%s): %s" % (module, msg))
+        _warn("ImportError: %s" % msg)
 
     for name in list(_common_members) + extras:
         try:
