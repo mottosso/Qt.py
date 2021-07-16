@@ -901,7 +901,7 @@ def test_unicode_error_messages():
 
     with captured_output() as out:
         stdout, stderr = out
-        Qt._warn_import_error(exc=message, module=module)
+        Qt._warn(text=message)
         assert "DLL load failed" in stderr.getvalue()
 
 
