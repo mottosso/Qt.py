@@ -896,13 +896,14 @@ def test_unicode_error_messages():
     """Test if unicode error messages with non-ascii characters
     throw the error reporter off"""
     import Qt
-    message = u"DLL load failed : le module spécifié est introuvable."
+    unicode_message = u"DLL load failed : le module spécifié est introuvable."
+    str_message = "DLL load failed : le module"
     module = Qt.__binding__
 
     with captured_output() as out:
         stdout, stderr = out
-        Qt._warn(text=message)
-        assert "DLL load failed" in stderr.getvalue()
+        Qt._warn(text=unicode_message)
+        assert str_message in stderr.getvalue()
 
 
 if sys.version_info < (3, 5):
