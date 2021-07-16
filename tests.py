@@ -898,7 +898,6 @@ def test_unicode_error_messages():
     import Qt
     unicode_message = u"DLL load failed : le module spécifié est introuvable."
     str_message = "DLL load failed : le module"
-    module = Qt.__binding__
 
     with captured_output() as out:
         stdout, stderr = out
