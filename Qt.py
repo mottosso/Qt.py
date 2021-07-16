@@ -1261,6 +1261,8 @@ def _setup(module, extras):
 
     def _warn_import_error(exc, module):
         msg = str(exc)
+        if "No module named" in msg:
+            return
         _warn("ImportError(%s): %s" % (module, msg))
 
     for name in list(_common_members) + extras:
@@ -1680,10 +1682,12 @@ def _log(text):
 
 
 def _warn(text):
-	try:
-		sys.stderr.write("Qt.py [warning]: %s\n" % text)
-	except UnicodeDecodeError:
-		sys.stderr.write("Qt.py [warning]: %s\n" % text.decode("utf-8", "replace"))
+    try:
+        sys.stderr.write("Qt.py [warning]: %s\n" % text)
+    except UnicodeDecodeError:
+        import locale
+        encoding = locale.getpreferredencoding()
+        sys.stderr.write("Qt.py [warning]: %s\n" % text.decode(encoding))
 
 
 def _convert(lines):
