@@ -1254,21 +1254,14 @@ def _import_sub_module(module, name):
     return module
 
 
-def _warn_import_error(exc, module):
-    try:
-        msg = str(exc)
-    except UnicodeEncodeError:
-        # args[0] is the message of the error
-        msg = str(exc.args[0].encode('ascii', 'replace'))
-    if "No module named" in msg:
-        return
-    _warn("ImportError(%s): %s" % (module, msg))
-
-
 def _setup(module, extras):
     """Install common submodules"""
 
     Qt.__binding__ = module.__name__
+
+    def _warn_import_error(exc, module):
+        msg = str(exc)
+        _warn("ImportError(%s): %s" % (module, msg))
 
     for name in list(_common_members) + extras:
         try:
@@ -1687,7 +1680,10 @@ def _log(text):
 
 
 def _warn(text):
-    sys.stderr.write("Qt.py [warning]: %s\n" % text)
+	try:
+		sys.stderr.write("Qt.py [warning]: %s\n" % text)
+	except UnicodeDecodeError:
+		sys.stderr.write("Qt.py [warning]: %s\n" % text.decode("utf-8", "replace"))
 
 
 def _convert(lines):
