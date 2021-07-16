@@ -1260,14 +1260,6 @@ def _setup(module, extras):
     Qt.__binding__ = module.__name__
 
     def _warn_import_error(exc, module):
-        if sys.version_info > (3, 0):
-            unicode = str
-        else:
-            try:
-                if isinstance(exc, unicode):
-                    exc = exc.encode('ascii', 'replace')
-            except (UnboundLocalError, NameError):
-                pass
         msg = str(exc)
         if "No module named" in msg:
             return
@@ -1690,7 +1682,12 @@ def _log(text):
 
 
 def _warn(text):
-    sys.stderr.write("Qt.py [warning]: %s\n" % text)
+    try:
+        sys.stderr.write("Qt.py [warning]: %s\n" % text)
+    except UnicodeDecodeError:
+        import locale
+        encoding = locale.getpreferredencoding()
+        sys.stderr.write("Qt.py [warning]: %s\n" % text.decode(encoding))
 
 
 def _convert(lines):

@@ -1,3 +1,4 @@
+# coding=utf-8
 """Tests that run once"""
 import io
 import os
@@ -889,6 +890,19 @@ def test_missing():
         "Some members did not exist in {binding} as "
         "a Qt.MissingMember type\n{missing}".format(**locals())
     )
+
+
+def test_unicode_error_messages():
+    """Test if unicode error messages with non-ascii characters
+    throw the error reporter off"""
+    import Qt
+    unicode_message = u"DLL load failed : le module spécifié est introuvable."
+    str_message = "DLL load failed : le module"
+
+    with captured_output() as out:
+        stdout, stderr = out
+        Qt._warn(text=unicode_message)
+        assert str_message in stderr.getvalue()
 
 
 if sys.version_info < (3, 5):
