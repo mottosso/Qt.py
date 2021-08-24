@@ -1030,6 +1030,7 @@ _misplaced_members = {
             "QtCompat.qInstallMessageHandler", _qInstallMessageHandler
         ],
         "QtWidgets.QStyleOptionViewItem": "QtCompat.QStyleOptionViewItemV4",
+        "QtMultimedia.QSound": "QtMultimedia.QSound",
     },
     "PyQt5": {
         "QtCore.pyqtProperty": "QtCore.Property",
@@ -1056,6 +1057,7 @@ _misplaced_members = {
             "QtCompat.qInstallMessageHandler", _qInstallMessageHandler
         ],
         "QtWidgets.QStyleOptionViewItem": "QtCompat.QStyleOptionViewItemV4",
+        "QtMultimedia.QSound": "QtMultimedia.QSound",
     },
     "PySide": {
         "QtGui.QAbstractProxyModel": "QtCore.QAbstractProxyModel",
@@ -1090,6 +1092,7 @@ _misplaced_members = {
             "QtCompat.qInstallMessageHandler", _qInstallMessageHandler
         ],
         "QtGui.QStyleOptionViewItemV4": "QtCompat.QStyleOptionViewItemV4",
+        "QtGui.QSound": "QtMultimedia.QSound",
     },
     "PyQt4": {
         "QtGui.QAbstractProxyModel": "QtCore.QAbstractProxyModel",
@@ -1126,6 +1129,7 @@ _misplaced_members = {
             "QtCompat.qInstallMessageHandler", _qInstallMessageHandler
         ],
         "QtGui.QStyleOptionViewItemV4": "QtCompat.QStyleOptionViewItemV4",
+        "QtGui.QSound": "QtMultimedia.QSound",
     }
 }
 
