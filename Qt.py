@@ -239,6 +239,7 @@ _common_members = {
         "QFontMetrics",
         "QFontMetricsF",
         "QGradient",
+        "QGuiApplication",
         "QHelpEvent",
         "QHideEvent",
         "QHoverEvent",
