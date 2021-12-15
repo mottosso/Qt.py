@@ -45,7 +45,7 @@ import importlib
 import json
 
 
-__version__ = "1.3.6"
+__version__ = "1.3.7"
 
 # Enable support for `from Qt import *`
 __all__ = []
@@ -288,6 +288,7 @@ _common_members = {
         "QRegion",
         "QResizeEvent",
         "QSessionManager",
+        "QScreen",
         "QShortcutEvent",
         "QShowEvent",
         "QStandardItem",
@@ -396,7 +397,8 @@ _common_members = {
         "QGL",
         "QGLContext",
         "QGLFormat",
-        "QGLWidget"
+        "QGLWidget",
+        "QGLPixelBuffer"
     ],
     "QtPrintSupport": [
         "QAbstractPrintDialog",
