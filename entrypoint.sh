@@ -10,6 +10,14 @@ while ! ps aux | grep -q '[0]:00 Xvfb :99 -screen 0 1024x768x16'; do
     sleep 1
 done
 
+if [ -n "$RELEASE" ]; then
+  wget https://bootstrap.pypa.io/pip/2.7/get-pip.py
+  python${PYTHON} ./get-pip.py
+  printf "#\n# Installed pip for Python 2.7\n"
+else
+  printf "#\n# Skipped pip, RELEASE not set\n"
+fi
+
 printf "#\n# Running tests in Python ${PYTHON}\n"
 export NOSETESTS_BINARY=nosetests${PYTHON}
 printf "#\n# Testing implementation..\n"
@@ -28,13 +36,5 @@ printf "#\n# Testing examples..\n"
     --with-doctest \
     --exe \
         examples/*/*.py
-
-if [ -n "$RELEASE" ]; then
-  wget https://bootstrap.pypa.io/pip/2.7/get-pip.py
-  python${PYTHON} ./get-pip.py
-  printf "#\n# Installed pip for Python 2.7\n"
-else
-  printf "#\n# Skipped pip, RELEASE not set\n"
-fi
 
 printf Done
