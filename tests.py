@@ -1051,11 +1051,24 @@ if sys.version_info < (3, 5):
 
     def test_isValid():
         """.isValid and .delete work in all bindings"""
-        from Qt import QtCompat, QtCore
-        obj = QtCore.QObject()
-        assert QtCompat.isValid(obj)
-        QtCompat.delete(obj)
-        assert not QtCompat.isValid(obj)
+        from Qt import QtCompat, QtCore, QtWidgets
+
+        app = QtWidgets.QApplication(sys.argv)
+
+        try:
+            obj = QtCore.QObject()
+            assert QtCompat.isValid(obj)
+            QtCompat.delete(obj)
+            assert not QtCompat.isValid(obj)
+
+            # Graphics Item
+            item = QtWidgets.QGraphicsItemGroup()
+            assert QtCompat.isValid(item)
+            QtCompat.delete(item)
+            assert not QtCompat.isValid(item)
+
+        finally:
+            app.exit()
 
 
 if binding("PyQt4"):
