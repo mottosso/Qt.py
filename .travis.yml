@@ -37,7 +37,7 @@ matrix:
 
 language: python
 sudo: required
-dist: trusty
+dist: focal
 
 services:
   - docker
