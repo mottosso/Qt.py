@@ -32,8 +32,9 @@ printf "#\n# Testing examples..\n"
 if [ -n "$RELEASE" ]; then
   wget https://bootstrap.pypa.io/pip/2.7/get-pip.py
   python${PYTHON} ./get-pip.py
+  printf "#\n# Installed pip for Python 2.7\n"
 else
-  echo ""
+  printf "#\n# Skipped pip, RELEASE not set\n"
 fi
 
 printf Done
