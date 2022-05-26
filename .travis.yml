@@ -6,6 +6,7 @@ matrix:
     env:
     - VFXPLATFORM=2018
     - PYTHON=2.7
+    - RELEASE=true
   - os: linux
     env:
     - VFXPLATFORM=2018
