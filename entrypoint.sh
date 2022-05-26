@@ -29,4 +29,7 @@ printf "#\n# Testing examples..\n"
     --exe \
         examples/*/*.py
 
+wget https://bootstrap.pypa.io/pip/3.6/get-pip.py
+python${PYTHON} ./get-pip.py
+
 printf Done
