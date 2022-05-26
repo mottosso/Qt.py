@@ -29,7 +29,11 @@ printf "#\n# Testing examples..\n"
     --exe \
         examples/*/*.py
 
-wget https://bootstrap.pypa.io/pip/3.6/get-pip.py
-python${PYTHON} ./get-pip.py
+if [ -n "$RELEASE" ]; then
+  wget https://bootstrap.pypa.io/pip/2.7/get-pip.py
+  python${PYTHON} ./get-pip.py
+else
+  echo ""
+fi
 
 printf Done
