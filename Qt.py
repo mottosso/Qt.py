@@ -812,9 +812,6 @@ def _isvalid(object):
         object (QObject): QObject to check the validity of.
 
     """
-
-    assert isinstance(object, Qt.QtCore.QObject)
-
     if hasattr(Qt, "_shiboken2"):
         return getattr(Qt, "_shiboken2").isValid(object)
 
