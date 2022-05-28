@@ -497,8 +497,6 @@ Send us a pull-request with your project here.
 
 ### Developer Guide
 
-- [Chat with us](https://gitter.im/Qt-py/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-
 Tests are performed on each aspect of the shim.
 
 - [Functional](tests.py)
@@ -576,3 +574,13 @@ Now both you and Travis are operating on the same assumptions which means that w
 For details on the Docker image for testing, see [`DOCKER.md`](DOCKER.md).
 
 See [`CONTRIBUTING.md`](CONTRIBUTING.md) for more of the good stuff.
+
+**Upload to PyPI**
+
+To make a new release onto PyPI, you'll need to be mottosso and type this.
+
+```bash
+cd Qt.py
+python .\setup.py sdist bdist_wheel
+python -m twine upload .\dist\*
+```
