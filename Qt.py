@@ -769,9 +769,7 @@ def _wrapinstance(ptr, base=None):
     assert (base is None) or issubclass(base, Qt.QtCore.QObject), (
         "Argument 'base' must be of type <QObject>")
 
-    if Qt.IsPyQt4 or Qt.IsPyQt5:
-        func = getattr(Qt, "_sip").wrapinstance
-    elif Qt.IsPySide2:
+    if Qt.IsPySide2:
         func = getattr(Qt, "_shiboken2").wrapInstance
     elif Qt.IsPySide:
         func = getattr(Qt, "_shiboken").wrapInstance
@@ -779,25 +777,22 @@ def _wrapinstance(ptr, base=None):
         raise AttributeError("'module' has no attribute 'wrapInstance'")
 
     if base is None:
-        if Qt.IsPyQt4 or Qt.IsPyQt5:
-            base = Qt.QtCore.QObject
-        else:
-            q_object = func(long(ptr), Qt.QtCore.QObject)
-            meta_object = q_object.metaObject()
+        q_object = func(long(ptr), Qt.QtCore.QObject)
+        meta_object = q_object.metaObject()
 
-            while True:
-                class_name = meta_object.className()
+        while True:
+            class_name = meta_object.className()
 
+            try:
+                base = getattr(Qt.QtWidgets, class_name)
+            except AttributeError:
                 try:
-                    base = getattr(Qt.QtWidgets, class_name)
+                    base = getattr(Qt.QtCore, class_name)
                 except AttributeError:
-                    try:
-                        base = getattr(Qt.QtCore, class_name)
-                    except AttributeError:
-                        meta_object = meta_object.superClass()
-                        continue
+                    meta_object = meta_object.superClass()
+                    continue
 
-                break
+            break
 
     return func(long(ptr), base)
 
@@ -1029,33 +1024,6 @@ _misplaced_members = {
         "QtWidgets.QStyleOptionViewItem": "QtCompat.QStyleOptionViewItemV4",
         "QtMultimedia.QSound": "QtMultimedia.QSound",
     },
-    "PyQt5": {
-        "QtCore.pyqtProperty": "QtCore.Property",
-        "QtCore.pyqtSignal": "QtCore.Signal",
-        "QtCore.pyqtSlot": "QtCore.Slot",
-        "QtCore.QAbstractProxyModel": "QtCore.QAbstractProxyModel",
-        "QtCore.QSortFilterProxyModel": "QtCore.QSortFilterProxyModel",
-        "QtCore.QStringListModel": "QtCore.QStringListModel",
-        "QtCore.QItemSelection": "QtCore.QItemSelection",
-        "QtCore.QItemSelectionModel": "QtCore.QItemSelectionModel",
-        "QtCore.QItemSelectionRange": "QtCore.QItemSelectionRange",
-        "uic.loadUi": ["QtCompat.loadUi", _loadUi],
-        "sip.wrapinstance": ["QtCompat.wrapInstance", _wrapinstance],
-        "sip.unwrapinstance": ["QtCompat.getCppPointer", _getcpppointer],
-        "sip.isdeleted": ["QtCompat.isValid", _isvalid],
-        "QtWidgets.qApp": "QtWidgets.QApplication.instance()",
-        "QtCore.QCoreApplication.translate": [
-            "QtCompat.translate", _translate
-        ],
-        "QtWidgets.QApplication.translate": [
-            "QtCompat.translate", _translate
-        ],
-        "QtCore.qInstallMessageHandler": [
-            "QtCompat.qInstallMessageHandler", _qInstallMessageHandler
-        ],
-        "QtWidgets.QStyleOptionViewItem": "QtCompat.QStyleOptionViewItemV4",
-        "QtMultimedia.QSound": "QtMultimedia.QSound",
-    },
     "PySide": {
         "QtGui.QAbstractProxyModel": "QtCore.QAbstractProxyModel",
         "QtGui.QSortFilterProxyModel": "QtCore.QSortFilterProxyModel",
@@ -1091,43 +1059,6 @@ _misplaced_members = {
         "QtGui.QStyleOptionViewItemV4": "QtCompat.QStyleOptionViewItemV4",
         "QtGui.QSound": "QtMultimedia.QSound",
     },
-    "PyQt4": {
-        "QtGui.QAbstractProxyModel": "QtCore.QAbstractProxyModel",
-        "QtGui.QSortFilterProxyModel": "QtCore.QSortFilterProxyModel",
-        "QtGui.QItemSelection": "QtCore.QItemSelection",
-        "QtGui.QStringListModel": "QtCore.QStringListModel",
-        "QtGui.QItemSelectionModel": "QtCore.QItemSelectionModel",
-        "QtCore.pyqtProperty": "QtCore.Property",
-        "QtCore.pyqtSignal": "QtCore.Signal",
-        "QtCore.pyqtSlot": "QtCore.Slot",
-        "QtGui.QItemSelectionRange": "QtCore.QItemSelectionRange",
-        "QtGui.QAbstractPrintDialog": "QtPrintSupport.QAbstractPrintDialog",
-        "QtGui.QPageSetupDialog": "QtPrintSupport.QPageSetupDialog",
-        "QtGui.QPrintDialog": "QtPrintSupport.QPrintDialog",
-        "QtGui.QPrintEngine": "QtPrintSupport.QPrintEngine",
-        "QtGui.QPrintPreviewDialog": "QtPrintSupport.QPrintPreviewDialog",
-        "QtGui.QPrintPreviewWidget": "QtPrintSupport.QPrintPreviewWidget",
-        "QtGui.QPrinter": "QtPrintSupport.QPrinter",
-        "QtGui.QPrinterInfo": "QtPrintSupport.QPrinterInfo",
-        # "QtCore.pyqtSignature": "QtCore.Slot",
-        "uic.loadUi": ["QtCompat.loadUi", _loadUi],
-        "sip.wrapinstance": ["QtCompat.wrapInstance", _wrapinstance],
-        "sip.unwrapinstance": ["QtCompat.getCppPointer", _getcpppointer],
-        "sip.isdeleted": ["QtCompat.isValid", _isvalid],
-        "QtCore.QString": "str",
-        "QtGui.qApp": "QtWidgets.QApplication.instance()",
-        "QtCore.QCoreApplication.translate": [
-            "QtCompat.translate", _translate
-        ],
-        "QtGui.QApplication.translate": [
-            "QtCompat.translate", _translate
-        ],
-        "QtCore.qInstallMsgHandler": [
-            "QtCompat.qInstallMessageHandler", _qInstallMessageHandler
-        ],
-        "QtGui.QStyleOptionViewItemV4": "QtCompat.QStyleOptionViewItemV4",
-        "QtGui.QSound": "QtMultimedia.QSound",
-    }
 }
 
 """ Compatibility Members
@@ -1518,149 +1449,6 @@ def _pyside():
     _build_compatibility_members("PySide")
 
 
-def _pyqt5():
-    """Initialise PyQt5"""
-
-    import PyQt5 as module
-    extras = ["uic"]
-
-    try:
-        # Relevant to PyQt5 5.11 and above
-        from PyQt5 import sip
-        extras += ["sip"]
-    except ImportError:
-
-        try:
-            import sip
-            extras += ["sip"]
-        except ImportError:
-            sip = None
-
-    _setup(module, extras)
-    if hasattr(Qt, "_sip"):
-        Qt.QtCompat.wrapInstance = _wrapinstance
-        Qt.QtCompat.getCppPointer = _getcpppointer
-        Qt.QtCompat.delete = sip.delete
-
-    if hasattr(Qt, "_uic"):
-        Qt.QtCompat.loadUi = _loadUi
-
-    if hasattr(Qt, "_QtCore"):
-        Qt.__binding_version__ = Qt._QtCore.PYQT_VERSION_STR
-        Qt.__qt_version__ = Qt._QtCore.QT_VERSION_STR
-        Qt.QtCompat.dataChanged = (
-            lambda self, topleft, bottomright, roles=None:
-            self.dataChanged.emit(topleft, bottomright, roles or [])
-        )
-
-    if hasattr(Qt, "_QtWidgets"):
-        Qt.QtCompat.setSectionResizeMode = \
-            Qt._QtWidgets.QHeaderView.setSectionResizeMode
-
-    _reassign_misplaced_members("PyQt5")
-    _build_compatibility_members('PyQt5')
-
-
-def _pyqt4():
-    """Initialise PyQt4"""
-
-    import sip
-
-    # Validation of envivornment variable. Prevents an error if
-    # the variable is invalid since it's just a hint.
-    try:
-        hint = int(QT_SIP_API_HINT)
-    except TypeError:
-        hint = None  # Variable was None, i.e. not set.
-    except ValueError:
-        raise ImportError("QT_SIP_API_HINT=%s must be a 1 or 2")
-
-    for api in ("QString",
-                "QVariant",
-                "QDate",
-                "QDateTime",
-                "QTextStream",
-                "QTime",
-                "QUrl"):
-        try:
-            sip.setapi(api, hint or 2)
-        except AttributeError:
-            raise ImportError("PyQt4 < 4.6 isn't supported by Qt.py")
-        except ValueError:
-            actual = sip.getapi(api)
-            if not hint:
-                raise ImportError("API version already set to %d" % actual)
-            else:
-                # Having provided a hint indicates a soft constraint, one
-                # that doesn't throw an exception.
-                sys.stderr.write(
-                    "Warning: API '%s' has already been set to %d.\n"
-                    % (api, actual)
-                )
-
-    import PyQt4 as module
-    extras = ["uic"]
-    try:
-        import sip
-        extras.append(sip.__name__)
-    except ImportError:
-        sip = None
-
-    _setup(module, extras)
-    if hasattr(Qt, "_sip"):
-        Qt.QtCompat.wrapInstance = _wrapinstance
-        Qt.QtCompat.getCppPointer = _getcpppointer
-        Qt.QtCompat.delete = sip.delete
-
-    if hasattr(Qt, "_uic"):
-        Qt.QtCompat.loadUi = _loadUi
-
-    if hasattr(Qt, "_QtGui"):
-        setattr(Qt, "QtWidgets", _new_module("QtWidgets"))
-        setattr(Qt, "_QtWidgets", Qt._QtGui)
-        if hasattr(Qt._QtGui, "QX11Info"):
-            setattr(Qt, "QtX11Extras", _new_module("QtX11Extras"))
-            Qt.QtX11Extras.QX11Info = Qt._QtGui.QX11Info
-
-        Qt.QtCompat.setSectionResizeMode = \
-            Qt._QtGui.QHeaderView.setResizeMode
-
-    if hasattr(Qt, "_QtCore"):
-        Qt.__binding_version__ = Qt._QtCore.PYQT_VERSION_STR
-        Qt.__qt_version__ = Qt._QtCore.QT_VERSION_STR
-        Qt.QtCompat.dataChanged = (
-            lambda self, topleft, bottomright, roles=None:
-            self.dataChanged.emit(topleft, bottomright)
-        )
-
-    _reassign_misplaced_members("PyQt4")
-
-    # QFileDialog QtCompat decorator
-    def _standardizeQFileDialog(some_function):
-        """Decorator that makes PyQt4 return conform to other bindings"""
-        def wrapper(*args, **kwargs):
-            ret = (some_function(*args, **kwargs))
-
-            # PyQt4 only returns the selected filename, force it to a
-            # standard return of the selected filename, and a empty string
-            # for the selected filter
-            return ret, ''
-
-        wrapper.__doc__ = some_function.__doc__
-        wrapper.__name__ = some_function.__name__
-
-        return wrapper
-
-    decorators = {
-        "QFileDialog": {
-            "getOpenFileName": _standardizeQFileDialog,
-            "getOpenFileNames": _standardizeQFileDialog,
-            "getSaveFileName": _standardizeQFileDialog,
-        }
-    }
-    _build_compatibility_members('PyQt4', decorators)
-
-
 def _none():
     """Internal option (used in installer)"""
 
@@ -1842,9 +1630,7 @@ def _install():
 
     available = {
         "PySide2": _pyside2,
-        "PyQt5": _pyqt5,
         "PySide": _pyside,
-        "PyQt4": _pyqt4,
         "None": _none
     }
 
