@@ -97,6 +97,12 @@ $ conda config --add channels conda-forge
 $ conda install qt.py
 ```
 
+If you want code completion in your editor or if you're using a static type checker like [`mypy`](https://mypy.readthedocs.io/en/stable/) you should install with type stub support:
+
+```bash
+$ pip install Qt.py[stubs]
+```
+
 - Pro tip: **Never use the latest commit for production**. Instead, use [the latest release](https://github.com/mottosso/Qt.py/releases). That way, when you read bug reports or make one for yourself you will be able to match a version with the problem without which you will not know which fixes apply to you nor would we be able to help you. Installing via pip or conda as above ensures you are provided the latest *stable* release. Unstable releases are suffixed with a `.b`, e.g. `1.1.0.b3`.
 - Pro tip: Supports [vendoring](https://fredrikaverpil.github.io/2017/05/04/vendoring-qt-py/)
 
