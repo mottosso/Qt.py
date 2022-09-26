@@ -31,8 +31,9 @@ setup(
     url="https://github.com/mottosso/Qt",
     license="MIT",
     zip_safe=False,
-    packages=["Qt"],
-    package_data={'Qt': ['*.pyi', 'py.typed']},
+    py_modules=["Qt"],
+    packages=["Qt-stubs"],
+    package_data={"Qt-stubs": ["*.pyi"]},
     include_package_data=True,
     classifiers=classifiers
 )
