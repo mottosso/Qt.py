@@ -35,8 +35,6 @@ setup(
     packages=["Qt-stubs"],
     package_data={"Qt-stubs": ["*.pyi"]},
     include_package_data=True,
-    extras_require={
-        "stubs": ["types-PySide2"],
-    },
+    install_requires=["types-PySide2"],
     classifiers=classifiers
 )
