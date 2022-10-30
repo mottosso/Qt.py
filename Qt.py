@@ -1476,6 +1476,7 @@ def _build_compatibility_members(binding, decorators=None):
         compat_class = type(classname, (_QtCompat,), attrs)
         setattr(Qt.QtCompat, classname, compat_class)
 
+
 def _pyside6():
     """Initialise PySide6
 
@@ -1518,6 +1519,7 @@ def _pyside6():
 
     _reassign_misplaced_members("PySide6")
     _build_compatibility_members("PySide6")
+
 
 def _pyside2():
     """Initialise PySide2
@@ -1905,7 +1907,7 @@ class MissingMember(object):
 
 def _install():
     # Default order (customize order and content via QT_PREFERRED_BINDING)
-    default_order = ("PySide6","PySide2", "PyQt5", "PySide", "PyQt4")
+    default_order = ("PySide6", "PySide2", "PyQt5", "PySide", "PyQt4")
     preferred_order = None
     if QT_PREFERRED_BINDING_JSON:
         # A per-vendor preferred binding customization was defined
