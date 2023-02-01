@@ -832,7 +832,7 @@ def _translate(context, sourceText, *args):
     # The last argument is n[int]
     # The middle argument can be encoding[QtCore.QCoreApplication.Encoding]
     try:
-        app = getattr(Qt.QtCore, "QCoreApplication")
+        app = Qt.QtCore.QCoreApplication
     except AttributeError:
         raise NotImplementedError(
             "Missing QCoreApplication implementation for {}".format(
