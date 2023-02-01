@@ -834,7 +834,11 @@ def _translate(context, sourceText, *args):
     try:
         app = getattr(Qt.QtCore, "QCoreApplication")
     except AttributeError:
-        raise NotImplementedError("Missing QCoreApplication implementation for {}".format(Qt.__binding__))
+        raise NotImplementedError(
+            "Missing QCoreApplication implementation for {}".format(
+                Qt.__binding__
+            )
+        )
 
     def get_arg(index):
         try:
