@@ -831,23 +831,35 @@ def _translate(context, sourceText, *args):
     # The first argument is disambiguation[str]
     # The last argument is n[int]
     # The middle argument can be encoding[QtCore.QCoreApplication.Encoding]
-    if len(args) == 3:
-        disambiguation, encoding, n = args
-    elif len(args) == 2:
-        disambiguation, n = args
-        encoding = None
-    else:
-        raise TypeError(
-            "Expected 4 or 5 arguments, got {0}.".format(len(args) + 2))
-
-    if hasattr(Qt.QtCore, "QCoreApplication"):
-        app = getattr(Qt.QtCore, "QCoreApplication")
-    else:
+    try:
+        app = Qt.QtCore.QCoreApplication
+    except AttributeError:
         raise NotImplementedError(
-            "Missing QCoreApplication implementation for {binding}".format(
-                binding=Qt.__binding__,
+            "Missing QCoreApplication implementation for {}".format(
+                Qt.__binding__
             )
         )
+
+    def get_arg(index):
+        try:
+            return args[index]
+        except IndexError:
+            pass
+
+    n = -1
+    encoding = None
+
+    if len(args) == 3:
+        disambiguation, encoding, n = args
+    else:
+        disambiguation = get_arg(0)
+        n_or_encoding = get_arg(1)
+
+        if isinstance(n_or_encoding, int):
+            n = n_or_encoding
+        else:
+            encoding = n_or_encoding
+
     if Qt.__binding__ in ("PySide2", "PyQt5"):
         sanitized_args = [context, sourceText, disambiguation, n]
     else:
@@ -856,8 +868,9 @@ def _translate(context, sourceText, *args):
             sourceText,
             disambiguation,
             encoding or app.CodecForTr,
-            n
+            n,
         ]
+
     return app.translate(*sanitized_args)
 
 
