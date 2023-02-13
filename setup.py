@@ -32,5 +32,9 @@ setup(
     license="MIT",
     zip_safe=False,
     py_modules=["Qt"],
+    packages=["Qt-stubs"],
+    package_data={"Qt-stubs": ["*.pyi"]},
+    include_package_data=True,
+    install_requires=["types-PySide2"],
     classifiers=classifiers
 )
