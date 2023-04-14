@@ -32,9 +32,9 @@ Qt.py enables you to write software that runs on any of the 4 supported bindings
 
 ##### Guides
 
-- [Developing with Qt.py](https://fredrikaverpil.github.io/posts/2016-07-25-developing-with-qt-py/)
-- [Dealing with Maya 2017 and PySide2](https://fredrikaverpil.github.io/posts/2016-07-25-dealing-with-maya-2017-and-pyside2/)
-- [Vendoring Qt.py](https://fredrikaverpil.github.io/posts/2017-05-04-vendoring-qt-py/)
+- [Developing with Qt.py](https://fredrikaverpil.github.io/blog/2016/07/25/developing-with-qtpy/)
+- [Dealing with Maya 2017 and PySide2](https://fredrikaverpil.github.io/blog/2016/07/25/dealing-with-maya-2017-and-pyside2/)
+- [Vendoring Qt.py](https://fredrikaverpil.github.io/blog/2017/05/04/vendoring-qtpy/)
 - [Udemy Course](https://www.udemy.com/python-for-maya/learn/v4/t/lecture/6027394)
 - [PythonBytes #77](https://pythonbytes.fm/episodes/show/77/you-don-t-have-to-be-a-workaholic-to-win) (Starts at 5:00)
 
@@ -98,7 +98,7 @@ $ conda install qt.py
 ```
 
 - Pro tip: **Never use the latest commit for production**. Instead, use [the latest release](https://github.com/mottosso/Qt.py/releases). That way, when you read bug reports or make one for yourself you will be able to match a version with the problem without which you will not know which fixes apply to you nor would we be able to help you. Installing via pip or conda as above ensures you are provided the latest *stable* release. Unstable releases are suffixed with a `.b`, e.g. `1.1.0.b3`.
-- Pro tip: Supports [vendoring](https://fredrikaverpil.github.io/2017/05/04/vendoring-qt-py/)
+- Pro tip: Supports [vendoring](https://fredrikaverpil.github.io/blog/2017/05/04/vendoring-qtpy/)
 
 <br>
 <br>
