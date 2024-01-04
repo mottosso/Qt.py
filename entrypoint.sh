@@ -16,14 +16,6 @@ while ! pgrep 'Xvfb' &> /dev/null; do
     fi
 done
 
-if [ -n "$RELEASE" ]; then
-  wget https://bootstrap.pypa.io/pip/2.7/get-pip.py
-  python${PYTHON} ./get-pip.py
-  printf "#\n# Installed pip for Python 2.7\n"
-else
-  printf "#\n# Skipped pip, RELEASE not set\n"
-fi
-
 printf "#\n# Running tests in Python ${PYTHON}\n"
 export NOSETESTS_BINARY=nosetests${PYTHON}
 printf "#\n# Testing implementation..\n"
