@@ -1,0 +1,44 @@
+name: run-tests
+
+on:
+  push
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            VFXPLATFORM: "2018"
+            PYTHON: "2.7"
+          - os: ubuntu-latest
+            VFXPLATFORM: "2018"
+            PYTHON: "3.4"
+          - os: ubuntu-latest
+            VFXPLATFORM: "2018"
+            PYTHON: "3.5"
+          - os: ubuntu-latest
+            VFXPLATFORM: "2018"
+            PYTHON: "3.6"
+          - os: ubuntu-latest
+            VFXPLATFORM: "2017"
+            PYTHON: "2.7"
+          - os: ubuntu-latest
+            VFXPLATFORM: "2017"
+            PYTHON: "3.4"
+          - os: ubuntu-latest
+            VFXPLATFORM: "2017"
+            PYTHON: "3.5"
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run tests in Docker container
+        run: |
+          docker run --rm \
+            -v $(pwd):/Qt.py \
+            -e PYTHON=${{ matrix.PYTHON }} \
+            -e RELEASE=${{ matrix.RELEASE }} \
+            fredrikaverpil/qt.py:${{ matrix.VFXPLATFORM }}
