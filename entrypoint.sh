@@ -5,9 +5,15 @@ set -e
 
 # Start Xvfb
 Xvfb :99 -screen 0 1024x768x16 2>/dev/null &
+counter=0
 while ! pgrep 'Xvfb' &> /dev/null; do
     echo "Waiting for Xvfb..."
     sleep 1
+    ((counter+=1))
+    if [[ $counter -ge 60 ]]; then
+      echo "Xvfb: Exceeded timeout."
+        exit 124
+    fi
 done
 
 if [ -n "$RELEASE" ]; then
