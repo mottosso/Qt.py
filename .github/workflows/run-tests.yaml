@@ -1,7 +1,9 @@
-name: run-tests
+name: Run Tests
 
 on:
-  push
+  push:
+    branches:
+      - "*"
 
 jobs:
   test:
@@ -40,5 +42,4 @@ jobs:
           docker run --rm \
             -v $(pwd):/Qt.py \
             -e PYTHON=${{ matrix.PYTHON }} \
-            -e RELEASE=${{ matrix.RELEASE }} \
             fredrikaverpil/qt.py:${{ matrix.VFXPLATFORM }}
