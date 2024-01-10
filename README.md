@@ -574,7 +574,7 @@ docker run --rm -v %CD%:/Qt.py -e PYTHON=3.6 fredrikaverpil/qt.py:2018
 # OK
 ```
 
-Now both you and Travis are operating on the same assumptions which means that when the tests pass on your machine, they pass on Travis. And everybody wins!
+Now both you and Github Actions are operating on the same assumptions which means that when the tests pass on your machine, they pass on Github Actions. And everybody wins!
 
 For details on the Docker image for testing, see [`DOCKER.md`](DOCKER.md).
 
