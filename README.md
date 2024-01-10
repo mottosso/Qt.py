@@ -1,4 +1,4 @@
-<img width=260 src=logo.svg>
+<img width=260 src=https://raw.githubusercontent.com/mottosso/Qt.py/master/logo.svg>
 
 [![Downloads](https://pepy.tech/badge/qt-py)](https://pepy.tech/project/qt-py) [![Build Status](https://travis-ci.org/mottosso/Qt.py.svg?branch=master)](https://travis-ci.org/mottosso/Qt.py) [![PyPI version](https://badge.fury.io/py/Qt.py.svg)](https://pypi.python.org/pypi/Qt.py)
 [![Anaconda-Server Badge](https://anaconda.org/conda-forge/qt.py/badges/version.svg)](https://anaconda.org/conda-forge/qt.py) [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/Qt-py/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
