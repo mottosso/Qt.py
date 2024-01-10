@@ -33,7 +33,7 @@ ROOT_PATH = os.path.dirname(os.path.realpath(__file__))
 README_PATH = os.path.join(ROOT_PATH, "README.md")
 
 setup(
-    name="martin-chatterjee-Qt.py",
+    name="Qt.py",
     version=version,
     description=DESCRIPTION,
     long_description=open(README_PATH).read(),
