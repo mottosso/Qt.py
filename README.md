@@ -1,7 +1,7 @@
 <img width=260 src=https://raw.githubusercontent.com/mottosso/Qt.py/master/logo.svg>
 
 [![Downloads](https://pepy.tech/badge/qt-py)](https://pepy.tech/project/qt-py)
-[![Run Tests](https://github.com/martin-chatterjee/Qt.py/actions/workflows/run-tests.yml/badge.svg)](https://github.com/martin-chatterjee/Qt.py/actions)
+[![Run Tests](https://github.com/mottosso/Qt.py/actions/workflows/run-tests.yml/badge.svg)](https://github.com/mottosso/Qt.py/actions)
 [![PyPI version](https://badge.fury.io/py/Qt.py.svg)](https://pypi.python.org/pypi/Qt.py)
 [![Anaconda-Server Badge](https://anaconda.org/conda-forge/qt.py/badges/version.svg)](https://anaconda.org/conda-forge/qt.py)
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/Qt-py/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
