@@ -9,7 +9,7 @@ jobs:
   build-and-release:
     name: Build and Release
     runs-on: ubuntu-latest
-    # if: github.repository_owner == 'mottosso'
+    if: github.repository_owner == 'mottosso'
 
     environment:
       name: pypi
