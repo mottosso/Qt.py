@@ -30,6 +30,3 @@ jobs:
         run: python3 -m build
       - name: Release to PyPi
         uses: pypa/gh-action-pypi-publish@release/v1
-        # TODO: Remove with: block before actual release.
-        with:
-          repository-url: https://test.pypi.org/legacy/
