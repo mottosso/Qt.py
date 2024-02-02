@@ -1,7 +1,10 @@
-<img width=260 src=logo.svg>
+<img width=260 src=https://raw.githubusercontent.com/mottosso/Qt.py/master/logo.svg>
 
-[![Downloads](https://pepy.tech/badge/qt-py)](https://pepy.tech/project/qt-py) [![Build Status](https://travis-ci.org/mottosso/Qt.py.svg?branch=master)](https://travis-ci.org/mottosso/Qt.py) [![PyPI version](https://badge.fury.io/py/Qt.py.svg)](https://pypi.python.org/pypi/Qt.py)
-[![Anaconda-Server Badge](https://anaconda.org/conda-forge/qt.py/badges/version.svg)](https://anaconda.org/conda-forge/qt.py) [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/Qt-py/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Downloads](https://pepy.tech/badge/qt-py)](https://pepy.tech/project/qt-py)
+[![Run Tests](https://github.com/mottosso/Qt.py/actions/workflows/run-tests.yml/badge.svg)](https://github.com/mottosso/Qt.py/actions)
+[![PyPI version](https://badge.fury.io/py/Qt.py.svg)](https://pypi.python.org/pypi/Qt.py)
+[![Anaconda-Server Badge](https://anaconda.org/conda-forge/qt.py/badges/version.svg)](https://anaconda.org/conda-forge/qt.py)
+[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/Qt-py/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Reviewed by Hound](https://img.shields.io/badge/Reviewed_by-Hound-8E64B0.svg)](https://houndci.com)
 
 Qt.py enables you to write software that runs on any of the 4 supported bindings - PySide2, PyQt5, PySide and PyQt4.
@@ -12,6 +15,7 @@ Qt.py enables you to write software that runs on any of the 4 supported bindings
 
 | Date     | Version   | Event
 |:---------|:----------|:----------
+| Jan 2024 | [1.3.9][] | Run CI on Github Actions, instead of Travis CI.
 | Sep 2020 | [1.3.0][] | Stability improvements and greater ability for `QtCompat.wrapInstance` to do its job
 | Jun 2019 | [1.2.1][] | Bugfixes and [additional members](https://github.com/mottosso/Qt.py/releases/tag/1.2.0)
 | Jan 2018 | [1.1.0][] | Adds new test suite, new members
@@ -29,6 +33,7 @@ Qt.py enables you to write software that runs on any of the 4 supported bindings
 [1.1.0]: https://github.com/mottosso/Qt.py/releases/tag/1.1.0
 [1.2.1]: https://github.com/mottosso/Qt.py/releases/tag/1.2.1
 [1.3.0]: https://github.com/mottosso/Qt.py/releases/tag/1.3.0
+[1.3.9]: https://github.com/mottosso/Qt.py/releases/tag/1.3.9
 
 ##### Guides
 
@@ -569,7 +574,7 @@ docker run --rm -v %CD%:/Qt.py -e PYTHON=3.6 fredrikaverpil/qt.py:2018
 # OK
 ```
 
-Now both you and Travis are operating on the same assumptions which means that when the tests pass on your machine, they pass on Travis. And everybody wins!
+Now both you and Github Actions are operating on the same assumptions which means that when the tests pass on your machine, they pass on Github Actions. And everybody wins!
 
 For details on the Docker image for testing, see [`DOCKER.md`](DOCKER.md).
 
