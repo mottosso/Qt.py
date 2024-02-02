@@ -5,18 +5,16 @@ set -e
 
 # Start Xvfb
 Xvfb :99 -screen 0 1024x768x16 2>/dev/null &
-while ! ps aux | grep -q '[0]:00 Xvfb :99 -screen 0 1024x768x16'; do
+counter=0
+while ! pgrep 'Xvfb' &> /dev/null; do
     echo "Waiting for Xvfb..."
     sleep 1
+    ((counter+=1))
+    if [[ $counter -ge 60 ]]; then
+      echo "Xvfb: Exceeded timeout."
+        exit 124
+    fi
 done
-
-if [ -n "$RELEASE" ]; then
-  wget https://bootstrap.pypa.io/pip/2.7/get-pip.py
-  python${PYTHON} ./get-pip.py
-  printf "#\n# Installed pip for Python 2.7\n"
-else
-  printf "#\n# Skipped pip, RELEASE not set\n"
-fi
 
 printf "#\n# Running tests in Python ${PYTHON}\n"
 export NOSETESTS_BINARY=nosetests${PYTHON}

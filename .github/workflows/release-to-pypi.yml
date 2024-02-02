@@ -1,0 +1,32 @@
+name: Release to PyPi
+
+on:
+  push:
+    tags:
+      - "*"
+
+jobs:
+  build-and-release:
+    name: Build and Release
+    runs-on: ubuntu-latest
+    if: github.repository_owner == 'mottosso'
+
+    environment:
+      name: pypi
+      url: https://pypi.org/p/Qt.py
+    permissions:
+      id-token: write # IMPORTANT: this permission is mandatory for trusted publishing
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.7.x"
+      - name: Install build dependency
+        run: python3 -m pip install --upgrade build
+      - name: Build a binary wheel and a source tarball
+        run: python3 -m build
+      - name: Release to PyPi
+        uses: pypa/gh-action-pypi-publish@release/v1

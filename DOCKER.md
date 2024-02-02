@@ -1,6 +1,6 @@
 ## Docker
 
-In order to successfully test Qt.py against the different bindings of different versions, we use Travis-CI to run Docker containers based on [pre-built CentOS-based images](https://hub.docker.com/r/fredrikaverpil/qt.py/tags/).
+In order to successfully test Qt.py against the different bindings of different versions, we use [Github Actions](https://docs.github.com/en/actions/automating-builds-and-tests/about-continuous-integration) to run Docker containers based on [pre-built CentOS-based images](https://hub.docker.com/r/fredrikaverpil/qt.py/tags/).
 
 The Docker images follow the [VFX Reference Platform specifications](http://www.vfxplatform.com/) with some additionals, and are quite jam-packed.
 
@@ -24,10 +24,10 @@ The Docker images follow the [VFX Reference Platform specifications](http://www.
 * PyQt5<sup>1</sup>
 * PySide2<sup>1</sup>
 
-<sup>1</sup> Per specification from VFX Platform  
-<sup>2</sup> Adds possibility to faster clone large repositories  
-<sup>3</sup> cmake 3.x required to build PySide2  
-<sup>4</sup> Required for Qt.py testing  
+<sup>1</sup> Per specification from VFX Platform
+<sup>2</sup> Adds possibility to faster clone large repositories
+<sup>3</sup> cmake 3.x required to build PySide2
+<sup>4</sup> Required for Qt.py testing
 <sup>5</sup> Required for `PySide2.QtUiTools`
 
 <br>
