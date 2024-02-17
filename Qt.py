@@ -215,6 +215,7 @@ _common_members = {
     ],
     "QtGui": [
         "QAbstractTextDocumentLayout",
+        "QAction",
         "QActionEvent",
         "QBitmap",
         "QBrush",
