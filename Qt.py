@@ -3,14 +3,16 @@
 DOCUMENTATION
     Qt.py was born in the film and visual effects industry to address
     the growing need for the development of software capable of running
-    with more than one flavour of the Qt bindings for Python - PySide,
-    PySide2, PyQt4 and PyQt5.
+    with more than one flavour of the Qt bindings for Python. 
+    
+    Supported Binding: PySide, PySide2, PySide6, PyQt4, PyQt5
 
     1. Build for one, run with all
     2. Explicit is better than implicit
     3. Support co-existence
 
     Default resolution order:
+        - PySide6
         - PySide2
         - PyQt5
         - PySide
