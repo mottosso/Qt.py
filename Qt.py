@@ -3,14 +3,16 @@
 DOCUMENTATION
     Qt.py was born in the film and visual effects industry to address
     the growing need for the development of software capable of running
-    with more than one flavour of the Qt bindings for Python - PySide,
-    PySide2, PyQt4 and PyQt5.
+    with more than one flavour of the Qt bindings for Python. 
+    
+    Supported Binding: PySide, PySide2, PySide6, PyQt4, PyQt5
 
     1. Build for one, run with all
     2. Explicit is better than implicit
     3. Support co-existence
 
     Default resolution order:
+        - PySide6
         - PySide2
         - PyQt5
         - PySide
@@ -215,6 +217,7 @@ _common_members = {
     ],
     "QtGui": [
         "QAbstractTextDocumentLayout",
+        "QAction",
         "QActionEvent",
         "QBitmap",
         "QBrush",
@@ -442,7 +445,6 @@ _common_members = {
         "QAbstractScrollArea",
         "QAbstractSlider",
         "QAbstractSpinBox",
-        "QAction",
         "QActionGroup",
         "QApplication",
         "QBoxLayout",
@@ -550,7 +552,6 @@ _common_members = {
         "QRubberBand",
         "QScrollArea",
         "QScrollBar",
-        "QShortcut",
         "QSizeGrip",
         "QSizePolicy",
         "QSlider",
@@ -730,12 +731,14 @@ def _qInstallMessageHandler(handler):
     passObject = messageOutputHandler if handler else handler
     if Qt.IsPySide or Qt.IsPyQt4:
         return Qt._QtCore.qInstallMsgHandler(passObject)
-    elif Qt.IsPySide2 or Qt.IsPyQt5:
+    elif Qt.IsPySide2 or Qt.IsPyQt5 or Qt.IsPySide6:
         return Qt._QtCore.qInstallMessageHandler(passObject)
 
 
 def _getcpppointer(object):
-    if hasattr(Qt, "_shiboken2"):
+    if hasattr(Qt, "_shiboken6"):
+        return getattr(Qt, "_shiboken6").getCppPointer(object)[0]
+    elif hasattr(Qt, "_shiboken2"):
         return getattr(Qt, "_shiboken2").getCppPointer(object)[0]
     elif hasattr(Qt, "_shiboken"):
         return getattr(Qt, "_shiboken").getCppPointer(object)[0]
@@ -773,6 +776,8 @@ def _wrapinstance(ptr, base=None):
         func = getattr(Qt, "_sip").wrapinstance
     elif Qt.IsPySide2:
         func = getattr(Qt, "_shiboken2").wrapInstance
+    elif Qt.IsPySide6:
+        func = getattr(Qt, "_shiboken6").wrapInstance
     elif Qt.IsPySide:
         func = getattr(Qt, "_shiboken").wrapInstance
     else:
@@ -812,7 +817,10 @@ def _isvalid(object):
         object (QObject): QObject to check the validity of.
 
     """
-    if hasattr(Qt, "_shiboken2"):
+    if hasattr(Qt, "_shiboken6"):
+        return getattr(Qt, "_shiboken6").isValid(object)
+
+    elif hasattr(Qt, "_shiboken2"):
         return getattr(Qt, "_shiboken2").isValid(object)
 
     elif hasattr(Qt, "_shiboken"):
@@ -1014,9 +1022,41 @@ These members from the original submodule are misplaced relative PySide2
 
 """
 _misplaced_members = {
-    "PySide2": {
+    "PySide6": {
+        "QtGui.QShortcut": "QtWidgets.QShortcut",
         "QtCore.QStringListModel": "QtCore.QStringListModel",
         "QtGui.QStringListModel": "QtCore.QStringListModel",
+        "QtGui.QAction": "QtWidgets.QAction",
+        "QtCore.Property": "QtCore.Property",
+        "QtCore.Signal": "QtCore.Signal",
+        "QtCore.Slot": "QtCore.Slot",
+        "QtCore.QAbstractProxyModel": "QtCore.QAbstractProxyModel",
+        "QtCore.QSortFilterProxyModel": "QtCore.QSortFilterProxyModel",
+        "QtCore.QItemSelection": "QtCore.QItemSelection",
+        "QtCore.QItemSelectionModel": "QtCore.QItemSelectionModel",
+        "QtCore.QItemSelectionRange": "QtCore.QItemSelectionRange",
+        "QtUiTools.QUiLoader": ["QtCompat.loadUi", _loadUi],
+        "shiboken6.wrapInstance": ["QtCompat.wrapInstance", _wrapinstance],
+        "shiboken6.getCppPointer": ["QtCompat.getCppPointer", _getcpppointer],
+        "shiboken6.isValid": ["QtCompat.isValid", _isvalid],
+        "QtWidgets.qApp": "QtWidgets.QApplication.instance()",
+        "QtCore.QCoreApplication.translate": [
+            "QtCompat.translate", _translate
+        ],
+        "QtWidgets.QApplication.translate": [
+            "QtCompat.translate", _translate
+        ],
+        "QtCore.qInstallMessageHandler": [
+            "QtCompat.qInstallMessageHandler", _qInstallMessageHandler
+        ],
+        "QtWidgets.QStyleOptionViewItem": "QtCompat.QStyleOptionViewItemV4",
+        "QtMultimedia.QSound": "QtMultimedia.QSound",
+    },
+    "PySide2": {
+        "QtWidgets.QShortcut": "QtWidgets.QShortcut",
+        "QtCore.QStringListModel": "QtCore.QStringListModel",
+        "QtGui.QStringListModel": "QtCore.QStringListModel",
+        "QtWidgets.QAction": "QtWidgets.QAction",
         "QtCore.Property": "QtCore.Property",
         "QtCore.Signal": "QtCore.Signal",
         "QtCore.Slot": "QtCore.Slot",
@@ -1043,6 +1083,8 @@ _misplaced_members = {
         "QtMultimedia.QSound": "QtMultimedia.QSound",
     },
     "PyQt5": {
+        "QtWidgets.QShortcut": "QtWidgets.QShortcut",
+        "QtWidgets.QAction": "QtWidgets.QAction",
         "QtCore.pyqtProperty": "QtCore.Property",
         "QtCore.pyqtSignal": "QtCore.Signal",
         "QtCore.pyqtSlot": "QtCore.Slot",
@@ -1070,6 +1112,8 @@ _misplaced_members = {
         "QtMultimedia.QSound": "QtMultimedia.QSound",
     },
     "PySide": {
+        "QtWidgets.QShortcut": "QtWidgets.QShortcut",
+        "QtWidgets.QAction": "QtWidgets.QAction",
         "QtGui.QAbstractProxyModel": "QtCore.QAbstractProxyModel",
         "QtGui.QSortFilterProxyModel": "QtCore.QSortFilterProxyModel",
         "QtGui.QStringListModel": "QtCore.QStringListModel",
@@ -1105,6 +1149,8 @@ _misplaced_members = {
         "QtGui.QSound": "QtMultimedia.QSound",
     },
     "PyQt4": {
+        "QtWidgets.QShortcut": "QtWidgets.QShortcut",
+        "QtWidgets.QAction": "QtWidgets.QAction",
         "QtGui.QAbstractProxyModel": "QtCore.QAbstractProxyModel",
         "QtGui.QSortFilterProxyModel": "QtCore.QSortFilterProxyModel",
         "QtGui.QItemSelection": "QtCore.QItemSelection",
@@ -1157,6 +1203,26 @@ interface for obsolete members, and differences in binding return values.
 }
 """
 _compatibility_members = {
+    "PySide6": {
+        "QWidget": {
+            "grab": "QtWidgets.QWidget.grab",
+        },
+        "QHeaderView": {
+            "sectionsClickable": "QtWidgets.QHeaderView.sectionsClickable",
+            "setSectionsClickable":
+                "QtWidgets.QHeaderView.setSectionsClickable",
+            "sectionResizeMode": "QtWidgets.QHeaderView.sectionResizeMode",
+            "setSectionResizeMode":
+                "QtWidgets.QHeaderView.setSectionResizeMode",
+            "sectionsMovable": "QtWidgets.QHeaderView.sectionsMovable",
+            "setSectionsMovable": "QtWidgets.QHeaderView.setSectionsMovable",
+        },
+        "QFileDialog": {
+            "getOpenFileName": "QtWidgets.QFileDialog.getOpenFileName",
+            "getOpenFileNames": "QtWidgets.QFileDialog.getOpenFileNames",
+            "getSaveFileName": "QtWidgets.QFileDialog.getSaveFileName",
+        },
+    },
     "PySide2": {
         "QWidget": {
             "grab": "QtWidgets.QWidget.grab",
@@ -1433,6 +1499,50 @@ def _build_compatibility_members(binding, decorators=None):
         # Create the QtCompat class and install it into the namespace
         compat_class = type(classname, (_QtCompat,), attrs)
         setattr(Qt.QtCompat, classname, compat_class)
+
+
+def _pyside6():
+    """Initialise PySide6
+
+    These functions serve to test the existence of a binding
+    along with set it up in such a way that it aligns with
+    the final step; adding members from the original binding
+    to Qt.py
+
+    """
+
+    import PySide6 as module
+    extras = ["QtUiTools"]
+    try:
+        import shiboken6
+        extras.append("shiboken6")
+    except ImportError as e:
+        print("ImportError: %s" % e)
+
+    _setup(module, extras)
+    Qt.__binding_version__ = module.__version__
+
+    if hasattr(Qt, "_shiboken6"):
+        Qt.QtCompat.wrapInstance = _wrapinstance
+        Qt.QtCompat.getCppPointer = _getcpppointer
+        Qt.QtCompat.delete = shiboken6.delete
+
+    if hasattr(Qt, "_QtUiTools"):
+        Qt.QtCompat.loadUi = _loadUi
+
+    if hasattr(Qt, "_QtCore"):
+        Qt.__qt_version__ = Qt._QtCore.qVersion()
+        Qt.QtCompat.dataChanged = (
+            lambda self, topleft, bottomright, roles=None:
+            self.dataChanged.emit(topleft, bottomright, roles or [])
+        )
+
+    if hasattr(Qt, "_QtWidgets"):
+        Qt.QtCompat.setSectionResizeMode = \
+            Qt._QtWidgets.QHeaderView.setSectionResizeMode
+
+    _reassign_misplaced_members("PySide6")
+    _build_compatibility_members("PySide6")
 
 
 def _pyside2():
@@ -1821,7 +1931,7 @@ class MissingMember(object):
 
 def _install():
     # Default order (customize order and content via QT_PREFERRED_BINDING)
-    default_order = ("PySide2", "PyQt5", "PySide", "PyQt4")
+    default_order = ("PySide6", "PySide2", "PyQt5", "PySide", "PyQt4")
     preferred_order = None
     if QT_PREFERRED_BINDING_JSON:
         # A per-vendor preferred binding customization was defined
@@ -1854,6 +1964,7 @@ def _install():
     order = preferred_order or default_order
 
     available = {
+        "PySide6": _pyside6,
         "PySide2": _pyside2,
         "PyQt5": _pyqt5,
         "PySide": _pyside,
@@ -1938,6 +2049,7 @@ def _install():
 _install()
 
 # Setup Binding Enum states
+Qt.IsPySide6 = Qt.__binding__ == "PySide6"
 Qt.IsPySide2 = Qt.__binding__ == 'PySide2'
 Qt.IsPyQt5 = Qt.__binding__ == 'PyQt5'
 Qt.IsPySide = Qt.__binding__ == 'PySide'
