@@ -3,7 +3,6 @@
 import io
 import os
 import sys
-import imp
 import shutil
 import tempfile
 import subprocess
@@ -306,12 +305,20 @@ def ignoreQtMessageHandler(msgs):
 def test_environment():
     """Tests require all bindings to be installed (except PySide on py3.5+)"""
 
-    if sys.version_info < (3, 5):
-        # PySide is not available for Python > 3.4
-        imp.find_module("PySide")
-    imp.find_module("PySide2")
-    imp.find_module("PyQt4")
-    imp.find_module("PyQt5")
+    # the imp module is removed with Python 3.12
+    if sys.version_info < (3, 11):
+        import imp
+        if sys.version_info < (3, 5):
+            # PySide is not available for Python > 3.4
+            imp.find_module("PySide")
+        imp.find_module("PySide2")
+        imp.find_module("PyQt4")
+        imp.find_module("PyQt5")
+    else:
+        from importlib.util import find_spec
+        find_spec("PySide2")
+        find_spec("PyQt4")
+        find_spec("PyQt5")
 
 
 def test_load_ui_returntype():
