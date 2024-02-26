@@ -1022,6 +1022,27 @@ These members from the original submodule are misplaced relative PySide2
 
 """
 _misplaced_members = {
+    "PySide6": {
+        "QtGui.QShortcut": "QtWidgets.QShortcut",
+        "QtGui.QStringListModel": "QtCore.QStringListModel",
+        "QtGui.QAction": "QtWidgets.QAction",
+        "QtUiTools.QUiLoader": ["QtCompat.loadUi", _loadUi],
+        "shiboken6.wrapInstance": ["QtCompat.wrapInstance", _wrapinstance],
+        "shiboken6.getCppPointer": ["QtCompat.getCppPointer", _getcpppointer],
+        "shiboken6.isValid": ["QtCompat.isValid", _isvalid],
+        "QtWidgets.qApp": "QtWidgets.QApplication.instance()",
+        "QtCore.QCoreApplication.translate": [
+            "QtCompat.translate", _translate
+        ],
+        "QtWidgets.QApplication.translate": [
+            "QtCompat.translate", _translate
+        ],
+        "QtCore.qInstallMessageHandler": [
+            "QtCompat.qInstallMessageHandler", _qInstallMessageHandler
+        ],
+        "QtWidgets.QStyleOptionViewItem": "QtCompat.QStyleOptionViewItemV4",
+        "QtMultimedia.QSound": "QtMultimedia.QSound",
+    },
     "PySide2": {
         "QtGui.QStringListModel": "QtCore.QStringListModel",
         "QtUiTools.QUiLoader": ["QtCompat.loadUi", _loadUi],
@@ -1146,6 +1167,26 @@ interface for obsolete members, and differences in binding return values.
 }
 """
 _compatibility_members = {
+    "PySide6": {
+        "QWidget": {
+            "grab": "QtWidgets.QWidget.grab",
+        },
+        "QHeaderView": {
+            "sectionsClickable": "QtWidgets.QHeaderView.sectionsClickable",
+            "setSectionsClickable":
+                "QtWidgets.QHeaderView.setSectionsClickable",
+            "sectionResizeMode": "QtWidgets.QHeaderView.sectionResizeMode",
+            "setSectionResizeMode":
+                "QtWidgets.QHeaderView.setSectionResizeMode",
+            "sectionsMovable": "QtWidgets.QHeaderView.sectionsMovable",
+            "setSectionsMovable": "QtWidgets.QHeaderView.setSectionsMovable",
+        },
+        "QFileDialog": {
+            "getOpenFileName": "QtWidgets.QFileDialog.getOpenFileName",
+            "getOpenFileNames": "QtWidgets.QFileDialog.getOpenFileNames",
+            "getSaveFileName": "QtWidgets.QFileDialog.getSaveFileName",
+        },
+    },
     "PySide2": {
         "QWidget": {
             "grab": "QtWidgets.QWidget.grab",
