@@ -80,10 +80,12 @@ build_membership.sh script.
 
 _common_members = {
     "QtCore": [
+        "Property",
         "QAbstractAnimation",
         "QAbstractEventDispatcher",
         "QAbstractItemModel",
         "QAbstractListModel",
+        "QAbstractProxyModel",
         "QAbstractState",
         "QAbstractTableModel",
         "QAbstractTransition",
@@ -114,6 +116,8 @@ _common_members = {
         "QGenericArgument",
         "QGenericReturnArgument",
         "QHistoryState",
+        "QItemSelection",
+        "QItemSelectionModel",
         "QItemSelectionRange",
         "QIODevice",
         "QLibraryInfo",
@@ -155,8 +159,10 @@ _common_members = {
         "QSize",
         "QSizeF",
         "QSocketNotifier",
+        "QSortFilterProxyModel",
         "QState",
         "QStateMachine",
+        "QStringListModel",
         "QSysInfo",
         "QSystemSemaphore",
         "QT_TRANSLATE_NOOP",
@@ -211,7 +217,9 @@ _common_members = {
         "qVersion",
         "qWarning",
         "qrand",
-        "qsrand"
+        "qsrand",
+        "Signal",
+        "Slot"
     ],
     "QtGui": [
         "QAbstractTextDocumentLayout",
