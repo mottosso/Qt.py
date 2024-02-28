@@ -1,0 +1,34 @@
+name: Run PySide6 Tests
+
+on:
+  push:
+    branches:
+      - "*"
+  pull_request:
+    branches:
+      - "*"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            VFXPLATFORM: "2018"
+            PYTHON: "3.6"
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: pip install PySide6
+        run: |
+          pip install PySide6
+
+      - name: Run tests in Docker container
+        run: |
+          docker run --rm \
+            -v $(pwd):/Qt.py \
+            -e PYTHON=${{ matrix.PYTHON }} \
+            fredrikaverpil/qt.py:${{ matrix.VFXPLATFORM }}
