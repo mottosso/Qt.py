@@ -10,25 +10,16 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        include:
-          - os: ubuntu-latest
-            VFXPLATFORM: "2018"
-            PYTHON: "3.6"
+    runs-on: ubuntu-22.04
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: pip install PySide6
+      - name: Pip install PySide6 and dependencies 
         run: |
-          pip install PySide6
+          python3.10 -m pip install PySide6 nose nosepipe six packaging setuptools wheel
 
-      - name: Run tests in Docker container
+      - name: Run tests from entrypoint.sh
         run: |
-          docker run --rm \
-            -v $(pwd):/Qt.py \
-            -e PYTHON=${{ matrix.PYTHON }} \
-            fredrikaverpil/qt.py:${{ matrix.VFXPLATFORM }}
+          PYTHON=3.10 ./entrypoint.sh
