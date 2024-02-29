@@ -22,13 +22,13 @@ printf "#\n# Testing implementation..\n"
     python${PYTHON} -u run_tests.py
 printf "#\n# Testing caveats..\n"
     python${PYTHON} build_caveats.py
-    python${PYTHON} -m nose \
+    python${PYTHON} -m nose2 \
         --verbose \
         --with-doctest \
         --with-process-isolation \
         test_caveats.py
 printf "#\n# Testing examples..\n"
-    python${PYTHON} -m nose \
+    python${PYTHON} -m nose2 \
     --verbose \
     --with-process-isolation \
     --with-doctest \
