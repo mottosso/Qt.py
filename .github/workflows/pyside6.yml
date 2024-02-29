@@ -20,6 +20,10 @@ jobs:
         run: |
           python3.10 -m pip install PySide6 nose nosepipe six packaging setuptools wheel
 
+      - name: Set entrypoint.sh script permissions
+        run: |
+          chmod +x ./entrypoint.sh
+
       - name: Run tests from entrypoint.sh
         run: |
           PYTHON=3.10 ./entrypoint.sh
