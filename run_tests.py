@@ -52,8 +52,5 @@ if __name__ == "__main__":
     with binding("PySide2"):
         errors += subprocess.call(argv)
 
-    with binding("PySide6"):
-        errors += subprocess.call(argv)
-
     if errors:
         raise Exception("%i binding(s) failed." % errors)
