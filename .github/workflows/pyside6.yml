@@ -35,5 +35,7 @@ jobs:
       - name: Testing examples..
         run: |
           cd examples
-          python3.10 -m nose2 --verbose
+          python3.10 -m nose2 --verbose loadUi.baseinstance1
+          python3.10 -m nose2 --verbose loadUi.baseinstance2
+          python3.10 -m nose2 --verbose QtSiteConfig.main
           cd ..
