@@ -18,20 +18,21 @@ done
 
 printf "#\n# Running tests in Python ${PYTHON}\n"
 export NOSETESTS_BINARY=nosetests${PYTHON}
-
 printf "#\n# Testing implementation..\n"
     python${PYTHON} -u run_tests.py
-    
 printf "#\n# Testing caveats..\n"
     python${PYTHON} build_caveats.py
-    python${PYTHON} -m nose2 \
+    nosetests${PYTHON} \
         --verbose \
-        test_caveats
-        
+        --with-doctest \
+        --with-process-isolation \
+        test_caveats.py
 printf "#\n# Testing examples..\n"
-    cd examples
-    python${PYTHON} -m nose2 \
-        --verbose
-    cd ..
+    nosetests${PYTHON} \
+    --verbose \
+    --with-process-isolation \
+    --with-doctest \
+    --exe \
+        examples/*/*.py
 
 printf Done
