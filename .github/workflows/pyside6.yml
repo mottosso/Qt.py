@@ -12,6 +12,10 @@ jobs:
   test:
     runs-on: ubuntu-22.04
 
+    env:
+      QT_PREFERRED_BINDING: PySide6
+      PYTHONPATH: "${{ github.workspace }}"
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -27,7 +31,7 @@ jobs:
       - name: Testing implementation..
         run: |
           python3.10 -m nose2 --verbose tests
-
+        
       - name: Building caveats..
         run: |
           python3.10 -u build_caveats.py
@@ -43,5 +47,3 @@ jobs:
           python3.10 -m nose2 --verbose loadUi.baseinstance2
           python3.10 -m nose2 --verbose QtSiteConfig.main
           cd ..
-        env:
-          PYTHONPATH: ${{ env.PYTHONPATH }}:$(pwd)
