@@ -449,25 +449,10 @@ def test_load_ui_customwidget():
     app.exit()
 
 
-def _rewrite_file(file, current, provided):
-    with open(file, "r") as f:
-        new = f.read().replace(
-            "<header>" + current + "</header>",
-            "<header>" + provided + "</header>"
-        )
-    with open(self.ui_qpycustomwidget, "w") as f:
-        f.write(new)
-
-
-def test_load_ui_pycustomwidget():
-    """Tests to see if loadUi loads a custom widget from different sources,
-    such as a Python path or a .h path can be parsed properly.
-
-    The structure of the current code does not provide direct access to the
-    headertomodule function. Instead, the test updates the temp.ui file to
-    contain a different header and tries to load the UI. All cases are
-    designed to trigger a ModuleImport Exception which reports the path
-    expected.
+def test_headerToModule():
+    """
+    Tests to see if headerToModule manipulates the path passed in appropriately.
+    - It should only affect `Header` files and paths, marked with an .h extension.
     """
 
     path_tests = {
@@ -489,30 +474,13 @@ def test_load_ui_pycustomwidget():
         "path/to/module": "path/to/module",
         "module.py": "module.py",
     }
-    import sys
-    from Qt import QtWidgets, QtCompat
 
-    app = QtWidgets.QApplication(sys.argv)
-    win = QtWidgets.QMainWindow()
+    import Qt
 
-    current = "tests"
     for provided, expected in path_tests.items():
-        _rewrite_file(self.ui_qpycustomwidget, current, provided)
-        current = provided
+        result = Qt._headerToModule(provided)
+        assert result == expected, "Provided: %s expected: %s got: %s" % (provided, expected, result)
 
-        try:
-            # actual test
-            QtCompat.loadUi(self.ui_qpycustomwidget, win)
-
-        except ImportError as error:
-            # Since the loadUi is a blackbox it is not possible to test the
-            # `headertomodule` function directly. Test if the ImportError
-            # error contains the correct import path.
-            result = str(error).split("'")[1]
-            assert result == expected, (
-                    "Provided: %s expected: %s got: %s" % (provided, expected, result)
-            )
-    app.exit()
 
 def test_load_ui_invalidpath():
     """Tests to see if loadUi successfully fails on invalid paths"""

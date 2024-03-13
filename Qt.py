@@ -874,6 +874,23 @@ def _translate(context, sourceText, *args):
     return app.translate(*sanitized_args)
 
 
+def _headerToModule(header):
+    """
+    Translate a header file to python module path
+    foo/bar.h => foo.bar
+    """
+
+    # Only manipulate header files, identified by the `.h` ext.
+    if header.endswith(".h") is False:
+        return header
+
+    # Remove header extension
+    module = os.path.splitext(header)[0]
+
+    # Replace os separator by python module separator
+    return module.replace("/", ".").replace("\\", ".")
+
+
 def _loadUi(uifile, baseinstance=None):
     """Dynamically load a user interface from the given `uifile`
 
@@ -925,22 +942,6 @@ def _loadUi(uifile, baseinstance=None):
                 objects. Then we can directly use them in createWidget method.
                 """
 
-                def headerToModule(header):
-                    """
-                    Translate a header file to python module path
-                    foo/bar.h => foo.bar
-                    """
-
-                    if header.endswith(".h") is False:
-                        # Only manipulate header files, identified by the `.h` ext.
-                        return header
-
-                    # Remove header extension
-                    module = os.path.splitext(header)[0]
-
-                    # Replace os separator by python module separator
-                    return module.replace("/", ".").replace("\\", ".")
-
                 custom_widgets = etree.find("customwidgets")
 
                 if custom_widgets is None:
@@ -949,13 +950,7 @@ def _loadUi(uifile, baseinstance=None):
                 for custom_widget in custom_widgets:
                     class_name = custom_widget.find("class").text
                     header = custom_widget.find("header").text
-                    try:
-                        header = headerToModule(header)
-                        module = importlib.import_module(header)
-                    except ImportError as _error:
-                        # ReRaising the ImportError with a more informative
-                        # message to aid in the creation of Tests for this case.
-                        raise ImportError("No module named '%s'" % header)
+                    module = importlib.import_module(_headerToModule(header))
                     self.custom_widgets[class_name] = getattr(module,
                                                               class_name)
 
