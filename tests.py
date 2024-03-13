@@ -501,11 +501,11 @@ def test_load_ui_pycustomwidget():
             # actual test
             QtCompat.loadUi(self.ui_qpycustomwidget)
 
-        except ModuleNotFoundError as error:
+        except ImportError as error:
             # Since the loadUi is a blackbox it is not possible to test the
-            # `headertomodule` function directly. Test if the moduleimport
+            # `headertomodule` function directly. Test if the ImportError
             # error contains the correct import path.
-            result = error.msg.split("'")[1]
+            result = str(error).split("'")[1]
             assert result == expected, (
                     "Provided: %s expected: %s got: %s" % (provided, expected, result)
             )

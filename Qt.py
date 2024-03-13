@@ -952,10 +952,10 @@ def _loadUi(uifile, baseinstance=None):
                     try:
                         header = headerToModule(header)
                         module = importlib.import_module(header)
-                    except ModuleNotFoundError as _error:
-                        # ReRaising the ModuleNOtFoundError with a more informative
+                    except ImportError as _error:
+                        # ReRaising the ImportError with a more informative
                         # message to aid in the creation of Tests for this case.
-                        raise ModuleNotFoundError("No module named '%s'" % header)
+                        raise ImportError("No module named '%s'" % header)
                     self.custom_widgets[class_name] = getattr(module,
                                                               class_name)
 
