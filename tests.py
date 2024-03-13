@@ -470,8 +470,6 @@ def test_load_ui_pycustomwidget():
     expected.
     """
 
-    from Qt import QtCompat
-
     path_tests = {
         # Input: Expected
 
@@ -491,6 +489,11 @@ def test_load_ui_pycustomwidget():
         "path/to/module": "path/to/module",
         "module.py": "module.py",
     }
+    import sys
+    from Qt import QtWidgets, QtCompat
+
+    app = QtWidgets.QApplication(sys.argv)
+    win = QtWidgets.QMainWindow()
 
     current = "tests"
     for provided, expected in path_tests.items():
@@ -499,7 +502,7 @@ def test_load_ui_pycustomwidget():
 
         try:
             # actual test
-            QtCompat.loadUi(self.ui_qpycustomwidget)
+            QtCompat.loadUi(self.ui_qpycustomwidget, win)
 
         except ImportError as error:
             # Since the loadUi is a blackbox it is not possible to test the
@@ -509,7 +512,7 @@ def test_load_ui_pycustomwidget():
             assert result == expected, (
                     "Provided: %s expected: %s got: %s" % (provided, expected, result)
             )
-
+    app.exit()
 
 def test_load_ui_invalidpath():
     """Tests to see if loadUi successfully fails on invalid paths"""
