@@ -242,6 +242,37 @@ qcustomwidget_ui = u"""\
 </ui>
 """
 
+qpycustomwidget_ui = u"""\
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>238</width>
+    <height>44</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="CustomWidget" name="customwidget">
+  </widget>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>CustomWidget</class>
+   <extends>QWidget</extends>
+   <header>tests</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>
+"""
+
 
 def setup():
     """Module-wide initialisation
@@ -263,7 +294,7 @@ def setup():
     self.ui_qdialog = saveUiFile("qdialog.ui", qdialog_ui)
     self.ui_qdockwidget = saveUiFile("qdockwidget.ui", qdockwidget_ui)
     self.ui_qcustomwidget = saveUiFile("qcustomwidget.ui", qcustomwidget_ui)
-
+    self.ui_qpycustomwidget = saveUiFile("qpycustomwidget.ui", qpycustomwidget_ui)
 
 def teardown():
     shutil.rmtree(self.tempdir)
@@ -416,6 +447,68 @@ def test_load_ui_customwidget():
         "loadUi could not load custom widget to main window"
 
     app.exit()
+
+
+def _rewrite_file(file, current, provided):
+    with open(file, "r") as f:
+        new = f.read().replace(
+            "<header>" + current + "</header>",
+            "<header>" + provided + "</header>"
+        )
+    with open(self.ui_qpycustomwidget, "w") as f:
+        f.write(new)
+
+
+def test_load_ui_pycustomwidget():
+    """Tests to see if loadUi loads a custom widget from different sources,
+    such as a Python path or a .h path can be parsed properly.
+
+    The structure of the current code does not provide direct access to the
+    headertomodule function. Instead, the test updates the temp.ui file to
+    contain a different header and tries to load the UI. All cases are
+    designed to trigger a ModuleImport Exception which reports the path
+    expected.
+    """
+
+    from Qt import QtCompat
+
+    path_tests = {
+        # Input: Expected
+
+        # Valid paths; .h paths need to be updated to work with Qt.py
+        "path.to.module": "path.to.module",  # valid python .path to module
+        "path\\to\\module.h": "path.to.module",  # valid .h path with backslashes
+        "path\\to/module.h": "path.to.module",  # mixed slashes
+        "path/to/module.h": "path.to.module",  # valid .h path with forward slashes
+        "module.h": "module",  # valid .h file in current path
+        "module": "module",  # valid python module in current path
+
+        # malformed; Should we change QtDesigner input?
+        "path.to.module.py": "path.to.module.py",
+        "path\\to\\module.py": "path\\to\\module.py",
+        "path/to/module.py": "path/to/module.py",
+        "path\\to\\module": "path\\to\\module",
+        "path/to/module": "path/to/module",
+        "module.py": "module.py",
+    }
+
+    current = "tests"
+    for provided, expected in path_tests.items():
+        _rewrite_file(self.ui_qpycustomwidget, current, provided)
+        current = provided
+
+        try:
+            # actual test
+            QtCompat.loadUi(self.ui_qpycustomwidget)
+
+        except ModuleNotFoundError as error:
+            # Since the loadUi is a blackbox it is not possible to test the
+            # `headertomodule` function directly. Test if the moduleimport
+            # error contains the correct import path.
+            result = error.msg.split("'")[1]
+            assert result == expected, (
+                    "Provided: %s expected: %s got: %s" % (provided, expected, result)
+            )
 
 
 def test_load_ui_invalidpath():
