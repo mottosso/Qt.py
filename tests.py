@@ -273,7 +273,7 @@ qpycustomwidget_ui = u"""\
 </ui>
 """
 
-python_custom_widget = '''
+python_custom_widget = u'''
 def CustomWidget(parent=None):
     """
     Wrap CustomWidget class into a function to avoid global Qt import
