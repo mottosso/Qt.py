@@ -469,7 +469,6 @@ def test_load_ui_pycustomwidget():
     # create a python file for the custom widget in a directory relative to the tempdir
     filename = os.path.join(
         self.tempdir,
-        self.tempdir,
         "custom",
         "customwidget",
         "customwidget.py"
@@ -478,10 +477,15 @@ def test_load_ui_pycustomwidget():
     with io.open(filename, "w", encoding="utf-8") as f:
         f.write(self.python_custom_widget)
 
+    # Python 2.7 requires that each folder be a package
+    with io.open(os.path.join(self.tempdir, "custom/__init__.py"), "w", encoding="utf-8") as f:
+        f.write(u"")
+    with io.open(os.path.join(self.tempdir, "custom/customwidget/__init__.py"), "w", encoding="utf-8") as f:
+        f.write(u"")
     # append the path to ensure the future import can be loaded 'relative' to the tempdir
     sys.path.append(self.tempdir)
 
-    app = QtWidgets.QApplication([self.tempdir, ])
+    app = QtWidgets.QApplication(sys.argv)
     win = QtWidgets.QMainWindow()
 
     QtCompat.loadUi(self.ui_qpycustomwidget, win)
