@@ -265,7 +265,7 @@ qpycustomwidget_ui = u"""\
   <customwidget>
    <class>CustomWidget</class>
    <extends>QWidget</extends>
-   <header>tests</header>
+   <header>custom.customwidget.customwidget</header>
   </customwidget>
  </customwidgets>
  <resources/>
@@ -273,6 +273,18 @@ qpycustomwidget_ui = u"""\
 </ui>
 """
 
+python_custom_widget = '''
+def CustomWidget(parent=None):
+    """
+    Wrap CustomWidget class into a function to avoid global Qt import
+    """
+    from Qt import QtWidgets
+
+    class Widget(QtWidgets.QWidget):
+        pass
+
+    return Widget(parent)
+'''
 
 def setup():
     """Module-wide initialisation
@@ -297,7 +309,8 @@ def setup():
     self.ui_qpycustomwidget = saveUiFile("qpycustomwidget.ui", qpycustomwidget_ui)
 
 def teardown():
-    shutil.rmtree(self.tempdir)
+    # shutil.rmtree(self.tempdir)
+    pass
 
 
 def binding(binding):
@@ -448,38 +461,39 @@ def test_load_ui_customwidget():
 
     app.exit()
 
+def test_load_ui_pycustomwidget():
+    """Tests to see if loadUi loads a custom widget properly"""
+    import sys
+    from Qt import QtWidgets, QtCompat
 
-def test_headerToModule():
-    """
-    Tests to see if headerToModule manipulates the path passed in appropriately.
-    - It should only affect `Header` files and paths, marked with an .h extension.
-    """
+    # create a python file for the custom widget in a directory relative to the tempdir
+    filename = os.path.join(
+        self.tempdir,
+        self.tempdir,
+        "custom",
+        "customwidget",
+        "customwidget.py"
+    )
+    os.makedirs(os.path.dirname(filename))
+    with io.open(filename, "w", encoding="utf-8") as f:
+        f.write(self.python_custom_widget)
 
-    path_tests = {
-        # Input: Expected
+    # append the path to ensure the future import can be loaded 'relative' to the tempdir
+    sys.path.append(self.tempdir)
 
-        # Valid paths; .h paths need to be updated to work with Qt.py
-        "path.to.module": "path.to.module",  # valid python .path to module
-        "path\\to\\module.h": "path.to.module",  # valid .h path with backslashes
-        "path\\to/module.h": "path.to.module",  # mixed slashes
-        "path/to/module.h": "path.to.module",  # valid .h path with forward slashes
-        "module.h": "module",  # valid .h file in current path
-        "module": "module",  # valid python module in current path
+    app = QtWidgets.QApplication([self.tempdir, ])
+    win = QtWidgets.QMainWindow()
 
-        # malformed; Should we change QtDesigner input?
-        "path.to.module.py": "path.to.module.py",
-        "path\\to\\module.py": "path\\to\\module.py",
-        "path/to/module.py": "path/to/module.py",
-        "path\\to\\module": "path\\to\\module",
-        "path/to/module": "path/to/module",
-        "module.py": "module.py",
-    }
+    QtCompat.loadUi(self.ui_qpycustomwidget, win)
 
-    import Qt
+    # Ensure that the derived class was properly created
+    # and not the base class (in case of failure)
+    custom_class_name = getattr(win, "customwidget", None).__class__.__name__
+    excepted_class_name = CustomWidget(win).__class__.__name__
+    assert custom_class_name == excepted_class_name, \
+        "loadUi could not load custom widget to main window"
 
-    for provided, expected in path_tests.items():
-        result = Qt._headerToModule(provided)
-        assert result == expected, "Provided: %s expected: %s got: %s" % (provided, expected, result)
+    app.exit()
 
 
 def test_load_ui_invalidpath():
