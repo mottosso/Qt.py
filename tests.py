@@ -309,8 +309,8 @@ def setup():
     self.ui_qpycustomwidget = saveUiFile("qpycustomwidget.ui", qpycustomwidget_ui)
 
 def teardown():
-    # shutil.rmtree(self.tempdir)
-    pass
+    shutil.rmtree(self.tempdir)
+
 
 
 def binding(binding):
