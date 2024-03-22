@@ -242,6 +242,49 @@ qcustomwidget_ui = u"""\
 </ui>
 """
 
+qpycustomwidget_ui = u"""\
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>238</width>
+    <height>44</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="CustomWidget" name="customwidget">
+  </widget>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>CustomWidget</class>
+   <extends>QWidget</extends>
+   <header>custom.customwidget.customwidget</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>
+"""
+
+python_custom_widget = u'''
+def CustomWidget(parent=None):
+    """
+    Wrap CustomWidget class into a function to avoid global Qt import
+    """
+    from Qt import QtWidgets
+
+    class Widget(QtWidgets.QWidget):
+        pass
+
+    return Widget(parent)
+'''
 
 def setup():
     """Module-wide initialisation
@@ -263,10 +306,11 @@ def setup():
     self.ui_qdialog = saveUiFile("qdialog.ui", qdialog_ui)
     self.ui_qdockwidget = saveUiFile("qdockwidget.ui", qdockwidget_ui)
     self.ui_qcustomwidget = saveUiFile("qcustomwidget.ui", qcustomwidget_ui)
-
+    self.ui_qpycustomwidget = saveUiFile("qpycustomwidget.ui", qpycustomwidget_ui)
 
 def teardown():
     shutil.rmtree(self.tempdir)
+
 
 
 def binding(binding):
@@ -407,6 +451,44 @@ def test_load_ui_customwidget():
     win = QtWidgets.QMainWindow()
 
     QtCompat.loadUi(self.ui_qcustomwidget, win)
+
+    # Ensure that the derived class was properly created
+    # and not the base class (in case of failure)
+    custom_class_name = getattr(win, "customwidget", None).__class__.__name__
+    excepted_class_name = CustomWidget(win).__class__.__name__
+    assert custom_class_name == excepted_class_name, \
+        "loadUi could not load custom widget to main window"
+
+    app.exit()
+
+def test_load_ui_pycustomwidget():
+    """Tests to see if loadUi loads a custom widget properly"""
+    import sys
+    from Qt import QtWidgets, QtCompat
+
+    # create a python file for the custom widget in a directory relative to the tempdir
+    filename = os.path.join(
+        self.tempdir,
+        "custom",
+        "customwidget",
+        "customwidget.py"
+    )
+    os.makedirs(os.path.dirname(filename))
+    with io.open(filename, "w", encoding="utf-8") as f:
+        f.write(self.python_custom_widget)
+
+    # Python 2.7 requires that each folder be a package
+    with io.open(os.path.join(self.tempdir, "custom/__init__.py"), "w", encoding="utf-8") as f:
+        f.write(u"")
+    with io.open(os.path.join(self.tempdir, "custom/customwidget/__init__.py"), "w", encoding="utf-8") as f:
+        f.write(u"")
+    # append the path to ensure the future import can be loaded 'relative' to the tempdir
+    sys.path.append(self.tempdir)
+
+    app = QtWidgets.QApplication(sys.argv)
+    win = QtWidgets.QMainWindow()
+
+    QtCompat.loadUi(self.ui_qpycustomwidget, win)
 
     # Ensure that the derived class was properly created
     # and not the base class (in case of failure)

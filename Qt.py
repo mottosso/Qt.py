@@ -961,7 +961,14 @@ def _loadUi(uifile, baseinstance=None):
                 for custom_widget in custom_widgets:
                     class_name = custom_widget.find("class").text
                     header = custom_widget.find("header").text
-                    module = importlib.import_module(headerToModule(header))
+
+                    try:
+                        # try to import the module using the header as defined by the user
+                        module = importlib.import_module(header)
+                    except ImportError:
+                        # try again, but use the customized conversion of a path to a module
+                        module = importlib.import_module(headerToModule(header))
+
                     self.custom_widgets[class_name] = getattr(module,
                                                               class_name)
 
