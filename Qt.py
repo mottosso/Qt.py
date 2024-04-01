@@ -82,15 +82,11 @@ build_membership.sh script.
 
 _common_members = {
     "QtCore": [
-        "Property",
         "QAbstractAnimation",
         "QAbstractEventDispatcher",
         "QAbstractItemModel",
         "QAbstractListModel",
-        "QAbstractProxyModel",
-        "QAbstractState",
         "QAbstractTableModel",
-        "QAbstractTransition",
         "QAnimationGroup",
         "QBasicTimer",
         "QBitArray",
@@ -110,17 +106,11 @@ _common_members = {
         "QElapsedTimer",
         "QEvent",
         "QEventLoop",
-        "QEventTransition",
         "QFile",
         "QFileInfo",
         "QFileSystemWatcher",
-        "QFinalState",
         "QGenericArgument",
         "QGenericReturnArgument",
-        "QHistoryState",
-        "QItemSelection",
-        "QItemSelectionModel",
-        "QItemSelectionRange",
         "QIODevice",
         "QLibraryInfo",
         "QLine",
@@ -150,20 +140,15 @@ _common_members = {
         "QReadWriteLock",
         "QRect",
         "QRectF",
-        "QRegExp",
         "QResource",
         "QRunnable",
         "QSemaphore",
         "QSequentialAnimationGroup",
         "QSettings",
         "QSignalMapper",
-        "QSignalTransition",
         "QSize",
         "QSizeF",
         "QSocketNotifier",
-        "QSortFilterProxyModel",
-        "QState",
-        "QStateMachine",
         "QStringListModel",
         "QSysInfo",
         "QSystemSemaphore",
@@ -172,9 +157,6 @@ _common_members = {
         "QT_TR_NOOP_UTF8",
         "QTemporaryFile",
         "QTextBoundaryFinder",
-        "QTextCodec",
-        "QTextDecoder",
-        "QTextEncoder",
         "QTextStream",
         "QTextStreamManipulator",
         "QThread",
@@ -185,6 +167,7 @@ _common_members = {
         "QTimerEvent",
         "QTranslator",
         "QUrl",
+        "QUuid",
         "QVariantAnimation",
         "QWaitCondition",
         "QWriteLocker",
@@ -197,15 +180,9 @@ _common_members = {
         "QXmlStreamReader",
         "QXmlStreamWriter",
         "Qt",
-        "QtCriticalMsg",
-        "QtDebugMsg",
-        "QtFatalMsg",
         "QtMsgType",
-        "QtSystemMsg",
-        "QtWarningMsg",
         "qAbs",
         "qAddPostRoutine",
-        "qChecksum",
         "qCritical",
         "qDebug",
         "qFatal",
@@ -218,10 +195,7 @@ _common_members = {
         "qUnregisterResourceData",
         "qVersion",
         "qWarning",
-        "qrand",
-        "qsrand",
-        "Signal",
-        "Slot"
+        "Signal"
     ],
     "QtGui": [
         "QAbstractTextDocumentLayout",
@@ -287,14 +261,12 @@ _common_members = {
         "QPalette",
         "QPen",
         "QPicture",
-        "QPictureIO",
         "QPixmap",
         "QPixmapCache",
         "QPolygon",
         "QPolygonF",
         "QQuaternion",
         "QRadialGradient",
-        "QRegExpValidator",
         "QRegion",
         "QResizeEvent",
         "QSessionManager",
@@ -363,17 +335,6 @@ _common_members = {
         "QHelpSearchQueryWidget",
         "QHelpSearchResultWidget"
     ],
-    "QtMultimedia": [
-        "QAbstractVideoBuffer",
-        "QAbstractVideoSurface",
-        "QAudio",
-        "QAudioDeviceInfo",
-        "QAudioFormat",
-        "QAudioInput",
-        "QAudioOutput",
-        "QVideoFrame",
-        "QVideoSurfaceFormat"
-    ],
     "QtNetwork": [
         "QAbstractNetworkCache",
         "QAbstractSocket",
@@ -385,8 +346,6 @@ _common_members = {
         "QNetworkAccessManager",
         "QNetworkAddressEntry",
         "QNetworkCacheMetaData",
-        "QNetworkConfiguration",
-        "QNetworkConfigurationManager",
         "QNetworkCookie",
         "QNetworkCookieJar",
         "QNetworkDiskCache",
@@ -396,17 +355,16 @@ _common_members = {
         "QNetworkProxyQuery",
         "QNetworkReply",
         "QNetworkRequest",
-        "QNetworkSession",
         "QSsl",
+        "QSslCertificate",
+        "QSslCipher",
+        "QSslConfiguration",
+        "QSslError",
+        "QSslKey",
+        "QSslSocket",
         "QTcpServer",
         "QTcpSocket",
         "QUdpSocket"
-    ],
-    "QtOpenGL": [
-        "QGL",
-        "QGLContext",
-        "QGLFormat",
-        "QGLWidget"
     ],
     "QtPrintSupport": [
         "QAbstractPrintDialog",
@@ -418,28 +376,9 @@ _common_members = {
         "QPrinter",
         "QPrinterInfo"
     ],
-    "QtSql": [
-        "QSql",
-        "QSqlDatabase",
-        "QSqlDriver",
-        "QSqlDriverCreatorBase",
-        "QSqlError",
-        "QSqlField",
-        "QSqlIndex",
-        "QSqlQuery",
-        "QSqlQueryModel",
-        "QSqlRecord",
-        "QSqlRelation",
-        "QSqlRelationalDelegate",
-        "QSqlRelationalTableModel",
-        "QSqlResult",
-        "QSqlTableModel"
-    ],
     "QtSvg": [
-        "QGraphicsSvgItem",
         "QSvgGenerator",
-        "QSvgRenderer",
-        "QSvgWidget"
+        "QSvgRenderer"
     ],
     "QtTest": [
         "QTest"
@@ -452,8 +391,6 @@ _common_members = {
         "QAbstractScrollArea",
         "QAbstractSlider",
         "QAbstractSpinBox",
-        "QAction",
-        "QActionGroup",
         "QApplication",
         "QBoxLayout",
         "QButtonGroup",
@@ -468,11 +405,9 @@ _common_members = {
         "QDataWidgetMapper",
         "QDateEdit",
         "QDateTimeEdit",
-        "QDesktopWidget",
         "QDial",
         "QDialog",
         "QDialogButtonBox",
-        "QDirModel",
         "QDockWidget",
         "QDoubleSpinBox",
         "QErrorMessage",
@@ -533,7 +468,6 @@ _common_members = {
         "QItemDelegate",
         "QItemEditorCreatorBase",
         "QItemEditorFactory",
-        "QKeyEventTransition",
         "QLCDNumber",
         "QLabel",
         "QLayout",
@@ -548,7 +482,6 @@ _common_members = {
         "QMenu",
         "QMenuBar",
         "QMessageBox",
-        "QMouseEventTransition",
         "QPanGesture",
         "QPinchGesture",
         "QPlainTextDocumentLayout",
@@ -560,7 +493,6 @@ _common_members = {
         "QRubberBand",
         "QScrollArea",
         "QScrollBar",
-        "QShortcut",
         "QSizeGrip",
         "QSizePolicy",
         "QSlider",
@@ -624,9 +556,6 @@ _common_members = {
         "QTreeWidget",
         "QTreeWidgetItem",
         "QTreeWidgetItemIterator",
-        "QUndoCommand",
-        "QUndoGroup",
-        "QUndoStack",
         "QUndoView",
         "QVBoxLayout",
         "QWhatsThis",
@@ -635,9 +564,6 @@ _common_members = {
         "QWidgetItem",
         "QWizard",
         "QWizardPage"
-    ],
-    "QtX11Extras": [
-        "QX11Info"
     ],
     "QtXml": [
         "QDomAttr",
@@ -656,38 +582,7 @@ _common_members = {
         "QDomNodeList",
         "QDomNotation",
         "QDomProcessingInstruction",
-        "QDomText",
-        "QXmlAttributes",
-        "QXmlContentHandler",
-        "QXmlDTDHandler",
-        "QXmlDeclHandler",
-        "QXmlDefaultHandler",
-        "QXmlEntityResolver",
-        "QXmlErrorHandler",
-        "QXmlInputSource",
-        "QXmlLexicalHandler",
-        "QXmlLocator",
-        "QXmlNamespaceSupport",
-        "QXmlParseException",
-        "QXmlReader",
-        "QXmlSimpleReader"
-    ],
-    "QtXmlPatterns": [
-        "QAbstractMessageHandler",
-        "QAbstractUriResolver",
-        "QAbstractXmlNodeModel",
-        "QAbstractXmlReceiver",
-        "QSourceLocation",
-        "QXmlFormatter",
-        "QXmlItem",
-        "QXmlName",
-        "QXmlNamePool",
-        "QXmlNodeModelIndex",
-        "QXmlQuery",
-        "QXmlResultItems",
-        "QXmlSchema",
-        "QXmlSchemaValidator",
-        "QXmlSerializer"
+        "QDomText"
     ]
 }
 
@@ -877,7 +772,7 @@ def _translate(context, sourceText, *args):
         else:
             encoding = n_or_encoding
 
-    if Qt.__binding__ in ("PySide2", "PyQt5"):
+    if Qt.__binding__ in ("PySide2", "PySide6","PyQt5"):
         sanitized_args = [context, sourceText, disambiguation, n]
     else:
         sanitized_args = [
