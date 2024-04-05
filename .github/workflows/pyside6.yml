@@ -20,6 +20,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Install EGL mesa
+        run: |
+          sudo apt-get update -y -qq
+          sudo apt-get install -y -qq libegl1-mesa libegl1-mesa-dev libgl1-mesa-glx libgl1-mesa-dev
+
       - name: Pip install . 
         run: |
           python3.10 -m pip install .
