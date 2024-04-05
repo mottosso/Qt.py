@@ -935,7 +935,6 @@ These members from the original submodule are misplaced relative PySide2
 _misplaced_members = {
     "PySide6": {
         "QtGui.QShortcut": "QtWidgets.QShortcut",
-        "QtGui.QStringListModel": "QtCore.QStringListModel",
         "QtGui.QAction": "QtWidgets.QAction",
         "QtUiTools.QUiLoader": ["QtCompat.loadUi", _loadUi],
         "shiboken6.wrapInstance": ["QtCompat.wrapInstance", _wrapinstance],
@@ -955,7 +954,6 @@ _misplaced_members = {
         "QtMultimedia.QSound": "QtMultimedia.QSound",
     },
     "PySide2": {
-        "QtGui.QStringListModel": "QtCore.QStringListModel",
         "QtUiTools.QUiLoader": ["QtCompat.loadUi", _loadUi],
         "shiboken2.wrapInstance": ["QtCompat.wrapInstance", _wrapinstance],
         "shiboken2.getCppPointer": ["QtCompat.getCppPointer", _getcpppointer],
