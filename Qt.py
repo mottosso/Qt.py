@@ -111,6 +111,9 @@ _common_members = {
         "QFileSystemWatcher",
         "QGenericArgument",
         "QGenericReturnArgument",
+        "QItemSelection",
+        "QItemSelectionModel",
+        "QItemSelectionRange",
         "QIODevice",
         "QLibraryInfo",
         "QLine",
@@ -194,7 +197,8 @@ _common_members = {
         "qUnregisterResourceData",
         "qVersion",
         "qWarning",
-        "Signal"
+        "Signal",
+        "Slot"
     ],
     "QtGui": [
         "QAbstractTextDocumentLayout",
@@ -267,6 +271,7 @@ _common_members = {
         "QQuaternion",
         "QRadialGradient",
         "QRegion",
+        "QRegExpValidator",
         "QResizeEvent",
         "QSessionManager",
         "QShortcutEvent",
@@ -384,6 +389,7 @@ _common_members = {
         "QAbstractScrollArea",
         "QAbstractSlider",
         "QAbstractSpinBox",
+        "QAction",
         "QApplication",
         "QBoxLayout",
         "QButtonGroup",
