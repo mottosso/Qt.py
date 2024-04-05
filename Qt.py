@@ -954,6 +954,7 @@ _misplaced_members = {
         "QtMultimedia.QSound": "QtMultimedia.QSound",
     },
     "PySide2": {
+        "QtGui.QStringListModel": "QtCore.QStringListModel",
         "QtUiTools.QUiLoader": ["QtCompat.loadUi", _loadUi],
         "shiboken2.wrapInstance": ["QtCompat.wrapInstance", _wrapinstance],
         "shiboken2.getCppPointer": ["QtCompat.getCppPointer", _getcpppointer],
