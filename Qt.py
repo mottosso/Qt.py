@@ -933,6 +933,7 @@ These members from the original submodule are misplaced relative PySide2
 """
 _misplaced_members = {
     "PySide6": {
+        "QtGui.QRegularExpressionValidator": "QtGui.QRegExpValidator",
         "QtGui.QShortcut": "QtWidgets.QShortcut",
         "QtGui.QAction": "QtWidgets.QAction",
         "QtUiTools.QUiLoader": ["QtCompat.loadUi", _loadUi],
