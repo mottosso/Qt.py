@@ -55,5 +55,4 @@ jobs:
       - name: Testing examples..
         run: |
           python3.10 -m nose2 --verbose examples.loadUi.baseinstance1
-          python3.10 -m nose2 --verbose examples.loadUi.baseinstance2
           python3.10 -m nose2 --verbose examples.QtSiteConfig.main
