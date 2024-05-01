@@ -933,6 +933,16 @@ These members from the original submodule are misplaced relative PySide2
 """
 _misplaced_members = {
     "PySide6": {
+        "QtCore.QStringListModel": "QtCore.QStringListModel",
+        "QtGui.QStringListModel": "QtCore.QStringListModel",
+        "QtCore.Property": "QtCore.Property",
+        "QtCore.Signal": "QtCore.Signal",
+        "QtCore.Slot": "QtCore.Slot",
+        "QtCore.QAbstractProxyModel": "QtCore.QAbstractProxyModel",
+        "QtCore.QSortFilterProxyModel": "QtCore.QSortFilterProxyModel",
+        "QtCore.QItemSelection": "QtCore.QItemSelection",
+        "QtCore.QItemSelectionModel": "QtCore.QItemSelectionModel",
+        "QtCore.QItemSelectionRange": "QtCore.QItemSelectionRange",
         "QtGui.QRegularExpressionValidator": "QtGui.QRegExpValidator",
         "QtGui.QShortcut": "QtWidgets.QShortcut",
         "QtGui.QAction": "QtWidgets.QAction",
@@ -955,6 +965,15 @@ _misplaced_members = {
     },
     "PySide2": {
         "QtGui.QStringListModel": "QtCore.QStringListModel",
+        "QtGui.QStringListModel": "QtCore.QStringListModel",
+        "QtCore.Property": "QtCore.Property",
+        "QtCore.Signal": "QtCore.Signal",
+        "QtCore.Slot": "QtCore.Slot",
+        "QtCore.QAbstractProxyModel": "QtCore.QAbstractProxyModel",
+        "QtCore.QSortFilterProxyModel": "QtCore.QSortFilterProxyModel",
+        "QtCore.QItemSelection": "QtCore.QItemSelection",
+        "QtCore.QItemSelectionModel": "QtCore.QItemSelectionModel",
+        "QtCore.QItemSelectionRange": "QtCore.QItemSelectionRange",
         "QtUiTools.QUiLoader": ["QtCompat.loadUi", _loadUi],
         "shiboken2.wrapInstance": ["QtCompat.wrapInstance", _wrapinstance],
         "shiboken2.getCppPointer": ["QtCompat.getCppPointer", _getcpppointer],
@@ -1095,6 +1114,12 @@ _compatibility_members = {
             "getOpenFileName": "QtWidgets.QFileDialog.getOpenFileName",
             "getOpenFileNames": "QtWidgets.QFileDialog.getOpenFileNames",
             "getSaveFileName": "QtWidgets.QFileDialog.getSaveFileName",
+        },
+        "QFont":{
+            "setWeight": "QtGui.QFont.setWeight",
+        },
+        "Qt": {
+            "MidButton": "QtCore.Qt.MiddleButton",
         },
     },
     "PySide2": {
@@ -1414,9 +1439,38 @@ def _pyside6():
     if hasattr(Qt, "_QtWidgets"):
         Qt.QtCompat.setSectionResizeMode = \
             Qt._QtWidgets.QHeaderView.setSectionResizeMode
+        
+    def setWeight(func):
+        def wrapper(self, weight):
+            weight = {
+                100: Qt._QtGui.QFont.Thin,
+                200: Qt._QtGui.QFont.ExtraLight,
+                300: Qt._QtGui.QFont.Light,
+                400: Qt._QtGui.QFont.Normal,
+                500: Qt._QtGui.QFont.Medium,
+                600: Qt._QtGui.QFont.DemiBold,
+                700: Qt._QtGui.QFont.Bold,
+                800: Qt._QtGui.QFont.ExtraBold,
+                900: Qt._QtGui.QFont.Black,
+            }.get(weight, Qt._QtGui.QFont.Normal)
+
+            return func(self, weight)
+
+        wrapper.__doc__ = func.__doc__
+        wrapper.__name__ = func.__name__
+
+        return wrapper
+    
+
+    decorators = {
+        "QFont": {
+            "setWeight": setWeight,
+        }
+    }
 
     _reassign_misplaced_members("PySide6")
     _build_compatibility_members("PySide6")
+    _build_compatibility_members("PySide6", decorators)
 
 
 def _pyside2():
