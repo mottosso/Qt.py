@@ -21,7 +21,7 @@ try:
 except ImportError:
     # Fallback: Define assert_raises using unittest if the import fails
     import unittest
-    
+
     def assert_raises(expected_exception, callable_obj=None, *args, **kwargs):
         """
         Custom implementation of assert_raises using unittest.
@@ -36,7 +36,7 @@ except ImportError:
             function_that_raises_some_exception()
         """
         context = unittest.TestCase().assertRaises(expected_exception)
-        
+
         # If callable_obj is provided, directly call the function with the context manager
         if callable_obj:
             with context:
@@ -337,6 +337,17 @@ def setup():
     self.ui_qdockwidget = saveUiFile("qdockwidget.ui", qdockwidget_ui)
     self.ui_qpycustomwidget = saveUiFile("qcustomwidget.ui", qcustomwidget_ui)
 
+    def cleanup():
+        try:
+            shutil.rmtree(self.tempdir)
+        except Exception:
+            print(
+                "WARNING: Temporary directory remains: %s" % self.tempdir
+            )
+
+    import atexit
+    atexit.register(cleanup)
+
 
 def setUpModule():
     """Module-wide initialisation
@@ -349,7 +360,10 @@ def setUpModule():
 
 
 def teardown():
-    shutil.rmtree(self.tempdir)
+    if os.path.exists(self.tempdir):
+        print("Failed")
+    else:
+        print("Success")
 
 
 def tearDownModule():
@@ -409,7 +423,7 @@ def test_load_ui_returntype():
 
     import sys
     from Qt import QtWidgets, QtCore, QtCompat
-    
+
     if not QtWidgets.QApplication.instance():
         app = QtWidgets.QApplication(sys.argv)
     else:
@@ -423,7 +437,7 @@ def test_load_ui_baseinstance():
     """Tests to see if the baseinstance loading loads a QWidget on properly"""
     import sys
     from Qt import QtWidgets, QtCompat
-    
+
     if not QtWidgets.QApplication.instance():
         app = QtWidgets.QApplication(sys.argv)
     else:
@@ -438,7 +452,7 @@ def test_load_ui_signals():
     """Tests to see if the baseinstance connects signals properly"""
     import sys
     from Qt import QtWidgets, QtCompat
-    
+
     if not QtWidgets.QApplication.instance():
         app = QtWidgets.QApplication(sys.argv)
     else:
@@ -457,7 +471,7 @@ def test_load_ui_mainwindow():
     import sys
     from Qt import QtWidgets, QtCompat
 
-    
+
     if not QtWidgets.QApplication.instance():
         app = QtWidgets.QApplication(sys.argv)
     else:
@@ -477,7 +491,7 @@ def test_load_ui_dialog():
     import sys
     from Qt import QtWidgets, QtCompat
 
-    
+
     if not QtWidgets.QApplication.instance():
         app = QtWidgets.QApplication(sys.argv)
     else:
@@ -497,7 +511,7 @@ def test_load_ui_dockwidget():
     import sys
     from Qt import QtWidgets, QtCompat
 
-    
+
     if not QtWidgets.QApplication.instance():
         app = QtWidgets.QApplication(sys.argv)
     else:
@@ -517,7 +531,7 @@ def test_load_ui_customwidget():
     import sys
     from Qt import QtWidgets, QtCompat
 
-    
+
     if not QtWidgets.QApplication.instance():
         app = QtWidgets.QApplication(sys.argv)
     else:
@@ -560,12 +574,12 @@ def test_load_ui_pycustomwidget():
     # append the path to ensure the future import can be loaded 'relative' to the tempdir
     sys.path.append(self.tempdir)
 
-    
+
     if not QtWidgets.QApplication.instance():
         app = QtWidgets.QApplication(sys.argv)
     else:
         app = QtWidgets.QApplication.instance()
-    
+
     win = QtWidgets.QMainWindow()
 
     QtCompat.loadUi(self.ui_qpycustomwidget, win)
@@ -584,7 +598,7 @@ def test_load_ui_invalidpath():
     """Tests to see if loadUi successfully fails on invalid paths"""
     import sys
     from Qt import QtWidgets, QtCompat
-    
+
     if not QtWidgets.QApplication.instance():
         app = QtWidgets.QApplication(sys.argv)
     else:
@@ -606,7 +620,7 @@ def test_load_ui_invalidxml():
 
     from xml.etree import ElementTree
     from Qt import QtWidgets, QtCompat
-    
+
     if not QtWidgets.QApplication.instance():
         app = QtWidgets.QApplication(sys.argv)
     else:
@@ -624,7 +638,7 @@ def test_load_ui_existingLayoutOnDialog():
         '"Dialog", which already has a layout'
 
     with ignoreQtMessageHandler([msgs]):
-        
+
         if not QtWidgets.QApplication.instance():
             app = QtWidgets.QApplication(sys.argv)
         else:
@@ -645,7 +659,7 @@ def test_load_ui_existingLayoutOnMainWindow():
         '"", which already has a layout'
 
     with ignoreQtMessageHandler([msgs]):
-        
+
         if not QtWidgets.QApplication.instance():
             app = QtWidgets.QApplication(sys.argv)
         else:
@@ -666,7 +680,7 @@ def test_load_ui_existingLayoutOnDockWidget():
         '"", which already has a layout'
 
     with ignoreQtMessageHandler([msgs]):
-        
+
         if not QtWidgets.QApplication.instance():
             app = QtWidgets.QApplication(sys.argv)
         else:
@@ -687,7 +701,7 @@ def test_load_ui_existingLayoutOnWidget():
         '"Form", which already has a layout'
 
     with ignoreQtMessageHandler([msgs]):
-        
+
         if not QtWidgets.QApplication.instance():
             app = QtWidgets.QApplication(sys.argv)
         else:
@@ -998,7 +1012,7 @@ def test_qtcompat_base_class():
     import Qt
     from Qt import QtWidgets
     from Qt import QtCompat
-    
+
     if not QtWidgets.QApplication.instance():
         app = QtWidgets.QApplication(sys.argv)
     else:
@@ -1022,7 +1036,7 @@ def test_qtcompat_base_class():
 def test_cli():
     """Qt.py is available from the command-line"""
     env = os.environ.copy()
-    env.pop("QT_VERBOSE")  # Do not include debug messages
+    env.pop("QT_VERBOSE", None)  # Do not include debug messages
 
     popen = subprocess.Popen(
         [sys.executable, "Qt.py", "--help"],
@@ -1094,6 +1108,23 @@ def test_unicode_error_messages():
         stdout, stderr = out
         Qt._warn(text=unicode_message)
         assert str_message in stderr.getvalue()
+
+
+def test_midbutton_qt6():
+    """QtCore.MidButton was renamed QtCore.MiddleButton in Qt 6"""
+    from Qt import QtCore, QtCompat
+
+    if binding("PySide6"):
+        assert QtCompat.Qt.MidButton == QtCore.Qt.MiddleButton
+    else:
+        assert QtCompat.Qt.MidButton == QtCore.Qt.MidButton
+
+
+def test_set_font_weight():
+    """Qt 6 changed font weights from integers to enums"""
+    from Qt import QtGui, QtCompat
+    font = QtGui.QFont()
+    QtCompat.QFont.setWeight(font, 400)
 
 
 if sys.version_info < (3, 5):
