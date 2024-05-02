@@ -15,6 +15,7 @@ Qt.py enables you to write software that runs on any of the 4 supported bindings
 
 | Date     | Version   | Event
 |:---------|:----------|:----------
+| May 2024 | [1.4.0][] | Added support for Qt 6
 | Jan 2024 | [1.3.9][] | Run CI on Github Actions, instead of Travis CI.
 | Sep 2020 | [1.3.0][] | Stability improvements and greater ability for `QtCompat.wrapInstance` to do its job
 | Jun 2019 | [1.2.1][] | Bugfixes and [additional members](https://github.com/mottosso/Qt.py/releases/tag/1.2.0)
@@ -34,9 +35,11 @@ Qt.py enables you to write software that runs on any of the 4 supported bindings
 [1.2.1]: https://github.com/mottosso/Qt.py/releases/tag/1.2.1
 [1.3.0]: https://github.com/mottosso/Qt.py/releases/tag/1.3.0
 [1.3.9]: https://github.com/mottosso/Qt.py/releases/tag/1.3.9
+[1.4.0]: https://github.com/mottosso/Qt.py/releases/tag/1.4.0
 
 ##### Guides
 
+- [Qt 6 Transition Guide](#qt-6-transition-guide)
 - [Developing with Qt.py](https://fredrikaverpil.github.io/blog/2016/07/25/developing-with-qtpy/)
 - [Dealing with Maya 2017 and PySide2](https://fredrikaverpil.github.io/blog/2016/07/25/dealing-with-maya-2017-and-pyside2/)
 - [Vendoring Qt.py](https://fredrikaverpil.github.io/blog/2017/05/04/vendoring-qtpy/)
@@ -64,6 +67,7 @@ Qt.py enables you to write software that runs on any of the 4 supported bindings
 - [Projects using Qt.py](#projects-using-qtpy)
 - [Projects similar to Qt.py](#projects-similar-to-qtpy)
 - [Developer guide](#developer-guide)
+- [Qt 6 transition guide](#qt-6-transition-guide)
 
 <br>
 <br>
@@ -589,3 +593,23 @@ cd Qt.py
 python .\setup.py sdist bdist_wheel
 python -m twine upload .\dist\*
 ```
+
+<br>
+<br>
+<br>
+
+### Qt 6 Transition Guide
+
+| Replace | With
+|:--------|:----------------------------------
+| `QFont().setWeight(...)` | `QtCompat.QFont.setWeight(font, ...)`
+| `QtCore.Qt.MidButton`  | `QtCompat.QtCore.Qt.MidButton`
+| | Submit your known issues here!
+
+Qt.py 1.4.0, released in May 2024, added support for Qt 6 whilst preserving compatibility with Qt 4 and 5. That means that in most cases, code you've already written for Qt 4 or 5 will now continue to work with Qt 6, such as Maya 2025.
+
+However, some changes between 5 and 6 require up-front work by you the developer to make your codebase run on Qt 6 whilst continuing to run on Qt 4 and 5.
+
+The above is what we know, please do submit issues and pull-request with what else you find!
+
+- https://github.com/mottosso/Qt.py/issues/new
