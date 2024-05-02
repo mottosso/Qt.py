@@ -2,7 +2,7 @@ import sys
 import os
 
 # Set preferred binding
-os.environ['QT_PREFERRED_BINDING'] = os.pathsep.join(['PySide', 'PyQt4'])
+os.environ['QT_PREFERRED_BINDING'] = os.pathsep.join(['PySide', 'PyQt4', 'PySide6'])
 
 from Qt import QtWidgets, QtCompat
 
