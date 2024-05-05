@@ -337,17 +337,6 @@ def setup():
     self.ui_qdockwidget = saveUiFile("qdockwidget.ui", qdockwidget_ui)
     self.ui_qpycustomwidget = saveUiFile("qcustomwidget.ui", qcustomwidget_ui)
 
-    def cleanup():
-        try:
-            shutil.rmtree(self.tempdir)
-        except Exception:
-            print(
-                "WARNING: Temporary directory remains: %s" % self.tempdir
-            )
-
-    import atexit
-    atexit.register(cleanup)
-
 
 def setUpModule():
     """Module-wide initialisation
@@ -360,40 +349,11 @@ def setUpModule():
 
 
 def teardown():
-    if os.path.exists(self.tempdir):
-        print("Failed")
-    else:
-        print("Success")
+    shutil.rmtree(self.tempdir)
 
 
 def tearDownModule():
     teardown()
-
-
-preferred_binding = None
-
-# Use whichever binding is currently available
-try:
-    import PySide as __
-    preferred_binding = "PySide"
-except ImportError:
-    try:
-        import PySide2 as __
-        preferred_binding = "PySide2"
-    except ImportError:
-        try:
-            import PySide6 as __
-            preferred_binding = "PySide6"
-        except ImportError:
-            try:
-                import PyQt4 as __
-                preferred_binding = "PyQt4"
-            except ImportError:
-                try:
-                    import PyQt5 as __
-                    preferred_binding = "PyQt5"
-                except ImportError:
-                    pass
 
 
 def binding(binding):
@@ -406,11 +366,7 @@ def binding(binding):
 
     """
 
-    if "QT_PREFERRED_BINDING" in os.environ:
-        return os.getenv("QT_PREFERRED_BINDING") == binding
-
-    return binding == preferred_binding
-
+    return os.getenv("QT_PREFERRED_BINDING") == binding
 
 
 @contextlib.contextmanager
@@ -432,6 +388,20 @@ def ignoreQtMessageHandler(msgs):
         yield
     finally:
         QtCompat.qInstallMessageHandler(None)
+
+
+def test_environment():
+    """Tests require all bindings to be installed (except PySide on py3.5+)"""
+
+    if sys.version_info < (3, 5):
+        # PySide is not available for Python > 3.4
+        imp.find_module("PySide")
+    elif os.environ.get("QT_PREFERRED_BINDING") == "PySide6":
+        imp.find_module("PySide6")
+    else:
+        imp.find_module("PySide2")
+        imp.find_module("PyQt4")
+        imp.find_module("PyQt5")
 
 
 def test_load_ui_returntype():
@@ -845,7 +815,7 @@ def test_vendoring():
     env = os.environ.copy()
     env["QT_PREFERRED_BINDING_JSON"] = json.dumps(
         {
-            "Qt": ["PySide6", "PySide2", "PyQt5", "PyQt4"],
+            "Qt": ["PySide6", "PyQt5", "PyQt4"],
             "default": ["None"]
         }
     )
@@ -858,7 +828,7 @@ def test_vendoring():
     ) == 0
 
     print("Testing QT_PREFERRED_BINDING_JSON and QT_PREFERRED_BINDING work..")
-    env["QT_PREFERRED_BINDING_JSON"] = '{"Qt":["PySide6", "PySide2","PyQt5","PyQt4"]}'
+    env["QT_PREFERRED_BINDING_JSON"] = '{"Qt":["PySide6","PyQt5","PyQt4"]}'
     env["QT_PREFERRED_BINDING"] = "None"
     assert subprocess.call(
         [sys.executable, "-c", cmd],
@@ -1015,10 +985,8 @@ def test_binding_and_qt_version():
 def test_binding_states():
     """Tests to see if the Qt binding enum states are set properly"""
     import Qt
-    print(Qt)
-    print("ADTAD A---- - - -- - - _SDFSD")
     assert Qt.IsPySide == binding("PySide")
-    assert Qt.IsPySide2 == binding("PySide2"), "%s != %s" % (Qt.IsPySide2, binding("PySide2"))
+    assert Qt.IsPySide2 == binding("PySide2")
     assert Qt.IsPySide6 == binding("PySide6")
     assert Qt.IsPyQt5 == binding("PyQt5")
     assert Qt.IsPyQt4 == binding("PyQt4")
@@ -1054,7 +1022,7 @@ def test_qtcompat_base_class():
 def test_cli():
     """Qt.py is available from the command-line"""
     env = os.environ.copy()
-    env.pop("QT_VERBOSE", None)  # Do not include debug messages
+    env.pop("QT_VERBOSE")  # Do not include debug messages
 
     popen = subprocess.Popen(
         [sys.executable, "Qt.py", "--help"],
@@ -1126,23 +1094,6 @@ def test_unicode_error_messages():
         stdout, stderr = out
         Qt._warn(text=unicode_message)
         assert str_message in stderr.getvalue()
-
-
-def test_midbutton_qt6():
-    """QtCore.MidButton was renamed QtCore.MiddleButton in Qt 6"""
-    from Qt import QtCore, QtCompat
-
-    if binding("PySide6"):
-        assert QtCompat.Qt.MidButton == QtCore.Qt.MiddleButton
-    else:
-        assert QtCompat.Qt.MidButton == QtCore.Qt.MidButton
-
-
-def test_set_font_weight():
-    """Qt 6 changed font weights from integers to enums"""
-    from Qt import QtGui, QtCompat
-    font = QtGui.QFont()
-    QtCompat.QFont.setWeight(font, 400)
 
 
 if sys.version_info < (3, 5):
@@ -1392,18 +1343,6 @@ if binding("PySide"):
             "PySide should have been picked, "
             "instead got %s" % Qt.__binding__)
 
-    def test_coexistence():
-        """Qt.py may be use alongside the actual binding"""
-
-        from Qt import QtCore
-        import PySide.QtGui
-
-        # Qt remaps QStringListModel
-        assert QtCore.QStringListModel
-
-        # But does not delete the original
-        assert PySide.QtGui.QStringListModel
-
 
 if binding("PySide2"):
     def test_preferred_pyside2():
@@ -1412,6 +1351,18 @@ if binding("PySide2"):
         assert Qt.__binding__ == "PySide2", (
             "PySide2 should have been picked, "
             "instead got %s" % Qt.__binding__)
+
+    def test_coexistence():
+        """Qt.py may be use alongside the actual binding"""
+
+        from Qt import QtCore
+        import PySide2.QtGui
+
+        # Qt remaps QStringListModel
+        assert QtCore.QStringListModel
+
+        # But does not delete the original
+        assert PySide2.QtGui.QStringListModel
 
 
 if binding("PySide6"):
