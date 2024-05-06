@@ -1455,6 +1455,7 @@ def _pyside6():
         import shiboken6
         extras.append("shiboken6")
     except ImportError as e:
+        print("ImportError: %s" % e)
 
     _setup(module, extras)
     Qt.__binding_version__ = module.__version__
