@@ -1312,7 +1312,6 @@ def _reassign_misplaced_members(binding):
 
     """
 
-    print(binding, "HALLO?")
 
     for src, dst in _misplaced_members[binding].items():
         dst_value = None
@@ -1332,7 +1331,6 @@ def _reassign_misplaced_members(binding):
         if len(dst_parts) > 1:
             dst_member = dst_parts[1]
 
-        print("replacing %s.%s -> %s.%s" % (src_module, src_member, dst_module, dst_member))
 
         # Get the member we want to store in the namesapce.
         if not dst_value:
@@ -1457,7 +1455,6 @@ def _pyside6():
         import shiboken6
         extras.append("shiboken6")
     except ImportError as e:
-        print("ImportError: %s" % e)
 
     _setup(module, extras)
     Qt.__binding_version__ = module.__version__
@@ -1558,7 +1555,6 @@ def _pyside2():
         Qt.QtCompat.setSectionResizeMode = \
             Qt._QtWidgets.QHeaderView.setSectionResizeMode
 
-    print("ARADFA")
     _reassign_misplaced_members("PySide2")
     _build_compatibility_members("PySide2")
 
@@ -1930,7 +1926,6 @@ def _install():
             b for b in QT_PREFERRED_BINDING.split(os.pathsep) if b
         )
 
-    print("Installing Qt.py")
     order = preferred_order or default_order
 
     available = {
@@ -2016,7 +2011,6 @@ def _install():
         Qt.QtCompat.load_ui = Qt.QtCompat.loadUi
 
 
-print("RSHRFJsndfljsdnjk")
 _install()
 
 # Setup Binding Enum states
