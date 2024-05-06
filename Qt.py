@@ -3,8 +3,8 @@
 DOCUMENTATION
     Qt.py was born in the film and visual effects industry to address
     the growing need for the development of software capable of running
-    with more than one flavour of the Qt bindings for Python. 
-    
+    with more than one flavour of the Qt bindings for Python.
+
     Supported Binding: PySide, PySide2, PySide6, PyQt4, PyQt5
 
     1. Build for one, run with all
@@ -111,8 +111,7 @@ _common_members = {
         "QFileSystemWatcher",
         "QGenericArgument",
         "QGenericReturnArgument",
-        "QItemSelection",
-        "QItemSelectionModel",
+        "QHistoryState",
         "QItemSelectionRange",
         "QIODevice",
         "QLibraryInfo",
@@ -152,7 +151,6 @@ _common_members = {
         "QSize",
         "QSizeF",
         "QSocketNotifier",
-        "QStringListModel",
         "QSysInfo",
         "QSystemSemaphore",
         "QT_TRANSLATE_NOOP",
@@ -197,8 +195,6 @@ _common_members = {
         "qUnregisterResourceData",
         "qVersion",
         "qWarning",
-        "Signal",
-        "Slot"
     ],
     "QtGui": [
         "QAbstractTextDocumentLayout",
@@ -271,7 +267,6 @@ _common_members = {
         "QQuaternion",
         "QRadialGradient",
         "QRegion",
-        "QRegExpValidator",
         "QResizeEvent",
         "QSessionManager",
         "QShortcutEvent",
@@ -943,6 +938,9 @@ _misplaced_members = {
         "QtCore.QItemSelection": "QtCore.QItemSelection",
         "QtCore.QItemSelectionModel": "QtCore.QItemSelectionModel",
         "QtCore.QItemSelectionRange": "QtCore.QItemSelectionRange",
+        "QtCore.QRegularExpression": "QtCore.QRegExp",
+        "QtStateMachine.QStateMachine": "QtCore.QStateMachine",
+        "QtStateMachine.QState": "QtCore.QState",
         "QtGui.QRegularExpressionValidator": "QtGui.QRegExpValidator",
         "QtGui.QShortcut": "QtWidgets.QShortcut",
         "QtGui.QAction": "QtWidgets.QAction",
@@ -961,10 +959,10 @@ _misplaced_members = {
             "QtCompat.qInstallMessageHandler", _qInstallMessageHandler
         ],
         "QtWidgets.QStyleOptionViewItem": "QtCompat.QStyleOptionViewItemV4",
+        "QtWidgets.QActionGroup": "QtGui.QActionGroup",
         "QtMultimedia.QSound": "QtMultimedia.QSound",
     },
     "PySide2": {
-        "QtGui.QStringListModel": "QtCore.QStringListModel",
         "QtGui.QStringListModel": "QtCore.QStringListModel",
         "QtCore.Property": "QtCore.Property",
         "QtCore.Signal": "QtCore.Signal",
@@ -1141,6 +1139,12 @@ _compatibility_members = {
             "getOpenFileNames": "QtWidgets.QFileDialog.getOpenFileNames",
             "getSaveFileName": "QtWidgets.QFileDialog.getSaveFileName",
         },
+        "QFont":{
+            "setWeight": "QtGui.QFont.setWeight",
+        },
+        "Qt": {
+            "MidButton": "QtCore.Qt.MiddleButton",
+        },
     },
     "PyQt5": {
         "QWidget": {
@@ -1161,6 +1165,12 @@ _compatibility_members = {
             "getOpenFileNames": "QtWidgets.QFileDialog.getOpenFileNames",
             "getSaveFileName": "QtWidgets.QFileDialog.getSaveFileName",
         },
+        "QFont":{
+            "setWeight": "QtGui.QFont.setWeight",
+        },
+        "Qt": {
+            "MidButton": "QtCore.Qt.MiddleButton",
+        },
     },
     "PySide": {
         "QWidget": {
@@ -1179,6 +1189,12 @@ _compatibility_members = {
             "getOpenFileNames": "QtWidgets.QFileDialog.getOpenFileNames",
             "getSaveFileName": "QtWidgets.QFileDialog.getSaveFileName",
         },
+        "QFont":{
+            "setWeight": "QtGui.QFont.setWeight",
+        },
+        "Qt": {
+            "MidButton": "QtCore.Qt.MiddleButton",
+        },
     },
     "PyQt4": {
         "QWidget": {
@@ -1196,6 +1212,12 @@ _compatibility_members = {
             "getOpenFileName": "QtWidgets.QFileDialog.getOpenFileName",
             "getOpenFileNames": "QtWidgets.QFileDialog.getOpenFileNames",
             "getSaveFileName": "QtWidgets.QFileDialog.getSaveFileName",
+        },
+        "QFont":{
+            "setWeight": "QtGui.QFont.setWeight",
+        },
+        "Qt": {
+            "MidButton": "QtCore.Qt.MiddleButton",
         },
     },
 }
@@ -1439,7 +1461,7 @@ def _pyside6():
     if hasattr(Qt, "_QtWidgets"):
         Qt.QtCompat.setSectionResizeMode = \
             Qt._QtWidgets.QHeaderView.setSectionResizeMode
-        
+
     def setWeight(func):
         def wrapper(self, weight):
             weight = {
@@ -1460,7 +1482,7 @@ def _pyside6():
         wrapper.__name__ = func.__name__
 
         return wrapper
-    
+
 
     decorators = {
         "QFont": {
@@ -1469,7 +1491,6 @@ def _pyside6():
     }
 
     _reassign_misplaced_members("PySide6")
-    _build_compatibility_members("PySide6")
     _build_compatibility_members("PySide6", decorators)
 
 
