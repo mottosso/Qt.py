@@ -963,7 +963,6 @@ _misplaced_members = {
         ],
         "QtWidgets.QStyleOptionViewItem": "QtCompat.QStyleOptionViewItemV4",
         "QtWidgets.QActionGroup": "QtGui.QActionGroup",
-        "QtMultimedia.QSound": "QtMultimedia.QSound",
     },
     "PySide2": {
         "QtGui.QStringListModel": "QtCore.QStringListModel",
@@ -993,7 +992,6 @@ _misplaced_members = {
             "QtCompat.qInstallMessageHandler", _qInstallMessageHandler
         ],
         "QtWidgets.QStyleOptionViewItem": "QtCompat.QStyleOptionViewItemV4",
-        "QtMultimedia.QSound": "QtMultimedia.QSound",
     },
     "PyQt5": {
         "QtCore.pyqtProperty": "QtCore.Property",
@@ -1017,9 +1015,11 @@ _misplaced_members = {
         ],
         "QtWidgets.QShortcut": "QtWidgets.QShortcut",
         "QtWidgets.QStyleOptionViewItem": "QtCompat.QStyleOptionViewItemV4",
-        "QtMultimedia.QSound": "QtMultimedia.QSound",
     },
     "PySide": {
+        "QtCore.Property": "QtCore.Property",
+        "QtCore.Signal": "QtCore.Signal",
+        "QtCore.Slot": "QtCore.Slot",
         "QtGui.QAbstractProxyModel": "QtCore.QAbstractProxyModel",
         "QtGui.QSortFilterProxyModel": "QtCore.QSortFilterProxyModel",
         "QtGui.QStringListModel": "QtCore.QStringListModel",
@@ -1052,7 +1052,6 @@ _misplaced_members = {
             "QtCompat.qInstallMessageHandler", _qInstallMessageHandler
         ],
         "QtGui.QStyleOptionViewItemV4": "QtCompat.QStyleOptionViewItemV4",
-        "QtGui.QSound": "QtMultimedia.QSound",
     },
     "PyQt4": {
         "QtGui.QAbstractProxyModel": "QtCore.QAbstractProxyModel",
@@ -1091,7 +1090,6 @@ _misplaced_members = {
             "QtCompat.qInstallMessageHandler", _qInstallMessageHandler
         ],
         "QtGui.QStyleOptionViewItemV4": "QtCompat.QStyleOptionViewItemV4",
-        "QtGui.QSound": "QtMultimedia.QSound",
     }
 }
 
