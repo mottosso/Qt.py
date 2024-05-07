@@ -21,7 +21,7 @@ try:
 except ImportError:
     # Fallback: Define assert_raises using unittest if the import fails
     import unittest
-    
+
     def assert_raises(expected_exception, callable_obj=None, *args, **kwargs):
         """
         Custom implementation of assert_raises using unittest.
@@ -36,7 +36,7 @@ except ImportError:
             function_that_raises_some_exception()
         """
         context = unittest.TestCase().assertRaises(expected_exception)
-        
+
         # If callable_obj is provided, directly call the function with the context manager
         if callable_obj:
             with context:
@@ -409,7 +409,7 @@ def test_load_ui_returntype():
 
     import sys
     from Qt import QtWidgets, QtCore, QtCompat
-    
+
     if not QtWidgets.QApplication.instance():
         app = QtWidgets.QApplication(sys.argv)
     else:
@@ -423,7 +423,7 @@ def test_load_ui_baseinstance():
     """Tests to see if the baseinstance loading loads a QWidget on properly"""
     import sys
     from Qt import QtWidgets, QtCompat
-    
+
     if not QtWidgets.QApplication.instance():
         app = QtWidgets.QApplication(sys.argv)
     else:
@@ -438,7 +438,7 @@ def test_load_ui_signals():
     """Tests to see if the baseinstance connects signals properly"""
     import sys
     from Qt import QtWidgets, QtCompat
-    
+
     if not QtWidgets.QApplication.instance():
         app = QtWidgets.QApplication(sys.argv)
     else:
@@ -457,7 +457,7 @@ def test_load_ui_mainwindow():
     import sys
     from Qt import QtWidgets, QtCompat
 
-    
+
     if not QtWidgets.QApplication.instance():
         app = QtWidgets.QApplication(sys.argv)
     else:
@@ -477,7 +477,7 @@ def test_load_ui_dialog():
     import sys
     from Qt import QtWidgets, QtCompat
 
-    
+
     if not QtWidgets.QApplication.instance():
         app = QtWidgets.QApplication(sys.argv)
     else:
@@ -497,7 +497,7 @@ def test_load_ui_dockwidget():
     import sys
     from Qt import QtWidgets, QtCompat
 
-    
+
     if not QtWidgets.QApplication.instance():
         app = QtWidgets.QApplication(sys.argv)
     else:
@@ -517,7 +517,7 @@ def test_load_ui_customwidget():
     import sys
     from Qt import QtWidgets, QtCompat
 
-    
+
     if not QtWidgets.QApplication.instance():
         app = QtWidgets.QApplication(sys.argv)
     else:
@@ -560,12 +560,12 @@ def test_load_ui_pycustomwidget():
     # append the path to ensure the future import can be loaded 'relative' to the tempdir
     sys.path.append(self.tempdir)
 
-    
+
     if not QtWidgets.QApplication.instance():
         app = QtWidgets.QApplication(sys.argv)
     else:
         app = QtWidgets.QApplication.instance()
-    
+
     win = QtWidgets.QMainWindow()
 
     QtCompat.loadUi(self.ui_qpycustomwidget, win)
@@ -584,7 +584,7 @@ def test_load_ui_invalidpath():
     """Tests to see if loadUi successfully fails on invalid paths"""
     import sys
     from Qt import QtWidgets, QtCompat
-    
+
     if not QtWidgets.QApplication.instance():
         app = QtWidgets.QApplication(sys.argv)
     else:
@@ -606,7 +606,7 @@ def test_load_ui_invalidxml():
 
     from xml.etree import ElementTree
     from Qt import QtWidgets, QtCompat
-    
+
     if not QtWidgets.QApplication.instance():
         app = QtWidgets.QApplication(sys.argv)
     else:
@@ -624,7 +624,7 @@ def test_load_ui_existingLayoutOnDialog():
         '"Dialog", which already has a layout'
 
     with ignoreQtMessageHandler([msgs]):
-        
+
         if not QtWidgets.QApplication.instance():
             app = QtWidgets.QApplication(sys.argv)
         else:
@@ -645,7 +645,7 @@ def test_load_ui_existingLayoutOnMainWindow():
         '"", which already has a layout'
 
     with ignoreQtMessageHandler([msgs]):
-        
+
         if not QtWidgets.QApplication.instance():
             app = QtWidgets.QApplication(sys.argv)
         else:
@@ -666,7 +666,7 @@ def test_load_ui_existingLayoutOnDockWidget():
         '"", which already has a layout'
 
     with ignoreQtMessageHandler([msgs]):
-        
+
         if not QtWidgets.QApplication.instance():
             app = QtWidgets.QApplication(sys.argv)
         else:
@@ -687,7 +687,7 @@ def test_load_ui_existingLayoutOnWidget():
         '"Form", which already has a layout'
 
     with ignoreQtMessageHandler([msgs]):
-        
+
         if not QtWidgets.QApplication.instance():
             app = QtWidgets.QApplication(sys.argv)
         else:
@@ -998,7 +998,7 @@ def test_qtcompat_base_class():
     import Qt
     from Qt import QtWidgets
     from Qt import QtCompat
-    
+
     if not QtWidgets.QApplication.instance():
         app = QtWidgets.QApplication(sys.argv)
     else:
