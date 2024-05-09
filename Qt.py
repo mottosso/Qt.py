@@ -966,6 +966,10 @@ _misplaced_members = {
     },
     "PySide2": {
         "QtCore.QStringListModel": "QtCore.QStringListModel",
+
+        # Older versions of PySide2 still left this in QtGui, this accounts for those too
+        "QtGui.QStringListModel": "QtCore.QStringListModel",
+
         "QtCore.Property": "QtCore.Property",
         "QtCore.Signal": "QtCore.Signal",
         "QtCore.Slot": "QtCore.Slot",
