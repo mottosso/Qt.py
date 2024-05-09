@@ -931,6 +931,11 @@ NOTE: For bindings where a member is not replaced, they still
 """
 _misplaced_members = {
     "PySide6": {
+        "QtGui.QUndoCommand": "QtWidgets.QUndoCommand",
+        "QtGui.QUndoGroup": "QtWidgets.QUndoGroup",
+        "QtGui.QUndoStack": "QtWidgets.QUndoStack",
+        "QtGui.QActionGroup": "QtWidgets.QActionGroup",
+
         "QtCore.QStringListModel": "QtCore.QStringListModel",
         "QtGui.QStringListModel": "QtCore.QStringListModel",
         "QtCore.Property": "QtCore.Property",
@@ -964,7 +969,12 @@ _misplaced_members = {
         "QtWidgets.QStyleOptionViewItem": "QtCompat.QStyleOptionViewItemV4",
         "QtWidgets.QActionGroup": "QtGui.QActionGroup",
     },
-    "PySide2": {
+    "PySide2": {        
+        "QtWidgets.QUndoCommand": "QtWidgets.QUndoCommand",
+        "QtWidgets.QUndoGroup": "QtWidgets.QUndoGroup",
+        "QtWidgets.QUndoStack": "QtWidgets.QUndoStack",
+        "QtWidgets.QActionGroup": "QtWidgets.QActionGroup",
+
         "QtCore.QStringListModel": "QtCore.QStringListModel",
 
         # Older versions of PySide2 still left this in QtGui, this accounts for those too
