@@ -47,7 +47,7 @@ import importlib
 import json
 
 
-__version__ = "1.4.0"
+__version__ = "1.4.1"
 
 # Enable support for `from Qt import *`
 __all__ = []
@@ -965,7 +965,7 @@ _misplaced_members = {
         "QtWidgets.QActionGroup": "QtGui.QActionGroup",
     },
     "PySide2": {
-        "QtGui.QStringListModel": "QtCore.QStringListModel",
+        "QtCore.QStringListModel": "QtCore.QStringListModel",
         "QtCore.Property": "QtCore.Property",
         "QtCore.Signal": "QtCore.Signal",
         "QtCore.Slot": "QtCore.Slot",
