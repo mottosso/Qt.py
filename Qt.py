@@ -482,6 +482,7 @@ _common_members = {
         "QPlainTextEdit",
         "QProgressBar",
         "QProgressDialog",
+        "QProxyStyle",
         "QPushButton",
         "QRadioButton",
         "QRubberBand",
