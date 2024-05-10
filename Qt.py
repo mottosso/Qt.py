@@ -935,7 +935,6 @@ _misplaced_members = {
         "QtGui.QUndoGroup": "QtWidgets.QUndoGroup",
         "QtGui.QUndoStack": "QtWidgets.QUndoStack",
         "QtGui.QActionGroup": "QtWidgets.QActionGroup",
-
         "QtCore.QStringListModel": "QtCore.QStringListModel",
         "QtGui.QStringListModel": "QtCore.QStringListModel",
         "QtCore.Property": "QtCore.Property",
@@ -967,14 +966,12 @@ _misplaced_members = {
             "QtCompat.qInstallMessageHandler", _qInstallMessageHandler
         ],
         "QtWidgets.QStyleOptionViewItem": "QtCompat.QStyleOptionViewItemV4",
-        "QtWidgets.QActionGroup": "QtGui.QActionGroup",
     },
     "PySide2": {        
         "QtWidgets.QUndoCommand": "QtWidgets.QUndoCommand",
         "QtWidgets.QUndoGroup": "QtWidgets.QUndoGroup",
         "QtWidgets.QUndoStack": "QtWidgets.QUndoStack",
         "QtWidgets.QActionGroup": "QtWidgets.QActionGroup",
-
         "QtCore.QStringListModel": "QtCore.QStringListModel",
 
         # Older versions of PySide2 still left this in QtGui, this accounts for those too
@@ -1008,6 +1005,10 @@ _misplaced_members = {
         "QtWidgets.QStyleOptionViewItem": "QtCompat.QStyleOptionViewItemV4",
     },
     "PyQt5": {
+        "QtWidgets.QUndoCommand": "QtWidgets.QUndoCommand",
+        "QtWidgets.QUndoGroup": "QtWidgets.QUndoGroup",
+        "QtWidgets.QUndoStack": "QtWidgets.QUndoStack",
+        "QtWidgets.QActionGroup": "QtWidgets.QActionGroup",
         "QtCore.pyqtProperty": "QtCore.Property",
         "QtCore.pyqtSignal": "QtCore.Signal",
         "QtCore.pyqtSlot": "QtCore.Slot",
@@ -1031,6 +1032,10 @@ _misplaced_members = {
         "QtWidgets.QStyleOptionViewItem": "QtCompat.QStyleOptionViewItemV4",
     },
     "PySide": {
+        "QtGui.QUndoCommand": "QtWidgets.QUndoCommand",
+        "QtGui.QUndoGroup": "QtWidgets.QUndoGroup",
+        "QtGui.QUndoStack": "QtWidgets.QUndoStack",
+        "QtGui.QActionGroup": "QtWidgets.QActionGroup",
         "QtCore.Property": "QtCore.Property",
         "QtCore.Signal": "QtCore.Signal",
         "QtCore.Slot": "QtCore.Slot",
@@ -1068,6 +1073,10 @@ _misplaced_members = {
         "QtGui.QStyleOptionViewItemV4": "QtCompat.QStyleOptionViewItemV4",
     },
     "PyQt4": {
+        "QtGui.QUndoCommand": "QtWidgets.QUndoCommand",
+        "QtGui.QUndoGroup": "QtWidgets.QUndoGroup",
+        "QtGui.QUndoStack": "QtWidgets.QUndoStack",
+        "QtGui.QActionGroup": "QtWidgets.QActionGroup",
         "QtGui.QAbstractProxyModel": "QtCore.QAbstractProxyModel",
         "QtGui.QSortFilterProxyModel": "QtCore.QSortFilterProxyModel",
         "QtGui.QItemSelection": "QtCore.QItemSelection",
