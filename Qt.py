@@ -1018,6 +1018,7 @@ _misplaced_members = {
         "sip.isdeleted": ["QtCompat.isValid", _isvalid],
         "QtWidgets.qApp": "QtWidgets.QApplication.instance()",
         "QtGui.QRegExpValidator": "QtGui.QRegExpValidator",
+        "QtCore.QSortFilterProxyModel": "QtCore.QSortFilterProxyModel",
         "QtCore.QRegExp": "QtCore.QRegExp",
         "QtCore.QCoreApplication.translate": [
             "QtCompat.translate", _translate
