@@ -608,6 +608,7 @@ python -m twine upload .\dist\*
 | `QtCore.Qt.MidButton`  | `QtCompat.QtCore.Qt.MidButton`
 | `QLabel.setPixmap(str)` | `QLabel.setPixmap(QPixmap())` | Can't take a string anymore (tested in Maya 2025.0)
 | `QModelIndex.child` | `QModel.index` | This one is apparently from Qt 4 and should not have been in Qt.py to begin with
+| `QtSvg.QSvgWidget` | `QtSvgWidgets.QSvgWidget` | Moved to QtSvgWidgets in Qt 6
 | | Submit your known issues here! |
 
 ##### Removed Members
