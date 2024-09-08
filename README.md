@@ -605,7 +605,7 @@ python -m twine upload .\dist\*
 | `QFont().setWeight(...)` | `QtCompat.QFont.setWeight(font, ...)`
 | `QFont().setWeight(QFont().Bold)` | `QFont().setWeight(QFont.Bold)` | Instance of class doesn't have the enums, apparently
 | `QEvent().Resize` | `QEvent.Resize` | Instance of class doesn't have the enums, seems to apply overall
-| `QtCore.Qt.MidButton`  | `QtCompat.QtCore.Qt.MidButton`
+| `QtCore.Qt.MidButton`  | `QtCompat.Qt.MidButton`
 | `QLabel.setPixmap(str)` | `QLabel.setPixmap(QPixmap())` | Can't take a string anymore (tested in Maya 2025.0)
 | `QModelIndex.child` | `QModel.index` | This one is apparently from Qt 4 and should not have been in Qt.py to begin with
 | | Submit your known issues here! |
