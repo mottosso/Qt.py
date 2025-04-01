@@ -702,9 +702,13 @@ def test_load_ui_existingLayoutOnWidget():
 def test_preferred_none():
     """Preferring None shouldn't import anything"""
 
-    os.environ["QT_PREFERRED_BINDING"] = "None"
-    import Qt
-    assert Qt.__name__ == "Qt", Qt
+    current = os.environ["QT_PREFERRED_BINDING"]
+    try:
+        os.environ["QT_PREFERRED_BINDING"] = "None"
+        import Qt
+        assert Qt.__name__ == "Qt", Qt
+    finally:
+        os.environ["QT_PREFERRED_BINDING"] = current
 
 
 def test_vendoring():
@@ -900,6 +904,7 @@ class Ui_uic(object):
 
     from Qt import QtCompat
 
+    current_dir = os.getcwd()
     os.chdir(self.tempdir)
     QtCompat._cli(args=["--convert", "idempotency.py"])
 
@@ -910,6 +915,9 @@ class Ui_uic(object):
 
     with open(fname) as f:
         assert f.read() == after
+
+    # Prevent windows file lock PermissionError issues when testing on windows.
+    os.chdir(current_dir)
 
 
 def test_convert_backup():
@@ -921,12 +929,16 @@ def test_convert_backup():
 
     from Qt import QtCompat
 
+    current_dir = os.getcwd()
     os.chdir(self.tempdir)
     QtCompat._cli(args=["--convert", "idempotency.py"])
 
     assert os.path.exists(
         os.path.join(self.tempdir, "%s_backup%s" % os.path.splitext(fname))
     )
+
+    # Prevent windows file lock PermissionError issues when testing on windows.
+    os.chdir(current_dir)
 
 
 def test_import_from_qtwidgets():
