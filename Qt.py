@@ -919,6 +919,131 @@ def _loadUi(uifile, baseinstance=None):
         raise NotImplementedError("No implementation available for loadUi")
 
 
+def _enum_to_value(enum):
+    """Returns the int value of the given enum.
+    """
+    return enum.value
+
+
+def _enum_to_int(enum):
+    """Returns the int value of the given enum.
+    """
+    return int(enum)
+
+
+def _convert_font_weights(weight, in_qt, out_qt="enum"):
+    """Helper function to convert between legacy Qt and OpenType font weights.
+
+    Converted to python from the Qt source code for QFont.
+    https://code.qt.io/cgit/qt/qtbase.git/tree/src/gui/text/qfont.cpp?h=6.8.3#n146
+
+    Args:
+        weight(int): The font weight to convert.
+        inverted(bool): `True` converts OpenType to legacy(Qt6->Qt5). `False`
+            converts legacy to OpenType(Qt5->Qt6).
+    """
+    if Qt.IsPySide or Qt.IsPyQt4:
+        # Qt4 doesn't support fully qualified enum's
+        _enum_obj = Qt._QtGui.QFont
+    else:
+        _enum_obj = Qt._QtGui.QFont.Weight
+
+    # Map of (Qt4/5, Qt6, Enum) for the various font weights.
+    legacy_to_opentype_map = [
+        (0, 100, _enum_obj.Thin),
+        (12, 200, _enum_obj.ExtraLight),
+        (25, 300, _enum_obj.Light),
+        (50, 400, _enum_obj.Normal),
+        (57, 500, _enum_obj.Medium),
+        (63, 600, _enum_obj.DemiBold),
+        (75, 700, _enum_obj.Bold),
+        (81, 800, _enum_obj.ExtraBold),
+        (87, 900, _enum_obj.Black),
+    ]
+    # Convert the Qt version to the correct column index in the map
+    qt_version_map = {4: 0, 5: 0, 6: 1, "enum": 2}
+    in_qt = qt_version_map[in_qt]
+    out_qt = qt_version_map[out_qt]
+
+    closest_dist = sys.maxsize
+    result = None
+
+    for mapping in legacy_to_opentype_map:
+        weight_old = mapping[in_qt]
+        weight_new = mapping[out_qt]
+        dist = abs(weight_old - weight)
+
+        if dist < closest_dist:
+            result = weight_new
+            closest_dist = dist
+        else:
+            break
+
+    return result
+
+
+def _qfont_from_qt6(descrip):
+    """Convert font strings generated in Qt6 to Qt4 and 5 compliant strings.
+
+    Qt6: "Courier New,8.25,-1,5,400,0,0,0,0,0,0,0,0,0,0,1"
+    Qt5: "Courier New,8.25,-1,5,50,0,0,0,0,0"
+
+    A Font string is a comma separated list of 9-11 items for Qt4,5 and 16-17
+    items for Qt 6. Here is a breakdown of each column's data.
+    # Qt4,5 and 6
+    - Font family
+    - Point size
+    - Pixel size
+    - Style hint
+    - Font weight (See _convert_font_weights for how weight is valued.)
+    - Font style
+    - Underline
+    - Strike out
+    - Fixed pitch
+    - Always 0
+    # Qt6 only
+    - Capitalization
+    - Letter spacing
+    - Word spacing
+    - Stretch
+    - Style strategy
+    # Qt4,5 and 6. Optional and always last if specified.
+    - Font style (omitted when unavailable)
+    """
+
+    # Convert Qt6 strings into Qt5 formats.
+    parts = descrip.split(",")
+    if len(parts) <= 11:
+        # Qt5 style strings have 10 or 11 parts. We don't need to process
+        # strings with fewer parts.
+        return descrip
+
+    style = parts[-1] if len(parts) == 17 else None
+
+    # Convert from the Open Type to legacy font weight.
+    weight = int(parts[4])
+    weight = _convert_font_weights(weight, 6, 5)
+    parts[4] = str(weight)
+
+    ret = parts[:10]
+    if style is not None:
+        ret.append(style)
+
+    return ",".join(ret)
+
+
+def _fromStringQt5(func):
+    # Decorator for Qt5 to handle converting a Qt6 QFont string to Qt5.
+    def wrapper(self, descrip):
+        descrip = _qfont_from_qt6(descrip)
+        return func(self, descrip)
+
+    wrapper.__doc__ = func.__doc__
+    wrapper.__name__ = func.__name__
+
+    return wrapper
+
+
 """Misplaced members
 
 These members from the original submodule are misplaced relative PySide2
@@ -1152,7 +1277,8 @@ _compatibility_members = {
             "getOpenFileNames": "QtWidgets.QFileDialog.getOpenFileNames",
             "getSaveFileName": "QtWidgets.QFileDialog.getSaveFileName",
         },
-        "QFont":{
+        "QFont": {
+            "fromString": "QtGui.QFont.fromString",
             "setWeight": "QtGui.QFont.setWeight",
         },
         "Qt": {
@@ -1178,7 +1304,8 @@ _compatibility_members = {
             "getOpenFileNames": "QtWidgets.QFileDialog.getOpenFileNames",
             "getSaveFileName": "QtWidgets.QFileDialog.getSaveFileName",
         },
-        "QFont":{
+        "QFont": {
+            "fromString": "QtGui.QFont.fromString",
             "setWeight": "QtGui.QFont.setWeight",
         },
         "Qt": {
@@ -1204,7 +1331,8 @@ _compatibility_members = {
             "getOpenFileNames": "QtWidgets.QFileDialog.getOpenFileNames",
             "getSaveFileName": "QtWidgets.QFileDialog.getSaveFileName",
         },
-        "QFont":{
+        "QFont": {
+            "fromString": "QtGui.QFont.fromString",
             "setWeight": "QtGui.QFont.setWeight",
         },
         "Qt": {
@@ -1228,7 +1356,8 @@ _compatibility_members = {
             "getOpenFileNames": "QtWidgets.QFileDialog.getOpenFileNames",
             "getSaveFileName": "QtWidgets.QFileDialog.getSaveFileName",
         },
-        "QFont":{
+        "QFont": {
+            "fromString": "QtGui.QFont.fromString",
             "setWeight": "QtGui.QFont.setWeight",
         },
         "Qt": {
@@ -1252,7 +1381,8 @@ _compatibility_members = {
             "getOpenFileNames": "QtWidgets.QFileDialog.getOpenFileNames",
             "getSaveFileName": "QtWidgets.QFileDialog.getSaveFileName",
         },
-        "QFont":{
+        "QFont": {
+            "fromString": "QtGui.QFont.fromString",
             "setWeight": "QtGui.QFont.setWeight",
         },
         "Qt": {
@@ -1483,6 +1613,7 @@ def _pyside6():
 
     _setup(module, extras)
     Qt.__binding_version__ = module.__version__
+    Qt.QtCompat.enumValue = _enum_to_value
 
     if hasattr(Qt, "_shiboken6"):
         Qt.QtCompat.wrapInstance = _wrapinstance
@@ -1505,25 +1636,14 @@ def _pyside6():
 
     def setWeight(func):
         def wrapper(self, weight):
-            weight = {
-                100: Qt._QtGui.QFont.Thin,
-                200: Qt._QtGui.QFont.ExtraLight,
-                300: Qt._QtGui.QFont.Light,
-                400: Qt._QtGui.QFont.Normal,
-                500: Qt._QtGui.QFont.Medium,
-                600: Qt._QtGui.QFont.DemiBold,
-                700: Qt._QtGui.QFont.Bold,
-                800: Qt._QtGui.QFont.ExtraBold,
-                900: Qt._QtGui.QFont.Black,
-            }.get(weight, Qt._QtGui.QFont.Normal)
-
+            # PySide6 requires passing Enum data types not int values.
+            weight = _convert_font_weights(weight, 6)
             return func(self, weight)
 
         wrapper.__doc__ = func.__doc__
         wrapper.__name__ = func.__name__
 
         return wrapper
-
 
     decorators = {
         "QFont": {
@@ -1560,6 +1680,7 @@ def _pyside2():
 
     _setup(module, extras)
     Qt.__binding_version__ = module.__version__
+    Qt.QtCompat.enumValue = _enum_to_int
 
     if hasattr(Qt, "_shiboken2"):
         Qt.QtCompat.wrapInstance = _wrapinstance
@@ -1580,8 +1701,14 @@ def _pyside2():
         Qt.QtCompat.setSectionResizeMode = \
             Qt._QtWidgets.QHeaderView.setSectionResizeMode
 
+    decorators = {
+        "QFont": {
+            "fromString": _fromStringQt5,
+        },
+    }
+
     _reassign_misplaced_members("PySide2")
-    _build_compatibility_members("PySide2")
+    _build_compatibility_members("PySide2", decorators)
 
 
 def _pyside():
@@ -1602,6 +1729,7 @@ def _pyside():
 
     _setup(module, extras)
     Qt.__binding_version__ = module.__version__
+    Qt.QtCompat.enumValue = _enum_to_int
 
     if hasattr(Qt, "_shiboken"):
         Qt.QtCompat.wrapInstance = _wrapinstance
@@ -1627,8 +1755,14 @@ def _pyside():
             self.dataChanged.emit(topleft, bottomright)
         )
 
+    decorators = {
+        "QFont": {
+            "fromString": _fromStringQt5,
+        },
+    }
+
     _reassign_misplaced_members("PySide")
-    _build_compatibility_members("PySide")
+    _build_compatibility_members("PySide", decorators)
 
 
 def _pyqt5():
@@ -1636,6 +1770,8 @@ def _pyqt5():
 
     import PyQt5 as module
     extras = ["uic"]
+
+    Qt.QtCompat.enumValue = _enum_to_int
 
     try:
         # Relevant to PyQt5 5.11 and above
@@ -1670,8 +1806,14 @@ def _pyqt5():
         Qt.QtCompat.setSectionResizeMode = \
             Qt._QtWidgets.QHeaderView.setSectionResizeMode
 
+    decorators = {
+        "QFont": {
+            "fromString": _fromStringQt5,
+        },
+    }
+
     _reassign_misplaced_members("PyQt5")
-    _build_compatibility_members('PyQt5')
+    _build_compatibility_members('PyQt5', decorators)
 
 
 def _pyqt4():
@@ -1718,6 +1860,8 @@ def _pyqt4():
         extras.append(sip.__name__)
     except ImportError:
         sip = None
+
+    Qt.QtCompat.enumValue = _enum_to_int
 
     _setup(module, extras)
     if hasattr(Qt, "_sip"):
@@ -1769,7 +1913,10 @@ def _pyqt4():
             "getOpenFileName": _standardizeQFileDialog,
             "getOpenFileNames": _standardizeQFileDialog,
             "getSaveFileName": _standardizeQFileDialog,
-        }
+        },
+        "QFont": {
+            "fromString": _fromStringQt5,
+        },
     }
     _build_compatibility_members('PyQt4', decorators)
 
