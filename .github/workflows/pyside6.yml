@@ -11,9 +11,13 @@ on:
 jobs:
   test:
     runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        # Test if using native json or pyjson5 for json parsing
+        QT_BINDING: ['PySide6', 'PyQt6']
 
     env:
-      QT_PREFERRED_BINDING: PySide6
+      QT_PREFERRED_BINDING: ${{ matrix.QT_BINDING }}
       QT_QPA_PLATFORM: minimal
       QT_VERBOSE: 1
       PYTHONPATH: "${{ github.workspace }}"
@@ -36,9 +40,9 @@ jobs:
         run: |
           python3.10 -m pip install .
 
-      - name: Pip install PySide6 and dependencies 
+      - name: Pip install PySide6/PyQt6 and dependencies
         run: |
-          python3.10 -m pip install PySide6 nose2 nosepipe six packaging setuptools wheel
+          python3.10 -m pip install PySide6 PyQt6 nose2 nosepipe six packaging setuptools wheel
 
       - name: Testing implementation..
         run: |

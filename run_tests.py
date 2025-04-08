@@ -34,23 +34,38 @@ if __name__ == "__main__":
     ]
 
     errors = 0
+    failures = []
 
     # Running each test independently via subprocess
     # enables tests to filter out from tests.py before
     # being split into individual processes via the
     # --with-process-isolation feature of nose.
     with binding("PyQt4"):
-        errors += subprocess.call(argv)
+        _errors = subprocess.call(argv)
+        errors += _errors
+        if _errors:
+            failures.append(os.environ["QT_PREFERRED_BINDING"])
 
     if sys.version_info <= (3, 4):
         with binding("PySide"):
-            errors += subprocess.call(argv)
+            _errors = subprocess.call(argv)
+            errors += _errors
+            if _errors:
+                failures.append(os.environ["QT_PREFERRED_BINDING"])
 
     with binding("PyQt5"):
-        errors += subprocess.call(argv)
+        _errors = subprocess.call(argv)
+        errors += _errors
+        if _errors:
+            failures.append(os.environ["QT_PREFERRED_BINDING"])
 
     with binding("PySide2"):
-        errors += subprocess.call(argv)
+        _errors = subprocess.call(argv)
+        errors += _errors
+        if _errors:
+            failures.append(os.environ["QT_PREFERRED_BINDING"])
 
     if errors:
-        raise Exception("%i binding(s) failed." % errors)
+        raise Exception(
+            "{} binding(s) failed for {}.".format(errors, ", ".join(failures))
+        )

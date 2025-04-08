@@ -121,12 +121,12 @@ Use Qt.py as you would use PySide2.
 
 ```python
 import sys
-from Qt import QtWidgets
+from Qt import QtWidgets QtCompat
 
 app = QtWidgets.QApplication(sys.argv)
 button = QtWidgets.QPushButton("Hello World")
 button.show()
-app.exec_()
+QtCompat.QApplication.exec_()
 ```
 
 - Also see [/examples](examples)
@@ -329,12 +329,12 @@ The `uic.loadUi` function of PyQt4 and PyQt5 as well as the `QtUiTools.QUiLoader
 
 ```python
 import sys
-from Qt import QtCompat
+from Qt import QtCompat, QtWidgets
 
 app = QtWidgets.QApplication(sys.argv)
 ui = QtCompat.loadUi(uifile="my.ui")
 ui.show()
-app.exec_()
+QtCompat.QApplication.exec_()
 ```
 For `PyQt` bindings it uses their native implementation, whereas for `PySide` bindings it uses our custom implementation borrowed from the [qtpy](https://github.com/spyder-ide/qtpy) project.
 
@@ -603,17 +603,21 @@ python -m twine upload .\dist\*
 
 | Replace | With | Notes
 |:--------|:-----|:----------------------------
+| `QFont().fromString(...)` | `QtCompat.QFont.fromString(font, ...)` | Qt6 adds extra data to font strings and changes weight if you want to pass a font string from Qt6 to Qt4/5 use this
 | `QFont().setWeight(...)` | `QtCompat.QFont.setWeight(font, ...)`
-| `QFont().setWeight(QFont().Bold)` | `QFont().setWeight(QFont.Bold)` | Instance of class doesn't have the enums, apparently
-| `QEvent().Resize` | `QEvent.Resize` | Instance of class doesn't have the enums, seems to apply overall
+| `QFont().setWeight(QFont().Bold)` | `QFont().setWeight(QFont.Weight.Bold)` | Instance of class don't have enums, see [see Fully Qualified Enums](CAVEATS.md#fully-qualified-enums)
+| `QEvent().Resize` | `QEvent.Type.Resize` | All instances of class don't have enums, see [see Fully Qualified Enums](CAVEATS.md#fully-qualified-enums)
 | `QtCore.Qt.MidButton`  | `QtCompat.Qt.MidButton`
 | `QLabel.setPixmap(str)` | `QLabel.setPixmap(QPixmap())` | Can't take a string anymore (tested in Maya 2025.0)
 | `QModelIndex.child` | `QModel.index` | This one is apparently from Qt 4 and should not have been in Qt.py to begin with
+| `QApplication.exec_()` | `QtCompat.QApplication.exec_()` | `exec` is no longer a reserved keyword in python 3 so Qt6 is removing the underscore from `exec_`. Qt.py is using exec_ to preserve compatibility with python 2. The same applies for `QCoreApplication`.
+| `QAction().setShortcut(Qt.SHIFT\|Qt.Key_Backspace)` | `QAction().setShortcut(QKeySequence(Qt.Modifier.SHIFT\|Qt.Key.Key_Backspace))` | PyQt6 doesn't accept `QKeyCombination` objects for shortcuts. To work around this cast them to `QKeySequence` objects.
+| int(QMainWindow().windowState()) | QtCompat.enumValue(QMainWindow().windowState()) | Consistent interface to convert an enum to an `int`
 | | Submit your known issues here! |
 
 ##### Removed Members
 
-Many members were removed from Qt.py due to no longer existing in PySide 6.
+Many members were removed from Qt.py due to no longer existing in PySide 6 and PyQt6.
 
 > If you find where they went, or think some were removed in error, please submit a pull-request!
 
@@ -624,6 +628,7 @@ Many members were removed from Qt.py due to no longer existing in PySide 6.
     "QEventTransition",
     "QFinalState",
     "QSignalTransition",
+    "QT_TR_NOOP_UTF8",
     "QTextCodec",
     "QTextDecoder",
     "QTextEncoder",
@@ -633,8 +638,12 @@ Many members were removed from Qt.py due to no longer existing in PySide 6.
     "QtSystemMsg",
     "QtWarningMsg",
     "qChecksum",
-    "QPictureIO",
+    "qIsNull",
+    "QPictureIO"
 ],
+"QtGui": [
+    "qIsGray"
+]
 "QtMultimedia": [
     "QAbstractVideoBuffer",
     "QAbstractVideoSurface",
@@ -649,7 +658,7 @@ Many members were removed from Qt.py due to no longer existing in PySide 6.
 "QtNetwork": [
     "QNetworkConfiguration",
     "QNetworkConfigurationManager",
-    "QNetworkSession",
+    "QNetworkSession"
 ],
 "QtOpenGL": [
     "QGL",
@@ -676,7 +685,7 @@ Many members were removed from Qt.py due to no longer existing in PySide 6.
 ],
 "QtSvg": [
     "QSvgGenerator",
-    "QSvgRenderer",
+    "QSvgRenderer"
 ],
 "QtWidgets": [
     "QActionGroup",
@@ -686,7 +695,7 @@ Many members were removed from Qt.py due to no longer existing in PySide 6.
     "QMouseEventTransition",
     "QUndoCommand",
     "QUndoGroup",
-    "QUndoStack",
+    "QUndoStack"
 ],
 "QtX11Extras": [
     "QX11Info"
