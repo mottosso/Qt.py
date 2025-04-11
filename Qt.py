@@ -795,7 +795,25 @@ def _loadUi(uifile, baseinstance=None):
 
     """
     if hasattr(Qt, "_uic"):
-        return Qt._uic.loadUi(uifile, baseinstance)
+        if not Qt.IsPyQt6:
+            return Qt._uic.loadUi(uifile, baseinstance)
+
+        # loadUi in PyQt6 chains all exceptions in their own internal exception
+        # type `PyQt6.uic.exceptions.UIFileException`. This code removes the
+        # extra wrapping exception and raises the underlying exception that
+        # matches those raised by PyQt5, PySide2 and PySide6 exceptions. Any
+        # other exceptions will still raise the original PyQt6 specific error.
+        from xml.etree import ElementTree
+
+        try:
+            return Qt._uic.loadUi(uifile, baseinstance)
+        except Qt._uic.exceptions.UIFileException as error:
+            context = error.__context__
+            # Raise the exceptions that are consistent with the other bindings
+            if isinstance(context, (IOError, ElementTree.ParseError)):
+                raise context
+            # Otherwise raise the original PyQt6 specific exception.
+            raise
 
     elif hasattr(Qt, "_QtUiTools"):
         # Implement `PyQt5.uic.loadUi` for PySide(2)
