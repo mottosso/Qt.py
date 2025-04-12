@@ -43,7 +43,7 @@ setup(
     url="https://github.com/mottosso/Qt",
     license="MIT",
     zip_safe=False,
-    py_modules=["Qt"],
+    py_modules=["Qt", "Qt_convert_enum"],
     packages=["Qt-stubs"],
     package_data={"Qt-stubs": ["*.pyi"]},
     include_package_data=True,

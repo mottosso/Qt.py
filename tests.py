@@ -1499,3 +1499,133 @@ if binding("PyQt4") or binding("PyQt5"):
         assert Qt.__binding__ == "PyQt4", (
             "PyQt4 should have been picked, "
             "instead got %s" % Qt.__binding__)
+
+
+enum_file_1 = u"""
+# a comment Qt.WindowActive with an enum. This file uses enums from super-classes
+if QAbstractItemView.Box:
+    print(QTreeWidget.Box)
+    print(QFrame.Box)
+"""
+
+
+enum_file_2 = u"""
+# a comment QStyle.CC_ComboBox that has a enum in it
+print(QFrame.Box)
+"""
+
+
+enum_check = r"""'__init__.py': Replace 'Qt.WindowActive' => 'Qt.WindowState.WindowActive' (1)
+'__init__.py': Replace 'QAbstractItemView.Box' => 'QAbstractItemView.Shape.Box' (1)
+'__init__.py': Replace 'QFrame.Box' => 'QFrame.Shape.Box' (1)
+'__init__.py': Replace 'QTreeWidget.Box' => 'QTreeWidget.Shape.Box' (1)
+'api\example.py': Replace 'QFrame.Box' => 'QFrame.Shape.Box' (1)
+'api\example.py': Replace 'QStyle.CC_ComboBox' => 'QStyle.ComplexControl.CC_ComboBox' (1)
+"""
+
+
+if binding("PySide2") and sys.version_info >= (3, 7):
+    # Qt_convert_enum.py only runs in python 3.7 or higher
+    def test_convert_enum():
+        """Test the output of running Qt_convert_enum.py."""
+
+        code_path = os.path.join(os.path.dirname(__file__), "Qt_convert_enum.py")
+        old_code_dir = os.path.join(self.tempdir, "enum_convert")
+        api_dir = os.path.join(old_code_dir, "api")
+        init_file = os.path.join(old_code_dir, "__init__.py")
+        example_file = os.path.join(api_dir, "example.py")
+        os.makedirs(api_dir)
+
+        # Test the dry run mode text output
+        with open(init_file, "w") as fle:
+            fle.write(enum_file_1)
+
+        with open(example_file, "w") as fle:
+            fle.write(enum_file_2)
+
+        cmd = [sys.executable, code_path, old_code_dir]
+        output = subprocess.check_output(cmd, cwd=self.tempdir, text=True)
+
+        assert enum_check in output
+
+        # Test actually updating the files.
+        cmd.append("--write")
+        output = subprocess.check_output(cmd, cwd=self.tempdir, text=True)
+        assert enum_check in output
+
+        check = enum_file_1.replace("WindowActive", "WindowState.WindowActive")
+        check = check.replace("Box", "Shape.Box")
+        with open(init_file) as fle:
+            assert fle.read() == check
+
+        check = enum_file_2.replace("CC_ComboBox", "ComplexControl.CC_ComboBox")
+        check = check.replace("QFrame.Box", "QFrame.Shape.Box")
+        with open(example_file) as fle:
+            assert fle.read() == check
+
+    def test_convert_enum_map():
+        """Test enum map generation for conversion from short to long enums"""
+        code_path = os.path.join(os.path.dirname(__file__), "Qt_convert_enum.py")
+        cmd = [sys.executable, code_path, "--show", "map"]
+        proc = subprocess.run(
+            cmd,
+            stdout=subprocess.PIPE,
+            check=True,
+            stderr=subprocess.DEVNULL,
+            cwd=self.tempdir,
+            text=True,
+        )
+
+        data = json.loads(proc.stdout)
+        assert data['Qt.WindowActive'] == 'Qt.WindowState.WindowActive'
+        assert data['QAbstractItemView.Box'] == 'QAbstractItemView.Shape.Box'
+        assert data['QFrame.Box'] == 'QFrame.Shape.Box'
+        assert data['QTreeWidget.Box'] == 'QTreeWidget.Shape.Box'
+        assert data['QFrame.Box'] == 'QFrame.Shape.Box'
+        assert data['QStyle.CC_ComboBox'] == 'QStyle.ComplexControl.CC_ComboBox'
+
+    def test_convert_enum_modules():
+        """Test enum map generation modules data structure"""
+        code_path = os.path.join(os.path.dirname(__file__), "Qt_convert_enum.py")
+        cmd = [sys.executable, code_path, "--show", "modules"]
+        proc = subprocess.run(
+            cmd,
+            stdout=subprocess.PIPE,
+            check=True,
+            stderr=subprocess.DEVNULL,
+            cwd=self.tempdir,
+            text=True,
+        )
+
+        data = json.loads(proc.stdout)
+        assert data['QtCore']['Qt.WindowActive'] == ['Qt.WindowState.WindowActive']
+        assert data['QtWidgets']['QAbstractItemView.Box'] == ['QAbstractItemView.Shape.Box']
+        assert data['QtWidgets']['QFrame.Box'] == ['QFrame.Shape.Box']
+        assert data['QtWidgets']['QTreeWidget.Box'] == ['QTreeWidget.Shape.Box']
+        assert data['QtWidgets']['QFrame.Box'] == ['QFrame.Shape.Box']
+        assert data['QtWidgets']['QStyle.CC_ComboBox'] == ['QStyle.ComplexControl.CC_ComboBox']
+
+
+if binding("PySide6") and sys.version_info >= (3, 7):
+    # Qt_convert_enum.py only runs in python 3.7 or higher
+    def test_convert_enum_duplicates():
+        """Tests using PySide6 to show enums with duplicate short names"""
+        code_path = os.path.join(os.path.dirname(__file__), "Qt_convert_enum.py")
+        cmd = [sys.executable, code_path, "--show", "dups"]
+        proc = subprocess.run(
+            cmd,
+            stdout=subprocess.PIPE,
+            check=True,
+            stderr=subprocess.DEVNULL,
+            cwd=self.tempdir,
+            text=True,
+        )
+
+        data = json.loads(proc.stdout)
+
+        # Test some know duplicate enum values
+        assert "PySide6" in data["BINDING_INFO"]
+        assert data["QtGui"]["QColorSpace"]["AdobeRgb"] == [
+            "NamedColorSpace.AdobeRgb, 3",
+            "Primaries.AdobeRgb, 2",
+        ]
