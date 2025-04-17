@@ -369,6 +369,34 @@ def binding(binding):
     return os.getenv("QT_PREFERRED_BINDING") == binding
 
 
+def get_enum(cls, namespace, enum):
+    """Get an enum from a fully qualified namespace
+
+    Qt4 and older Qt5 don't support fully qualified enum names, this accounts
+    for it.
+
+    For example to access `Qt.QtCore.Qt.WindowState.WindowActive` using
+    `get_enum(Qt.QtCore.Qt, "WindowState", "WindowActive")` returns
+    `Qt.QtCore.Qt.WindowState.WindowActive` for newer Qt versions. For Qt
+    versions that don't support fully qualified enum names it returns
+    `Qt.QtCore.Qt.WindowActive`.
+
+    Args:
+        cls: The class that contains the enum.
+        namespace(str): The namespace name in Qt6.
+        enum(str): The name of the enum value.
+    """
+    if not hasattr(cls, namespace):
+        # Legacy short enum name
+        return getattr(cls, enum)
+    namespace_cls = getattr(cls, namespace)
+    if hasattr(namespace_cls, enum):
+        # Return new fully qualified enum if possible
+        return getattr(namespace_cls, enum)
+    # Fallback to legacy short enum name if not using new enum classes
+    return getattr(cls, enum)
+
+
 @contextlib.contextmanager
 def ignoreQtMessageHandler(msgs):
     """A context that ignores specific qMessages for all bindings
@@ -396,8 +424,10 @@ def test_environment():
     if sys.version_info < (3, 5):
         # PySide is not available for Python > 3.4
         imp.find_module("PySide")
-    elif os.environ.get("QT_PREFERRED_BINDING") == "PySide6":
+    if sys.version_info >= (3, 9):
+        # NOTE: Existing docker images don't support Qt6
         imp.find_module("PySide6")
+        imp.find_module("PyQt6")
     else:
         imp.find_module("PySide2")
         imp.find_module("PyQt4")
@@ -1000,6 +1030,9 @@ def test_binding_states():
     assert Qt.IsPySide == binding("PySide")
     assert Qt.IsPySide2 == binding("PySide2")
     assert Qt.IsPySide6 == binding("PySide6")
+    if sys.version_info >= (3, 9):
+        # NOTE: Existing docker images don't support Qt6
+        assert Qt.IsPyQt6 == binding("PyQt6")
     assert Qt.IsPyQt5 == binding("PyQt5")
     assert Qt.IsPyQt4 == binding("PyQt4")
 
@@ -1017,7 +1050,9 @@ def test_qtcompat_base_class():
         app = QtWidgets.QApplication.instance()
     # suppress `local variable 'app' is assigned to but never used`
     app
-    header = QtWidgets.QHeaderView(Qt.QtCore.Qt.Horizontal)
+    header = QtWidgets.QHeaderView(
+        get_enum(Qt.QtCore.Qt, "Orientation", "Horizontal")
+    )
 
     # Spot check compatibility functions
     QtCompat.QHeaderView.setSectionsMovable(header, False)
@@ -1106,6 +1141,51 @@ def test_unicode_error_messages():
         stdout, stderr = out
         Qt._warn(text=unicode_message)
         assert str_message in stderr.getvalue()
+
+
+def test_enum_value():
+    """Test QtCompat.enumValue returns an int value."""
+    from Qt import QtCompat, QtGui
+    from Qt.QtCore import Qt
+
+    # Get the enum objects to test with
+    enum_window_active = get_enum(Qt, "WindowState", "WindowActive")
+    enum_demi_bold = get_enum(QtGui.QFont, "Weight", "DemiBold")
+
+    if binding("PySide6") or binding("PyQt6"):
+        window_active_check = enum_window_active.value
+        # Note: Both int and .value work for this enum
+        demi_bold_check = enum_demi_bold.value
+    else:
+        window_active_check = int(enum_window_active)
+        demi_bold_check = int(enum_demi_bold)
+
+    assert QtCompat.enumValue(enum_window_active) == window_active_check
+    assert QtCompat.enumValue(enum_demi_bold) == demi_bold_check
+    assert isinstance(QtCompat.enumValue(enum_window_active), int)
+    assert isinstance(QtCompat.enumValue(enum_demi_bold), int)
+
+
+def test_qfont_from_string():
+    import Qt
+    enum_weight_normal = get_enum(Qt.QtGui.QFont, "Weight", "Normal")
+    enum_weight_bold = get_enum(Qt.QtGui.QFont, "Weight", "Bold")
+
+    in_font = "Arial,7,-1,5,400,0,0,0,0,0,0,0,0,0,0,1"
+    font = Qt.QtGui.QFont()
+    Qt.QtCompat.QFont.fromString(font, in_font)
+    assert font.family() == "Arial"
+    assert font.pointSizeF() == 7.0
+    assert font.weight() == enum_weight_normal
+    font.setWeight(enum_weight_bold)
+    if binding("PySide6") or binding("PyQt6"):
+        # In Qt6 the full string is returned with OpenType weight of 700
+        out_font = "Arial,7,-1,5,700,0,0,0,0,0,0,0,0,0,0,1"
+        assert font.toString() == out_font
+    else:
+        # In previous bindings the shorter version is returned. Also the bold
+        # weight is 75 instead of 700
+        assert font.toString() == "Arial,7,-1,5,75,0,0,0,0,0"
 
 
 if sys.version_info < (3, 5):
@@ -1336,6 +1416,15 @@ if binding("PyQt4"):
             sip.setapi("QString", 2)
             os.environ["QT_SIP_API_HINT"] = "2"
             __import__("Qt")  # Bypass linter warning
+
+
+if binding("PyQt6"):
+    def test_preferred_pyqt6():
+        """QT_PREFERRED_BINDING = PyQt6 properly forces the binding"""
+        import Qt
+        assert Qt.__binding__ == "PyQt6", (
+            "PyQt6 should have been picked, "
+            "instead got %s" % Qt.__binding__)
 
 
 if binding("PyQt5"):
