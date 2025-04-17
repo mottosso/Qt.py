@@ -5,7 +5,7 @@ DOCUMENTATION
     the growing need for the development of software capable of running
     with more than one flavour of the Qt bindings for Python.
 
-    Supported Binding: PySide, PySide2, PySide6, PyQt4, PyQt5
+    Supported Binding: PySide, PySide2, PySide6, PyQt4, PyQt5, PyQt6
 
     1. Build for one, run with all
     2. Explicit is better than implicit
@@ -13,6 +13,7 @@ DOCUMENTATION
 
     Default resolution order:
         - PySide6
+        - PyQt6
         - PySide2
         - PyQt5
         - PySide
@@ -153,7 +154,6 @@ _common_members = {
         "QSystemSemaphore",
         "QT_TRANSLATE_NOOP",
         "QT_TR_NOOP",
-        "QT_TR_NOOP_UTF8",
         "QTemporaryFile",
         "QTextBoundaryFinder",
         "QTextStream",
@@ -188,7 +188,6 @@ _common_members = {
         "qIsFinite",
         "qIsInf",
         "qIsNaN",
-        "qIsNull",
         "qRegisterResourceData",
         "qUnregisterResourceData",
         "qVersion",
@@ -314,7 +313,6 @@ _common_members = {
         "qBlue",
         "qGray",
         "qGreen",
-        "qIsGray",
         "qRed",
         "qRgb",
         "qRgba"
@@ -627,7 +625,7 @@ def _qInstallMessageHandler(handler):
     passObject = messageOutputHandler if handler else handler
     if Qt.IsPySide or Qt.IsPyQt4:
         return Qt._QtCore.qInstallMsgHandler(passObject)
-    elif Qt.IsPySide2 or Qt.IsPyQt5 or Qt.IsPySide6:
+    elif Qt.IsPySide2 or Qt.IsPyQt5 or Qt.IsPySide6 or Qt.IsPyQt6:
         return Qt._QtCore.qInstallMessageHandler(passObject)
 
 
@@ -668,7 +666,7 @@ def _wrapinstance(ptr, base=None):
     assert (base is None) or issubclass(base, Qt.QtCore.QObject), (
         "Argument 'base' must be of type <QObject>")
 
-    if Qt.IsPyQt4 or Qt.IsPyQt5:
+    if Qt.IsPyQt4 or Qt.IsPyQt5 or Qt.IsPyQt6:
         func = getattr(Qt, "_sip").wrapinstance
     elif Qt.IsPySide2:
         func = getattr(Qt, "_shiboken2").wrapInstance
@@ -764,7 +762,7 @@ def _translate(context, sourceText, *args):
         else:
             encoding = n_or_encoding
 
-    if Qt.__binding__ in ("PySide2", "PySide6","PyQt5"):
+    if Qt.__binding__ in ("PySide2", "PySide6", "PyQt5", "PyQt6"):
         sanitized_args = [context, sourceText, disambiguation, n]
     else:
         sanitized_args = [
@@ -942,24 +940,31 @@ def _convert_font_weights(weight, in_qt, out_qt="enum"):
         inverted(bool): `True` converts OpenType to legacy(Qt6->Qt5). `False`
             converts legacy to OpenType(Qt5->Qt6).
     """
-    if Qt.IsPySide or Qt.IsPyQt4:
-        # Qt4 doesn't support fully qualified enum's
-        _enum_obj = Qt._QtGui.QFont
+    if not hasattr(Qt._QtGui.QFont.Weight, "Thin"):
+        # Qt4 and older versions of Qt5 don't support fully qualified enum
+        # names and don't define all of the enums.
+        # Map of (Qt4, Qt6, Enum) for the various font weights.
+        legacy_to_opentype_map = [
+            (0, 100, 0),  # Ultralight
+            (25, 300, Qt._QtGui.QFont.Light),
+            (50, 400, Qt._QtGui.QFont.Normal),
+            (63, 600, Qt._QtGui.QFont.DemiBold),
+            (75, 700, Qt._QtGui.QFont.Bold),
+            (87, 900, Qt._QtGui.QFont.Black),
+        ]
     else:
-        _enum_obj = Qt._QtGui.QFont.Weight
-
-    # Map of (Qt4/5, Qt6, Enum) for the various font weights.
-    legacy_to_opentype_map = [
-        (0, 100, _enum_obj.Thin),
-        (12, 200, _enum_obj.ExtraLight),
-        (25, 300, _enum_obj.Light),
-        (50, 400, _enum_obj.Normal),
-        (57, 500, _enum_obj.Medium),
-        (63, 600, _enum_obj.DemiBold),
-        (75, 700, _enum_obj.Bold),
-        (81, 800, _enum_obj.ExtraBold),
-        (87, 900, _enum_obj.Black),
-    ]
+        # Map of (Qt5, Qt6, Enum) for the various font weights.
+        legacy_to_opentype_map = [
+            (0, 100, Qt._QtGui.QFont.Weight.Thin),
+            (12, 200, Qt._QtGui.QFont.Weight.ExtraLight),
+            (25, 300, Qt._QtGui.QFont.Weight.Light),
+            (50, 400, Qt._QtGui.QFont.Weight.Normal),
+            (57, 500, Qt._QtGui.QFont.Weight.Medium),
+            (63, 600, Qt._QtGui.QFont.Weight.DemiBold),
+            (75, 700, Qt._QtGui.QFont.Weight.Bold),
+            (81, 800, Qt._QtGui.QFont.Weight.ExtraBold),
+            (87, 900, Qt._QtGui.QFont.Weight.Black),
+        ]
     # Convert the Qt version to the correct column index in the map
     qt_version_map = {4: 0, 5: 0, 6: 1, "enum": 2}
     in_qt = qt_version_map[in_qt]
@@ -1077,6 +1082,43 @@ _misplaced_members = {
         "shiboken6.wrapInstance": ["QtCompat.wrapInstance", _wrapinstance],
         "shiboken6.getCppPointer": ["QtCompat.getCppPointer", _getcpppointer],
         "shiboken6.isValid": ["QtCompat.isValid", _isvalid],
+        "QtWidgets.qApp": "QtWidgets.QApplication.instance()",
+        "QtCore.QCoreApplication.translate": [
+            "QtCompat.translate", _translate
+        ],
+        "QtWidgets.QApplication.translate": [
+            "QtCompat.translate", _translate
+        ],
+        "QtCore.qInstallMessageHandler": [
+            "QtCompat.qInstallMessageHandler", _qInstallMessageHandler
+        ],
+        "QtWidgets.QStyleOptionViewItem": "QtCompat.QStyleOptionViewItemV4",
+    },
+    "PyQt6": {
+        "QtGui.QUndoCommand": "QtWidgets.QUndoCommand",
+        "QtGui.QUndoGroup": "QtWidgets.QUndoGroup",
+        "QtGui.QUndoStack": "QtWidgets.QUndoStack",
+        "QtGui.QActionGroup": "QtWidgets.QActionGroup",
+        "QtCore.QStringListModel": "QtCore.QStringListModel",
+        "QtCore.pyqtProperty": "QtCore.Property",
+        "QtCore.pyqtSignal": "QtCore.Signal",
+        "QtCore.pyqtSlot": "QtCore.Slot",
+        "QtCore.QAbstractProxyModel": "QtCore.QAbstractProxyModel",
+        "QtCore.QSortFilterProxyModel": "QtCore.QSortFilterProxyModel",
+        "QtCore.QItemSelection": "QtCore.QItemSelection",
+        "QtCore.QItemSelectionModel": "QtCore.QItemSelectionModel",
+        "QtCore.QItemSelectionRange": "QtCore.QItemSelectionRange",
+        "QtCore.QRegularExpression": "QtCore.QRegExp",
+        "QtStateMachine.QStateMachine": "QtCore.QStateMachine",
+        "QtStateMachine.QState": "QtCore.QState",
+        "QtGui.QRegularExpressionValidator": "QtGui.QRegExpValidator",
+        "QtGui.QShortcut": "QtWidgets.QShortcut",
+        "QtGui.QAction": "QtWidgets.QAction",
+        "QtGui.QFileSystemModel": "QtWidgets.QFileSystemModel",
+        "uic.loadUi": ["QtCompat.loadUi", _loadUi],
+        "sip.wrapinstance": ["QtCompat.wrapInstance", _wrapinstance],
+        "sip.unwrapinstance": ["QtCompat.getCppPointer", _getcpppointer],
+        "sip.isdeleted": ["QtCompat.isValid", _isvalid],
         "QtWidgets.qApp": "QtWidgets.QApplication.instance()",
         "QtCore.QCoreApplication.translate": [
             "QtCompat.translate", _translate
@@ -1259,6 +1301,12 @@ interface for obsolete members, and differences in binding return values.
 """
 _compatibility_members = {
     "PySide6": {
+        "QApplication": {
+            "exec_": "QtWidgets.QApplication.exec",
+        },
+        "QCoreApplication": {
+            "exec_": "QtCore.QCoreApplication.exec",
+        },
         "QWidget": {
             "grab": "QtWidgets.QWidget.grab",
         },
@@ -1285,7 +1333,47 @@ _compatibility_members = {
             "MidButton": "QtCore.Qt.MiddleButton",
         },
     },
+    "PyQt6": {
+        "QApplication": {
+            "exec_": "QtWidgets.QApplication.exec",
+        },
+        "QCoreApplication": {
+            "exec_": "QtCore.QCoreApplication.exec",
+        },
+        "QWidget": {
+            "grab": "QtWidgets.QWidget.grab",
+        },
+        "QHeaderView": {
+            "sectionsClickable": "QtWidgets.QHeaderView.sectionsClickable",
+            "setSectionsClickable":
+                "QtWidgets.QHeaderView.setSectionsClickable",
+            "sectionResizeMode": "QtWidgets.QHeaderView.sectionResizeMode",
+            "setSectionResizeMode":
+                "QtWidgets.QHeaderView.setSectionResizeMode",
+            "sectionsMovable": "QtWidgets.QHeaderView.sectionsMovable",
+            "setSectionsMovable": "QtWidgets.QHeaderView.setSectionsMovable",
+        },
+        "QFileDialog": {
+            "getOpenFileName": "QtWidgets.QFileDialog.getOpenFileName",
+            "getOpenFileNames": "QtWidgets.QFileDialog.getOpenFileNames",
+            "getSaveFileName": "QtWidgets.QFileDialog.getSaveFileName",
+        },
+        "QFont": {
+            "fromString": "QtGui.QFont.fromString",
+            "setWeight": "QtGui.QFont.setWeight",
+        },
+        "Qt": {
+            "MidButton": "QtCore.Qt.MouseButton.MiddleButton",
+            "WindowMinMaxButtonsHint": "QtCore.Qt.WindowType.WindowMinMaxButtonsHint",
+        },
+    },
     "PySide2": {
+        "QApplication": {
+            "exec_": "QtWidgets.QApplication.exec_",
+        },
+        "QCoreApplication": {
+            "exec_": "QtCore.QCoreApplication.exec_",
+        },
         "QWidget": {
             "grab": "QtWidgets.QWidget.grab",
         },
@@ -1313,6 +1401,12 @@ _compatibility_members = {
         },
     },
     "PyQt5": {
+        "QApplication": {
+            "exec_": "QtWidgets.QApplication.exec_",
+        },
+        "QCoreApplication": {
+            "exec_": "QtCore.QCoreApplication.exec_",
+        },
         "QWidget": {
             "grab": "QtWidgets.QWidget.grab",
         },
@@ -1340,6 +1434,12 @@ _compatibility_members = {
         },
     },
     "PySide": {
+        "QApplication": {
+            "exec_": "QtWidgets.QApplication.exec_",
+        },
+        "QCoreApplication": {
+            "exec_": "QtCore.QCoreApplication.exec_",
+        },
         "QWidget": {
             "grab": "QtWidgets.QPixmap.grabWidget",
         },
@@ -1365,6 +1465,12 @@ _compatibility_members = {
         },
     },
     "PyQt4": {
+        "QApplication": {
+            "exec_": "QtWidgets.QApplication.exec_",
+        },
+        "QCoreApplication": {
+            "exec_": "QtCore.QCoreApplication.exec_",
+        },
         "QWidget": {
             "grab": "QtWidgets.QPixmap.grabWidget",
         },
@@ -1765,6 +1871,42 @@ def _pyside():
     _build_compatibility_members("PySide", decorators)
 
 
+def _pyqt6():
+    """Initialise PyQt6"""
+
+    import PyQt6 as module
+    extras = ["uic"]
+
+    from PyQt6 import sip
+    extras += ["sip"]
+
+    Qt.QtCompat.enumValue = _enum_to_value
+
+    _setup(module, extras)
+    if hasattr(Qt, "_sip"):
+        Qt.QtCompat.wrapInstance = _wrapinstance
+        Qt.QtCompat.getCppPointer = _getcpppointer
+        Qt.QtCompat.delete = sip.delete
+
+    if hasattr(Qt, "_uic"):
+        Qt.QtCompat.loadUi = _loadUi
+
+    if hasattr(Qt, "_QtCore"):
+        Qt.__binding_version__ = Qt._QtCore.PYQT_VERSION_STR
+        Qt.__qt_version__ = Qt._QtCore.QT_VERSION_STR
+        Qt.QtCompat.dataChanged = (
+            lambda self, topleft, bottomright, roles=None:
+            self.dataChanged.emit(topleft, bottomright, roles or [])
+        )
+
+    if hasattr(Qt, "_QtWidgets"):
+        Qt.QtCompat.setSectionResizeMode = \
+            Qt._QtWidgets.QHeaderView.setSectionResizeMode
+
+    _reassign_misplaced_members("PyQt6")
+    _build_compatibility_members('PyQt6')
+
+
 def _pyqt5():
     """Initialise PyQt5"""
 
@@ -2068,7 +2210,7 @@ class MissingMember(object):
 
 def _install():
     # Default order (customize order and content via QT_PREFERRED_BINDING)
-    default_order = ("PySide6", "PySide2", "PyQt5", "PySide", "PyQt4")
+    default_order = ("PySide6", "PyQt6", "PySide2", "PyQt5", "PySide", "PyQt4")
     preferred_order = None
     if QT_PREFERRED_BINDING_JSON:
         # A per-vendor preferred binding customization was defined
@@ -2102,6 +2244,7 @@ def _install():
 
     available = {
         "PySide6": _pyside6,
+        "PyQt6": _pyqt6,
         "PySide2": _pyside2,
         "PyQt5": _pyqt5,
         "PySide": _pyside,
@@ -2187,6 +2330,7 @@ _install()
 
 # Setup Binding Enum states
 Qt.IsPySide6 = Qt.__binding__ == "PySide6"
+Qt.IsPyQt6 = Qt.__binding__ == "PyQt6"
 Qt.IsPySide2 = Qt.__binding__ == 'PySide2'
 Qt.IsPyQt5 = Qt.__binding__ == 'PyQt5'
 Qt.IsPySide = Qt.__binding__ == 'PySide'
