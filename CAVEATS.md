@@ -12,6 +12,7 @@ There are cases where Qt.py is not handling incompatibility issues.
 - [QtCompat.wrapInstance](#qtcompatwrapinstance)
 - [QtGui.QPixmap.grabWidget](#qtguiqpixmapgrabwidget)
 - [QtCore.qInstallMessageHandler](#qtcoreqinstallmessagehandler)
+- [Fully Qualified Enums](#fully-qualified-enums)
 
 <br>
 <br>
@@ -387,3 +388,42 @@ Use compatibility wrapper.
 >>> button = QtWidgets.QPushButton("Hello world")
 >>> pixmap = QtCompat.QWidget.grab(button)
 ```
+
+#### Fully Qualified Enums
+
+In Qt6 both PySide6 and PyQt6 are moving from custom Enum classes to python Enums.
+This means you should be moving from short form Enums `QFont.Bold` to
+fully qualified Enum names `QFont.Weight.Bold`.
+
+PySide6 currently has a [forgiveness mode](https://doc.qt.io/qtforpython-6/considerations.html#doing-a-smooth-transition-from-the-old-enums) where you can still use `QFont.Bold`
+on a Qt class object but no longer let you use `QFont().Bold` on a instance of the
+class. PyQt6 doesn't let you use either of these options and you must use the fully
+qualified Enum name `QFont.Weight.Bold`.
+
+There have already been a few short enum name conflicts introduced. `QtGui.QColorSpace`
+for example has the enums `QColorSpace.NamedColorSpace.AdobeRgb` with a value of
+3 and `QColorSpace.Primaries.AdobeRgb` with a value of 2. The value doesn't match
+so you may not be passing the value you expect when using short enums. You can use
+the `--show dups` mode of [Qt_convert_enum.py](/Qt_convert_enum.py) to generate a listing of duplicates
+currently found in PySide6.
+
+PySide, PyQt4 and older releases of PySide2 and PyQt5 can only use short enums
+and are not compatible with fully qualified enum names. If you need to support Qt4
+and Qt5 then use short enum's. Unfortunately your code won't easily work with PyQt6.
+
+For maximum compatibility with Qt5 and Qt6 moving forward, you should always use
+the fully qualified enum name. Even if you only plan to support PySide5/6 you are
+encouraged to use the fully qualified names for future proofing.
+
+To convert existing code from short to fully qualified enum names use the
+[Qt_convert_enum.py](/Qt_convert_enum.py) script included with Qt.py.
+
+```bash
+$ pip3 install Qt.py PySide2
+$ python3 .../Qt_convert_enum.py /path/to/code/directory/to/update
+```
+This will search every .py file in the directory recursively and list any short
+enums that need replaced in each file.
+
+To actually update the code add `--write` flag. This updates existing files and
+does not make backups of the existing files, so make sure to do that first.

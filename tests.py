@@ -369,6 +369,34 @@ def binding(binding):
     return os.getenv("QT_PREFERRED_BINDING") == binding
 
 
+def get_enum(cls, namespace, enum):
+    """Get an enum from a fully qualified namespace
+
+    Qt4 and older Qt5 don't support fully qualified enum names, this accounts
+    for it.
+
+    For example to access `Qt.QtCore.Qt.WindowState.WindowActive` using
+    `get_enum(Qt.QtCore.Qt, "WindowState", "WindowActive")` returns
+    `Qt.QtCore.Qt.WindowState.WindowActive` for newer Qt versions. For Qt
+    versions that don't support fully qualified enum names it returns
+    `Qt.QtCore.Qt.WindowActive`.
+
+    Args:
+        cls: The class that contains the enum.
+        namespace(str): The namespace name in Qt6.
+        enum(str): The name of the enum value.
+    """
+    if not hasattr(cls, namespace):
+        # Legacy short enum name
+        return getattr(cls, enum)
+    namespace_cls = getattr(cls, namespace)
+    if hasattr(namespace_cls, enum):
+        # Return new fully qualified enum if possible
+        return getattr(namespace_cls, enum)
+    # Fallback to legacy short enum name if not using new enum classes
+    return getattr(cls, enum)
+
+
 @contextlib.contextmanager
 def ignoreQtMessageHandler(msgs):
     """A context that ignores specific qMessages for all bindings
@@ -396,8 +424,10 @@ def test_environment():
     if sys.version_info < (3, 5):
         # PySide is not available for Python > 3.4
         imp.find_module("PySide")
-    elif os.environ.get("QT_PREFERRED_BINDING") == "PySide6":
+    if sys.version_info >= (3, 9):
+        # NOTE: Existing docker images don't support Qt6
         imp.find_module("PySide6")
+        imp.find_module("PyQt6")
     else:
         imp.find_module("PySide2")
         imp.find_module("PyQt4")
@@ -702,9 +732,13 @@ def test_load_ui_existingLayoutOnWidget():
 def test_preferred_none():
     """Preferring None shouldn't import anything"""
 
-    os.environ["QT_PREFERRED_BINDING"] = "None"
-    import Qt
-    assert Qt.__name__ == "Qt", Qt
+    current = os.environ["QT_PREFERRED_BINDING"]
+    try:
+        os.environ["QT_PREFERRED_BINDING"] = "None"
+        import Qt
+        assert Qt.__name__ == "Qt", Qt
+    finally:
+        os.environ["QT_PREFERRED_BINDING"] = current
 
 
 def test_vendoring():
@@ -900,6 +934,7 @@ class Ui_uic(object):
 
     from Qt import QtCompat
 
+    current_dir = os.getcwd()
     os.chdir(self.tempdir)
     QtCompat._cli(args=["--convert", "idempotency.py"])
 
@@ -910,6 +945,9 @@ class Ui_uic(object):
 
     with open(fname) as f:
         assert f.read() == after
+
+    # Prevent windows file lock PermissionError issues when testing on windows.
+    os.chdir(current_dir)
 
 
 def test_convert_backup():
@@ -921,12 +959,16 @@ def test_convert_backup():
 
     from Qt import QtCompat
 
+    current_dir = os.getcwd()
     os.chdir(self.tempdir)
     QtCompat._cli(args=["--convert", "idempotency.py"])
 
     assert os.path.exists(
         os.path.join(self.tempdir, "%s_backup%s" % os.path.splitext(fname))
     )
+
+    # Prevent windows file lock PermissionError issues when testing on windows.
+    os.chdir(current_dir)
 
 
 def test_import_from_qtwidgets():
@@ -988,6 +1030,9 @@ def test_binding_states():
     assert Qt.IsPySide == binding("PySide")
     assert Qt.IsPySide2 == binding("PySide2")
     assert Qt.IsPySide6 == binding("PySide6")
+    if sys.version_info >= (3, 9):
+        # NOTE: Existing docker images don't support Qt6
+        assert Qt.IsPyQt6 == binding("PyQt6")
     assert Qt.IsPyQt5 == binding("PyQt5")
     assert Qt.IsPyQt4 == binding("PyQt4")
 
@@ -1005,7 +1050,9 @@ def test_qtcompat_base_class():
         app = QtWidgets.QApplication.instance()
     # suppress `local variable 'app' is assigned to but never used`
     app
-    header = QtWidgets.QHeaderView(Qt.QtCore.Qt.Horizontal)
+    header = QtWidgets.QHeaderView(
+        get_enum(Qt.QtCore.Qt, "Orientation", "Horizontal")
+    )
 
     # Spot check compatibility functions
     QtCompat.QHeaderView.setSectionsMovable(header, False)
@@ -1094,6 +1141,51 @@ def test_unicode_error_messages():
         stdout, stderr = out
         Qt._warn(text=unicode_message)
         assert str_message in stderr.getvalue()
+
+
+def test_enum_value():
+    """Test QtCompat.enumValue returns an int value."""
+    from Qt import QtCompat, QtGui
+    from Qt.QtCore import Qt
+
+    # Get the enum objects to test with
+    enum_window_active = get_enum(Qt, "WindowState", "WindowActive")
+    enum_demi_bold = get_enum(QtGui.QFont, "Weight", "DemiBold")
+
+    if binding("PySide6") or binding("PyQt6"):
+        window_active_check = enum_window_active.value
+        # Note: Both int and .value work for this enum
+        demi_bold_check = enum_demi_bold.value
+    else:
+        window_active_check = int(enum_window_active)
+        demi_bold_check = int(enum_demi_bold)
+
+    assert QtCompat.enumValue(enum_window_active) == window_active_check
+    assert QtCompat.enumValue(enum_demi_bold) == demi_bold_check
+    assert isinstance(QtCompat.enumValue(enum_window_active), int)
+    assert isinstance(QtCompat.enumValue(enum_demi_bold), int)
+
+
+def test_qfont_from_string():
+    import Qt
+    enum_weight_normal = get_enum(Qt.QtGui.QFont, "Weight", "Normal")
+    enum_weight_bold = get_enum(Qt.QtGui.QFont, "Weight", "Bold")
+
+    in_font = "Arial,7,-1,5,400,0,0,0,0,0,0,0,0,0,0,1"
+    font = Qt.QtGui.QFont()
+    Qt.QtCompat.QFont.fromString(font, in_font)
+    assert font.family() == "Arial"
+    assert font.pointSizeF() == 7.0
+    assert font.weight() == enum_weight_normal
+    font.setWeight(enum_weight_bold)
+    if binding("PySide6") or binding("PyQt6"):
+        # In Qt6 the full string is returned with OpenType weight of 700
+        out_font = "Arial,7,-1,5,700,0,0,0,0,0,0,0,0,0,0,1"
+        assert font.toString() == out_font
+    else:
+        # In previous bindings the shorter version is returned. Also the bold
+        # weight is 75 instead of 700
+        assert font.toString() == "Arial,7,-1,5,75,0,0,0,0,0"
 
 
 if sys.version_info < (3, 5):
@@ -1326,6 +1418,15 @@ if binding("PyQt4"):
             __import__("Qt")  # Bypass linter warning
 
 
+if binding("PyQt6"):
+    def test_preferred_pyqt6():
+        """QT_PREFERRED_BINDING = PyQt6 properly forces the binding"""
+        import Qt
+        assert Qt.__binding__ == "PyQt6", (
+            "PyQt6 should have been picked, "
+            "instead got %s" % Qt.__binding__)
+
+
 if binding("PyQt5"):
     def test_preferred_pyqt5():
         """QT_PREFERRED_BINDING = PyQt5 properly forces the binding"""
@@ -1398,3 +1499,133 @@ if binding("PyQt4") or binding("PyQt5"):
         assert Qt.__binding__ == "PyQt4", (
             "PyQt4 should have been picked, "
             "instead got %s" % Qt.__binding__)
+
+
+enum_file_1 = u"""
+# a comment Qt.WindowActive with an enum. This file uses enums from super-classes
+if QAbstractItemView.Box:
+    print(QTreeWidget.Box)
+    print(QFrame.Box)
+"""
+
+
+enum_file_2 = u"""
+# a comment QStyle.CC_ComboBox that has a enum in it
+print(QFrame.Box)
+"""
+
+
+enum_check = r"""'__init__.py': Replace 'Qt.WindowActive' => 'Qt.WindowState.WindowActive' (1)
+'__init__.py': Replace 'QAbstractItemView.Box' => 'QAbstractItemView.Shape.Box' (1)
+'__init__.py': Replace 'QFrame.Box' => 'QFrame.Shape.Box' (1)
+'__init__.py': Replace 'QTreeWidget.Box' => 'QTreeWidget.Shape.Box' (1)
+'api\example.py': Replace 'QFrame.Box' => 'QFrame.Shape.Box' (1)
+'api\example.py': Replace 'QStyle.CC_ComboBox' => 'QStyle.ComplexControl.CC_ComboBox' (1)
+"""
+
+
+if binding("PySide2") and sys.version_info >= (3, 7):
+    # Qt_convert_enum.py only runs in python 3.7 or higher
+    def test_convert_enum():
+        """Test the output of running Qt_convert_enum.py."""
+
+        code_path = os.path.join(os.path.dirname(__file__), "Qt_convert_enum.py")
+        old_code_dir = os.path.join(self.tempdir, "enum_convert")
+        api_dir = os.path.join(old_code_dir, "api")
+        init_file = os.path.join(old_code_dir, "__init__.py")
+        example_file = os.path.join(api_dir, "example.py")
+        os.makedirs(api_dir)
+
+        # Test the dry run mode text output
+        with open(init_file, "w") as fle:
+            fle.write(enum_file_1)
+
+        with open(example_file, "w") as fle:
+            fle.write(enum_file_2)
+
+        cmd = [sys.executable, code_path, old_code_dir]
+        output = subprocess.check_output(cmd, cwd=self.tempdir, text=True)
+
+        assert enum_check in output
+
+        # Test actually updating the files.
+        cmd.append("--write")
+        output = subprocess.check_output(cmd, cwd=self.tempdir, text=True)
+        assert enum_check in output
+
+        check = enum_file_1.replace("WindowActive", "WindowState.WindowActive")
+        check = check.replace("Box", "Shape.Box")
+        with open(init_file) as fle:
+            assert fle.read() == check
+
+        check = enum_file_2.replace("CC_ComboBox", "ComplexControl.CC_ComboBox")
+        check = check.replace("QFrame.Box", "QFrame.Shape.Box")
+        with open(example_file) as fle:
+            assert fle.read() == check
+
+    def test_convert_enum_map():
+        """Test enum map generation for conversion from short to long enums"""
+        code_path = os.path.join(os.path.dirname(__file__), "Qt_convert_enum.py")
+        cmd = [sys.executable, code_path, "--show", "map"]
+        proc = subprocess.run(
+            cmd,
+            stdout=subprocess.PIPE,
+            check=True,
+            stderr=subprocess.DEVNULL,
+            cwd=self.tempdir,
+            text=True,
+        )
+
+        data = json.loads(proc.stdout)
+        assert data['Qt.WindowActive'] == 'Qt.WindowState.WindowActive'
+        assert data['QAbstractItemView.Box'] == 'QAbstractItemView.Shape.Box'
+        assert data['QFrame.Box'] == 'QFrame.Shape.Box'
+        assert data['QTreeWidget.Box'] == 'QTreeWidget.Shape.Box'
+        assert data['QFrame.Box'] == 'QFrame.Shape.Box'
+        assert data['QStyle.CC_ComboBox'] == 'QStyle.ComplexControl.CC_ComboBox'
+
+    def test_convert_enum_modules():
+        """Test enum map generation modules data structure"""
+        code_path = os.path.join(os.path.dirname(__file__), "Qt_convert_enum.py")
+        cmd = [sys.executable, code_path, "--show", "modules"]
+        proc = subprocess.run(
+            cmd,
+            stdout=subprocess.PIPE,
+            check=True,
+            stderr=subprocess.DEVNULL,
+            cwd=self.tempdir,
+            text=True,
+        )
+
+        data = json.loads(proc.stdout)
+        assert data['QtCore']['Qt.WindowActive'] == ['Qt.WindowState.WindowActive']
+        assert data['QtWidgets']['QAbstractItemView.Box'] == ['QAbstractItemView.Shape.Box']
+        assert data['QtWidgets']['QFrame.Box'] == ['QFrame.Shape.Box']
+        assert data['QtWidgets']['QTreeWidget.Box'] == ['QTreeWidget.Shape.Box']
+        assert data['QtWidgets']['QFrame.Box'] == ['QFrame.Shape.Box']
+        assert data['QtWidgets']['QStyle.CC_ComboBox'] == ['QStyle.ComplexControl.CC_ComboBox']
+
+
+if binding("PySide6") and sys.version_info >= (3, 7):
+    # Qt_convert_enum.py only runs in python 3.7 or higher
+    def test_convert_enum_duplicates():
+        """Tests using PySide6 to show enums with duplicate short names"""
+        code_path = os.path.join(os.path.dirname(__file__), "Qt_convert_enum.py")
+        cmd = [sys.executable, code_path, "--show", "dups"]
+        proc = subprocess.run(
+            cmd,
+            stdout=subprocess.PIPE,
+            check=True,
+            stderr=subprocess.DEVNULL,
+            cwd=self.tempdir,
+            text=True,
+        )
+
+        data = json.loads(proc.stdout)
+
+        # Test some know duplicate enum values
+        assert "PySide6" in data["BINDING_INFO"]
+        assert data["QtGui"]["QColorSpace"]["AdobeRgb"] == [
+            "NamedColorSpace.AdobeRgb, 3",
+            "Primaries.AdobeRgb, 2",
+        ]
