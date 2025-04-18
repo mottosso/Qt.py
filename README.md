@@ -683,10 +683,6 @@ Many members were removed from Qt.py due to no longer existing in PySide 6 and P
     "QSqlResult",
     "QSqlTableModel"
 ],
-"QtSvg": [
-    "QSvgGenerator",
-    "QSvgRenderer"
-],
 "QtWidgets": [
     "QActionGroup",
     "QDesktopWidget",
