@@ -366,8 +366,10 @@ _common_members = {
         "QPrinterInfo"
     ],
     "QtSvg": [
+        "QGraphicsSvgItem",
         "QSvgGenerator",
-        "QSvgRenderer"
+        "QSvgRenderer",
+        "QSvgWidget"
     ],
     "QtTest": [
         "QTest"
@@ -1096,6 +1098,8 @@ _misplaced_members = {
         "QtGui.QRegularExpressionValidator": "QtGui.QRegExpValidator",
         "QtGui.QShortcut": "QtWidgets.QShortcut",
         "QtGui.QAction": "QtWidgets.QAction",
+        "QtSvgWidgets.QGraphicsSvgItem": "QtSvg.QGraphicsSvgItem",
+        "QtSvgWidgets.QSvgWidget": "QtSvg.QSvgWidget",
         "QtUiTools.QUiLoader": ["QtCompat.loadUi", _loadUi],
         "shiboken6.wrapInstance": ["QtCompat.wrapInstance", _wrapinstance],
         "shiboken6.getCppPointer": ["QtCompat.getCppPointer", _getcpppointer],
@@ -1133,6 +1137,8 @@ _misplaced_members = {
         "QtGui.QShortcut": "QtWidgets.QShortcut",
         "QtGui.QAction": "QtWidgets.QAction",
         "QtGui.QFileSystemModel": "QtWidgets.QFileSystemModel",
+        "QtSvgWidgets.QGraphicsSvgItem": "QtSvg.QGraphicsSvgItem",
+        "QtSvgWidgets.QSvgWidget": "QtSvg.QSvgWidget",
         "uic.loadUi": ["QtCompat.loadUi", _loadUi],
         "sip.wrapinstance": ["QtCompat.wrapInstance", _wrapinstance],
         "sip.unwrapinstance": ["QtCompat.getCppPointer", _getcpppointer],
@@ -1170,6 +1176,8 @@ _misplaced_members = {
         "QtCore.QItemSelection": "QtCore.QItemSelection",
         "QtCore.QItemSelectionModel": "QtCore.QItemSelectionModel",
         "QtCore.QItemSelectionRange": "QtCore.QItemSelectionRange",
+        "QtSvg.QGraphicsSvgItem": "QtSvg.QGraphicsSvgItem",
+        "QtSvg.QSvgWidget": "QtSvg.QSvgWidget",
         "QtUiTools.QUiLoader": ["QtCompat.loadUi", _loadUi],
         "shiboken2.wrapInstance": ["QtCompat.wrapInstance", _wrapinstance],
         "shiboken2.getCppPointer": ["QtCompat.getCppPointer", _getcpppointer],
@@ -1200,6 +1208,8 @@ _misplaced_members = {
         "QtCore.QItemSelection": "QtCore.QItemSelection",
         "QtCore.QItemSelectionModel": "QtCore.QItemSelectionModel",
         "QtCore.QItemSelectionRange": "QtCore.QItemSelectionRange",
+        "QtSvg.QGraphicsSvgItem": "QtSvg.QGraphicsSvgItem",
+        "QtSvg.QSvgWidget": "QtSvg.QSvgWidget",
         "uic.loadUi": ["QtCompat.loadUi", _loadUi],
         "sip.wrapinstance": ["QtCompat.wrapInstance", _wrapinstance],
         "sip.unwrapinstance": ["QtCompat.getCppPointer", _getcpppointer],
@@ -1243,6 +1253,8 @@ _misplaced_members = {
         "QtGui.QPrinter": "QtPrintSupport.QPrinter",
         "QtWidgets.QShortcut": "QtWidgets.QShortcut",
         "QtGui.QPrinterInfo": "QtPrintSupport.QPrinterInfo",
+        "QtSvg.QGraphicsSvgItem": "QtSvg.QGraphicsSvgItem",
+        "QtSvg.QSvgWidget": "QtSvg.QSvgWidget",
         "QtUiTools.QUiLoader": ["QtCompat.loadUi", _loadUi],
         "shiboken.wrapInstance": ["QtCompat.wrapInstance", _wrapinstance],
         "shiboken.unwrapInstance": ["QtCompat.getCppPointer", _getcpppointer],
@@ -1284,6 +1296,8 @@ _misplaced_members = {
         "QtGui.QPrintPreviewWidget": "QtPrintSupport.QPrintPreviewWidget",
         "QtGui.QPrinter": "QtPrintSupport.QPrinter",
         "QtGui.QPrinterInfo": "QtPrintSupport.QPrinterInfo",
+        "QtSvg.QGraphicsSvgItem": "QtSvg.QGraphicsSvgItem",
+        "QtSvg.QSvgWidget": "QtSvg.QSvgWidget",
         "uic.loadUi": ["QtCompat.loadUi", _loadUi],
         "sip.wrapinstance": ["QtCompat.wrapInstance", _wrapinstance],
         "sip.unwrapinstance": ["QtCompat.getCppPointer", _getcpppointer],
@@ -1728,7 +1742,7 @@ def _pyside6():
     """
 
     import PySide6 as module
-    extras = ["QtUiTools"]
+    extras = ["QtSvgWidgets", "QtUiTools"]
     try:
         import shiboken6
         extras.append("shiboken6")
@@ -1893,7 +1907,7 @@ def _pyqt6():
     """Initialise PyQt6"""
 
     import PyQt6 as module
-    extras = ["uic"]
+    extras = ["QtSvgWidgets", "uic"]
 
     from PyQt6 import sip
     extras += ["sip"]
