@@ -1069,6 +1069,22 @@ def _fromStringQt5(func):
     return wrapper
 
 
+def _exec(object):
+    """Start the event loop of the app.
+
+    Usage:
+        See :func:`QtCompat.exec()`
+
+    Arguments:
+        object (QObject): QApplication to execute.
+
+    """
+    if Qt.IsPyQt4 or Qt.IsPySide or Qt.IsPySide2 or Qt.IsPyQt5:
+        return object.exec_()
+    elif Qt.IsPySide6:
+        return getattr(object, "exec")()
+
+
 """Misplaced members
 
 These members from the original submodule are misplaced relative PySide2
@@ -1771,6 +1787,7 @@ def _pyside6():
     if hasattr(Qt, "_QtWidgets"):
         Qt.QtCompat.setSectionResizeMode = \
             Qt._QtWidgets.QHeaderView.setSectionResizeMode
+        Qt.QtCompat.exec_ = _exec
 
     def setWeight(func):
         def wrapper(self, weight):

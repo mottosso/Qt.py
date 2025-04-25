@@ -16,6 +16,9 @@ class QHeaderView:
 def delete(obj: object) -> None: ...
 
 
+def exec_(obj: object) -> int: ...
+
+
 def getCppPointer(obj: object) -> typing.Tuple[int, ...]: ...
 
 
