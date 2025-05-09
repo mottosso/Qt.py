@@ -2153,10 +2153,11 @@ def _convert(lines):
     qt_compat_imported = any("from Qt import QtCompat" in line for line in parsed)
 
     if not qt_compat_imported:
-        last_qt_import_line = max(
-            (i for i, line in enumerate(parsed) if line.startswith("from Qt")),
-            default=0
-        )
+        try:
+            last_qt_import_line = max(
+                i for i, line in enumerate(parsed) if line.startswith("from Qt"))
+        except ValueError:
+            last_qt_import_line = 0
         parsed.insert(last_qt_import_line + 1, "from Qt import QtCompat\n")
 
 
