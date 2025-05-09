@@ -1155,7 +1155,7 @@ _misplaced_members = {
         ],
         "QtWidgets.QStyleOptionViewItem": "QtCompat.QStyleOptionViewItemV4",
     },
-    "PySide2": {        
+    "PySide2": {
         "QtWidgets.QUndoCommand": "QtWidgets.QUndoCommand",
         "QtWidgets.QUndoGroup": "QtWidgets.QUndoGroup",
         "QtWidgets.QUndoStack": "QtWidgets.QUndoStack",
@@ -2138,9 +2138,10 @@ def _convert(lines):
     """
 
     def parse(line):
-        line = line.replace("from PySide2 import", "from Qt import QtCompat,")
+        line = line.replace("from PySide2", "from Qt")
         line = line.replace("QtWidgets.QApplication.translate",
                             "QtCompat.translate")
+        line = line.replace("QCoreApplication.translate", "QtCompat.translate")
         if "QtCore.SIGNAL" in line:
             raise NotImplementedError("QtCore.SIGNAL is missing from PyQt5 "
                                       "and so Qt.py does not support it: you "
@@ -2148,10 +2149,17 @@ def _convert(lines):
                                       "your ui files.")
         return line
 
-    parsed = list()
-    for line in lines:
-        line = parse(line)
-        parsed.append(line)
+    parsed = [parse(line) for line in lines]
+    qt_compat_imported = any("from Qt import QtCompat" in line for line in parsed)
+
+    if not qt_compat_imported:
+        last_qt_import_line = max(
+            (i for i, line in enumerate(parsed) if line.startswith("from Qt")),
+            default=0
+        )
+        parsed.insert(last_qt_import_line + 1, "from Qt import QtCompat\n")
+
+
 
     return parsed
 
@@ -2205,7 +2213,7 @@ def _cli(args):
         # <------ Write
         #
         with open(args.convert, "w") as f:
-            f.write("".join(lines))
+            f.writelines(lines)
 
         sys.stdout.write("Successfully converted \"%s\"\n" % args.convert)
 
