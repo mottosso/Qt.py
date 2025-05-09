@@ -884,10 +884,11 @@ class Ui_uic(object):
     def retranslateUi(self, uic):
         self.pushButton_2.setText(
             QtWidgets.QApplication.translate("uic", "NOT Ok", None, -1))
-""".split("\n")
+"""
 
     after = """\
-from Qt import QtCompat, QtCore, QtGui, QtWidgets
+from Qt import QtCore, QtGui, QtWidgets
+from Qt import QtCompat
 
 class Ui_uic(object):
     def setupUi(self, uic):
@@ -896,11 +897,69 @@ class Ui_uic(object):
     def retranslateUi(self, uic):
         self.pushButton_2.setText(
             QtCompat.translate("uic", "NOT Ok", None, -1))
-""".split("\n")
+"""
+
+    fname = os.path.join(self.tempdir, "simple.py")
+    with open(fname, "w") as f:
+        f.write(before)
 
     from Qt import QtCompat
-    assert QtCompat._convert(before) == after, after
 
+    current_dir = os.getcwd()
+    os.chdir(self.tempdir)
+    QtCompat._cli(args=["--convert", "simple.py"])
+
+    with open(fname) as f:
+        assert f.read() == after
+
+    # Prevent windows file lock PermissionError issues when testing on windows.
+    os.chdir(current_dir)
+
+def test_convert_5_15_2_format():
+    before = """\
+from PySide2.QtCore import *
+from PySide2.QtGui import *
+from PySide2.QtWidgets import *
+
+class Ui_uic(object):
+    def setupUi(self, uic):
+        self.retranslateUi(uic)
+
+    def retranslateUi(self, uic):
+        self.pushButton_2.setText(
+            QCoreApplication.translate("uic", "NOT Ok", None, -1))
+    """
+
+    after = """\
+from Qt.QtCore import *
+from Qt.QtGui import *
+from Qt.QtWidgets import *
+from Qt import QtCompat
+
+class Ui_uic(object):
+    def setupUi(self, uic):
+        self.retranslateUi(uic)
+
+    def retranslateUi(self, uic):
+        self.pushButton_2.setText(
+            QtCompat.translate("uic", "NOT Ok", None, -1))
+    """
+
+    fname = os.path.join(self.tempdir, "5_15_2_uic.py")
+    with open(fname, "w") as f:
+        f.write(before)
+
+    from Qt import QtCompat
+
+    current_dir = os.getcwd()
+    os.chdir(self.tempdir)
+    QtCompat._cli(args=["--convert", "5_15_2_uic.py"])
+
+    with open(fname) as f:
+        assert f.read() == after
+
+    # Prevent windows file lock PermissionError issues when testing on windows.
+    os.chdir(current_dir)
 
 def test_convert_idempotency():
     """Converting a converted file produces an identical file"""
@@ -917,7 +976,8 @@ class Ui_uic(object):
 """
 
     after = """\
-from Qt import QtCompat, QtCore, QtGui, QtWidgets
+from Qt import QtCore, QtGui, QtWidgets
+from Qt import QtCompat
 
 class Ui_uic(object):
     def setupUi(self, uic):
