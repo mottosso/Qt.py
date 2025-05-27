@@ -1,0 +1,46 @@
+---
+name: "Setup tox"
+description: "Prepare the runner to test Qt.py including QtWidgets using tox."
+
+runs:
+  using: "composite"
+  steps:
+    - name: Install EGL mesa
+      shell: bash
+      run: |
+        sudo apt-get update -y -qq
+        sudo apt-get install -y -qq libegl1-mesa libegl1-mesa-dev libgl1-mesa-glx libgl1-mesa-dev
+
+    - name: Install GUI libs
+      shell: bash
+      run: |
+        sudo apt-get install -y -qq libxcb-xinerama0
+        sudo apt-get install -y -qq libxkbcommon-x11-0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 libxcb-xfixes0 libxcb-cursor0
+
+    # Note: The last python to get setup becomes the default for future python calls
+    - name: Setup Python 3.7
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.7'
+
+    - name: Setup Python 3.9
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.9'
+
+    - name: Setup Python 3.11
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Setup Python 3.10
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+
+    - name: Install dependencies
+      shell: bash
+      run: |
+        python --version
+        python -m pip install --upgrade pip
+        python -m pip install tox

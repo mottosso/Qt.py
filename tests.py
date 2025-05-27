@@ -46,6 +46,7 @@ except ImportError:
             return context
 
 PYTHON = sys.version_info[0]  # e.g. 2 or 3
+IS_TOX = os.getenv("TOX_ENV_NAME") is not None
 
 try:
     long
@@ -428,6 +429,10 @@ def test_environment():
         # NOTE: Existing docker images don't support Qt6
         imp.find_module("PySide6")
         imp.find_module("PyQt6")
+    elif IS_TOX:
+        # Tox environments don't have access to Qt4
+        imp.find_module("PySide2")
+        imp.find_module("PyQt5")
     else:
         imp.find_module("PySide2")
         imp.find_module("PyQt4")
@@ -1232,20 +1237,30 @@ def test_qfont_from_string():
     enum_weight_bold = get_enum(Qt.QtGui.QFont, "Weight", "Bold")
 
     in_font = "Arial,7,-1,5,400,0,0,0,0,0,0,0,0,0,0,1"
-    font = Qt.QtGui.QFont()
-    Qt.QtCompat.QFont.fromString(font, in_font)
-    assert font.family() == "Arial"
-    assert font.pointSizeF() == 7.0
-    assert font.weight() == enum_weight_normal
-    font.setWeight(enum_weight_bold)
-    if binding("PySide6") or binding("PyQt6"):
-        # In Qt6 the full string is returned with OpenType weight of 700
-        out_font = "Arial,7,-1,5,700,0,0,0,0,0,0,0,0,0,0,1"
-        assert font.toString() == out_font
-    else:
-        # In previous bindings the shorter version is returned. Also the bold
-        # weight is 75 instead of 700
-        assert font.toString() == "Arial,7,-1,5,75,0,0,0,0,0"
+    # PyQt5 for Python 3.7 requires creating a QApplication to init a QFont
+    if binding("PyQt5"):
+        if not Qt.QtWidgets.QApplication.instance():
+            app = Qt.QtWidgets.QApplication(sys.argv)
+        else:
+            app = Qt.QtWidgets.QApplication.instance()
+    try:
+        font = Qt.QtGui.QFont()
+        Qt.QtCompat.QFont.fromString(font, in_font)
+        assert font.family() == "Arial"
+        assert font.pointSizeF() == 7.0
+        assert font.weight() == enum_weight_normal
+        font.setWeight(enum_weight_bold)
+        if binding("PySide6") or binding("PyQt6"):
+            # In Qt6 the full string is returned with OpenType weight of 700
+            out_font = "Arial,7,-1,5,700,0,0,0,0,0,0,0,0,0,0,1"
+            assert font.toString() == out_font
+        else:
+            # In previous bindings the shorter version is returned. Also the bold
+            # weight is 75 instead of 700
+            assert font.toString() == "Arial,7,-1,5,75,0,0,0,0,0"
+    finally:
+        if binding("PyQt5"):
+            app.exit()
 
 
 if sys.version_info < (3, 5):
@@ -1522,8 +1537,11 @@ if binding("PySide2"):
         # Qt remaps QStringListModel
         assert QtCore.QStringListModel
 
-        # But does not delete the original
-        assert PySide2.QtGui.QStringListModel
+        # But does not delete the original. Older versions of PySide2 had this
+        # on QtGui instead of QtCore
+        assert hasattr(PySide2.QtCore, "QStringListModel") or hasattr(
+            PySide2.QtGui, "QStringListModel"
+        )
 
 
 if binding("PySide6"):
@@ -1547,7 +1565,28 @@ if binding("PySide6"):
         assert PySide6.QtCore.QStringListModel
 
 
-if binding("PyQt4") or binding("PyQt5"):
+if IS_TOX and (binding("PyQt5") or binding("PyQt6") and sys.version_info < (3, 11)):
+    # Tox testing only supports PyQt5 and PyQt6. If using python 3.11+ PyQt5 is
+    # not available.
+    def test_multiple_preferred():
+        """QT_PREFERRED_BINDING = more than one binding excludes others"""
+
+        # PySide is the more desirable binding
+        current = os.environ["QT_PREFERRED_BINDING"]
+        try:
+            os.environ["QT_PREFERRED_BINDING"] = os.pathsep.join(
+                ["PyQt5", "PyQt6"])
+            import Qt
+
+            assert Qt.__binding__ == "PyQt5", (
+                "PyQt5 should have been picked, "
+                "instead got %s" % Qt.__binding__)
+        finally:
+            os.environ["QT_PREFERRED_BINDING"] = current
+
+
+if not IS_TOX and (binding("PyQt4") or binding("PyQt5")):
+    # If not using tox, then only PyQt4 and PyQt5 are available to test with.
     def test_multiple_preferred():
         """QT_PREFERRED_BINDING = more than one binding excludes others"""
 
@@ -1579,9 +1618,10 @@ enum_check = r"""'__init__.py': Replace 'Qt.WindowActive' => 'Qt.WindowState.Win
 '__init__.py': Replace 'QAbstractItemView.Box' => 'QAbstractItemView.Shape.Box' (1)
 '__init__.py': Replace 'QFrame.Box' => 'QFrame.Shape.Box' (1)
 '__init__.py': Replace 'QTreeWidget.Box' => 'QTreeWidget.Shape.Box' (1)
-'api\example.py': Replace 'QFrame.Box' => 'QFrame.Shape.Box' (1)
-'api\example.py': Replace 'QStyle.CC_ComboBox' => 'QStyle.ComplexControl.CC_ComboBox' (1)
+'api{slash}example.py': Replace 'QFrame.Box' => 'QFrame.Shape.Box' (1)
+'api{slash}example.py': Replace 'QStyle.CC_ComboBox' => 'QStyle.ComplexControl.CC_ComboBox' (1)
 """
+enum_check = enum_check.format(slash=os.sep)
 
 
 if binding("PySide2") and sys.version_info >= (3, 7):
