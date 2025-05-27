@@ -2,6 +2,8 @@ import os
 from setuptools import setup
 
 os.environ["QT_PREFERRED_BINDING"] = "None"
+if "QT_PREFERRED_BINDING_JSON" in os.environ:
+    del os.environ["QT_PREFERRED_BINDING_JSON"]
 version = __import__("Qt").__version__
 
 
