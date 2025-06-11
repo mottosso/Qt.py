@@ -1,4 +1,6 @@
-name: Run PySide6 Tests
+# These tests have been converted into run-tox.yml will be removed in the future
+
+name: Run Qt6 Tests(Pending Removal)
 
 on:
   push:
@@ -41,7 +43,7 @@ jobs:
 
       - name: Pip install PySide6/PyQt6 and dependencies
         run: |
-          python3.10 -m pip install PySide6 PyQt6 nose2 nosepipe six packaging setuptools wheel
+          python3.10 -m pip install PySide6 PyQt6 PySide2 PyQt5 nose2 nosepipe six packaging setuptools wheel
 
       - name: Testing implementation..
         run: |

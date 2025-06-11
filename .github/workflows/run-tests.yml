@@ -1,4 +1,21 @@
-name: Run Tests
+# These docker based tests are being replaced by tox based testing. These tests
+# focus on testing Python 2.7-3.5 and Qt4 and Qt5 testing. The run-tox.yml based
+# tests focus on python 3.7+ and Qt5 and Qt6 testing.
+#
+# Once we drop Qt4 support these files should be removed from the repo:
+#   .github/workflows/pyside6.yml
+#   .github/workflows/run-tests.yml
+#   DOCKER.md
+#   Dockerfile.vfxplatform2017
+#   Dockerfile.vfxplatform2018
+#   build_docker.sh
+#   build_membership.sh
+#   entrypoint.sh
+#   run_docker.sh
+#   run_tests.py
+#   test_docker.sh
+
+name: Run Docker Tests(Pending Removal)
 
 on:
   push:
