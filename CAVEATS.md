@@ -430,4 +430,8 @@ does not make backups of the existing files, so make sure to do that first.
 
 To check for enum use regression you can add `--check`. This will change the return
 code to the number of enums that require changing. A return code of zero indicates
-that no enum changes are required.
+that no enum changes are required. This check can only find and fix code that
+is directly using enums on Qt class names. If you used `self.EnumName` or other
+methods of accessing the enum objects the `--partial` check may find them. This is
+unable to automatically fix your code but shows you possible code that you will
+need to manually fix.
