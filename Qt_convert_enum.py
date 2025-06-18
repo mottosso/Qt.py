@@ -20,6 +20,7 @@ import os
 import re
 import sys
 from pathlib import Path
+from typing import Optional
 
 
 def qt_for_binding(binding):
@@ -38,7 +39,7 @@ def qt_for_binding(binding):
 
 
 class QtEnumConverter:
-    DEFAULT_IGNORED = ".tox,.eggs,build"
+    DEFAULT_IGNORED = ".tox,.eggs,build,dist"
 
     def __init__(self, verbosity=0, ignored: str = DEFAULT_IGNORED):
         self.ignored = ignored.split(",")
@@ -52,6 +53,7 @@ class QtEnumConverter:
         # The mapping of short to fully qualified enum names. Used to
         # update python scripts.
         self.enum_map: dict[str, str] = {}
+        self.partial_enum: Optional[re.Pattern] = None
         # Module level view of all the enums also used to check for naming
         # conflicts where the short name maps to multiple long names.
         self.enum_module: dict[str, dict[str, list[str]]] = {}
@@ -148,7 +150,45 @@ class QtEnumConverter:
             f.write(content)
         return changes
 
-    def convert_all(self, directory: Path, dry_run: bool) -> int:
+    def find_partials(self, filepath: Path, root: Path) -> int:
+        """Find and report potential partial Enum uses
+
+        We can't automatically replace them as this has a high likelihood of
+        false positives.
+        """
+        if not self.enum_map:
+            self.enums_for_qt_py()
+
+        if not self.partial_enum:
+            enums = {v.split('.')[-1] for v in self.enum_map.values()}
+            self.partial_enum = re.compile(fr"\.({'|'.join(enums)})(?!\w)")
+
+        # Read the content
+        with filepath.open('r', encoding='utf-8', newline='\n', errors='replace') as f:
+            content = f.readlines()
+
+        changes = 0
+        relative = filepath.relative_to(root)
+        for ln, line in enumerate(content):
+            clean_line = line.rstrip()
+            matches = set()
+            for v in self.enum_map.values():
+                clean_line = clean_line.replace(v, "")
+
+            for match in self.partial_enum.findall(clean_line):
+                matches.add(match)
+            if matches:
+                if self.verbosity >= 0:
+                    print(
+                        f'File: "{relative}", line:{ln + 1}, for {", ".join(matches)}'
+                    )
+                if self.verbosity >= 1:
+                    print(f'    {line.strip()}')
+                changes += 1
+
+        return changes
+
+    def convert_all(self, directory: Path, dry_run: bool, partial: bool = False) -> int:
         """Search and replace all enums."""
         ignored = [directory / i for i in self.ignored]
         changes = 0
@@ -174,7 +214,10 @@ class QtEnumConverter:
                     continue
                 if self.verbosity >= 2:
                     print(f"Checking: {filepath}")
-                changes += self.convert_enums_in_file(filepath, directory, dry_run)
+                if partial:
+                    changes += self.find_partials(filepath, directory)
+                else:
+                    changes += self.convert_enums_in_file(filepath, directory, dry_run)
 
         return changes
 
@@ -250,11 +293,25 @@ def parse_args():
         "names. dups requires PySide6 and the others require PySide2 installed.",
     )
     parser.add_argument(
+        "--partial",
+        action="store_true",
+        help="Report any potential enum uses that can not be automatically fixed. "
+        "This can happen if the code accesses enums from the instance instead of "
+        "directly from the class name.",
+    )
+    parser.add_argument(
         '-v',
         '--verbosity',
         action='count',
         default=0,
         help="Increase the verbosity of the output.",
+    )
+    parser.add_argument(
+        '-q',
+        '--quiet',
+        action="count",
+        default=0,
+        help="Decrease the verbosity of the output.",
     )
     parser.add_argument(
         '--check',
@@ -282,6 +339,9 @@ def add_binding_info(data, qt):
 if __name__ == "__main__":
     args = parse_args()
 
+    # Merge the quiet and verbosity arguments
+    args.verbosity -= args.quiet
+
     if args.show == "dups":
         # Show duplicate enum short names found in PySide6
         checker = DuplicateEnums()
@@ -303,10 +363,14 @@ if __name__ == "__main__":
         print(json.dumps(mappings, indent=4, sort_keys=True))
     else:
         # Search .py files and update to fully qualified enum names
-        changes = mapper.convert_all(args.target, dry_run=not args.write)
+        changes = mapper.convert_all(
+            args.target, dry_run=not args.write, partial=args.partial
+        )
 
         # Report the number of enum changes
-        if args.write:
+        if args.partial:
+            print(f"{changes} partial enums found.")
+        elif args.write:
             print(f"{changes} enums changed.")
         else:
             print(f"{changes} enums require changes.")

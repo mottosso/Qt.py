@@ -2,6 +2,7 @@
 """Tests that run once"""
 import io
 import os
+import re
 import sys
 import imp
 import shutil
@@ -1646,6 +1647,8 @@ enum_file_1 = textwrap.dedent(
     if QAbstractItemView.Box:
         print(QTreeWidget.Box)
         print(QFrame.Box)
+        # Note: Not using a Qt class so this will only be found by the --partial check
+        self.Box
     """
 )
 
@@ -1654,6 +1657,7 @@ enum_file_2 = textwrap.dedent(
     u"""
     # a comment QStyle.CC_ComboBox that has a enum in it
     print(QFrame.Box)
+    print(self.Box)
     """
 )
 
@@ -1724,14 +1728,30 @@ if binding("PySide2") and sys.version_info >= (3, 7):
             assert "6 enums changed." in output
 
         check = enum_file_1.replace("WindowActive", "WindowState.WindowActive")
-        check = check.replace("Box", "Shape.Box")
+        name_re = re.compile(r"(?<!self)\.Box")
+        check = name_re.sub(".Shape.Box", check)
         with open(init_file) as fle:
             assert fle.read() == check
 
         check = enum_file_2.replace("CC_ComboBox", "ComplexControl.CC_ComboBox")
-        check = check.replace("QFrame.Box", "QFrame.Shape.Box")
+        check = name_re.sub(".Shape.Box", check)
         with open(example_file) as fle:
             assert fle.read() == check
+
+        # Check using `--partial`
+        output = subprocess.check_output(
+            cmd + ["--partial", "-v"], cwd=self.tempdir, universal_newlines=True
+        )
+        check = textwrap.dedent(
+            u"""\
+            File: "__init__.py", line:7, for Box
+                self.Box
+            File: "api{slash}example.py", line:4, for Box
+                print(self.Box)
+            2 partial enums found.
+            """
+        ).format(slash=os.sep)
+        assert output == check
 
     def test_convert_enum_map():
         """Test enum map generation for conversion from short to long enums"""
