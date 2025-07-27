@@ -48,7 +48,7 @@ import importlib
 import json
 
 
-__version__ = "1.4.8"
+__version__ = "2.0.0.dev1"
 
 # Enable support for `from Qt import *`
 __all__ = ["QtCompat"]
