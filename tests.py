@@ -1648,10 +1648,33 @@ if binding("PySide2") and sys.version_info >= (3, 7):
 
         assert enum_check in output
 
+        # Check using the "--check" command outputs the same text but uses
+        # the return code for the number of enums being changed.
+        try:
+            output = subprocess.check_output(
+                cmd + ["--check"], cwd=self.tempdir, universal_newlines=True
+            )
+        except subprocess.CalledProcessError as error:
+            assert error.returncode == 6
+            assert error.stdout == output
+            # The number of changes are added to the end of the output
+            assert "6 enums require changes." in output
+
         # Test actually updating the files.
         cmd.append("--write")
         output = subprocess.check_output(cmd, cwd=self.tempdir, universal_newlines=True)
         assert enum_check in output
+
+        # "--check" is respected in --write mode
+        try:
+            output = subprocess.check_output(
+                cmd + ["--check"], cwd=self.tempdir, universal_newlines=True
+            )
+        except subprocess.CalledProcessError as error:
+            assert error.returncode == 6
+            assert error.stdout == output
+            # The number of changes are added to the end of the output
+            assert "6 enums changed." in output
 
         check = enum_file_1.replace("WindowActive", "WindowState.WindowActive")
         check = check.replace("Box", "Shape.Box")

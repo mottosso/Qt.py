@@ -98,7 +98,7 @@ class QtEnumConverter:
             module = getattr(self.Qt, module_name)
             self.enums_for_module(module)
 
-    def convert_enums_in_file(self, filepath: Path, root: Path, dry_run: bool) -> None:
+    def convert_enums_in_file(self, filepath: Path, root: Path, dry_run: bool) -> int:
         """Convert the enums in the given file.
 
         Based on https://stackoverflow.com/a/72658216 by Kristof Mulier
@@ -111,6 +111,7 @@ class QtEnumConverter:
         with filepath.open('r', encoding='utf-8', newline='\n', errors='replace') as f:
             content = f.read()
 
+        changes = 0
         # Loop over all the keys in 'self.enum_map'. Perform a replacement in the
         # 'content' for each of them.
         for k, v in self.enum_map.items():
@@ -137,17 +138,20 @@ class QtEnumConverter:
             q = "'"
             print(f'{q}{relative_path}{q}: Replace {q}{k}{q} => {q}{v}{q} ({n})')
             content = new_content
+            # Record the number of enums updated in this file
+            changes += n
 
         if dry_run:
-            return
+            return changes
 
         with filepath.open('w', encoding='utf-8', newline='\n', errors='replace') as f:
             f.write(content)
-        return
+        return changes
 
-    def convert_all(self, directory: Path, dry_run: bool) -> None:
+    def convert_all(self, directory: Path, dry_run: bool) -> int:
         """Search and replace all enums."""
         ignored = [directory / i for i in self.ignored]
+        changes = 0
         # Using os.walk instead of pathlib's walk to support older python's
         for _root, _, files in os.walk(directory):
             root = Path(_root)
@@ -170,8 +174,9 @@ class QtEnumConverter:
                     continue
                 if self.verbosity >= 2:
                     print(f"Checking: {filepath}")
-                self.convert_enums_in_file(filepath, directory, dry_run)
-                continue
+                changes += self.convert_enums_in_file(filepath, directory, dry_run)
+
+        return changes
 
 
 class DuplicateEnums:
@@ -252,6 +257,13 @@ def parse_args():
         help="Increase the verbosity of the output.",
     )
     parser.add_argument(
+        '--check',
+        action='store_true',
+        help="The Return Code becomes the number of enums that were/require "
+        "changing. Can be used with --write. Use this to check for enum use "
+        "regression.",
+    )
+    parser.add_argument(
         'target', type=Path, nargs="?", help="Directory to process recursively"
     )
 
@@ -291,4 +303,13 @@ if __name__ == "__main__":
         print(json.dumps(mappings, indent=4, sort_keys=True))
     else:
         # Search .py files and update to fully qualified enum names
-        mapper.convert_all(args.target, dry_run=not args.write)
+        changes = mapper.convert_all(args.target, dry_run=not args.write)
+
+        # Report the number of enum changes
+        if args.write:
+            print(f"{changes} enums changed.")
+        else:
+            print(f"{changes} enums require changes.")
+        # Set the return code to the number of enums being changed if enabled
+        if args.check:
+            sys.exit(changes)
