@@ -427,3 +427,7 @@ enums that need replaced in each file.
 
 To actually update the code add `--write` flag. This updates existing files and
 does not make backups of the existing files, so make sure to do that first.
+
+To check for enum use regression you can add `--check`. This will change the return
+code to the number of enums that require changing. A return code of zero indicates
+that no enum changes are required.
