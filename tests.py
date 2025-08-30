@@ -6,6 +6,7 @@ import sys
 import imp
 import shutil
 import tempfile
+import textwrap
 import subprocess
 import contextlib
 import datetime
@@ -55,6 +56,19 @@ except NameError:
     long = int
 
 
+# NOTE: When building multi-line strings use this format to improve code folding.
+# dedent is mostly needed when your check cares about the leading white space.
+# variable = textwrap.dedent(
+#     u"""\
+#     Example text
+#     with common leading white space removed
+#         additional indents are preserved.
+#     The \\ at the top is important as it ensures the first line is indented
+#     the same as all other lines.
+#     """
+# )
+
+
 def _pyside2_commit_date():
     """Return the commit date of PySide2"""
 
@@ -96,225 +110,239 @@ def CustomWidget(parent=None):
 self = sys.modules[__name__]
 
 
-qwidget_ui = u"""\
-<?xml version="1.0" encoding="UTF-8"?>
-<ui version="4.0">
- <class>Form</class>
- <widget class="QWidget" name="Form">
-  <property name="geometry">
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>507</width>
-    <height>394</height>
-   </rect>
-  </property>
-  <property name="windowTitle">
-   <string>Form</string>
-  </property>
-  <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0">
-    <widget class="QLineEdit" name="lineEdit"/>
-   </item>
-   <item row="1" column="0">
-    <widget class="QLabel" name="label">
-     <property name="text">
-      <string>TextLabel</string>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="0">
-    <widget class="QLineEdit" name="lineEdit_2"/>
-   </item>
-  </layout>
- </widget>
- <resources/>
- <connections>
-  <connection>
-   <sender>lineEdit</sender>
-   <signal>textChanged(QString)</signal>
-   <receiver>label</receiver>
-   <slot>setText(QString)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>228</x>
-     <y>23</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>37</x>
-     <y>197</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
-</ui>
-"""
-
-
-qmainwindow_ui = u"""\
-<?xml version="1.0" encoding="UTF-8"?>
-<ui version="4.0">
- <class>MainWindow</class>
- <widget class="QMainWindow" name="MainWindow">
-  <property name="geometry">
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>238</width>
-    <height>44</height>
-   </rect>
-  </property>
-  <property name="windowTitle">
-   <string>MainWindow</string>
-  </property>
-  <widget class="QWidget" name="centralwidget">
-   <layout class="QVBoxLayout" name="verticalLayout">
-    <item>
-     <widget class="QLineEdit" name="lineEdit"/>
-    </item>
-   </layout>
-  </widget>
- </widget>
- <resources/>
- <connections/>
-</ui>
-"""
-
-
-qdialog_ui = u"""\
-<?xml version="1.0" encoding="UTF-8"?>
-<ui version="4.0">
- <class>Dialog</class>
- <widget class="QDialog" name="Dialog">
-  <property name="geometry">
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>186</width>
-    <height>38</height>
-   </rect>
-  </property>
-  <property name="windowTitle">
-   <string>Dialog</string>
-  </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
-   <item>
-    <widget class="QLineEdit" name="lineEdit"/>
-   </item>
-  </layout>
- </widget>
- <resources/>
- <connections/>
-</ui>
-"""
-
-
-qdockwidget_ui = u"""\
-<?xml version="1.0" encoding="UTF-8"?>
-<ui version="4.0">
- <class>DockWidget</class>
- <widget class="QDockWidget" name="DockWidget">
-  <property name="geometry">
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>169</width>
-    <height>60</height>
-   </rect>
-  </property>
-  <property name="windowTitle">
-   <string>DockWidget</string>
-  </property>
-  <widget class="QWidget" name="dockWidgetContents">
-   <layout class="QVBoxLayout" name="verticalLayout">
-    <item>
-     <widget class="QLineEdit" name="lineEdit"/>
-    </item>
-   </layout>
-  </widget>
- </widget>
- <resources/>
- <connections/>
-</ui>
-"""
-
-
-qcustomwidget_ui = u"""\
-<?xml version="1.0" encoding="UTF-8"?>
-<ui version="4.0">
- <class>MainWindow</class>
- <widget class="QMainWindow" name="MainWindow">
-  <property name="geometry">
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>238</width>
-    <height>44</height>
-   </rect>
-  </property>
-  <property name="windowTitle">
-   <string>MainWindow</string>
-  </property>
-  <widget class="CustomWidget" name="customwidget">
-  </widget>
- </widget>
- <customwidgets>
-  <customwidget>
-   <class>CustomWidget</class>
-   <extends>QWidget</extends>
-   <header>tests.h</header>
-  </customwidget>
- </customwidgets>
- <resources/>
- <connections/>
-</ui>
-"""
-
-
-qpycustomwidget_ui = u"""\
-<?xml version="1.0" encoding="UTF-8"?>
-<ui version="4.0">
- <class>MainWindow</class>
- <widget class="QMainWindow" name="MainWindow">
-  <property name="geometry">
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>238</width>
-    <height>44</height>
-   </rect>
-  </property>
-  <property name="windowTitle">
-   <string>MainWindow</string>
-  </property>
-  <widget class="CustomWidget" name="customwidget">
-  </widget>
- </widget>
- <customwidgets>
-  <customwidget>
-   <class>CustomWidget</class>
-   <extends>QWidget</extends>
-   <header>custom.customwidget.customwidget</header>
-  </customwidget>
- </customwidgets>
- <resources/>
- <connections/>
-</ui>
-"""
-
-
-python_custom_widget = u'''
-def CustomWidget(parent=None):
+qwidget_ui = textwrap.dedent(
+    u"""\
+    <?xml version="1.0" encoding="UTF-8"?>
+    <ui version="4.0">
+     <class>Form</class>
+     <widget class="QWidget" name="Form">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>507</width>
+        <height>394</height>
+       </rect>
+      </property>
+      <property name="windowTitle">
+       <string>Form</string>
+      </property>
+      <layout class="QGridLayout" name="gridLayout">
+       <item row="0" column="0">
+        <widget class="QLineEdit" name="lineEdit"/>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>TextLabel</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLineEdit" name="lineEdit_2"/>
+       </item>
+      </layout>
+     </widget>
+     <resources/>
+     <connections>
+      <connection>
+       <sender>lineEdit</sender>
+       <signal>textChanged(QString)</signal>
+       <receiver>label</receiver>
+       <slot>setText(QString)</slot>
+       <hints>
+        <hint type="sourcelabel">
+         <x>228</x>
+         <y>23</y>
+        </hint>
+        <hint type="destinationlabel">
+         <x>37</x>
+         <y>197</y>
+        </hint>
+       </hints>
+      </connection>
+     </connections>
+    </ui>
     """
-    Wrap CustomWidget class into a function to avoid global Qt import
+)
+
+
+qmainwindow_ui = textwrap.dedent(
+    u"""\
+    <?xml version="1.0" encoding="UTF-8"?>
+    <ui version="4.0">
+     <class>MainWindow</class>
+     <widget class="QMainWindow" name="MainWindow">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>238</width>
+        <height>44</height>
+       </rect>
+      </property>
+      <property name="windowTitle">
+       <string>MainWindow</string>
+      </property>
+      <widget class="QWidget" name="centralwidget">
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <item>
+         <widget class="QLineEdit" name="lineEdit"/>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+     <resources/>
+     <connections/>
+    </ui>
     """
-    from Qt import QtWidgets
+)
 
-    class Widget(QtWidgets.QWidget):
-        pass
 
-    return Widget(parent)
-'''
+qdialog_ui = textwrap.dedent(
+    u"""\
+    <?xml version="1.0" encoding="UTF-8"?>
+    <ui version="4.0">
+     <class>Dialog</class>
+     <widget class="QDialog" name="Dialog">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>186</width>
+        <height>38</height>
+       </rect>
+      </property>
+      <property name="windowTitle">
+       <string>Dialog</string>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="QLineEdit" name="lineEdit"/>
+       </item>
+      </layout>
+     </widget>
+     <resources/>
+     <connections/>
+    </ui>
+    """
+)
+
+
+qdockwidget_ui = textwrap.dedent(
+    u"""\
+    <?xml version="1.0" encoding="UTF-8"?>
+    <ui version="4.0">
+     <class>DockWidget</class>
+     <widget class="QDockWidget" name="DockWidget">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>169</width>
+        <height>60</height>
+       </rect>
+      </property>
+      <property name="windowTitle">
+       <string>DockWidget</string>
+      </property>
+      <widget class="QWidget" name="dockWidgetContents">
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <item>
+         <widget class="QLineEdit" name="lineEdit"/>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+     <resources/>
+     <connections/>
+    </ui>
+    """
+)
+
+
+qcustomwidget_ui = textwrap.dedent(
+    u"""\
+    <?xml version="1.0" encoding="UTF-8"?>
+    <ui version="4.0">
+     <class>MainWindow</class>
+     <widget class="QMainWindow" name="MainWindow">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>238</width>
+        <height>44</height>
+       </rect>
+      </property>
+      <property name="windowTitle">
+       <string>MainWindow</string>
+      </property>
+      <widget class="CustomWidget" name="customwidget">
+      </widget>
+     </widget>
+     <customwidgets>
+      <customwidget>
+       <class>CustomWidget</class>
+       <extends>QWidget</extends>
+       <header>tests.h</header>
+      </customwidget>
+     </customwidgets>
+     <resources/>
+     <connections/>
+    </ui>
+    """
+)
+
+
+qpycustomwidget_ui = textwrap.dedent(
+    u"""\
+    <?xml version="1.0" encoding="UTF-8"?>
+    <ui version="4.0">
+     <class>MainWindow</class>
+     <widget class="QMainWindow" name="MainWindow">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>238</width>
+        <height>44</height>
+       </rect>
+      </property>
+      <property name="windowTitle">
+       <string>MainWindow</string>
+      </property>
+      <widget class="CustomWidget" name="customwidget">
+      </widget>
+     </widget>
+     <customwidgets>
+      <customwidget>
+       <class>CustomWidget</class>
+       <extends>QWidget</extends>
+       <header>custom.customwidget.customwidget</header>
+      </customwidget>
+     </customwidgets>
+     <resources/>
+     <connections/>
+    </ui>
+    """
+)
+
+
+python_custom_widget = textwrap.dedent(
+    u'''
+    def CustomWidget(parent=None):
+        """
+        Wrap CustomWidget class into a function to avoid global Qt import
+        """
+        from Qt import QtWidgets
+
+        class Widget(QtWidgets.QWidget):
+            pass
+
+        return Widget(parent)
+    '''
+)
 
 
 def setup():
@@ -879,30 +907,34 @@ def test_vendoring():
 
 def test_convert_simple():
     """python -m Qt --convert works in general"""
-    before = """\
-from PySide2 import QtCore, QtGui, QtWidgets
+    before = textwrap.dedent(
+        """\
+        from PySide2 import QtCore, QtGui, QtWidgets
 
-class Ui_uic(object):
-    def setupUi(self, uic):
-        self.retranslateUi(uic)
+        class Ui_uic(object):
+            def setupUi(self, uic):
+                self.retranslateUi(uic)
 
-    def retranslateUi(self, uic):
-        self.pushButton_2.setText(
-            QtWidgets.QApplication.translate("uic", "NOT Ok", None, -1))
-"""
+            def retranslateUi(self, uic):
+                self.pushButton_2.setText(
+                    QtWidgets.QApplication.translate("uic", "NOT Ok", None, -1))
+        """
+    )
 
-    after = """\
-from Qt import QtCore, QtGui, QtWidgets
-from Qt import QtCompat
+    after = textwrap.dedent(
+        """\
+        from Qt import QtCore, QtGui, QtWidgets
+        from Qt import QtCompat
 
-class Ui_uic(object):
-    def setupUi(self, uic):
-        self.retranslateUi(uic)
+        class Ui_uic(object):
+            def setupUi(self, uic):
+                self.retranslateUi(uic)
 
-    def retranslateUi(self, uic):
-        self.pushButton_2.setText(
-            QtCompat.translate("uic", "NOT Ok", None, -1))
-"""
+            def retranslateUi(self, uic):
+                self.pushButton_2.setText(
+                    QtCompat.translate("uic", "NOT Ok", None, -1))
+        """
+    )
 
     fname = os.path.join(self.tempdir, "simple.py")
     with open(fname, "w") as f:
@@ -921,34 +953,38 @@ class Ui_uic(object):
     os.chdir(current_dir)
 
 def test_convert_5_15_2_format():
-    before = """\
-from PySide2.QtCore import *
-from PySide2.QtGui import *
-from PySide2.QtWidgets import *
+    before = textwrap.dedent(
+        """\
+        from PySide2.QtCore import *
+        from PySide2.QtGui import *
+        from PySide2.QtWidgets import *
 
-class Ui_uic(object):
-    def setupUi(self, uic):
-        self.retranslateUi(uic)
+        class Ui_uic(object):
+            def setupUi(self, uic):
+                self.retranslateUi(uic)
 
-    def retranslateUi(self, uic):
-        self.pushButton_2.setText(
-            QCoreApplication.translate("uic", "NOT Ok", None, -1))
-    """
+            def retranslateUi(self, uic):
+                self.pushButton_2.setText(
+                    QCoreApplication.translate("uic", "NOT Ok", None, -1))
+            """
+    )
 
-    after = """\
-from Qt.QtCore import *
-from Qt.QtGui import *
-from Qt.QtWidgets import *
-from Qt import QtCompat
+    after = textwrap.dedent(
+        """\
+        from Qt.QtCore import *
+        from Qt.QtGui import *
+        from Qt.QtWidgets import *
+        from Qt import QtCompat
 
-class Ui_uic(object):
-    def setupUi(self, uic):
-        self.retranslateUi(uic)
+        class Ui_uic(object):
+            def setupUi(self, uic):
+                self.retranslateUi(uic)
 
-    def retranslateUi(self, uic):
-        self.pushButton_2.setText(
-            QtCompat.translate("uic", "NOT Ok", None, -1))
-    """
+            def retranslateUi(self, uic):
+                self.pushButton_2.setText(
+                    QtCompat.translate("uic", "NOT Ok", None, -1))
+            """
+    )
 
     fname = os.path.join(self.tempdir, "5_15_2_uic.py")
     with open(fname, "w") as f:
@@ -968,30 +1004,34 @@ class Ui_uic(object):
 
 def test_convert_idempotency():
     """Converting a converted file produces an identical file"""
-    before = """\
-from PySide2 import QtCore, QtGui, QtWidgets
+    before = textwrap.dedent(
+        """\
+        from PySide2 import QtCore, QtGui, QtWidgets
 
-class Ui_uic(object):
-    def setupUi(self, uic):
-        self.retranslateUi(uic)
+        class Ui_uic(object):
+            def setupUi(self, uic):
+                self.retranslateUi(uic)
 
-    def retranslateUi(self, uic):
-        self.pushButton_2.setText(
-            QtWidgets.QApplication.translate("uic", "NOT Ok", None, -1))
-"""
+            def retranslateUi(self, uic):
+                self.pushButton_2.setText(
+                    QtWidgets.QApplication.translate("uic", "NOT Ok", None, -1))
+        """
+    )
 
-    after = """\
-from Qt import QtCore, QtGui, QtWidgets
-from Qt import QtCompat
+    after = textwrap.dedent(
+        """\
+        from Qt import QtCore, QtGui, QtWidgets
+        from Qt import QtCompat
 
-class Ui_uic(object):
-    def setupUi(self, uic):
-        self.retranslateUi(uic)
+        class Ui_uic(object):
+            def setupUi(self, uic):
+                self.retranslateUi(uic)
 
-    def retranslateUi(self, uic):
-        self.pushButton_2.setText(
-            QtCompat.translate("uic", "NOT Ok", None, -1))
-"""
+            def retranslateUi(self, uic):
+                self.pushButton_2.setText(
+                    QtCompat.translate("uic", "NOT Ok", None, -1))
+        """
+    )
 
     fname = os.path.join(self.tempdir, "idempotency.py")
     with open(fname, "w") as f:
@@ -1600,27 +1640,34 @@ if not IS_TOX and (binding("PyQt4") or binding("PyQt5")):
             "instead got %s" % Qt.__binding__)
 
 
-enum_file_1 = u"""
-# a comment Qt.WindowActive with an enum. This file uses enums from super-classes
-if QAbstractItemView.Box:
-    print(QTreeWidget.Box)
+enum_file_1 = textwrap.dedent(
+    u"""
+    # a comment Qt.WindowActive with an enum. This file uses enums from super-classes
+    if QAbstractItemView.Box:
+        print(QTreeWidget.Box)
+        print(QFrame.Box)
+    """
+)
+
+
+enum_file_2 = textwrap.dedent(
+    u"""
+    # a comment QStyle.CC_ComboBox that has a enum in it
     print(QFrame.Box)
-"""
+    """
+)
 
 
-enum_file_2 = u"""
-# a comment QStyle.CC_ComboBox that has a enum in it
-print(QFrame.Box)
-"""
-
-
-enum_check = r"""'__init__.py': Replace 'Qt.WindowActive' => 'Qt.WindowState.WindowActive' (1)
-'__init__.py': Replace 'QAbstractItemView.Box' => 'QAbstractItemView.Shape.Box' (1)
-'__init__.py': Replace 'QFrame.Box' => 'QFrame.Shape.Box' (1)
-'__init__.py': Replace 'QTreeWidget.Box' => 'QTreeWidget.Shape.Box' (1)
-'api{slash}example.py': Replace 'QFrame.Box' => 'QFrame.Shape.Box' (1)
-'api{slash}example.py': Replace 'QStyle.CC_ComboBox' => 'QStyle.ComplexControl.CC_ComboBox' (1)
-"""
+enum_check = textwrap.dedent(
+    u"""\
+    '__init__.py': Replace 'Qt.WindowActive' => 'Qt.WindowState.WindowActive' (1)
+    '__init__.py': Replace 'QAbstractItemView.Box' => 'QAbstractItemView.Shape.Box' (1)
+    '__init__.py': Replace 'QFrame.Box' => 'QFrame.Shape.Box' (1)
+    '__init__.py': Replace 'QTreeWidget.Box' => 'QTreeWidget.Shape.Box' (1)
+    'api{slash}example.py': Replace 'QFrame.Box' => 'QFrame.Shape.Box' (1)
+    'api{slash}example.py': Replace 'QStyle.CC_ComboBox' => 'QStyle.ComplexControl.CC_ComboBox' (1)
+    """
+)
 enum_check = enum_check.format(slash=os.sep)
 
 
