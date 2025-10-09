@@ -1,4 +1,4 @@
-
+__binding__: str
 __qt_version__: str
 IsPyQt5: bool
 IsPyQt4: bool
