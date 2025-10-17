@@ -51,7 +51,7 @@ import json
 __version__ = "1.4.7"
 
 # Enable support for `from Qt import *`
-__all__ = []
+__all__ = ["QtCompat"]
 
 # Flags from environment variables
 QT_VERBOSE = bool(os.getenv("QT_VERBOSE"))
