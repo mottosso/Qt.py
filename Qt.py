@@ -1079,6 +1079,7 @@ NOTE: For bindings where a member is not replaced, they still
 """
 _misplaced_members = {
     "PySide6": {
+        "QtGui.QWindow": "QtGui.QWindow",
         "QtGui.QUndoCommand": "QtWidgets.QUndoCommand",
         "QtGui.QUndoGroup": "QtWidgets.QUndoGroup",
         "QtGui.QUndoStack": "QtWidgets.QUndoStack",
@@ -1117,6 +1118,7 @@ _misplaced_members = {
         "QtWidgets.QStyleOptionViewItem": "QtCompat.QStyleOptionViewItemV4",
     },
     "PyQt6": {
+        "QtGui.QWindow": "QtGui.QWindow",
         "QtGui.QUndoCommand": "QtWidgets.QUndoCommand",
         "QtGui.QUndoGroup": "QtWidgets.QUndoGroup",
         "QtGui.QUndoStack": "QtWidgets.QUndoStack",
@@ -1156,6 +1158,7 @@ _misplaced_members = {
         "QtWidgets.QStyleOptionViewItem": "QtCompat.QStyleOptionViewItemV4",
     },
     "PySide2": {
+        "QtGui.QWindow": "QtGui.QWindow",
         "QtWidgets.QUndoCommand": "QtWidgets.QUndoCommand",
         "QtWidgets.QUndoGroup": "QtWidgets.QUndoGroup",
         "QtWidgets.QUndoStack": "QtWidgets.QUndoStack",
@@ -1195,6 +1198,7 @@ _misplaced_members = {
         "QtWidgets.QStyleOptionViewItem": "QtCompat.QStyleOptionViewItemV4",
     },
     "PyQt5": {
+        "QtGui.QWindow": "QtGui.QWindow",
         "QtWidgets.QUndoCommand": "QtWidgets.QUndoCommand",
         "QtWidgets.QUndoGroup": "QtWidgets.QUndoGroup",
         "QtWidgets.QUndoStack": "QtWidgets.QUndoStack",
