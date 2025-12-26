@@ -517,14 +517,10 @@ Tests are performed on each aspect of the shim.
 
 Each of these are run under..
 
-- Python 2.7 (using docker)
-- Python 3.4 (using docker)
-- Python 3.5 (using docker)
-- Python 3.6 (using docker)
-- Python 3.7 (using tox)
-- Python 3.9 (using tox)
-- Python 3.10 (using tox)
-- Python 3.11 (using tox)
+- Python 3.7
+- Python 3.9
+- Python 3.10
+- Python 3.11
 
 ..once for each binding or under a specific binding only.
 
@@ -635,49 +631,6 @@ See [`CONTRIBUTING.md`](CONTRIBUTING.md) for more of the good stuff.
     - `test-*-*-impl` runs implementation tests defined in test.py.
     - `test-*-*-caveats` tests the code found in [`CAVEATS.md`](CAVEATS.md).
     - `test-*-*-examples` tests the code found in [/examples](examples).
-
-
-**Running docker tests**
-
-The existing docker tests target older versions of python targeting Qt4 and older releases of Qt5. The modern VFX reference platform requirements all have pre-built pip wheels so this is no longer needed. The docker tests are planned to be removed once we drop support for Qt4 and python versions older than 3.7, but currently they must still pass.
-
-
-<details>
-<summary>Here is a guide for how to test with **Docker**</summary>
-
-With Docker setup, here's what you do. Please note this will pull down a ~1 GB image.
-
-```bash
-cd Qt.py
-
-# Run nosetests (Linux/OSX)
-docker run --rm -v $(pwd):/Qt.py -e PYTHON=2.7 fredrikaverpil/qt.py:2018
-docker run --rm -v $(pwd):/Qt.py -e PYTHON=3.4 fredrikaverpil/qt.py:2018
-docker run --rm -v $(pwd):/Qt.py -e PYTHON=3.5 fredrikaverpil/qt.py:2018
-docker run --rm -v $(pwd):/Qt.py -e PYTHON=3.6 fredrikaverpil/qt.py:2018
-
-# Run nosetests (Windows)
-docker run --rm -v %CD%:/Qt.py -e PYTHON=2.7 fredrikaverpil/qt.py:2018
-docker run --rm -v %CD%:/Qt.py -e PYTHON=3.4 fredrikaverpil/qt.py:2018
-docker run --rm -v %CD%:/Qt.py -e PYTHON=3.5 fredrikaverpil/qt.py:2018
-docker run --rm -v %CD%:/Qt.py -e PYTHON=3.6 fredrikaverpil/qt.py:2018
-
-# Doctest: test_caveats.test_1_qtgui_qabstractitemmodel_createindex ... ok
-# Doctest: test_caveats.test_2_qtgui_qabstractitemmodel_createindex ... ok
-# Doctest: test_caveats.test_3_qtcore_qitemselection ... ok
-# ...
-#
-# ----------------------------------------------------------------------
-# Ran 21 tests in 7.799s
-#
-# OK
-```
-
-Now both you and Github Actions are operating on the same assumptions which means that when the tests pass on your machine, they pass on Github Actions. And everybody wins!
-
-For details on the Docker image for testing, see [`DOCKER.md`](DOCKER.md).
-
-</details>
 
 **Upload to PyPI**
 
