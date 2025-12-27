@@ -44,6 +44,7 @@ class QtEnumConverter:
     def __init__(self, verbosity=0, ignored: str = DEFAULT_IGNORED):
         self.ignored = ignored.split(",")
         self.Qt = qt_for_binding("PySide2")
+        self.modules_not_loaded = set()
 
         # Unsure how to import these class types, so get them from objects
         self.enum_type = type(self.Qt.QtCore.Qt.AlignmentFlag)
@@ -95,7 +96,8 @@ class QtEnumConverter:
         """Include enums for common members of Qt.py."""
         for module_name in self.Qt._common_members:
             if not hasattr(self.Qt, module_name):
-                print(f"Module not loaded: {module_name}")
+                self.modules_not_loaded.add(module_name)
+                print(f"Module not loaded: {module_name}", file=sys.stderr)
                 continue
             module = getattr(self.Qt, module_name)
             self.enums_for_module(module)
@@ -258,7 +260,7 @@ class DuplicateEnums:
         ret = {}
         for module_name in self.Qt._common_members:
             if not hasattr(self.Qt, module_name):
-                print(f"Module not loaded: {module_name}")
+                print(f"Module not loaded: {module_name}", file=sys.stderr)
                 continue
             module = getattr(self.Qt, f"_{module_name}")
             enums = self.enums_for_module(module)
@@ -327,13 +329,16 @@ def parse_args():
     return parser.parse_args()
 
 
-def add_binding_info(data, qt):
+def add_binding_info(data, qt, modules_not_loaded=None):
     """Adds info on the PySide version used to generate this dict.
 
-    Uses the name BINDING_INFO as this normally gets sorted to the top of the
-    json output when using `sort_keys`.
+    Uses the name BINDING_INFO, etc as this normally gets sorted to the top of
+    the json output when using `sort_keys`.
     """
     data["BINDING_INFO"] = f"{qt.__binding__}=={qt.__binding_version__}"
+    # Add lists of modules that could not be imported
+    if modules_not_loaded:
+        data["MODULES_NOT_LOADED"] = sorted(modules_not_loaded)
 
 
 if __name__ == "__main__":
@@ -359,7 +364,7 @@ if __name__ == "__main__":
             mappings = mapper.enum_map
         else:
             mappings = mapper.enum_module  # type: ignore[assignment]
-        add_binding_info(mappings, mapper.Qt)
+        add_binding_info(mappings, mapper.Qt, mapper.modules_not_loaded)
         print(json.dumps(mappings, indent=4, sort_keys=True))
     else:
         # Search .py files and update to fully qualified enum names
