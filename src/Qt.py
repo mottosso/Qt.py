@@ -1334,6 +1334,23 @@ NOTE: For bindings where a member is not replaced, they still
 
 NOTE: The members should be sorted alphabetically for ease of maintenance.
 
+Example of possible ways to specify misplaced members:
+
+{
+    "binding": {
+        # A string specifying the destination to store the src on
+        "src_module.src_class": "dest_module.dest_class",
+        # A 2 item list specifying a destination to store a custom function
+        # instead of src
+        "src_module.src_class": ["dest_module.dest_class", _function],
+        # If the first item in a list is True, the list contains multiple
+        # misplaced members. Each following item can be any of the above defs.
+        "src_module.src_class": [
+            True, "dest_module.dest_class", "other_dest_module.dest_class", ...
+        ],
+    }
+}
+
 """
 _misplaced_members = {
     "PySide6": {
@@ -1352,7 +1369,8 @@ _misplaced_members = {
         "QtCore.QStringListModel": "QtCore.QStringListModel",
         "QtCore.Signal": "QtCore.Signal",
         "QtCore.Slot": "QtCore.Slot",
-        "QtGui.QAction": "QtWidgets.QAction",
+        # Preserve backwards compatibility for the old location of QAction
+        "QtGui.QAction": [True, "QtGui.QAction", "QtWidgets.QAction"],
         "QtGui.QActionGroup": "QtWidgets.QActionGroup",
         "QtGui.QRegularExpressionValidator": "QtGui.QRegExpValidator",
         "QtGui.QShortcut": "QtWidgets.QShortcut",
@@ -1387,7 +1405,7 @@ _misplaced_members = {
         "QtCore.QRegularExpression": "QtCore.QRegExp",
         "QtCore.QSortFilterProxyModel": "QtCore.QSortFilterProxyModel",
         "QtCore.QStringListModel": "QtCore.QStringListModel",
-        "QtGui.QAction": "QtWidgets.QAction",
+        "QtGui.QAction": [True, "QtGui.QAction", "QtWidgets.QAction"],
         "QtGui.QActionGroup": "QtWidgets.QActionGroup",
         "QtGui.QFileSystemModel": "QtWidgets.QFileSystemModel",
         "QtGui.QRegularExpressionValidator": "QtGui.QRegExpValidator",
@@ -1429,6 +1447,7 @@ _misplaced_members = {
         "QtSvg.QGraphicsSvgItem": "QtSvg.QGraphicsSvgItem",
         "QtSvg.QSvgWidget": "QtSvg.QSvgWidget",
         "QtUiTools.QUiLoader": ["QtCompat.loadUi", _loadUi],
+        "QtWidgets.QAction": [True, "QtWidgets.QAction", "QtGui.QAction"],
         "QtWidgets.QActionGroup": "QtWidgets.QActionGroup",
         "QtWidgets.qApp": "QtWidgets.QApplication.instance()",
         "QtWidgets.QApplication.translate": ["QtCompat.translate", _translate],
@@ -1460,6 +1479,7 @@ _misplaced_members = {
         "QtGui.QRegExpValidator": "QtGui.QRegExpValidator",
         "QtSvg.QGraphicsSvgItem": "QtSvg.QGraphicsSvgItem",
         "QtSvg.QSvgWidget": "QtSvg.QSvgWidget",
+        "QtWidgets.QAction": [True, "QtWidgets.QAction", "QtGui.QAction"],
         "QtWidgets.QActionGroup": "QtWidgets.QActionGroup",
         "QtWidgets.qApp": "QtWidgets.QApplication.instance()",
         "QtWidgets.QApplication.translate": ["QtCompat.translate", _translate],
@@ -1685,68 +1705,84 @@ def _reassign_misplaced_members(binding):
     """Apply misplaced members from `binding` to Qt.py
 
     Arguments:
-        binding (dict): Misplaced members
+        binding (str): The Qt binding ("PySide6", "PyQt6")
 
     """
 
-    for src, dst in _misplaced_members[binding].items():
-        dst_value = None
+    for src, dsts in _misplaced_members[binding].items():
+        # Normalize dsts to a list of potentially multiple misplaced members
+        if isinstance(dsts, str):
+            # A single string is treated as a single item lists
+            dsts = [dsts]
+        elif isinstance(dsts, (list, tuple)) and dsts:
+            if dsts[0] is True:
+                # This is a multi-destination list, remove the tag and process
+                # each item in the list. The items can be str or lists
+                dsts = dsts[1:]
+            else:
+                # This is a single item list, process it as a single item
+                dsts = [dsts]
 
-        src_parts = src.split(".")
-        src_module = src_parts[0]
-        src_member = None
-        if len(src_parts) > 1:
-            src_member = src_parts[1:]
+        # process each misplaced member defined for this source
+        for dst in dsts:
+            dst_value = None
 
-        if isinstance(dst, (list, tuple)):
-            dst, dst_value = dst
+            src_parts = src.split(".")
+            src_module = src_parts[0]
+            src_member = None
+            if len(src_parts) > 1:
+                src_member = src_parts[1:]
 
-        dst_parts = dst.split(".")
-        dst_module = dst_parts[0]
-        dst_member = None
-        if len(dst_parts) > 1:
-            dst_member = dst_parts[1]
+            if isinstance(dst, (list, tuple)):
+                dst, dst_value = dst
 
-        # Get the member we want to store in the namesapce.
-        if not dst_value:
+            dst_parts = dst.split(".")
+            dst_module = dst_parts[0]
+            dst_member = None
+            if len(dst_parts) > 1:
+                dst_member = dst_parts[1]
+
+            # Get the member we want to store in the namespace.
+            if not dst_value:
+                try:
+                    _part = getattr(Qt, "_" + src_module)
+                    while src_member:
+                        member = src_member.pop(0)
+                        _part = getattr(_part, member)
+                    dst_value = _part
+                except AttributeError:
+                    # If the member we want to store in the namespace does not
+                    # exist, there is no need to continue. This can happen if a
+                    # request was made to rename a member that didn't exist,
+                    # for example if QtWidgets isn't available on the target
+                    # platform.
+                    _log("Misplaced member has no source: {0}".format(src))
+                    continue
+
             try:
-                _part = getattr(Qt, "_" + src_module)
-                while src_member:
-                    member = src_member.pop(0)
-                    _part = getattr(_part, member)
-                dst_value = _part
+                src_object = getattr(Qt, dst_module)
             except AttributeError:
-                # If the member we want to store in the namespace does not
-                # exist, there is no need to continue. This can happen if a
-                # request was made to rename a member that didn't exist, for
-                # example if QtWidgets isn't available on the target platform.
-                _log("Misplaced member has no source: {0}".format(src))
-                continue
+                if dst_module not in _common_members:
+                    # Only create the Qt parent module if its listed in
+                    # _common_members. Without this check, if you remove QtCore
+                    # from _common_members, the default _misplaced_members will
+                    # add Qt.QtCore so it can add Signal, Slot, etc.
+                    msg = 'Not creating missing member module "{m}" for "{c}"'
+                    _log(msg.format(m=dst_module, c=dst_member))
+                    continue
+                # If the dst is valid but the Qt parent module does not exist
+                # then go ahead and create a new module to contain the member.
+                setattr(Qt, dst_module, _new_module(dst_module))
+                src_object = getattr(Qt, dst_module)
+                # Enable direct import of the new module
+                sys.modules[__name__ + "." + dst_module] = src_object
 
-        try:
-            src_object = getattr(Qt, dst_module)
-        except AttributeError:
-            if dst_module not in _common_members:
-                # Only create the Qt parent module if its listed in
-                # _common_members. Without this check, if you remove QtCore
-                # from _common_members, the default _misplaced_members will add
-                # Qt.QtCore so it can add Signal, Slot, etc.
-                msg = 'Not creating missing member module "{m}" for "{c}"'
-                _log(msg.format(m=dst_module, c=dst_member))
-                continue
-            # If the dst is valid but the Qt parent module does not exist
-            # then go ahead and create a new module to contain the member.
-            setattr(Qt, dst_module, _new_module(dst_module))
-            src_object = getattr(Qt, dst_module)
-            # Enable direct import of the new module
-            sys.modules[__name__ + "." + dst_module] = src_object
+            if not dst_value:
+                dst_value = getattr(Qt, "_" + src_module)
+                if src_member:
+                    dst_value = getattr(dst_value, src_member)
 
-        if not dst_value:
-            dst_value = getattr(Qt, "_" + src_module)
-            if src_member:
-                dst_value = getattr(dst_value, src_member)
-
-        setattr(src_object, dst_member or dst_module, dst_value)
+            setattr(src_object, dst_member or dst_module, dst_value)
 
 
 def _build_compatibility_members(binding, decorators=None):

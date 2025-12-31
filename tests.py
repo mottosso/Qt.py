@@ -1233,6 +1233,14 @@ def test_membership():
     )
 
 
+def test_mutliple_misplaced():
+    """Verify legacy misplaced members are present in all places"""
+    import Qt
+
+    assert Qt.QtGui.QAction
+    assert Qt.QtGui.QAction == Qt.QtWidgets.QAction
+
+
 def test_missing():
     """Missing members of Qt.py have been defined with placeholders"""
     import Qt
