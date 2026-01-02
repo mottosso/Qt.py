@@ -9,13 +9,21 @@ runs:
       shell: bash
       run: |
         sudo apt-get update -y -qq
-        sudo apt-get install -y -qq libegl1-mesa libegl1-mesa-dev libgl1-mesa-glx libgl1-mesa-dev
+        sudo apt-get install -y -qq libegl1-mesa libegl1-mesa-dev \
+          libgl1-mesa-glx libgl1-mesa-dev
 
     - name: Install GUI libs
       shell: bash
       run: |
         sudo apt-get install -y -qq libxcb-xinerama0
-        sudo apt-get install -y -qq libxkbcommon-x11-0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 libxcb-xfixes0 libxcb-cursor0
+        sudo apt-get install -y -qq libxkbcommon-x11-0 libxcb-icccm4 \
+          libxcb-image0 libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 \
+          libxcb-xfixes0 libxcb-cursor0
+
+    - name: Install Multimedia libs
+      shell: bash
+      run: |
+        sudo apt-get install -y -qq pulseaudio libpulse0 libpulse-dev
 
     # Note: The last python to get setup becomes the default for future python calls
     - name: Setup Python 3.7
