@@ -90,3 +90,27 @@ jobs:
       - name: Tox Test - Examples
         run: |
           tox --skip-missing-interpreters false -e ${{ matrix.test_env }}-examples
+
+  pip-package:
+    # Build and upload pip packages as artifacts so we can inspect them and
+    # ensure they are correct for actual release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10.x"
+      - name: Install build dependency
+        run: python3 -m pip install --upgrade build
+      - name: Build a binary wheel and a source tarball
+        run: python3 -m build
+      - name: Upload packages.
+        uses: actions/upload-artifact@v4
+        with:
+          name: pip-packages
+          path: |
+            dist/Qt[._]py-*.whl
+            dist/Qt[._]py-*.tar.gz
