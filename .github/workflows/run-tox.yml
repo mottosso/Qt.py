@@ -34,13 +34,11 @@ jobs:
           ls -lha .members
 
       - name: Upload membership report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: membership-report
           path: |
-            .members/*
-            .members/*.json
-            .members/*.md
+            .members/
           include-hidden-files: true
 
   lint:
@@ -73,6 +71,7 @@ jobs:
 
   test:
     runs-on: ubuntu-22.04
+    needs: membership
     strategy:
       matrix:
         test_env: [
@@ -103,6 +102,16 @@ jobs:
 
       - name: Setup tox
         uses: ./.github/actions/setup-tox
+
+      - name: Download coverage artifacts
+        # This is needed by the test_membership test
+        uses: actions/download-artifact@v7
+        with:
+          name: membership-report
+          path: .members
+          merge-multiple: true
+      - name: Display structure of downloaded files
+        run: ls -lha .members
 
       - name: Tox Test - Implementation
         # Note: `--skip-missing-interpreters` prevents false success if python
@@ -136,7 +145,7 @@ jobs:
       - name: Build a binary wheel and a source tarball
         run: python3 -m build
       - name: Upload packages.
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: pip-packages
           path: |
