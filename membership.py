@@ -14,10 +14,16 @@ MEMBERSHIP_PATH = Path("./.members")
 SKIP_MODULES = [
     "PyQt5.Qt",  # This module only exists in PyQt5 and is not exposed by Qt.py
     "PyQt5.uic.pyuic",  # Problematic as it is executed on import
+    # These modules are only available on windows
+    "PyQt5.QAxContainer",
+    "PyQt6.QAxContainer",
+    "PySide2.QtAxContainer",
+    "PySide6.QtAxContainer",
 ]
 SKIP_MEMBERS = [
-    "qApp",  # See main README.md on qApp
     "QIntList",  # Missing from Qt5 or PyQt6, but present in ~50 modules
+    "qApp",  # See main README.md on qApp
+    "QWinEventNotifier",  # This class is only available on Windows.
 ]
 
 # Will contain all modules for the current binding
