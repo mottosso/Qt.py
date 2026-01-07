@@ -12,6 +12,7 @@ import textwrap
 import subprocess
 import contextlib
 import json
+from pathlib import Path
 
 # Third-party dependency
 import six
@@ -48,7 +49,7 @@ except ImportError:
             return context
 
 
-REPO_ROOT = os.path.dirname(__file__)
+REPO_ROOT = Path(__file__).parent
 
 
 # NOTE: When building multi-line strings use this format to improve code folding.
@@ -332,10 +333,10 @@ def setup():
     all tests have completed.
 
     """
-    self.tempdir = tempfile.mkdtemp()
+    self.tempdir = Path(tempfile.mkdtemp())
 
     def saveUiFile(filename, ui_template):
-        filename = os.path.join(self.tempdir, filename)
+        filename = self.tempdir / filename
         with io.open(filename, "w", encoding="utf-8") as f:
             f.write(ui_template)
         return filename
@@ -404,6 +405,24 @@ def get_enum(cls, namespace, enum):
         return getattr(namespace_cls, enum)
     # Fallback to legacy short enum name if not using new enum classes
     return getattr(cls, enum)
+
+
+def subprocess_run(cmd, **kwargs):
+    """Work around python 3.7 not supporting passing pathlib objects to cmd.
+    TODO: Remove once we drop python 3.7 support.
+    """
+    if sys.version_info < (3, 8) and not isinstance(cmd, str):
+        cmd = [str(c) for c in cmd]
+    return subprocess.run(cmd, **kwargs)
+
+
+def subprocess_check_output(cmd, **kwargs):
+    """Work around python 3.7 not supporting passing pathlib objects to cmd.
+    TODO: Remove once we drop python 3.7 support.
+    """
+    if sys.version_info < (3, 8) and not isinstance(cmd, str):
+        cmd = [str(c) for c in cmd]
+    return subprocess.check_output(cmd, **kwargs)
 
 
 @contextlib.contextmanager
@@ -571,24 +590,20 @@ def test_load_ui_pycustomwidget():
     from Qt import QtWidgets, QtCompat
 
     # create a python file for the custom widget in a directory relative to the tempdir
-    filename = os.path.join(self.tempdir, "custom", "customwidget", "customwidget.py")
-    os.makedirs(os.path.dirname(filename))
+    filename = self.tempdir / "custom" / "customwidget" / "customwidget.py"
+    filename.parent.mkdir(parents=True)
     with io.open(filename, "w", encoding="utf-8") as f:
         f.write(self.python_custom_widget)
 
     # Python 2.7 requires that each folder be a package
-    with io.open(
-        os.path.join(self.tempdir, "custom/__init__.py"), "w", encoding="utf-8"
-    ) as f:
+    with io.open(self.tempdir / "custom" / "__init__.py", "w", encoding="utf-8") as f:
         f.write("")
     with io.open(
-        os.path.join(self.tempdir, "custom/customwidget/__init__.py"),
-        "w",
-        encoding="utf-8",
+        self.tempdir / "custom" / "customwidget" / "__init__.py", "w", encoding="utf-8"
     ) as f:
         f.write("")
     # append the path to ensure the future import can be loaded 'relative' to the tempdir
-    sys.path.append(self.tempdir)
+    sys.path.append(str(self.tempdir))
 
     if not QtWidgets.QApplication.instance():
         app = QtWidgets.QApplication(sys.argv)
@@ -627,7 +642,7 @@ def test_load_ui_invalidxml():
     """Tests to see if loadUi successfully fails on invalid ui files"""
     import sys
 
-    invalid_xml = os.path.join(self.tempdir, "invalid.ui")
+    invalid_xml = self.tempdir / "invalid.ui"
     with io.open(invalid_xml, "w", encoding="utf-8") as f:
         f.write("""
         <?xml version="1.0" encoding="UTF-8"?>
@@ -762,25 +777,23 @@ def test_vendoring():
 
     """
 
-    project = os.path.join(self.tempdir, "myproject")
-    vendor = os.path.join(project, "vendor")
+    project = self.tempdir / "myproject"
+    vendor = project / "vendor"
 
-    os.makedirs(vendor)
+    vendor.mkdir(parents=True)
 
     # Make packages out of folders
-    with open(os.path.join(project, "__init__.py"), "w") as f:
+    with (project / "__init__.py").open("w") as f:
         f.write("from .vendor.Qt import QtWidgets")
 
-    with open(os.path.join(vendor, "__init__.py"), "w") as f:
+    with (vendor / "__init__.py").open("w") as f:
         f.write("\n")
 
     # Copy real Qt.py into myproject
-    shutil.copy(os.path.join(REPO_ROOT, "src", "Qt.py"), os.path.join(vendor, "Qt.py"))
+    shutil.copy(REPO_ROOT / "src" / "Qt.py", vendor / "Qt.py")
 
     # Copy real Qt.py into the root folder
-    shutil.copy(
-        os.path.join(REPO_ROOT, "src", "Qt.py"), os.path.join(self.tempdir, "Qt.py")
-    )
+    shutil.copy(REPO_ROOT / "src" / "Qt.py", self.tempdir / "Qt.py")
 
     print("Testing relative import..")
     assert (
@@ -921,8 +934,8 @@ def test_convert_simple():
         """
     )
 
-    fname = os.path.join(self.tempdir, "simple.py")
-    with open(fname, "w") as f:
+    fname = self.tempdir / "simple.py"
+    with fname.open("w") as f:
         f.write(before)
 
     from Qt import QtCompat
@@ -931,7 +944,7 @@ def test_convert_simple():
     os.chdir(self.tempdir)
     QtCompat._cli(args=["--convert", "simple.py"])
 
-    with open(fname) as f:
+    with fname.open() as f:
         assert f.read() == after
 
     # Prevent windows file lock PermissionError issues when testing on windows.
@@ -972,8 +985,8 @@ def test_convert_5_15_2_format():
             """
     )
 
-    fname = os.path.join(self.tempdir, "5_15_2_uic.py")
-    with open(fname, "w") as f:
+    fname = self.tempdir / "5_15_2_uic.py"
+    with fname.open("w") as f:
         f.write(before)
 
     from Qt import QtCompat
@@ -982,7 +995,7 @@ def test_convert_5_15_2_format():
     os.chdir(self.tempdir)
     QtCompat._cli(args=["--convert", "5_15_2_uic.py"])
 
-    with open(fname) as f:
+    with fname.open() as f:
         assert f.read() == after
 
     # Prevent windows file lock PermissionError issues when testing on windows.
@@ -1020,8 +1033,8 @@ def test_convert_idempotency():
         """
     )
 
-    fname = os.path.join(self.tempdir, "idempotency.py")
-    with open(fname, "w") as f:
+    fname = self.tempdir / "idempotency.py"
+    with fname.open("w") as f:
         f.write(before)
 
     from Qt import QtCompat
@@ -1030,12 +1043,12 @@ def test_convert_idempotency():
     os.chdir(self.tempdir)
     QtCompat._cli(args=["--convert", "idempotency.py"])
 
-    with open(fname) as f:
+    with fname.open() as f:
         assert f.read() == after
 
     QtCompat._cli(args=["--convert", "idempotency.py"])
 
-    with open(fname) as f:
+    with fname.open() as f:
         assert f.read() == after
 
     # Prevent windows file lock PermissionError issues when testing on windows.
@@ -1045,8 +1058,8 @@ def test_convert_idempotency():
 def test_convert_backup():
     """Converting produces a backup"""
 
-    fname = os.path.join(self.tempdir, "idempotency.py")
-    with open(fname, "w") as f:
+    fname = self.tempdir / "idempotency.py"
+    with fname.open("w") as f:
         f.write("")
 
     from Qt import QtCompat
@@ -1055,9 +1068,7 @@ def test_convert_backup():
     os.chdir(self.tempdir)
     QtCompat._cli(args=["--convert", "idempotency.py"])
 
-    assert os.path.exists(
-        os.path.join(self.tempdir, "%s_backup%s" % os.path.splitext(fname))
-    )
+    assert (self.tempdir / f"{fname.stem}_backup{fname.suffix}").exists()
 
     # Prevent windows file lock PermissionError issues when testing on windows.
     os.chdir(current_dir)
@@ -1417,29 +1428,29 @@ if binding("PySide2"):
     def test_convert_enum():
         """Test the output of running Qt_convert_enum.py."""
 
-        code_path = os.path.join(REPO_ROOT, "src", "Qt_convert_enum.py")
-        old_code_dir = os.path.join(self.tempdir, "enum_convert")
-        api_dir = os.path.join(old_code_dir, "api")
-        init_file = os.path.join(old_code_dir, "__init__.py")
-        example_file = os.path.join(api_dir, "example.py")
-        os.makedirs(api_dir)
+        code_path = REPO_ROOT / "src" / "Qt_convert_enum.py"
+        old_code_dir = self.tempdir / "enum_convert"
+        api_dir = old_code_dir / "api"
+        init_file = old_code_dir / "__init__.py"
+        example_file = api_dir / "example.py"
+        api_dir.mkdir(parents=True)
 
         # Test the dry run mode text output
-        with open(init_file, "w") as fle:
+        with init_file.open("w") as fle:
             fle.write(enum_file_1)
 
         with open(example_file, "w") as fle:
             fle.write(enum_file_2)
 
         cmd = [sys.executable, code_path, old_code_dir]
-        output = subprocess.check_output(cmd, cwd=self.tempdir, universal_newlines=True)
+        output = subprocess_check_output(cmd, cwd=self.tempdir, universal_newlines=True)
 
         assert enum_check in output
 
         # Check using the "--check" command outputs the same text but uses
         # the return code for the number of enums being changed.
         try:
-            output = subprocess.check_output(
+            output = subprocess_check_output(
                 cmd + ["--check"], cwd=self.tempdir, universal_newlines=True
             )
         except subprocess.CalledProcessError as error:
@@ -1450,12 +1461,12 @@ if binding("PySide2"):
 
         # Test actually updating the files.
         cmd.append("--write")
-        output = subprocess.check_output(cmd, cwd=self.tempdir, universal_newlines=True)
+        output = subprocess_check_output(cmd, cwd=self.tempdir, universal_newlines=True)
         assert enum_check in output
 
         # "--check" is respected in --write mode
         try:
-            output = subprocess.check_output(
+            output = subprocess_check_output(
                 cmd + ["--check"], cwd=self.tempdir, universal_newlines=True
             )
         except subprocess.CalledProcessError as error:
@@ -1467,7 +1478,7 @@ if binding("PySide2"):
         check = enum_file_1.replace("WindowActive", "WindowState.WindowActive")
         name_re = re.compile(r"(?<!self)\.Box")
         check = name_re.sub(".Shape.Box", check)
-        with open(init_file) as fle:
+        with init_file.open() as fle:
             assert fle.read() == check
 
         check = enum_file_2.replace("CC_ComboBox", "ComplexControl.CC_ComboBox")
@@ -1476,7 +1487,7 @@ if binding("PySide2"):
             assert fle.read() == check
 
         # Check using `--partial`
-        output = subprocess.check_output(
+        output = subprocess_check_output(
             cmd + ["--partial", "-v"], cwd=self.tempdir, universal_newlines=True
         )
         check = textwrap.dedent(
@@ -1492,9 +1503,9 @@ if binding("PySide2"):
 
     def test_convert_enum_map():
         """Test enum map generation for conversion from short to long enums"""
-        code_path = os.path.join(REPO_ROOT, "src", "Qt_convert_enum.py")
+        code_path = REPO_ROOT / "src" / "Qt_convert_enum.py"
         cmd = [sys.executable, code_path, "--show", "map"]
-        proc = subprocess.run(
+        proc = subprocess_run(
             cmd,
             stdout=subprocess.PIPE,
             check=True,
@@ -1513,9 +1524,9 @@ if binding("PySide2"):
 
     def test_convert_enum_modules():
         """Test enum map generation modules data structure"""
-        code_path = os.path.join(REPO_ROOT, "src", "Qt_convert_enum.py")
+        code_path = REPO_ROOT / "src" / "Qt_convert_enum.py"
         cmd = [sys.executable, code_path, "--show", "modules"]
-        proc = subprocess.run(
+        proc = subprocess_run(
             cmd,
             stdout=subprocess.PIPE,
             check=True,
@@ -1541,7 +1552,7 @@ if binding("PySide6") and sys.version_info >= (3, 7):
     # Qt_convert_enum.py only runs in python 3.7 or higher
     def test_convert_enum_duplicates():
         """Tests using PySide6 to show enums with duplicate short names"""
-        code_path = os.path.join(REPO_ROOT, "src", "Qt_convert_enum.py")
+        code_path = REPO_ROOT / "src" / "Qt_convert_enum.py"
         cmd = [sys.executable, code_path, "--show", "dups"]
         proc = subprocess.run(
             cmd,

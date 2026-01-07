@@ -1046,7 +1046,7 @@ def _loadUi(uifile, baseinstance=None):
         http://pyqt.sourceforge.net/Docs/PyQt5/designer.html#PyQt5.uic.loadUi
 
     Arguments:
-        uifile (str): Absolute path to Qt Designer file.
+        uifile (str or pathlib.Path): Absolute path to Qt Designer file.
         baseinstance (QWidget): Instantiated QWidget or subclass thereof
 
     Return:
@@ -1136,6 +1136,10 @@ def _loadUi(uifile, baseinstance=None):
 
             def load(self, uifile, *args, **kwargs):
                 from xml.etree.ElementTree import ElementTree
+
+                # Note: Python 3.9 and PySide2 for py3.9 and PyQt/PySide for
+                # Python 3.7 requires converting pathlib.Path objects to str
+                uifile = str(uifile)
 
                 # For whatever reason, if this doesn't happen then
                 # reading an invalid or non-existing .ui file throws
