@@ -36,6 +36,12 @@ QT_VERBOSE = bool(os.getenv("QT_VERBOSE"))
 BINDING_NAMES_QT5 = ["PySide2", "PyQt5"]
 BINDING_NAMES_QT6 = ["PySide6", "PyQt6"]
 
+# Include these module names in common modules even if they have no common
+# members. They will be assigned using the misplaced members.
+MISPLACED_MODULES = [
+    "QtOpenGL",
+]
+
 
 def read_json(filename):
     """Read JSON, return dict"""
@@ -135,6 +141,12 @@ def compare(dicts):
         # Only add modules which have common members
         if members:
             common_members[k] = members
+
+    # Add empty misplaced modules. These are where we will add misplaced members
+    # for modules that are not common
+    for module in MISPLACED_MODULES:
+        if module not in common_members:
+            common_members[module] = []
 
     return ret
 

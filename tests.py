@@ -1233,12 +1233,42 @@ def test_membership():
     )
 
 
-def test_mutliple_misplaced():
-    """Verify legacy misplaced members are present in all places"""
+def test_misplaced():
+    """Verify that misplaced members are present in all places"""
     import Qt
 
+    assert Qt.QtWidgets.QFileSystemModel
+    # QAction was moved, then moved back. Qt.py exposes both places
     assert Qt.QtGui.QAction
     assert Qt.QtGui.QAction == Qt.QtWidgets.QAction
+
+
+def test__extras__():
+    """Spot check binding specific imports for missing members.
+
+    This should check at least one import for each common member that requires
+    being added to any bindings `__extras__` list.
+    """
+    import Qt
+
+    assert Qt.QtOpenGL.QAbstractOpenGLFunctions
+    assert Qt.QtOpenGL.QOpenGLBuffer
+    assert Qt.QtOpenGL.QOpenGLFunctions_2_0
+    assert Qt.QtOpenGL.QOpenGLFunctions_2_1
+    assert Qt.QtOpenGL.QOpenGLFunctions_4_1_Core
+
+
+def test__extras__none():
+    """Preferring None should add the __extras__ modules"""
+
+    current = os.environ["QT_PREFERRED_BINDING"]
+    try:
+        os.environ["QT_PREFERRED_BINDING"] = "None"
+        import Qt
+
+        assert Qt.QtOpenGL
+    finally:
+        os.environ["QT_PREFERRED_BINDING"] = current
 
 
 def test_missing():

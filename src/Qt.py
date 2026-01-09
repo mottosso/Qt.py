@@ -73,6 +73,10 @@ The "_common_members" dictionary is generated using the "common_members.json"
 file created by the membership tox environments. See _common_members_sources
 for a list of the python and qt bindings used to generate this list.
 
+Note: Some members like QtOpenGL may contain empty lists. These are targets for
+assigning misplaced members according to the reference binding(PySide6). We
+will need to add them to all bindings including None, so we add them here.
+
 """
 
 _common_members = {
@@ -467,6 +471,7 @@ _common_members = {
         "QTcpSocket",
         "QUdpSocket",
     ],
+    "QtOpenGL": [],
     "QtPositioning": [
         "QGeoAddress",
         "QGeoAreaMonitorInfo",
@@ -1351,9 +1356,13 @@ Example of possible ways to specify misplaced members:
     }
 }
 
+The __extras__ key contains any modules that need to be imported to handle
+misplaced members. They are not _common_members but need treated the same way.
+
 """
 _misplaced_members = {
     "PySide6": {
+        "__extras__": ["QtSvgWidgets", "QtUiTools"],
         "QtCore.Property": "QtCore.Property",
         "QtCore.QAbstractProxyModel": "QtCore.QAbstractProxyModel",
         "QtCore.QCoreApplication.translate": ["QtCompat.translate", _translate],
@@ -1372,11 +1381,17 @@ _misplaced_members = {
         # Preserve backwards compatibility for the old location of QAction
         "QtGui.QAction": [True, "QtGui.QAction", "QtWidgets.QAction"],
         "QtGui.QActionGroup": "QtWidgets.QActionGroup",
+        "QtWidgets.QFileSystemModel": "QtWidgets.QFileSystemModel",
         "QtGui.QRegularExpressionValidator": "QtGui.QRegExpValidator",
         "QtGui.QShortcut": "QtWidgets.QShortcut",
         "QtGui.QUndoCommand": "QtWidgets.QUndoCommand",
         "QtGui.QUndoGroup": "QtWidgets.QUndoGroup",
         "QtGui.QUndoStack": "QtWidgets.QUndoStack",
+        "QtOpenGL.QAbstractOpenGLFunctions": "QtOpenGL.QAbstractOpenGLFunctions",
+        "QtOpenGL.QOpenGLBuffer": "QtOpenGL.QOpenGLBuffer",
+        "QtOpenGL.QOpenGLFunctions_2_0": "QtOpenGL.QOpenGLFunctions_2_0",
+        "QtOpenGL.QOpenGLFunctions_2_1": "QtOpenGL.QOpenGLFunctions_2_1",
+        "QtOpenGL.QOpenGLFunctions_4_1_Core": "QtOpenGL.QOpenGLFunctions_4_1_Core",
         "QtStateMachine.QState": "QtCore.QState",
         "QtStateMachine.QStateMachine": "QtCore.QStateMachine",
         "QtSvgWidgets.QGraphicsSvgItem": "QtSvg.QGraphicsSvgItem",
@@ -1390,6 +1405,7 @@ _misplaced_members = {
         "shiboken6.wrapInstance": ["QtCompat.wrapInstance", _wrapinstance],
     },
     "PyQt6": {
+        "__extras__": ["QtSvgWidgets", "sip", "uic"],
         "QtCore.pyqtProperty": "QtCore.Property",
         "QtCore.pyqtSignal": "QtCore.Signal",
         "QtCore.pyqtSlot": "QtCore.Slot",
@@ -1413,6 +1429,11 @@ _misplaced_members = {
         "QtGui.QUndoCommand": "QtWidgets.QUndoCommand",
         "QtGui.QUndoGroup": "QtWidgets.QUndoGroup",
         "QtGui.QUndoStack": "QtWidgets.QUndoStack",
+        "QtOpenGL.QAbstractOpenGLFunctions": "QtOpenGL.QAbstractOpenGLFunctions",
+        "QtOpenGL.QOpenGLBuffer": "QtOpenGL.QOpenGLBuffer",
+        "QtOpenGL.QOpenGLFunctions_2_0": "QtOpenGL.QOpenGLFunctions_2_0",
+        "QtOpenGL.QOpenGLFunctions_2_1": "QtOpenGL.QOpenGLFunctions_2_1",
+        "QtOpenGL.QOpenGLFunctions_4_1_Core": "QtOpenGL.QOpenGLFunctions_4_1_Core",
         "QtStateMachine.QState": "QtCore.QState",
         "QtStateMachine.QStateMachine": "QtCore.QStateMachine",
         "QtSvgWidgets.QGraphicsSvgItem": "QtSvg.QGraphicsSvgItem",
@@ -1426,6 +1447,7 @@ _misplaced_members = {
         "uic.loadUi": ["QtCompat.loadUi", _loadUi],
     },
     "PySide2": {
+        "__extras__": ["QtOpenGLFunctions", "QtUiTools"],
         "QtCore.Property": "QtCore.Property",
         "QtCore.QAbstractProxyModel": "QtCore.QAbstractProxyModel",
         "QtCore.QCoreApplication.translate": ["QtCompat.translate", _translate],
@@ -1441,9 +1463,15 @@ _misplaced_members = {
         "QtCore.QStringListModel": "QtCore.QStringListModel",
         "QtCore.Signal": "QtCore.Signal",
         "QtCore.Slot": "QtCore.Slot",
+        "QtGui.QAbstractOpenGLFunctions": "QtOpenGL.QAbstractOpenGLFunctions",
+        "QtWidgets.QFileSystemModel": "QtWidgets.QFileSystemModel",
+        "QtGui.QOpenGLBuffer": "QtOpenGL.QOpenGLBuffer",
         "QtGui.QRegExpValidator": "QtGui.QRegExpValidator",
         # Older versions of PySide2 still left this in QtGui, this accounts for those too
         "QtGui.QStringListModel": "QtCore.QStringListModel",
+        "QtOpenGLFunctions.QOpenGLFunctions_2_0": "QtOpenGL.QOpenGLFunctions_2_0",
+        "QtOpenGLFunctions.QOpenGLFunctions_2_1": "QtOpenGL.QOpenGLFunctions_2_1",
+        "QtOpenGLFunctions.QOpenGLFunctions_4_1_Core": "QtOpenGL.QOpenGLFunctions_4_1_Core",
         "QtSvg.QGraphicsSvgItem": "QtSvg.QGraphicsSvgItem",
         "QtSvg.QSvgWidget": "QtSvg.QSvgWidget",
         "QtUiTools.QUiLoader": ["QtCompat.loadUi", _loadUi],
@@ -1461,6 +1489,16 @@ _misplaced_members = {
         "shiboken2.wrapInstance": ["QtCompat.wrapInstance", _wrapinstance],
     },
     "PyQt5": {
+        "__extras__": [
+            "_QOpenGLFunctions_2_0",
+            "_QOpenGLFunctions_2_1",
+            "_QOpenGLFunctions_4_1_Core",
+            "sip",
+            "uic",
+        ],
+        "_QOpenGLFunctions_2_0.QOpenGLFunctions_2_0": "QtOpenGL.QOpenGLFunctions_2_0",
+        "_QOpenGLFunctions_2_1.QOpenGLFunctions_2_1": "QtOpenGL.QOpenGLFunctions_2_1",
+        "_QOpenGLFunctions_4_1_Core.QOpenGLFunctions_4_1_Core": "QtOpenGL.QOpenGLFunctions_4_1_Core",
         "QtCore.pyqtProperty": "QtCore.Property",
         "QtCore.pyqtSignal": "QtCore.Signal",
         "QtCore.pyqtSlot": "QtCore.Slot",
@@ -1476,6 +1514,9 @@ _misplaced_members = {
         "QtCore.QRegExp": "QtCore.QRegExp",
         "QtCore.QSortFilterProxyModel": "QtCore.QSortFilterProxyModel",
         "QtCore.QStringListModel": "QtCore.QStringListModel",
+        "QtGui.QAbstractOpenGLFunctions": "QtOpenGL.QAbstractOpenGLFunctions",
+        "QtWidgets.QFileSystemModel": "QtWidgets.QFileSystemModel",
+        "QtGui.QOpenGLBuffer": "QtOpenGL.QOpenGLBuffer",
         "QtGui.QRegExpValidator": "QtGui.QRegExpValidator",
         "QtSvg.QGraphicsSvgItem": "QtSvg.QGraphicsSvgItem",
         "QtSvg.QSvgWidget": "QtSvg.QSvgWidget",
@@ -1679,6 +1720,11 @@ def _setup(module, extras):
             return
         _warn("ImportError(%s): %s" % (module, msg))
 
+    # Process the __extras__ modules as if they were common
+    _extras = _misplaced_members.get(Qt.__binding__, {})
+    _extras = _extras.get("__extras__", [])
+    extras = extras + _extras
+
     for name in list(_common_members) + extras:
         try:
             submodule = _import_sub_module(module, name)
@@ -1710,6 +1756,9 @@ def _reassign_misplaced_members(binding):
     """
 
     for src, dsts in _misplaced_members[binding].items():
+        if src == "__extras__":
+            # Don't process this key here.
+            continue
         # Normalize dsts to a list of potentially multiple misplaced members
         if isinstance(dsts, str):
             # A single string is treated as a single item lists
@@ -1857,7 +1906,7 @@ def _pyside6():
 
     import PySide6 as module  # noqa: N813
 
-    extras = ["QtSvgWidgets", "QtUiTools"]
+    extras = []
     try:
         import shiboken6
 
@@ -1923,7 +1972,7 @@ def _pyside2():
 
     import PySide2 as module  # noqa: N813
 
-    extras = ["QtUiTools"]
+    extras = []
     try:
         try:
             # Before merge of PySide and shiboken
@@ -1974,16 +2023,11 @@ def _pyqt6():
     """Initialise PyQt6"""
 
     import PyQt6 as module  # noqa: N813
-
-    extras = ["QtSvgWidgets", "uic"]
-
     from PyQt6 import sip
-
-    extras += ["sip"]
 
     Qt.QtCompat.enumValue = _enum_to_value
 
-    _setup(module, extras)
+    _setup(module, [])
     if hasattr(Qt, "_sip"):
         Qt.QtCompat.wrapInstance = _wrapinstance
         Qt.QtCompat.getCppPointer = _getcpppointer
@@ -2014,25 +2058,11 @@ def _pyqt5():
     """Initialise PyQt5"""
 
     import PyQt5 as module  # noqa: N813
-
-    extras = ["uic"]
+    from PyQt5 import sip
 
     Qt.QtCompat.enumValue = _enum_to_int
 
-    try:
-        # Relevant to PyQt5 5.11 and above
-        from PyQt5 import sip
-
-        extras += ["sip"]
-    except ImportError:
-        try:
-            import sip
-
-            extras += ["sip"]
-        except ImportError:
-            sip = None
-
-    _setup(module, extras)
+    _setup(module, [])
     if hasattr(Qt, "_sip"):
         Qt.QtCompat.wrapInstance = _wrapinstance
         Qt.QtCompat.getCppPointer = _getcpppointer
