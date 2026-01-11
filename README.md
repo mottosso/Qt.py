@@ -662,11 +662,13 @@ python -m twine upload .\dist\*
 | int(QMainWindow().windowState()) | QtCompat.enumValue(QMainWindow().windowState()) | Consistent interface to convert an enum to an `int`
 | | Submit your known issues here! |
 
-##### Removed Members
+##### Removed Members (Qt.py\==1.4.\*)
 
-Many members were removed from Qt.py due to no longer existing in PySide 6 and PyQt6.
+Many members were removed from Qt.py due to no longer existing in PySide 6 and PyQt6. They were removed to support Qt 4, 5 and 6.
 
-> If you find where they went, or think some were removed in error, please submit a pull-request!
+<details>
+
+<summary>See removed members</summary>
 
 ```json
 "QtCore": [
@@ -777,6 +779,8 @@ Many members were removed from Qt.py due to no longer existing in PySide 6 and P
     "QXmlSerializer"
 ]
 ```
+
+</details>
 
 ##### Static Members Missing from Instances
 

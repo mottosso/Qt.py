@@ -30,7 +30,7 @@ jobs:
         # membership-end combines binding/py data into common membership report
         run: |
           which tox
-          tox -e membership-py39-PySide5.15,membership-py39-PyQt5.15,membership-py311-PySide6.5,membership-py311-PyQt6.7,membership-end
+          tox -e membership-py37-PySide5.13,membership-py37-PyQt5.13,membership-py39-PySide5.15,membership-py39-PyQt5.15,membership-py311-PySide6.5,membership-py311-PyQt6.7,membership-end
           ls -lha .members
 
       - name: Upload membership report
@@ -52,8 +52,8 @@ jobs:
           'test-py37-PySide5.13',
           'test-py37-PyQt5.13',
           # Cy2021
-          'test-py39-PySide5.15',
-          'test-py39-PyQt5.15',
+          'test-py37-PySide5.15',
+          'test-py37-PyQt5.15',
           # Cy2022
           'test-py39-PySide5.15',
           'test-py39-PyQt5.15',
