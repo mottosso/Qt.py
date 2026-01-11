@@ -11,7 +11,7 @@ def test():
     sys.path.insert(0, os.path.dirname(__file__))
 
     try:
-        from Qt import QtCore
+        from Qt import QtCore  # noqa: F401
 
     except ImportError:
         print("Qt.QtCore was successfully removed by QtSiteConfig.py")
@@ -20,9 +20,6 @@ def test():
         raise ImportError(
             "Qt.QtCore was importable, update_members was not applied correctly."
         )
-
-        # Suppress "Qt.QtCore" imported but unused warning
-        QtCore
 
     # Test _misplaced_members is applied correctly
     from Qt import QtGui
@@ -35,7 +32,7 @@ def test():
     title = "Test Widget"
     from Qt import QtWidgets, QtCompat
 
-    app = QtWidgets.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)  # noqa: F841
     wid = QtWidgets.QWidget()
     wid.setWindowTitle(title)
 
@@ -57,8 +54,6 @@ def test():
     assert QtCompat.QMainWindow.windowTitleDecorator(win) == check, (
         "Decorated method was added to QtCompat.QMainWindow"
     )
-    # Suppress "app" imported but unused warning
-    app
 
 
 if __name__ == "__main__":

@@ -1177,9 +1177,7 @@ def test_qtcompat_base_class():
     if not QtWidgets.QApplication.instance():
         app = QtWidgets.QApplication(sys.argv)
     else:
-        app = QtWidgets.QApplication.instance()
-    # suppress `local variable 'app' is assigned to but never used`
-    app
+        app = QtWidgets.QApplication.instance()  # noqa: F841
     header = QtWidgets.QHeaderView(get_enum(Qt.QtCore.Qt, "Orientation", "Horizontal"))
 
     # Spot check compatibility functions
@@ -1219,7 +1217,7 @@ def test_membership():
         common_members.pop("QtOpenGL", None)
         common_members.pop("QtMultimedia", None)
 
-    missing = list()
+    missing = []
     for module, members in common_members.items():
         missing.extend(
             member for member in members if not hasattr(getattr(Qt, module), member)
@@ -1237,7 +1235,7 @@ def test_missing():
 
     missing_members = Qt._missing_members.copy()
 
-    missing = list()
+    missing = []
     for module, members in missing_members.items():
         mod = getattr(Qt, module)
         missing.extend(

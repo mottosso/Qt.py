@@ -11,7 +11,7 @@ def parse(fname):
 
     """
 
-    blocks = list()
+    blocks = []
     with io.open(fname, "r", encoding="utf-8") as f:
         in_block = False
         current_block = None
@@ -31,11 +31,11 @@ def parse(fname):
 
             if line.startswith("```python"):
                 in_block = True
-                current_block = list()
+                current_block = []
                 current_block.append(current_header)
                 blocks.append(current_block)
 
-    tests = list()
+    tests = []
     for block in blocks:
         header = (
             block[0]
@@ -87,7 +87,7 @@ def format_(blocks):
 
     """
 
-    tests = list()
+    tests = []
     function_count = 0  # For each test to have a unique name
 
     for block in blocks:
@@ -99,7 +99,7 @@ def format_(blocks):
             )
 
         # Validate binding on first line
-        if not block["binding"] in ("PySide", "PySide2", "PyQt5", "PyQt4"):
+        if block["binding"] not in ("PySide", "PySide2", "PyQt5", "PyQt4"):
             block["body"].insert(0, ">>> assert False, 'Invalid binding'\n")
 
         if sys.version_info > (3, 4) and block["binding"] in ("PySide"):

@@ -314,7 +314,7 @@ if __name__ == "__main__":
                     print("WARNING: Skipped dir() command", modname, error)
 
         # Remove duplicates and sort
-        MODULES = sorted(list(set(MODULES)))
+        MODULES = sorted(set(MODULES))
 
         if QT_VERBOSE:
             # Print all modules (for debugging)
@@ -336,7 +336,7 @@ if __name__ == "__main__":
         # Sort and remove duplicates
         sorted_members = {}
         for key, value in members.copy().items():
-            sorted_members[key] = sorted(list(set(value)))
+            sorted_members[key] = sorted(set(value))
 
         if QT_VERBOSE:
             # Debug
