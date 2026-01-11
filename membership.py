@@ -1,4 +1,5 @@
 import os
+import re
 import pkgutil
 import json
 import platform
@@ -15,7 +16,8 @@ SKIP_MODULES = [
     "PyQt5.uic.pyuic",  # Problematic as it is executed on import
 ]
 SKIP_MEMBERS = [
-    "qApp"  # See main README.md on qApp
+    "qApp",  # See main README.md on qApp
+    "QIntList",  # Missing from Qt5 or PyQt6, but present in ~50 modules
 ]
 
 # Will contain all modules for the current binding
@@ -222,11 +224,42 @@ def write_member_files(memberships, json_name=None, markdown_name=None):
         write_markdown_tables(members, filename, headers)
 
 
+def sort_qt_file(path):
+    """Sort a Qt filename consistently by major/minor qt and python version.
+
+    Note: It is preferred to use `reverse=True` when sorting with this method.
+    """
+    name = path.stem
+    match = re.match(
+        r"(?P<qt>(?P<binding>PyQt|PySide)\d)-(?P<qt_ver>[\d.]+)"
+        r"_py-(?P<py_ver>[\d.]+)",
+        name,
+    )
+    if not match:
+        raise ValueError(f"Invalid qt name: {path}")
+
+    qt_name = match.group("qt")
+    if "6" in qt_name:
+        qt_major = 6
+    elif "5" in qt_name or "2" in qt_name:
+        qt_major = 5
+    else:
+        qt_major = 4
+    # Note: Sort PyQt after PySide
+    binding = match.group("binding")  # .replace("PyQt", "Py_Qt")
+
+    qt_ver = [int(x) for x in match.group("qt_ver").split(".")]
+    py_ver = [int(x) for x in match.group("py_ver").split(".")]
+
+    return qt_major, binding, qt_ver, py_ver
+
+
 def generate_common_members():
     """Generate files with commonly shared members"""
 
     memberships = {}
-    for f in MEMBERSHIP_PATH.glob("Py*.*_py-*.json"):
+    files = MEMBERSHIP_PATH.glob("Py*.*_py-*.json")
+    for f in sorted(files, key=sort_qt_file, reverse=True):
         memberships[f.stem] = read_json(f)
 
     # Generate a mapping of all common members
