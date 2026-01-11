@@ -2,7 +2,9 @@ import sys
 import os
 
 # Set preferred binding
-os.environ['QT_PREFERRED_BINDING'] = os.pathsep.join(['PySide', 'PyQt4', 'PySide2', 'PySide6'])
+os.environ["QT_PREFERRED_BINDING"] = os.pathsep.join(
+    ["PySide", "PyQt4", "PySide2", "PySide6"]
+)
 
 from Qt import QtWidgets, QtCompat
 
@@ -23,17 +25,17 @@ def setup_ui(uifile, base_instance=None):
         return ui
     else:
         for member in dir(ui):
-            if not member.startswith('__') and \
-               member is not 'staticMetaObject':
+            if not member.startswith("__") and member is not "staticMetaObject":
                 setattr(base_instance, member, getattr(ui, member))
         return ui
 
 
 class MainWindow(QtWidgets.QWidget):
     """Load .ui file example, using setattr/getattr approach"""
+
     def __init__(self, parent=None):
         QtWidgets.QWidget.__init__(self, parent)
-        self.base_instance = setup_ui('qwidget.ui', self)
+        self.base_instance = setup_ui("qwidget.ui", self)
 
 
 def test():
@@ -49,8 +51,8 @@ def test():
     assert isinstance(window.parent(), type(None))
     assert isinstance(window.base_instance, QtWidgets.QWidget)
     assert isinstance(window.lineEdit, QtWidgets.QWidget)
-    assert window.lineEdit.text() == ''
-    window.lineEdit.setText('Hello')
-    assert window.lineEdit.text() == 'Hello'
+    assert window.lineEdit.text() == ""
+    window.lineEdit.setText("Hello")
+    assert window.lineEdit.text() == "Hello"
 
     app.exit()

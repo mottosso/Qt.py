@@ -18,7 +18,6 @@ def parse(fname):
         current_header = ""
 
         for line in f:
-
             # Doctests are within a quadruple hashtag header.
             if line.startswith("#### "):
                 current_header = line.rstrip()
@@ -39,9 +38,10 @@ def parse(fname):
     tests = list()
     for block in blocks:
         header = (
-            block[0].strip("# ")  # Remove Markdown
-                    .rstrip()     # Remove newline
-                    .lower()      # PEP08
+            block[0]
+            .strip("# ")  # Remove Markdown
+            .rstrip()  # Remove newline
+            .lower()  # PEP08
         )
 
         # Remove unsupported characters
@@ -55,8 +55,8 @@ def parse(fname):
         data = re.sub(" ", "", block[1])  # Remove spaces
         data = (
             data.strip("#")
-                .rstrip()     # Remove newline
-                .split(",")
+            .rstrip()  # Remove newline
+            .split(",")
         )
 
         binding, doctest_version = (data + [None])[:2]
@@ -67,17 +67,14 @@ def parse(fname):
                 raise SyntaxError(
                     "Invalid Python version:\n%s\n"
                     "Python version must follow binding, e.g.\n"
-                    "# PyQt5, Python3" % doctest_version)
+                    "# PyQt5, Python3" % doctest_version
+                )
 
             active_version = "Python%i" % sys.version_info[0]
             if doctest_version != active_version:
                 continue
 
-        tests.append({
-            "header": header,
-            "binding": binding,
-            "body": block[2:]
-        })
+        tests.append({"header": header, "binding": binding, "body": block[2:]})
 
     return tests
 
@@ -94,17 +91,16 @@ def format_(blocks):
     function_count = 0  # For each test to have a unique name
 
     for block in blocks:
-
         # Validate docstring format of body
         if not any(line[:3] == ">>>" for line in block["body"]):
             # A doctest requires at least one `>>>` directive.
-            block["body"].insert(0, ">>> assert False, "
-                                 "'Body must be in docstring format'\n")
+            block["body"].insert(
+                0, ">>> assert False, 'Body must be in docstring format'\n"
+            )
 
         # Validate binding on first line
         if not block["binding"] in ("PySide", "PySide2", "PyQt5", "PyQt4"):
-            block["body"].insert(0, ">>> assert False, "
-                                 "'Invalid binding'\n")
+            block["body"].insert(0, ">>> assert False, 'Invalid binding'\n")
 
         if sys.version_info > (3, 4) and block["binding"] in ("PySide"):
             # Skip caveat test if it requires PySide on Python > 3.4
@@ -114,7 +110,8 @@ def format_(blocks):
             block["header"] = block["header"]
             block["count"] = str(function_count)
             block["body"] = "    ".join(block["body"])
-            tests.append("""\
+            tests.append(
+                """\
 
 def test_{count}_{header}():
     '''Test {header}
@@ -127,6 +124,7 @@ def test_{count}_{header}():
     {body}
     '''
 
-    """.format(**block))
+    """.format(**block)
+            )
 
     return tests

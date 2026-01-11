@@ -1,5 +1,6 @@
 # coding=utf-8
 """Tests that run once"""
+
 import io
 import os
 import re
@@ -47,6 +48,7 @@ except ImportError:
             # Otherwise, return the context manager to be used with a 'with' statement
             return context
 
+
 PYTHON = sys.version_info[0]  # e.g. 2 or 3
 IS_TOX = os.getenv("TOX_ENV_NAME") is not None
 REPO_ROOT = os.path.dirname(__file__)
@@ -75,10 +77,11 @@ def _pyside2_commit_date():
     """Return the commit date of PySide2"""
 
     import PySide2
-    if hasattr(PySide2, '__build_commit_date__'):
+
+    if hasattr(PySide2, "__build_commit_date__"):
         commit_date = PySide2.__build_commit_date__
         datetime_object = datetime.datetime.strptime(
-            commit_date[: commit_date.rfind('+')], '%Y-%m-%dT%H:%M:%S'
+            commit_date[: commit_date.rfind("+")], "%Y-%m-%dT%H:%M:%S"
         )
         return datetime_object
     else:
@@ -495,7 +498,7 @@ def test_load_ui_baseinstance():
         app = QtWidgets.QApplication.instance()
     win = QtWidgets.QWidget()
     QtCompat.loadUi(self.ui_qwidget, win)
-    assert hasattr(win, 'lineEdit'), "loadUi could not load instance to win"
+    assert hasattr(win, "lineEdit"), "loadUi could not load instance to win"
     app.exit()
 
 
@@ -511,8 +514,8 @@ def test_load_ui_signals():
     win = QtWidgets.QWidget()
     QtCompat.loadUi(self.ui_qwidget, win)
 
-    win.lineEdit.setText('Hello')
-    assert str(win.label.text()) == 'Hello', "lineEdit signal did not fire"
+    win.lineEdit.setText("Hello")
+    assert str(win.label.text()) == "Hello", "lineEdit signal did not fire"
 
     app.exit()
 
@@ -522,7 +525,6 @@ def test_load_ui_mainwindow():
     import sys
     from Qt import QtWidgets, QtCompat
 
-
     if not QtWidgets.QApplication.instance():
         app = QtWidgets.QApplication(sys.argv)
     else:
@@ -531,8 +533,7 @@ def test_load_ui_mainwindow():
 
     QtCompat.loadUi(self.ui_qmainwindow, win)
 
-    assert hasattr(win, 'lineEdit'), \
-        "loadUi could not load instance to main window"
+    assert hasattr(win, "lineEdit"), "loadUi could not load instance to main window"
 
     app.exit()
 
@@ -542,7 +543,6 @@ def test_load_ui_dialog():
     import sys
     from Qt import QtWidgets, QtCompat
 
-
     if not QtWidgets.QApplication.instance():
         app = QtWidgets.QApplication(sys.argv)
     else:
@@ -551,8 +551,7 @@ def test_load_ui_dialog():
 
     QtCompat.loadUi(self.ui_qdialog, win)
 
-    assert hasattr(win, 'lineEdit'), \
-        "loadUi could not load instance to main window"
+    assert hasattr(win, "lineEdit"), "loadUi could not load instance to main window"
 
     app.exit()
 
@@ -562,7 +561,6 @@ def test_load_ui_dockwidget():
     import sys
     from Qt import QtWidgets, QtCompat
 
-
     if not QtWidgets.QApplication.instance():
         app = QtWidgets.QApplication(sys.argv)
     else:
@@ -571,8 +569,7 @@ def test_load_ui_dockwidget():
 
     QtCompat.loadUi(self.ui_qdockwidget, win)
 
-    assert hasattr(win, 'lineEdit'), \
-        "loadUi could not load instance to main window"
+    assert hasattr(win, "lineEdit"), "loadUi could not load instance to main window"
 
     app.exit()
 
@@ -581,7 +578,6 @@ def test_load_ui_customwidget():
     """Tests to see if loadUi loads a custom widget properly"""
     import sys
     from Qt import QtWidgets, QtCompat
-
 
     if not QtWidgets.QApplication.instance():
         app = QtWidgets.QApplication(sys.argv)
@@ -595,8 +591,9 @@ def test_load_ui_customwidget():
     # and not the base class (in case of failure)
     custom_class_name = getattr(win, "customwidget", None).__class__.__name__
     excepted_class_name = CustomWidget(win).__class__.__name__
-    assert custom_class_name == excepted_class_name, \
+    assert custom_class_name == excepted_class_name, (
         "loadUi could not load custom widget to main window"
+    )
 
     app.exit()
 
@@ -607,24 +604,24 @@ def test_load_ui_pycustomwidget():
     from Qt import QtWidgets, QtCompat
 
     # create a python file for the custom widget in a directory relative to the tempdir
-    filename = os.path.join(
-        self.tempdir,
-        "custom",
-        "customwidget",
-        "customwidget.py"
-    )
+    filename = os.path.join(self.tempdir, "custom", "customwidget", "customwidget.py")
     os.makedirs(os.path.dirname(filename))
     with io.open(filename, "w", encoding="utf-8") as f:
         f.write(self.python_custom_widget)
 
     # Python 2.7 requires that each folder be a package
-    with io.open(os.path.join(self.tempdir, "custom/__init__.py"), "w", encoding="utf-8") as f:
+    with io.open(
+        os.path.join(self.tempdir, "custom/__init__.py"), "w", encoding="utf-8"
+    ) as f:
         f.write(u"")
-    with io.open(os.path.join(self.tempdir, "custom/customwidget/__init__.py"), "w", encoding="utf-8") as f:
+    with io.open(
+        os.path.join(self.tempdir, "custom/customwidget/__init__.py"),
+        "w",
+        encoding="utf-8",
+    ) as f:
         f.write(u"")
     # append the path to ensure the future import can be loaded 'relative' to the tempdir
     sys.path.append(self.tempdir)
-
 
     if not QtWidgets.QApplication.instance():
         app = QtWidgets.QApplication(sys.argv)
@@ -639,8 +636,9 @@ def test_load_ui_pycustomwidget():
     # and not the base class (in case of failure)
     custom_class_name = getattr(win, "customwidget", None).__class__.__name__
     excepted_class_name = CustomWidget(win).__class__.__name__
-    assert custom_class_name == excepted_class_name, \
+    assert custom_class_name == excepted_class_name, (
         "loadUi could not load custom widget to main window"
+    )
 
     app.exit()
 
@@ -654,13 +652,14 @@ def test_load_ui_invalidpath():
         app = QtWidgets.QApplication(sys.argv)
     else:
         app = QtWidgets.QApplication.instance()
-    assert_raises(IOError, QtCompat.loadUi, 'made/up/path')
+    assert_raises(IOError, QtCompat.loadUi, "made/up/path")
     app.exit()
 
 
 def test_load_ui_invalidxml():
     """Tests to see if loadUi successfully fails on invalid ui files"""
     import sys
+
     invalid_xml = os.path.join(self.tempdir, "invalid.ui")
     with io.open(invalid_xml, "w", encoding="utf-8") as f:
         f.write(u"""
@@ -685,11 +684,12 @@ def test_load_ui_existingLayoutOnDialog():
     import sys
     from Qt import QtWidgets, QtCompat
 
-    msgs = 'QLayout: Attempting to add QLayout "" to QDialog ' \
+    msgs = (
+        'QLayout: Attempting to add QLayout "" to QDialog '
         '"Dialog", which already has a layout'
+    )
 
     with ignoreQtMessageHandler([msgs]):
-
         if not QtWidgets.QApplication.instance():
             app = QtWidgets.QApplication(sys.argv)
         else:
@@ -706,11 +706,12 @@ def test_load_ui_existingLayoutOnMainWindow():
     import sys
     from Qt import QtWidgets, QtCompat
 
-    msgs = 'QLayout: Attempting to add QLayout "" to QMainWindow ' \
+    msgs = (
+        'QLayout: Attempting to add QLayout "" to QMainWindow '
         '"", which already has a layout'
+    )
 
     with ignoreQtMessageHandler([msgs]):
-
         if not QtWidgets.QApplication.instance():
             app = QtWidgets.QApplication(sys.argv)
         else:
@@ -727,11 +728,12 @@ def test_load_ui_existingLayoutOnDockWidget():
     import sys
     from Qt import QtWidgets, QtCompat
 
-    msgs = 'QLayout: Attempting to add QLayout "" to QDockWidget ' \
+    msgs = (
+        'QLayout: Attempting to add QLayout "" to QDockWidget '
         '"", which already has a layout'
+    )
 
     with ignoreQtMessageHandler([msgs]):
-
         if not QtWidgets.QApplication.instance():
             app = QtWidgets.QApplication(sys.argv)
         else:
@@ -748,11 +750,12 @@ def test_load_ui_existingLayoutOnWidget():
     import sys
     from Qt import QtWidgets, QtCompat
 
-    msgs = 'QLayout: Attempting to add QLayout "" to QWidget ' \
+    msgs = (
+        'QLayout: Attempting to add QLayout "" to QWidget '
         '"Form", which already has a layout'
+    )
 
     with ignoreQtMessageHandler([msgs]):
-
         if not QtWidgets.QApplication.instance():
             app = QtWidgets.QApplication(sys.argv)
         else:
@@ -771,6 +774,7 @@ def test_preferred_none():
     try:
         os.environ["QT_PREFERRED_BINDING"] = "None"
         import Qt
+
         assert Qt.__name__ == "Qt", Qt
     finally:
         os.environ["QT_PREFERRED_BINDING"] = current
@@ -804,36 +808,45 @@ def test_vendoring():
         f.write("\n")
 
     # Copy real Qt.py into myproject
-    shutil.copy(os.path.join(REPO_ROOT, "src", "Qt.py"),
-                os.path.join(vendor, "Qt.py"))
+    shutil.copy(os.path.join(REPO_ROOT, "src", "Qt.py"), os.path.join(vendor, "Qt.py"))
 
     # Copy real Qt.py into the root folder
-    shutil.copy(os.path.join(REPO_ROOT, "src", "Qt.py"),
-                os.path.join(self.tempdir, "Qt.py"))
+    shutil.copy(
+        os.path.join(REPO_ROOT, "src", "Qt.py"), os.path.join(self.tempdir, "Qt.py")
+    )
 
     print("Testing relative import..")
-    assert subprocess.call(
-        [sys.executable, "-c", "import myproject"],
-        cwd=self.tempdir,
-        stdout=subprocess.PIPE,  # With nose process isolation, buffer can
-        stderr=subprocess.STDOUT,  # easily get full and throw an error.
-    ) == 0
+    assert (
+        subprocess.call(
+            [sys.executable, "-c", "import myproject"],
+            cwd=self.tempdir,
+            stdout=subprocess.PIPE,  # With nose process isolation, buffer can
+            stderr=subprocess.STDOUT,  # easily get full and throw an error.
+        )
+        == 0
+    )
 
     print("Testing absolute import..")
-    assert subprocess.call(
-        [sys.executable, "-c", "from myproject.vendor.Qt import QtWidgets"],
-        cwd=self.tempdir,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.STDOUT,
-    ) == 0
+    assert (
+        subprocess.call(
+            [sys.executable, "-c", "from myproject.vendor.Qt import QtWidgets"],
+            cwd=self.tempdir,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+        )
+        == 0
+    )
 
     print("Testing direct import..")
-    assert subprocess.call(
-        [sys.executable, "-c", "import myproject.vendor.Qt"],
-        cwd=self.tempdir,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.STDOUT,
-    ) == 0
+    assert (
+        subprocess.call(
+            [sys.executable, "-c", "import myproject.vendor.Qt"],
+            cwd=self.tempdir,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+        )
+        == 0
+    )
 
     #
     # Test invalid json data
@@ -851,7 +864,7 @@ def test_vendoring():
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         cwd=self.tempdir,
-        env=env
+        env=env,
     )
 
     out, err = popen.communicate()
@@ -864,10 +877,10 @@ def test_vendoring():
     error_check = b"Qt.py [warning]:"
     assert err.startswith(error_check), err
 
-    print('out------------------')
+    print("out------------------")
     print(out)
 
-    print('err ------------------')
+    print("err ------------------")
     print(err)
 
     # Check QT_PREFERRED_BINDING_JSON works as expected
@@ -883,28 +896,31 @@ def test_vendoring():
     # If the module name is "Qt" use PyQt5 or PyQt4, otherwise use None binding
     env = os.environ.copy()
     env["QT_PREFERRED_BINDING_JSON"] = json.dumps(
-        {
-            "Qt": ["PySide6", "PyQt5", "PyQt4"],
-            "default": ["None"]
-        }
+        {"Qt": ["PySide6", "PyQt5", "PyQt4"], "default": ["None"]}
     )
 
-    assert subprocess.call(
-        [sys.executable, "-c", cmd],
-        stdout=subprocess.PIPE,
-        cwd=self.tempdir,
-        env=env
-    ) == 0
+    assert (
+        subprocess.call(
+            [sys.executable, "-c", cmd],
+            stdout=subprocess.PIPE,
+            cwd=self.tempdir,
+            env=env,
+        )
+        == 0
+    )
 
     print("Testing QT_PREFERRED_BINDING_JSON and QT_PREFERRED_BINDING work..")
     env["QT_PREFERRED_BINDING_JSON"] = '{"Qt":["PySide6","PyQt5","PyQt4"]}'
     env["QT_PREFERRED_BINDING"] = "None"
-    assert subprocess.call(
-        [sys.executable, "-c", cmd],
-        stdout=subprocess.PIPE,
-        cwd=self.tempdir,
-        env=env
-    ) == 0
+    assert (
+        subprocess.call(
+            [sys.executable, "-c", cmd],
+            stdout=subprocess.PIPE,
+            cwd=self.tempdir,
+            env=env,
+        )
+        == 0
+    )
 
 
 def test_convert_simple():
@@ -953,6 +969,7 @@ def test_convert_simple():
 
     # Prevent windows file lock PermissionError issues when testing on windows.
     os.chdir(current_dir)
+
 
 def test_convert_5_15_2_format():
     before = textwrap.dedent(
@@ -1003,6 +1020,7 @@ def test_convert_5_15_2_format():
 
     # Prevent windows file lock PermissionError issues when testing on windows.
     os.chdir(current_dir)
+
 
 def test_convert_idempotency():
     """Converting a converted file produces an identical file"""
@@ -1081,12 +1099,14 @@ def test_convert_backup():
 def test_import_from_qtwidgets():
     """Fix #133, `from Qt.QtWidgets import XXX` works"""
     from Qt.QtWidgets import QPushButton
+
     assert QPushButton.__name__ == "QPushButton", QPushButton
 
 
 def test_import_from_qtcompat():
-    """ `from Qt.QtCompat import XXX` works """
+    """`from Qt.QtCompat import XXX` works"""
     from Qt.QtCompat import loadUi
+
     assert loadUi.__name__ == "_loadUi", loadUi
 
 
@@ -1098,6 +1118,7 @@ def test_i158_qtcore_direct_import():
     """
 
     import Qt.QtCore
+
     assert hasattr(Qt.QtCore, "Signal")
 
 
@@ -1114,11 +1135,13 @@ def test_translate_arguments():
     import Qt
 
     # This will run on each binding
-    result = Qt.QtCompat.translate("CustomDialog",  # context
-                                   "Status",  # sourceText
-                                   None,  # disambiguation
-                                   -1)  # n
-    assert result == u'Status', result
+    result = Qt.QtCompat.translate(
+        "CustomDialog",  # context
+        "Status",  # sourceText
+        None,  # disambiguation
+        -1,
+    )  # n
+    assert result == "Status", result
 
 
 def test_binding_and_qt_version():
@@ -1126,14 +1149,14 @@ def test_binding_and_qt_version():
 
     import Qt
 
-    assert Qt.__binding_version__ != "0.0.0", ("Binding version was not "
-                                               "populated")
-    assert Qt.__qt_version__ != "0.0.0", ("Qt version was not populated")
+    assert Qt.__binding_version__ != "0.0.0", "Binding version was not populated"
+    assert Qt.__qt_version__ != "0.0.0", "Qt version was not populated"
 
 
 def test_binding_states():
     """Tests to see if the Qt binding enum states are set properly"""
     import Qt
+
     assert Qt.IsPySide == binding("PySide")
     assert Qt.IsPySide2 == binding("PySide2")
     assert Qt.IsPySide6 == binding("PySide6")
@@ -1157,9 +1180,7 @@ def test_qtcompat_base_class():
         app = QtWidgets.QApplication.instance()
     # suppress `local variable 'app' is assigned to but never used`
     app
-    header = QtWidgets.QHeaderView(
-        get_enum(Qt.QtCore.Qt, "Orientation", "Horizontal")
-    )
+    header = QtWidgets.QHeaderView(get_enum(Qt.QtCore.Qt, "Orientation", "Horizontal"))
 
     # Spot check compatibility functions
     QtCompat.QHeaderView.setSectionsMovable(header, False)
@@ -1168,7 +1189,7 @@ def test_qtcompat_base_class():
     assert QtCompat.QHeaderView.sectionsMovable(header) is True
 
     # Verify that the grab function actually generates a non-null image
-    button = QtWidgets.QPushButton('TestImage')
+    button = QtWidgets.QPushButton("TestImage")
     pixmap = QtCompat.QWidget.grab(button)
     assert not pixmap.isNull()
 
@@ -1179,9 +1200,7 @@ def test_cli():
     env.pop("QT_VERBOSE")  # Do not include debug messages
 
     popen = subprocess.Popen(
-        [sys.executable, "src/Qt.py", "--help"],
-        stdout=subprocess.PIPE,
-        env=env
+        [sys.executable, "src/Qt.py", "--help"], stdout=subprocess.PIPE, env=env
     )
 
     out, err = popen.communicate()
@@ -1194,23 +1213,21 @@ def test_membership():
 
     common_members = Qt._common_members.copy()
 
-    if os.environ.get('VFXPLATFORM') == '2017':
+    if os.environ.get("VFXPLATFORM") == "2017":
         # For CY2017, skip the following
-        common_members['QtGui'].remove('QDesktopServices')
-        common_members.pop('QtOpenGL', None)
-        common_members.pop('QtMultimedia', None)
+        common_members["QtGui"].remove("QDesktopServices")
+        common_members.pop("QtOpenGL", None)
+        common_members.pop("QtMultimedia", None)
 
     missing = list()
     for module, members in common_members.items():
         missing.extend(
-            member for member in members
-            if not hasattr(getattr(Qt, module), member)
+            member for member in members if not hasattr(getattr(Qt, module), member)
         )
 
     binding = Qt.__binding__
-    assert not missing, (
-        "Some members did not exist in {binding}\n{missing}".format(
-            **locals())
+    assert not missing, "Some members did not exist in {binding}\n{missing}".format(
+        **locals()
     )
 
 
@@ -1222,12 +1239,12 @@ def test_missing():
 
     missing = list()
     for module, members in missing_members.items():
-
         mod = getattr(Qt, module)
         missing.extend(
-            member for member in members
-            if not hasattr(mod, member) or
-            not isinstance(getattr(mod, member), Qt.MissingMember)
+            member
+            for member in members
+            if not hasattr(mod, member)
+            or not isinstance(getattr(mod, member), Qt.MissingMember)
         )
 
     binding = Qt.__binding__
@@ -1241,6 +1258,7 @@ def test_unicode_error_messages():
     """Test if unicode error messages with non-ascii characters
     throw the error reporter off"""
     import Qt
+
     unicode_message = u"DLL load failed : le module spécifié est introuvable."
     str_message = "DLL load failed : le module"
 
@@ -1275,6 +1293,7 @@ def test_enum_value():
 
 def test_qfont_from_string():
     import Qt
+
     enum_weight_normal = get_enum(Qt.QtGui.QFont, "Weight", "Normal")
     enum_weight_bold = get_enum(Qt.QtGui.QFont, "Weight", "Bold")
 
@@ -1326,8 +1345,7 @@ if sys.version_info < (3, 5):
             button = QtWidgets.QPushButton("Hello world")
             button.setObjectName("MySpecialButton")
             pointer = QtCompat.getCppPointer(button)
-            widget = QtCompat.wrapInstance(long(pointer),
-                                           QtWidgets.QWidget)
+            widget = QtCompat.wrapInstance(long(pointer), QtWidgets.QWidget)
 
             assert widget.objectName() == button.objectName()
 
@@ -1372,9 +1390,9 @@ if sys.version_info < (3, 5):
                 assert widget != button
             elif binding("PySide2") and _pyside2_commit_date() is None:
                 assert widget != button
-            elif binding("PySide2") and \
-                    _pyside2_commit_date() <= datetime.datetime(
-                        2017, 8, 25):
+            elif binding("PySide2") and _pyside2_commit_date() <= datetime.datetime(
+                2017, 8, 25
+            ):
                 assert widget == button
             else:
                 assert widget == button
@@ -1403,6 +1421,7 @@ if sys.version_info < (3, 5):
         app = QtWidgets.QApplication(sys.argv)
 
         try:
+
             class A(QtWidgets.QPushButton):
                 pass
 
@@ -1439,13 +1458,20 @@ if sys.version_info < (3, 5):
         import inspect
         from Qt import QtCore, QtWidgets
 
-        core_class_names = set([attr for attr, value in QtCore.__dict__.items()
-                                if inspect.isclass(value) and
-                                issubclass(value, QtCore.QObject)])
-        widget_class_names = set([attr for attr, value in
-                                  QtWidgets.__dict__.items()
-                                  if inspect.isclass(value) and
-                                  issubclass(value, QtCore.QObject)])
+        core_class_names = set(
+            [
+                attr
+                for attr, value in QtCore.__dict__.items()
+                if inspect.isclass(value) and issubclass(value, QtCore.QObject)
+            ]
+        )
+        widget_class_names = set(
+            [
+                attr
+                for attr, value in QtWidgets.__dict__.items()
+                if inspect.isclass(value) and issubclass(value, QtCore.QObject)
+            ]
+        )
         intersecting_class_names = core_class_names & widget_class_names
         assert not intersecting_class_names
 
@@ -1472,27 +1498,32 @@ if sys.version_info < (3, 5):
 
 
 if binding("PyQt4"):
+
     def test_preferred_pyqt4():
         """QT_PREFERRED_BINDING = PyQt4 properly forces the binding"""
         import Qt
+
         assert Qt.__binding__ == "PyQt4", (
-            "PyQt4 should have been picked, "
-            "instead got %s" % Qt.__binding__)
+            "PyQt4 should have been picked, instead got %s" % Qt.__binding__
+        )
 
     def test_sip_api_qtpy():
         """Preferred binding PyQt4 should have sip version 2"""
 
         __import__("Qt")  # Bypass linter warning
         import sip
+
         assert sip.getapi("QString") == 2, (
-            "PyQt4 API version should be 2, "
-            "instead is %s" % sip.getapi("QString"))
+            "PyQt4 API version should be 2, instead is %s" % sip.getapi("QString")
+        )
 
     if PYTHON == 2:
+
         def test_sip_api_already_set():
             """Raise ImportError with sip was set to 1 with no hint, default"""
             __import__("PyQt4.QtCore")  # Bypass linter warning
             import sip
+
             sip.setapi("QString", 1)
             assert_raises(ImportError, __import__, "Qt")
 
@@ -1501,6 +1532,7 @@ if binding("PyQt4"):
         def test_sip_api_1_1():
             """sip=1, hint=1 == OK"""
             import sip
+
             sip.setapi("QString", 1)
             os.environ["QT_SIP_API_HINT"] = "1"
             __import__("Qt")  # Bypass linter warning
@@ -1508,6 +1540,7 @@ if binding("PyQt4"):
         def test_sip_api_2_1():
             """sip=2, hint=1 == WARNING"""
             import sip
+
             sip.setapi("QString", 2)
             os.environ["QT_SIP_API_HINT"] = "1"
 
@@ -1519,6 +1552,7 @@ if binding("PyQt4"):
         def test_sip_api_1_2():
             """sip=1, hint=2 == WARNING"""
             import sip
+
             sip.setapi("QString", 1)
             os.environ["QT_SIP_API_HINT"] = "2"
 
@@ -1530,45 +1564,54 @@ if binding("PyQt4"):
         def test_sip_api_2_2():
             """sip=2, hint=2 == OK"""
             import sip
+
             sip.setapi("QString", 2)
             os.environ["QT_SIP_API_HINT"] = "2"
             __import__("Qt")  # Bypass linter warning
 
 
 if binding("PyQt6"):
+
     def test_preferred_pyqt6():
         """QT_PREFERRED_BINDING = PyQt6 properly forces the binding"""
         import Qt
+
         assert Qt.__binding__ == "PyQt6", (
-            "PyQt6 should have been picked, "
-            "instead got %s" % Qt.__binding__)
+            "PyQt6 should have been picked, instead got %s" % Qt.__binding__
+        )
 
 
 if binding("PyQt5"):
+
     def test_preferred_pyqt5():
         """QT_PREFERRED_BINDING = PyQt5 properly forces the binding"""
         import Qt
+
         assert Qt.__binding__ == "PyQt5", (
-            "PyQt5 should have been picked, "
-            "instead got %s" % Qt.__binding__)
+            "PyQt5 should have been picked, instead got %s" % Qt.__binding__
+        )
 
 
 if binding("PySide"):
+
     def test_preferred_pyside():
         """QT_PREFERRED_BINDING = PySide properly forces the binding"""
         import Qt
+
         assert Qt.__binding__ == "PySide", (
-            "PySide should have been picked, "
-            "instead got %s" % Qt.__binding__)
+            "PySide should have been picked, instead got %s" % Qt.__binding__
+        )
 
 
 if binding("PySide2"):
+
     def test_preferred_pyside2():
         """QT_PREFERRED_BINDING = PySide2 properly forces the binding"""
         import Qt
+
         assert Qt.__binding__ == "PySide2", (
-            "PySide2 should have been picked, "
-            "instead got %s" % Qt.__binding__)
+            "PySide2 should have been picked, instead got %s" % Qt.__binding__
+        )
 
     def test_coexistence():
         """Qt.py may be use alongside the actual binding"""
@@ -1587,12 +1630,14 @@ if binding("PySide2"):
 
 
 if binding("PySide6"):
+
     def test_preferred_pyside6():
         """QT_PREFERRED_BINDING = PySide6 properly forces the binding"""
         import Qt
+
         assert Qt.__binding__ == "PySide6", (
-            "PySide6 should have been picked, "
-            "instead got %s" % Qt.__binding__)
+            "PySide6 should have been picked, instead got %s" % Qt.__binding__
+        )
 
     def test_coexistence():
         """Qt.py may be use alongside the actual binding"""
@@ -1616,13 +1661,12 @@ if IS_TOX and (binding("PyQt5") or binding("PyQt6") and sys.version_info < (3, 1
         # PySide is the more desirable binding
         current = os.environ["QT_PREFERRED_BINDING"]
         try:
-            os.environ["QT_PREFERRED_BINDING"] = os.pathsep.join(
-                ["PyQt5", "PyQt6"])
+            os.environ["QT_PREFERRED_BINDING"] = os.pathsep.join(["PyQt5", "PyQt6"])
             import Qt
 
             assert Qt.__binding__ == "PyQt5", (
-                "PyQt5 should have been picked, "
-                "instead got %s" % Qt.__binding__)
+                "PyQt5 should have been picked, instead got %s" % Qt.__binding__
+            )
         finally:
             os.environ["QT_PREFERRED_BINDING"] = current
 
@@ -1633,13 +1677,13 @@ if not IS_TOX and (binding("PyQt4") or binding("PyQt5")):
         """QT_PREFERRED_BINDING = more than one binding excludes others"""
 
         # PySide is the more desirable binding
-        os.environ["QT_PREFERRED_BINDING"] = os.pathsep.join(
-            ["PyQt4", "PyQt5"])
+        os.environ["QT_PREFERRED_BINDING"] = os.pathsep.join(["PyQt4", "PyQt5"])
 
         import Qt
+
         assert Qt.__binding__ == "PyQt4", (
-            "PyQt4 should have been picked, "
-            "instead got %s" % Qt.__binding__)
+            "PyQt4 should have been picked, instead got %s" % Qt.__binding__
+        )
 
 
 enum_file_1 = textwrap.dedent(
@@ -1768,12 +1812,12 @@ if binding("PySide2") and sys.version_info >= (3, 7):
         )
 
         data = json.loads(proc.stdout)
-        assert data['Qt.WindowActive'] == 'Qt.WindowState.WindowActive'
-        assert data['QAbstractItemView.Box'] == 'QAbstractItemView.Shape.Box'
-        assert data['QFrame.Box'] == 'QFrame.Shape.Box'
-        assert data['QTreeWidget.Box'] == 'QTreeWidget.Shape.Box'
-        assert data['QFrame.Box'] == 'QFrame.Shape.Box'
-        assert data['QStyle.CC_ComboBox'] == 'QStyle.ComplexControl.CC_ComboBox'
+        assert data["Qt.WindowActive"] == "Qt.WindowState.WindowActive"
+        assert data["QAbstractItemView.Box"] == "QAbstractItemView.Shape.Box"
+        assert data["QFrame.Box"] == "QFrame.Shape.Box"
+        assert data["QTreeWidget.Box"] == "QTreeWidget.Shape.Box"
+        assert data["QFrame.Box"] == "QFrame.Shape.Box"
+        assert data["QStyle.CC_ComboBox"] == "QStyle.ComplexControl.CC_ComboBox"
 
     def test_convert_enum_modules():
         """Test enum map generation modules data structure"""
@@ -1789,12 +1833,16 @@ if binding("PySide2") and sys.version_info >= (3, 7):
         )
 
         data = json.loads(proc.stdout)
-        assert data['QtCore']['Qt.WindowActive'] == ['Qt.WindowState.WindowActive']
-        assert data['QtWidgets']['QAbstractItemView.Box'] == ['QAbstractItemView.Shape.Box']
-        assert data['QtWidgets']['QFrame.Box'] == ['QFrame.Shape.Box']
-        assert data['QtWidgets']['QTreeWidget.Box'] == ['QTreeWidget.Shape.Box']
-        assert data['QtWidgets']['QFrame.Box'] == ['QFrame.Shape.Box']
-        assert data['QtWidgets']['QStyle.CC_ComboBox'] == ['QStyle.ComplexControl.CC_ComboBox']
+        assert data["QtCore"]["Qt.WindowActive"] == ["Qt.WindowState.WindowActive"]
+        assert data["QtWidgets"]["QAbstractItemView.Box"] == [
+            "QAbstractItemView.Shape.Box"
+        ]
+        assert data["QtWidgets"]["QFrame.Box"] == ["QFrame.Shape.Box"]
+        assert data["QtWidgets"]["QTreeWidget.Box"] == ["QTreeWidget.Shape.Box"]
+        assert data["QtWidgets"]["QFrame.Box"] == ["QFrame.Shape.Box"]
+        assert data["QtWidgets"]["QStyle.CC_ComboBox"] == [
+            "QStyle.ComplexControl.CC_ComboBox"
+        ]
 
 
 if binding("PySide6") and sys.version_info >= (3, 7):

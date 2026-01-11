@@ -18,8 +18,7 @@ def test():
 
     else:
         raise ImportError(
-            "Qt.QtCore was importable, update_members was not "
-            "applied correctly."
+            "Qt.QtCore was importable, update_members was not applied correctly."
         )
 
         # Suppress "Qt.QtCore" imported but unused warning
@@ -27,6 +26,7 @@ def test():
 
     # Test _misplaced_members is applied correctly
     from Qt import QtGui
+
     assert QtGui.QColorTest == QtGui.QColor, (
         "QtGui.QColor was not mapped to QtGui.QColorTest"
     )
@@ -34,6 +34,7 @@ def test():
     # Test _compatibility_members is applied correctly
     title = "Test Widget"
     from Qt import QtWidgets, QtCompat
+
     app = QtWidgets.QApplication(sys.argv)
     wid = QtWidgets.QWidget()
     wid.setWindowTitle(title)

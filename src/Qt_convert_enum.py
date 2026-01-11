@@ -60,7 +60,7 @@ class QtEnumConverter:
 
     def enums_for_class(self, cls):
         """Include enums for a specific class."""
-        module_name = cls.__module__.split('.')[-1]
+        module_name = cls.__module__.split(".")[-1]
 
         # Build a set of all enum classes on cls. These are the fully qualified
         # enum objects containing each individual enum value.
@@ -109,8 +109,8 @@ class QtEnumConverter:
             self.enums_for_qt_py()
 
         # Read the content
-        content = ''
-        with filepath.open('r', encoding='utf-8', newline='\n', errors='replace') as f:
+        content = ""
+        with filepath.open("r", encoding="utf-8", newline="\n", errors="replace") as f:
             content = f.read()
 
         changes = 0
@@ -127,7 +127,7 @@ class QtEnumConverter:
             # In the situation above, k is found in 'qt.Qt.WindowType.Window' such
             # that a replacement will take place there, messing up the code! By
             # surrounding k with bounds in the regex pattern, this won't happen.
-            p = re.compile(fr'\b{k}\b')
+            p = re.compile(rf"\b{k}\b")
 
             # Substitute all occurrences of k (key) in 'content' with v (value). The
             # 'subn()' method returns a tuple (new_string, number_of_subs_made).
@@ -138,7 +138,7 @@ class QtEnumConverter:
             assert new_content != content
             relative_path = filepath.relative_to(root)
             q = "'"
-            print(f'{q}{relative_path}{q}: Replace {q}{k}{q} => {q}{v}{q} ({n})')
+            print(f"{q}{relative_path}{q}: Replace {q}{k}{q} => {q}{v}{q} ({n})")
             content = new_content
             # Record the number of enums updated in this file
             changes += n
@@ -146,7 +146,7 @@ class QtEnumConverter:
         if dry_run:
             return changes
 
-        with filepath.open('w', encoding='utf-8', newline='\n', errors='replace') as f:
+        with filepath.open("w", encoding="utf-8", newline="\n", errors="replace") as f:
             f.write(content)
         return changes
 
@@ -160,11 +160,11 @@ class QtEnumConverter:
             self.enums_for_qt_py()
 
         if not self.partial_enum:
-            enums = {v.split('.')[-1] for v in self.enum_map.values()}
-            self.partial_enum = re.compile(fr"\.({'|'.join(enums)})(?!\w)")
+            enums = {v.split(".")[-1] for v in self.enum_map.values()}
+            self.partial_enum = re.compile(rf"\.({'|'.join(enums)})(?!\w)")
 
         # Read the content
-        with filepath.open('r', encoding='utf-8', newline='\n', errors='replace') as f:
+        with filepath.open("r", encoding="utf-8", newline="\n", errors="replace") as f:
             content = f.readlines()
 
         changes = 0
@@ -183,7 +183,7 @@ class QtEnumConverter:
                         f'File: "{relative}", line:{ln + 1}, for {", ".join(matches)}'
                     )
                 if self.verbosity >= 1:
-                    print(f'    {line.strip()}')
+                    print(f"    {line.strip()}")
                 changes += 1
 
         return changes
@@ -210,7 +210,7 @@ class QtEnumConverter:
                 continue
             for f in files:
                 filepath = root / f
-                if filepath.suffix != '.py':
+                if filepath.suffix != ".py":
                     continue
                 if self.verbosity >= 2:
                     print(f"Checking: {filepath}")
@@ -272,9 +272,9 @@ def parse_args():
         "Convert Qt5 enums to fully qualified enums for Qt6 compliance."
     )
     parser.add_argument(
-        '-w',
-        '--write',
-        action='store_true',
+        "-w",
+        "--write",
+        action="store_true",
         help="Write changes to the files. This does not create backups",
     )
     parser.add_argument(
@@ -300,28 +300,28 @@ def parse_args():
         "directly from the class name.",
     )
     parser.add_argument(
-        '-v',
-        '--verbosity',
-        action='count',
+        "-v",
+        "--verbosity",
+        action="count",
         default=0,
         help="Increase the verbosity of the output.",
     )
     parser.add_argument(
-        '-q',
-        '--quiet',
+        "-q",
+        "--quiet",
         action="count",
         default=0,
         help="Decrease the verbosity of the output.",
     )
     parser.add_argument(
-        '--check',
-        action='store_true',
+        "--check",
+        action="store_true",
         help="The Return Code becomes the number of enums that were/require "
         "changing. Can be used with --write. Use this to check for enum use "
         "regression.",
     )
     parser.add_argument(
-        'target', type=Path, nargs="?", help="Directory to process recursively"
+        "target", type=Path, nargs="?", help="Directory to process recursively"
     )
 
     return parser.parse_args()
