@@ -1,0 +1,81 @@
+[build-system]
+# Supports python 3.7 building
+requires = ["setuptools <= 68.0.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "Qt.py"
+description = """\
+    Python compatibility wrapper around Qt5 and Qt6 bindings - \
+    PySide2, PySide6, PyQt5 and PyQt6.\
+"""
+authors = [{name = "Marcus Ottosson", email = "konstruktion@gmail.com"}]
+dependencies = ["types-PySide2"]
+dynamic = ["version"]
+license = {text = "MIT"}
+requires-python = ">=3.7"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    # "Programming Language :: Python :: 3.12",
+    # "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Utilities"
+]
+
+[project.optional-dependencies]
+dev = [
+    "flake8",
+    "flake8-bugbear",
+    "Flake8-pyproject",
+    "tox",
+]
+
+[project.readme]
+file = "README.md"
+content-type = "text/markdown"
+
+[project.urls]
+Homepage = "https://github.com/mottosso/Qt"
+Source = "https://github.com/mottosso/Qt"
+Repository = "https://github.com/mottosso/Qt"
+Issues = "https://github.com/mottosso/Qt.py/issues"
+
+[tool.setuptools]
+license-files = ["LICENSE"]
+
+[tool.setuptools.dynamic]
+# Use ast parser to pull version from its source in Qt.py
+version = {attr = "Qt.__version__"}
+
+[tool.setuptools.package-data]
+"*" = ["*.pyi", "py.typed"]
+
+# These options configure flake8. They are only respected if you have the
+# Flake8-pyproject pip package installed as well.
+[flake8]
+select = ["B", "C", "E", "F", "N", "W", "B9"]
+extend-ignore = [
+    "E203",
+    "E501",
+    "E722",
+    "W503",
+]
+max-line-length = 88
+exclude = [
+    "*.egg-info",
+    "*.pyc",
+    ".cache",
+    ".eggs",
+    ".git",
+    ".tox",
+    "__pycache__",
+    "build",
+    "dist",
+]

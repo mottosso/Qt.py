@@ -49,6 +49,7 @@ except ImportError:
 
 PYTHON = sys.version_info[0]  # e.g. 2 or 3
 IS_TOX = os.getenv("TOX_ENV_NAME") is not None
+REPO_ROOT = os.path.dirname(__file__)
 
 try:
     long
@@ -803,11 +804,11 @@ def test_vendoring():
         f.write("\n")
 
     # Copy real Qt.py into myproject
-    shutil.copy(os.path.join(os.path.dirname(__file__), "Qt.py"),
+    shutil.copy(os.path.join(REPO_ROOT, "src", "Qt.py"),
                 os.path.join(vendor, "Qt.py"))
 
     # Copy real Qt.py into the root folder
-    shutil.copy(os.path.join(os.path.dirname(__file__), "Qt.py"),
+    shutil.copy(os.path.join(REPO_ROOT, "src", "Qt.py"),
                 os.path.join(self.tempdir, "Qt.py"))
 
     print("Testing relative import..")
@@ -1178,7 +1179,7 @@ def test_cli():
     env.pop("QT_VERBOSE")  # Do not include debug messages
 
     popen = subprocess.Popen(
-        [sys.executable, "Qt.py", "--help"],
+        [sys.executable, "src/Qt.py", "--help"],
         stdout=subprocess.PIPE,
         env=env
     )
@@ -1680,7 +1681,7 @@ if binding("PySide2") and sys.version_info >= (3, 7):
     def test_convert_enum():
         """Test the output of running Qt_convert_enum.py."""
 
-        code_path = os.path.join(os.path.dirname(__file__), "Qt_convert_enum.py")
+        code_path = os.path.join(REPO_ROOT, "src", "Qt_convert_enum.py")
         old_code_dir = os.path.join(self.tempdir, "enum_convert")
         api_dir = os.path.join(old_code_dir, "api")
         init_file = os.path.join(old_code_dir, "__init__.py")
@@ -1755,7 +1756,7 @@ if binding("PySide2") and sys.version_info >= (3, 7):
 
     def test_convert_enum_map():
         """Test enum map generation for conversion from short to long enums"""
-        code_path = os.path.join(os.path.dirname(__file__), "Qt_convert_enum.py")
+        code_path = os.path.join(REPO_ROOT, "src", "Qt_convert_enum.py")
         cmd = [sys.executable, code_path, "--show", "map"]
         proc = subprocess.run(
             cmd,
@@ -1776,7 +1777,7 @@ if binding("PySide2") and sys.version_info >= (3, 7):
 
     def test_convert_enum_modules():
         """Test enum map generation modules data structure"""
-        code_path = os.path.join(os.path.dirname(__file__), "Qt_convert_enum.py")
+        code_path = os.path.join(REPO_ROOT, "src", "Qt_convert_enum.py")
         cmd = [sys.executable, code_path, "--show", "modules"]
         proc = subprocess.run(
             cmd,
@@ -1800,7 +1801,7 @@ if binding("PySide6") and sys.version_info >= (3, 7):
     # Qt_convert_enum.py only runs in python 3.7 or higher
     def test_convert_enum_duplicates():
         """Tests using PySide6 to show enums with duplicate short names"""
-        code_path = os.path.join(os.path.dirname(__file__), "Qt_convert_enum.py")
+        code_path = os.path.join(REPO_ROOT, "src", "Qt_convert_enum.py")
         cmd = [sys.executable, code_path, "--show", "dups"]
         proc = subprocess.run(
             cmd,
