@@ -857,12 +857,12 @@ The "_common_members_sources" list is generated using the
 
 """
 _common_members_sources = [
-    "PyQt5-5.13.2_py-3.7.9",
-    "PyQt5-5.15.11_py-3.9.13",
-    "PyQt6-6.7.1_py-3.11.9",
-    "PySide2-5.13.2_py-3.7.9",
-    "PySide2-5.15.2.1_py-3.9.13",
-    "PySide6-6.5.3_py-3.11.9",
+    "PyQt5-5.13.2_py-3.7.17",
+    "PyQt5-5.15.11_py-3.9.25",
+    "PyQt6-6.7.1_py-3.11.14",
+    "PySide2-5.13.2_py-3.7.17",
+    "PySide2-5.15.2.1_py-3.9.25",
+    "PySide6-6.5.3_py-3.11.14",
 ]
 
 """ Missing members
