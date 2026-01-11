@@ -7,6 +7,7 @@ test_caveats.py
 # Development
 .vscode
 .idea
+.ruff_cache
 .tox
 .members/*.json
 .members/*.md

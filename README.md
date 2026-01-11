@@ -543,7 +543,7 @@ if binding("PyQt4"):
 Below are some of the conventions that used throughout the Qt.py module and tests.
 
 - **Etiquette: PEP8**
-    - All code is written in PEP8. It is recommended you use a linter as you work, flake8 and pylinter are both good options. Anaconda if using Sublime is another good option.
+    - All code is checked using ruff check and format. Use `tox -e check,format`.
 - **Etiquette: Double quotes**
     - " = yes, ' = no.
 - **Etiquette: Napoleon docstrings**
