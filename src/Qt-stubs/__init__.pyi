@@ -9,4 +9,3 @@ IsPySide6: bool
 
 QT_VERBOSE: bool
 QT_PREFERRED_BINDING: str
-QT_SIP_API_HINT: str

@@ -43,6 +43,34 @@ jobs:
             .members/*.md
           include-hidden-files: true
 
+  lint:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup tox
+        uses: ./.github/actions/setup-tox
+
+      - name: Run Tox
+        run: |
+          which tox
+          tox -e check
+
+  format:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup tox
+        uses: ./.github/actions/setup-tox
+
+      - name: Run Tox
+        run: |
+          which tox
+          tox -e format
+
   test:
     runs-on: ubuntu-22.04
     strategy:

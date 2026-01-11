@@ -98,7 +98,7 @@ def update_members(members):
 
 #### QtSiteConfig.py: Standardizing the location of Qt classes
 
-Some classes have been moved to new locations between bindings. Qt.py uses the namespace dictated by PySide2 and most members are already in place.
+Some classes have been moved to new locations between bindings. Qt.py uses the namespace dictated by PySide6 and most members are already in place.
 This example reproduces functionality already in Qt.py but it provides a good example of how use this function.
 
 ```python
@@ -109,16 +109,18 @@ def update_misplaced_members(members):
     Arguments:
         members (dict): The members considered by Qt.py
     """
-    # Standardize the the Property name
-    members["PySide2"]["QtCore.Property"] = "QtCore.Property"
-    members["PyQt5"]["QtCore.pyqtProperty"] = "QtCore.Property"
-    members["PySide"]["QtCore.Property"] = "QtCore.Property"
-    members["PyQt4"]["QtCore.pyqtProperty"] = "QtCore.Property"
+    # Create Qt.QtGui.QColorTest that points to Qtgui.QColor for unit testing.
+    members["PySide6"]["QtGui.QColor"] = "QtGui.QColorTest"
+    members["PyQt6"]["QtGui.QColor"] = "QtGui.QColorTest"
+    members["PySide2"]["QtGui.QColor"] = "QtGui.QColorTest"
+    members["PyQt5"]["QtGui.QColor"] = "QtGui.QColorTest"
 ```
 
 #### QtSiteConfig.py: Standardizing PyQt4's QFileDialog functionality
 
 This example reproduces functionality already in Qt.py but it provides a good example of what is necessary to create your QtCompat namespaces with custom method decorators to change how the source method runs.
+
+> TODO: Update this example to something for Qt5/6. It still shows the workflow but PyQt4 has been removed from Qt.py.
 
 ```python
 def update_compatibility_members(members):

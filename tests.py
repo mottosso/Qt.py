@@ -11,7 +11,6 @@ import tempfile
 import textwrap
 import subprocess
 import contextlib
-import datetime
 import json
 
 # Third-party dependency
@@ -49,21 +48,13 @@ except ImportError:
             return context
 
 
-PYTHON = sys.version_info[0]  # e.g. 2 or 3
-IS_TOX = os.getenv("TOX_ENV_NAME") is not None
 REPO_ROOT = os.path.dirname(__file__)
-
-try:
-    long
-except NameError:
-    # Python 3 compatibility
-    long = int
 
 
 # NOTE: When building multi-line strings use this format to improve code folding.
 # dedent is mostly needed when your check cares about the leading white space.
 # variable = textwrap.dedent(
-#     u"""\
+#     """\
 #     Example text
 #     with common leading white space removed
 #         additional indents are preserved.
@@ -71,22 +62,6 @@ except NameError:
 #     the same as all other lines.
 #     """
 # )
-
-
-def _pyside2_commit_date():
-    """Return the commit date of PySide2"""
-
-    import PySide2
-
-    if hasattr(PySide2, "__build_commit_date__"):
-        commit_date = PySide2.__build_commit_date__
-        datetime_object = datetime.datetime.strptime(
-            commit_date[: commit_date.rfind("+")], "%Y-%m-%dT%H:%M:%S"
-        )
-        return datetime_object
-    else:
-        # Returns None if no __build_commit_date__ is available
-        return None
 
 
 @contextlib.contextmanager
@@ -116,7 +91,7 @@ self = sys.modules[__name__]
 
 
 qwidget_ui = textwrap.dedent(
-    u"""\
+    """\
     <?xml version="1.0" encoding="UTF-8"?>
     <ui version="4.0">
      <class>Form</class>
@@ -173,7 +148,7 @@ qwidget_ui = textwrap.dedent(
 
 
 qmainwindow_ui = textwrap.dedent(
-    u"""\
+    """\
     <?xml version="1.0" encoding="UTF-8"?>
     <ui version="4.0">
      <class>MainWindow</class>
@@ -205,7 +180,7 @@ qmainwindow_ui = textwrap.dedent(
 
 
 qdialog_ui = textwrap.dedent(
-    u"""\
+    """\
     <?xml version="1.0" encoding="UTF-8"?>
     <ui version="4.0">
      <class>Dialog</class>
@@ -235,7 +210,7 @@ qdialog_ui = textwrap.dedent(
 
 
 qdockwidget_ui = textwrap.dedent(
-    u"""\
+    """\
     <?xml version="1.0" encoding="UTF-8"?>
     <ui version="4.0">
      <class>DockWidget</class>
@@ -267,7 +242,7 @@ qdockwidget_ui = textwrap.dedent(
 
 
 qcustomwidget_ui = textwrap.dedent(
-    u"""\
+    """\
     <?xml version="1.0" encoding="UTF-8"?>
     <ui version="4.0">
      <class>MainWindow</class>
@@ -301,7 +276,7 @@ qcustomwidget_ui = textwrap.dedent(
 
 
 qpycustomwidget_ui = textwrap.dedent(
-    u"""\
+    """\
     <?xml version="1.0" encoding="UTF-8"?>
     <ui version="4.0">
      <class>MainWindow</class>
@@ -335,7 +310,7 @@ qpycustomwidget_ui = textwrap.dedent(
 
 
 python_custom_widget = textwrap.dedent(
-    u'''
+    '''
     def CustomWidget(parent=None):
         """
         Wrap CustomWidget class into a function to avoid global Qt import
@@ -455,20 +430,12 @@ def ignoreQtMessageHandler(msgs):
 def test_environment():
     """Tests require all bindings to be installed (except PySide on py3.5+)"""
 
-    if sys.version_info < (3, 5):
-        # PySide is not available for Python > 3.4
-        imp.find_module("PySide")
-    if sys.version_info >= (3, 9):
-        # NOTE: Existing docker images don't support Qt6
+    if sys.version_info >= (3, 11):
+        # NOTE: Qt6 is only available for python 3.11 and above
         imp.find_module("PySide6")
         imp.find_module("PyQt6")
-    elif IS_TOX:
-        # Tox environments don't have access to Qt4
-        imp.find_module("PySide2")
-        imp.find_module("PyQt5")
     else:
         imp.find_module("PySide2")
-        imp.find_module("PyQt4")
         imp.find_module("PyQt5")
 
 
@@ -613,13 +580,13 @@ def test_load_ui_pycustomwidget():
     with io.open(
         os.path.join(self.tempdir, "custom/__init__.py"), "w", encoding="utf-8"
     ) as f:
-        f.write(u"")
+        f.write("")
     with io.open(
         os.path.join(self.tempdir, "custom/customwidget/__init__.py"),
         "w",
         encoding="utf-8",
     ) as f:
-        f.write(u"")
+        f.write("")
     # append the path to ensure the future import can be loaded 'relative' to the tempdir
     sys.path.append(self.tempdir)
 
@@ -662,7 +629,7 @@ def test_load_ui_invalidxml():
 
     invalid_xml = os.path.join(self.tempdir, "invalid.ui")
     with io.open(invalid_xml, "w", encoding="utf-8") as f:
-        f.write(u"""
+        f.write("""
         <?xml version="1.0" encoding="UTF-8"?>
         <ui version="4.0" garbage
         </ui>
@@ -852,7 +819,7 @@ def test_vendoring():
     # Test invalid json data
     print("Testing invalid json data..")
     env = os.environ.copy()
-    env["QT_PREFERRED_BINDING_JSON"] = '{"Qt":["PyQt5","PyQt4"],}'
+    env["QT_PREFERRED_BINDING_JSON"] = '{"Qt":["PyQt6","PyQt5"],}'
 
     cmd = "import myproject.vendor.Qt;"
     cmd += "import Qt;"
@@ -890,13 +857,13 @@ def test_vendoring():
     cmd += "assert myproject.vendor.Qt.__binding__ == 'None', 'vendor';"
     cmd += "import Qt;"
     # Check that the "None" binding was not set for `import Qt`.
-    # This should be PyQt5 or PyQt4 depending on the test environment.
+    # This should be PyQt6 or PyQt5 depending on the test environment.
     cmd += "assert Qt.__binding__ != 'None', 'Qt'"
 
-    # If the module name is "Qt" use PyQt5 or PyQt4, otherwise use None binding
+    # If the module name is "Qt" use PyQt6 or PyQt5, otherwise use None binding
     env = os.environ.copy()
     env["QT_PREFERRED_BINDING_JSON"] = json.dumps(
-        {"Qt": ["PySide6", "PyQt5", "PyQt4"], "default": ["None"]}
+        {"Qt": ["PySide6", "PyQt5"], "default": ["None"]}
     )
 
     assert (
@@ -910,7 +877,7 @@ def test_vendoring():
     )
 
     print("Testing QT_PREFERRED_BINDING_JSON and QT_PREFERRED_BINDING work..")
-    env["QT_PREFERRED_BINDING_JSON"] = '{"Qt":["PySide6","PyQt5","PyQt4"]}'
+    env["QT_PREFERRED_BINDING_JSON"] = '{"Qt":["PySide6","PyQt5"]}'
     env["QT_PREFERRED_BINDING"] = "None"
     assert (
         subprocess.call(
@@ -1125,7 +1092,7 @@ def test_i158_qtcore_direct_import():
 def test_translate_arguments():
     """Arguments of QtCompat.translate are correct
 
-    QtCompat.translate is a shim over the PySide, PyQt4 and PyQt5
+    QtCompat.translate is a shim over the PyQt6 and PyQt5
     equivalent with an interface like the one found in PySide2.
 
     Reference: https://doc.qt.io/qt-5/qcoreapplication.html#translate
@@ -1157,14 +1124,14 @@ def test_binding_states():
     """Tests to see if the Qt binding enum states are set properly"""
     import Qt
 
-    assert Qt.IsPySide == binding("PySide")
+    assert Qt.IsPySide is False
     assert Qt.IsPySide2 == binding("PySide2")
     assert Qt.IsPySide6 == binding("PySide6")
     if sys.version_info >= (3, 9):
         # NOTE: Existing docker images don't support Qt6
         assert Qt.IsPyQt6 == binding("PyQt6")
     assert Qt.IsPyQt5 == binding("PyQt5")
-    assert Qt.IsPyQt4 == binding("PyQt4")
+    assert Qt.IsPyQt4 is False
 
 
 def test_qtcompat_base_class():
@@ -1257,7 +1224,7 @@ def test_unicode_error_messages():
     throw the error reporter off"""
     import Qt
 
-    unicode_message = u"DLL load failed : le module spécifié est introuvable."
+    unicode_message = "DLL load failed : le module spécifié est introuvable."
     str_message = "DLL load failed : le module"
 
     with captured_output() as out:
@@ -1322,252 +1289,6 @@ def test_qfont_from_string():
             app.exit()
 
 
-if sys.version_info < (3, 5):
-    # PySide is not available for Python > 3.4
-    # Shiboken(1) doesn't support Python 3.5
-    # https://github.com/PySide/shiboken-setup/issues/3
-
-    def test_wrapInstance():
-        """Tests .wrapInstance cast of pointer to explicit class
-
-        Note:
-            sip.wrapInstance will ignore the explicit class if there is a more
-            suitable type available.
-
-        """
-        from Qt import QtCompat, QtWidgets
-
-        app = QtWidgets.QApplication(sys.argv)
-
-        try:
-            button = QtWidgets.QPushButton("Hello world")
-            button.setObjectName("MySpecialButton")
-            pointer = QtCompat.getCppPointer(button)
-            widget = QtCompat.wrapInstance(long(pointer), QtWidgets.QWidget)
-
-            assert widget.objectName() == button.objectName()
-
-            if binding("PyQt4") or binding("PyQt5"):
-                # Even when we explicitly pass QWidget we will get QPushButton
-                assert type(widget) is QtWidgets.QPushButton, widget
-            else:
-                assert type(widget) is QtWidgets.QWidget, widget
-
-            # IMPORTANT: this differs across sip and shiboken.
-            if binding("PySide") or binding("PySide2"):
-                assert widget != button
-            else:
-                assert widget == button
-
-        finally:
-            app.exit()
-
-    def test_implicit_wrapInstance_for_base_types():
-        """Tests .wrapInstance implicit cast of `Foo` pointer to `Foo` object
-
-        Testing is based upon the following parameters:
-
-        1. The `base` argument has a default value.
-        2. `Foo` is a standard Qt class.
-
-        """
-        from Qt import QtCompat, QtWidgets
-
-        app = QtWidgets.QApplication(sys.argv)
-
-        try:
-            button = QtWidgets.QPushButton("Hello world")
-            button.setObjectName("MySpecialButton")
-            pointer = QtCompat.getCppPointer(button)
-            widget = QtCompat.wrapInstance(long(pointer))
-
-            assert widget.objectName() == button.objectName()
-            assert type(widget) is QtWidgets.QPushButton, widget
-
-            if binding("PySide"):
-                assert widget != button
-            elif binding("PySide2") and _pyside2_commit_date() is None:
-                assert widget != button
-            elif binding("PySide2") and _pyside2_commit_date() <= datetime.datetime(
-                2017, 8, 25
-            ):
-                assert widget == button
-            else:
-                assert widget == button
-
-        finally:
-            app.exit()
-
-    def test_implicit_wrapInstance_for_derived_types():
-        """Tests .wrapInstance implicit cast of `Foo` pointer to `Bar` object
-
-        Testing is based upon the following parameters:
-
-        1. The `base` argument has a default value.
-        2. `Bar` is a standard Qt class.
-        3. `Foo` is a strict subclass of `Bar`, separated by one or more levels
-           of inheritance.
-        4. `Foo` is not a standard Qt class.
-
-        Note:
-            For sip usage, implicit cast of `Foo` pointer always results in a
-            `Foo` object.
-
-        """
-        from Qt import QtCompat, QtWidgets
-
-        app = QtWidgets.QApplication(sys.argv)
-
-        try:
-
-            class A(QtWidgets.QPushButton):
-                pass
-
-            class B(A):
-                pass
-
-            button = B("Hello world")
-            button.setObjectName("MySpecialButton")
-            pointer = QtCompat.getCppPointer(button)
-            widget = QtCompat.wrapInstance(long(pointer))
-
-            assert widget.objectName() == button.objectName()
-
-            if binding("PyQt4") or binding("PyQt5"):
-                assert type(widget) is B, widget
-            else:
-                assert type(widget) is QtWidgets.QPushButton, widget
-
-            if binding("PySide") or binding("PySide2"):
-                assert widget != button
-            else:
-                assert widget == button
-
-        finally:
-            app.exit()
-
-    def test_implicit_wrapInstance_expectations():
-        """Tests expectations for implicit usage of .wrapInstance
-
-        This includes testing whether the QtCore and QtWidgets namespaces have
-        any overlapping QObject subclass names.
-
-        """
-        import inspect
-        from Qt import QtCore, QtWidgets
-
-        core_class_names = set(
-            [
-                attr
-                for attr, value in QtCore.__dict__.items()
-                if inspect.isclass(value) and issubclass(value, QtCore.QObject)
-            ]
-        )
-        widget_class_names = set(
-            [
-                attr
-                for attr, value in QtWidgets.__dict__.items()
-                if inspect.isclass(value) and issubclass(value, QtCore.QObject)
-            ]
-        )
-        intersecting_class_names = core_class_names & widget_class_names
-        assert not intersecting_class_names
-
-    def test_isValid():
-        """.isValid and .delete work in all bindings"""
-        from Qt import QtCompat, QtCore, QtWidgets
-
-        app = QtWidgets.QApplication(sys.argv)
-
-        try:
-            obj = QtCore.QObject()
-            assert QtCompat.isValid(obj)
-            QtCompat.delete(obj)
-            assert not QtCompat.isValid(obj)
-
-            # Graphics Item
-            item = QtWidgets.QGraphicsItemGroup()
-            assert QtCompat.isValid(item)
-            QtCompat.delete(item)
-            assert not QtCompat.isValid(item)
-
-        finally:
-            app.exit()
-
-
-if binding("PyQt4"):
-
-    def test_preferred_pyqt4():
-        """QT_PREFERRED_BINDING = PyQt4 properly forces the binding"""
-        import Qt
-
-        assert Qt.__binding__ == "PyQt4", (
-            "PyQt4 should have been picked, instead got %s" % Qt.__binding__
-        )
-
-    def test_sip_api_qtpy():
-        """Preferred binding PyQt4 should have sip version 2"""
-
-        __import__("Qt")  # Bypass linter warning
-        import sip
-
-        assert sip.getapi("QString") == 2, (
-            "PyQt4 API version should be 2, instead is %s" % sip.getapi("QString")
-        )
-
-    if PYTHON == 2:
-
-        def test_sip_api_already_set():
-            """Raise ImportError with sip was set to 1 with no hint, default"""
-            __import__("PyQt4.QtCore")  # Bypass linter warning
-            import sip
-
-            sip.setapi("QString", 1)
-            assert_raises(ImportError, __import__, "Qt")
-
-        # A sip API hint of any kind bypasses ImportError
-        # on account of it being merely a hint.
-        def test_sip_api_1_1():
-            """sip=1, hint=1 == OK"""
-            import sip
-
-            sip.setapi("QString", 1)
-            os.environ["QT_SIP_API_HINT"] = "1"
-            __import__("Qt")  # Bypass linter warning
-
-        def test_sip_api_2_1():
-            """sip=2, hint=1 == WARNING"""
-            import sip
-
-            sip.setapi("QString", 2)
-            os.environ["QT_SIP_API_HINT"] = "1"
-
-            with captured_output() as out:
-                __import__("Qt")  # Bypass linter warning
-                stdout, stderr = out
-                assert stderr.getvalue().startswith("Warning:")
-
-        def test_sip_api_1_2():
-            """sip=1, hint=2 == WARNING"""
-            import sip
-
-            sip.setapi("QString", 1)
-            os.environ["QT_SIP_API_HINT"] = "2"
-
-            with captured_output() as out:
-                __import__("Qt")  # Bypass linter warning
-                stdout, stderr = out
-                assert stderr.getvalue().startswith("Warning:")
-
-        def test_sip_api_2_2():
-            """sip=2, hint=2 == OK"""
-            import sip
-
-            sip.setapi("QString", 2)
-            os.environ["QT_SIP_API_HINT"] = "2"
-            __import__("Qt")  # Bypass linter warning
-
-
 if binding("PyQt6"):
 
     def test_preferred_pyqt6():
@@ -1587,17 +1308,6 @@ if binding("PyQt5"):
 
         assert Qt.__binding__ == "PyQt5", (
             "PyQt5 should have been picked, instead got %s" % Qt.__binding__
-        )
-
-
-if binding("PySide"):
-
-    def test_preferred_pyside():
-        """QT_PREFERRED_BINDING = PySide properly forces the binding"""
-        import Qt
-
-        assert Qt.__binding__ == "PySide", (
-            "PySide should have been picked, instead got %s" % Qt.__binding__
         )
 
 
@@ -1650,9 +1360,8 @@ if binding("PySide6"):
         assert PySide6.QtCore.QStringListModel
 
 
-if IS_TOX and (binding("PyQt5") or binding("PyQt6") and sys.version_info < (3, 11)):
-    # Tox testing only supports PyQt5 and PyQt6. If using python 3.11+ PyQt5 is
-    # not available.
+if binding("PyQt5") or binding("PyQt6") and sys.version_info < (3, 11):
+    # NOTE: If using python 3.11+ PyQt5 is not available.
     def test_multiple_preferred():
         """QT_PREFERRED_BINDING = more than one binding excludes others"""
 
@@ -1669,23 +1378,8 @@ if IS_TOX and (binding("PyQt5") or binding("PyQt6") and sys.version_info < (3, 1
             os.environ["QT_PREFERRED_BINDING"] = current
 
 
-if not IS_TOX and (binding("PyQt4") or binding("PyQt5")):
-    # If not using tox, then only PyQt4 and PyQt5 are available to test with.
-    def test_multiple_preferred():
-        """QT_PREFERRED_BINDING = more than one binding excludes others"""
-
-        # PySide is the more desirable binding
-        os.environ["QT_PREFERRED_BINDING"] = os.pathsep.join(["PyQt4", "PyQt5"])
-
-        import Qt
-
-        assert Qt.__binding__ == "PyQt4", (
-            "PyQt4 should have been picked, instead got %s" % Qt.__binding__
-        )
-
-
 enum_file_1 = textwrap.dedent(
-    u"""
+    """
     # a comment Qt.WindowActive with an enum. This file uses enums from super-classes
     if QAbstractItemView.Box:
         print(QTreeWidget.Box)
@@ -1697,7 +1391,7 @@ enum_file_1 = textwrap.dedent(
 
 
 enum_file_2 = textwrap.dedent(
-    u"""
+    """
     # a comment QStyle.CC_ComboBox that has a enum in it
     print(QFrame.Box)
     print(self.Box)
@@ -1706,7 +1400,7 @@ enum_file_2 = textwrap.dedent(
 
 
 enum_check = textwrap.dedent(
-    u"""\
+    """\
     '__init__.py': Replace 'Qt.WindowActive' => 'Qt.WindowState.WindowActive' (1)
     '__init__.py': Replace 'QAbstractItemView.Box' => 'QAbstractItemView.Shape.Box' (1)
     '__init__.py': Replace 'QFrame.Box' => 'QFrame.Shape.Box' (1)
@@ -1718,8 +1412,8 @@ enum_check = textwrap.dedent(
 enum_check = enum_check.format(slash=os.sep)
 
 
-if binding("PySide2") and sys.version_info >= (3, 7):
-    # Qt_convert_enum.py only runs in python 3.7 or higher
+if binding("PySide2"):
+
     def test_convert_enum():
         """Test the output of running Qt_convert_enum.py."""
 
@@ -1786,7 +1480,7 @@ if binding("PySide2") and sys.version_info >= (3, 7):
             cmd + ["--partial", "-v"], cwd=self.tempdir, universal_newlines=True
         )
         check = textwrap.dedent(
-            u"""\
+            """\
             File: "__init__.py", line:7, for Box
                 self.Box
             File: "api{slash}example.py", line:4, for Box

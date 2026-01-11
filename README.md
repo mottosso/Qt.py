@@ -7,7 +7,7 @@
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/Qt-py/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Reviewed by Hound](https://img.shields.io/badge/Reviewed_by-Hound-8E64B0.svg)](https://houndci.com)
 
-Qt.py enables you to write software that runs on any of the 6 supported bindings - PySide6, PyQt6, PySide2, PyQt5, PySide and PyQt4.
+Qt.py enables you to write software that runs on any of the 4 supported bindings - PySide6, PyQt6, PySide2, PyQt5.
 
 <br>
 
@@ -15,6 +15,7 @@ Qt.py enables you to write software that runs on any of the 6 supported bindings
 
 | Date     | Version   | Event
 |:---------|:----------|:----------
+| Jan 2025 | [2.0.0][] | Dropped support for Qt 4 and python versions older than 3.7
 | May 2024 | [1.4.1][] | Added support for Qt 6
 | Jan 2024 | [1.3.9][] | Run CI on Github Actions, instead of Travis CI.
 | Sep 2020 | [1.3.0][] | Stability improvements and greater ability for `QtCompat.wrapInstance` to do its job
@@ -59,7 +60,6 @@ Qt.py enables you to write software that runs on any of the 6 supported bindings
   - [QtSiteConfig.py](#qtsiteconfigpy)
   - [Compile Qt Designer files](#compile-qt-designer-files)
   - [Loading Qt Designer files](#loading-qt-designer-files)
-  - [sip API v2](#sip-api-v2)
 - [Rules](#rules)
 - [How it works](#how-it-works)
 - [Known problems](#known-problems)
@@ -77,7 +77,7 @@ Qt.py enables you to write software that runs on any of the 6 supported bindings
 
 Write once, run in any binding.
 
-Qt.py was born in the film and visual effects industry to address the growing need for software capable of running with more than one flavor of the Qt bindings for Python - PySide, PySide2, PyQt4 and PyQt5.
+Qt.py was born in the film and visual effects industry to address the growing need for software capable of running with more than one flavor of the Qt bindings for Python - PySide6, PySide2, PyQt6 and PyQt5.
 
 | Goal                                 | Description
 |:-------------------------------------|:---------------
@@ -115,13 +115,13 @@ $ conda install qt.py
 
 ### Usage
 
-Use Qt.py as you would use PySide2.
+Use Qt.py as you would use PySide6.
 
 ![image](https://cloud.githubusercontent.com/assets/2152766/15653248/b5ce298e-2683-11e6-8c0c-f041ecae203d.png)
 
 ```python
 import sys
-from Qt import QtWidgets QtCompat
+from Qt import QtWidgets, QtCompat
 
 app = QtWidgets.QApplication(sys.argv)
 button = QtWidgets.QPushButton("Hello World")
@@ -137,7 +137,7 @@ QtCompat.QApplication.exec_()
 
 ### Documentation
 
-All members of `Qt` stem directly from those available via PySide2, along with these additional members.
+All members of `Qt` stem directly from those available via PySide6, along with these additional members.
 
 | Attribute               | Returns     | Description
 |:------------------------|:------------|:------------
@@ -160,11 +160,11 @@ Qt.py also provides compatibility wrappers for critical functionality that diffe
 
 | Attribute                                 | Returns     | Description
 |:------------------------------------------|:------------|:------------
-| `loadUi(uifile=str, baseinstance=QWidget)`| `QObject`   | Minimal wrapper of PyQt4.loadUi and PySide equivalent
+| `loadUi(uifile=str, baseinstance=QWidget)`| `QObject`   | Minimal wrapper of PyQt6.loadUi and PySide6 equivalent
 | `translate(...)`        					| `function`  | Compatibility wrapper around [QCoreApplication.translate][]
-| `wrapInstance(addr=long, type=QObject)`   | `QObject`   | Wrapper around `shiboken2.wrapInstance` and PyQt equivalent
-| `getCppPointer(object=QObject)`           | `long`      | Wrapper around `shiboken2.getCppPointer` and PyQt equivalent
-| `isValid(object=QObject)`                 | `bool`      | Wrapper around `shiboken2.isValid` and PyQt equivalent
+| `wrapInstance(addr=long, type=QObject)`   | `QObject`   | Wrapper around `shiboken6.wrapInstance` and PyQt equivalent
+| `getCppPointer(object=QObject)`           | `long`      | Wrapper around `shiboken6.getCppPointer` and PyQt equivalent
+| `isValid(object=QObject)`                 | `bool`      | Wrapper around `shiboken6.isValid` and PyQt equivalent
 | `dataChanged(topLeft=QModelIndex, bottomRight=QModelIndex, roles=[])` | `None` | Wrapper around `QtCore.QAbstractItemModel.dataChanged.emit`
 
 [QCoreApplication.translate]: https://doc.qt.io/qt-5/qcoreapplication.html#translate
@@ -177,6 +177,8 @@ Qt.py also provides compatibility wrappers for critical functionality that diffe
 ```
 
 #### Class specific compatibility objects
+
+> **Note:** Most of these are for Qt4 and Qt5 compatibility. With 2.0 dropping support for Qt4 many of them are no longer needed, but we are leaving them in for backwards compatibility.
 
 Between Qt4 and Qt5 there have been many classes and class members that are obsolete. Under Qt.QtCompat there are many classes with names matching the classes they provide compatibility functions. These will match the PySide2 naming convention.
 
@@ -200,19 +202,19 @@ These are the publicly facing environment variables that in one way or another a
 | QT_PREFERRED_BINDING_JSON | str   | Override order and content of binding to try. This can apply per Qt.py namespace.
 | QT_PREFERRED_BINDING      | str   | Override order and content of binding to try. Used if QT_PREFERRED_BINDING_JSON does not apply.
 | QT_VERBOSE                | bool  | Be a little more chatty about what's going on with Qt.py
-| QT_SIP_API_HINT           | int   | Sets the preferred SIP api version that will be attempted to set.
 
 <br>
 
 ##### Subset (or "common members")
 
-Members of Qt.py is a subset of PySide2. Which means for a member to be made accessible via Qt.py, it will need to (1) be accessible via PySide2 and (2) each of the other supported bindings. This excludes large portions of the Qt framework, including the newly added QtBluetooth and QtQuick3D modules but guarantees that anything you develop with Qt.py will work identically on any binding - PySide, PySide2, PySide6, PyQt4, PyQt5 and PyQt6. If you need to use such excluded modules with Qt.py, please see [QtSiteConfig.py](#qtsiteconfigpy).
+Members of Qt.py is a subset of PySide6. Which means for a member to be made accessible via Qt.py, it will need to (1) be accessible via PySide6 and (2) each of the other supported bindings. This excludes large portions of the Qt framework, including the newly added QtBluetooth and QtQuick3D modules but guarantees that anything you develop with Qt.py will work identically on any binding - PySide2, PySide6, PyQt5 and PyQt6. If you need to use such excluded modules with Qt.py, please see [QtSiteConfig.py](#qtsiteconfigpy).
 
 We call this subset "common members" and these can be generated by running the [tox tests](#running-tests). The membership tests will output all modules and members of each binding into individual JSON files. These JSON files are then compared and a `/.members/common_members.json` file is generated. The contents of the `members` dictionary of this file is copy-pasted into the `_common_members` dictionary of Qt.py. Please note that the script will only use the most up-to-date set of VFX Platform-stipulated software versions.
 
 See the wiki for a breakdown of what members are common across the supported Qt python bindings:
 - [Qt.py<1.4](https://github.com/mottosso/Qt.py/wiki/Membership-between-Qt4,Qt5): PySide2, PyQt5, PySide, PyQt4
 - [Qt.py=\=1.4.\*](https://github.com/mottosso/Qt.py/wiki/Membership-between-Qt4,Qt5,Qt6): PySide6, PyQt6, PySide2, PyQt5, PySide, PyQt4
+- [Qt.py=\=2.0.\*](https://github.com/mottosso/Qt.py/wiki/Membership-between-Qt5.13,Qt6): PySide6, PyQt6, PySide2, PyQt5. (Minimum Qt version 5.13)
 
 <br>
 
@@ -241,8 +243,8 @@ PyQt5
 Constrain available choices and order of discovery by supplying multiple values.
 
 ```bash
-# Try PyQt4 first and then PySide, but nothing else.
-$ export QT_PREFERRED_BINDING=PyQt4:PySide
+# Try PyQt5 first and then PySide2, but nothing else.
+$ export QT_PREFERRED_BINDING=PyQt5:PySide2
 ```
 
 Using the OS path separator (`os.pathsep`) which is `:` on Unix systems and `;` on Windows.
@@ -260,9 +262,9 @@ If you need to control the preferred choice of a specific vendored Qt.py you can
 This json data forces any code that uses `import Qt` or `import myproject.vendor.Qt` to use PyQt5(`from x import Qt` etc works too, this is based on `__name__` of the Qt.py being imported). Any other imports of a Qt module will use the "default" PySide2 only. If `"default"` is not provided or a Qt.py being used does not support `QT_PREFERRED_BINDING_JSON`, `QT_PREFERRED_BINDING` will be respected.
 
 ```bash
-# Try PyQt5 first and then PyQt4 for the Qt module name space.
-$ export QT_PREFERRED_BINDING_JSON="{"Qt":["PyQt5","PyQt4"]}"
-# Use PyQt4 for any other Qt module name spaces.
+# Try PyQt6 first and then PyQt5 for the Qt module name space.
+$ export QT_PREFERRED_BINDING_JSON="{"Qt":["PyQt6","PyQt5"]}"
+# Use PySide2 for any other Qt module name spaces.
 $ export QT_PREFERRED_BINDING=PySide2
 ```
 
@@ -327,7 +329,7 @@ Now you may use the file as you normally would, with Qt.py
 
 ##### Loading Qt Designer files
 
-The `uic.loadUi` function of PyQt4 and PyQt5 as well as the `QtUiTools.QUiLoader().load` function of PySide/PySide2 are mapped to a convenience function `loadUi`.
+The `uic.loadUi` function of PyQt5 and PyQt6 as well as the `QtUiTools.QUiLoader().load` function of PySide6/PySide2 are mapped to a convenience function `loadUi`.
 
 ```python
 import sys
@@ -363,38 +365,20 @@ Otherwise it will return the newly created instance of the user interface.
 
 <br>
 
-##### sip API v2
-
-If you're using PyQt4, `sip` attempts to set its API to version 2 for the following:
-- `QString`
-- `QVariant`
-- `QDate`
-- `QDateTime`
-- `QTextStream`
-- `QTime`
-- `QUrl`
-
-<br>
-<br>
-<br>
-
 ### Rules
 
 The PyQt and PySide bindings are similar, but not identical. Where there is ambiguity, there must to be a clear direction on which path to take.
 
 **Governing API**
 
-The official [Qt 5 documentation](http://doc.qt.io/qt-5/classes.html) is always right. Where the documentation lacks answers, PySide2 is right.
+The official [Qt 6 documentation](https://doc.qt.io/qt-6/classes.html) is always right. Where the documentation lacks answers, PySide6 is right.
 
 For example.
 
 ```python
-# PyQt5 adheres to PySide2 signals and slots
-PyQt5.Signal = PyQt5.pyqtSignal
-PyQt5.Slot = PyQt5.pyqtSlot
-
-# PySide2 adheres to the official documentation
-PySide2.QtCore.QStringListModel = PySide2.QtGui.QStringListModel
+# PyQt6 adheres to PySide6 signals and slots
+PyQt6.Signal = PyQt6.pyqtSignal
+PyQt6.Slot = PyQt6.pyqtSlot
 ```
 
 **Caveats**
@@ -529,8 +513,8 @@ Each test is run within it's own isolated process, so as to allow an `import` to
 Tests that are written at module level are run four times - once per binding - whereas tests written under a specific if-statement are run only for this particular binding.
 
 ```python
-if binding("PyQt4"):
-    def test_something_related_to_pyqt4():
+if binding("PyQt5"):
+    def test_something_related_to_pyqt5():
         pass
 ```
 
@@ -634,13 +618,12 @@ See [`CONTRIBUTING.md`](CONTRIBUTING.md) for more of the good stuff.
 
 **Upload to PyPI**
 
-To make a new release onto PyPI, you'll need to be mottosso and type this.
+To make a new release onto PyPI, you'll need to have the correct permissions and:
 
-```bash
-cd Qt.py
-python .\setup.py sdist bdist_wheel
-python -m twine upload .\dist\*
-```
+1. Increment version in Qt.py
+2. Make a new release here on GitHub, see prior releases for naming-scheme; but in short, it's the version string. No prefix or suffix.
+3. The rest is automated, the release ends up on PyPI shortly thereafter
+
 
 <br>
 <br>
@@ -661,6 +644,10 @@ python -m twine upload .\dist\*
 | `QAction().setShortcut(Qt.SHIFT\|Qt.Key_Backspace)` | `QAction().setShortcut(QKeySequence(Qt.Modifier.SHIFT\|Qt.Key.Key_Backspace))` | PyQt6 doesn't accept `QKeyCombination` objects for shortcuts. To work around this cast them to `QKeySequence` objects.
 | int(QMainWindow().windowState()) | QtCompat.enumValue(QMainWindow().windowState()) | Consistent interface to convert an enum to an `int`
 | | Submit your known issues here! |
+
+##### Removed Members (Qt.py\==2.\*)
+
+With the removal of support PySide and PyQt4 `Qt.QT_SIP_API_HINT` was removed. `Qt.IsPySide` and `Qt.IsPyQt4` remain for compatibility, but will always return `False` now.
 
 ##### Removed Members (Qt.py\==1.4.\*)
 
@@ -795,16 +782,18 @@ Must be replaced with:
 
 ```py
 font = QFont()
-font.setWeight(QFont.Bold)
+font.setWeight(QFont.Weight.Bold)
 ```
 
 Or:
 
+This method is not recommended.
 ```py
-font.setWeight(type(font).Bold)
+font.setWeight(type(font).Weight.Bold)
 ```
 
 Tedious and seemingly unnecessary.. But there you have it!
+> Note: You should also see [Fully Qualified Enums](CAVEATS.md#fully-qualified-enums)
 
 ##### Notes
 
