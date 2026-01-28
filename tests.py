@@ -1148,15 +1148,13 @@ def test_binding_states():
 def test_qtcompat_base_class():
     """Tests to ensure the QtCompat namespace object works as expected"""
     import sys
-    import Qt
-    from Qt import QtWidgets
-    from Qt import QtCompat
+    from Qt import QtCompat, QtCore, QtGui, QtWidgets
 
     if not QtWidgets.QApplication.instance():
         app = QtWidgets.QApplication(sys.argv)
     else:
         app = QtWidgets.QApplication.instance()  # noqa: F841
-    header = QtWidgets.QHeaderView(get_enum(Qt.QtCore.Qt, "Orientation", "Horizontal"))
+    header = QtWidgets.QHeaderView(get_enum(QtCore.Qt, "Orientation", "Horizontal"))
 
     # Spot check compatibility functions
     QtCompat.QHeaderView.setSectionsMovable(header, False)
@@ -1168,6 +1166,21 @@ def test_qtcompat_base_class():
     button = QtWidgets.QPushButton("TestImage")
     pixmap = QtCompat.QWidget.grab(button)
     assert not pixmap.isNull()
+
+    # Check QMouseEvent compatibility wrappers
+    # NOTE: PyQt6 requires passing QPointF. Also it doesn't have Qt.MouseButtons
+    mouse_event = QtGui.QMouseEvent(
+        QtCore.QEvent.Type.MouseButtonPress,
+        QtCore.QPointF(1, 1),
+        QtCore.QPointF(2, 2),
+        QtCore.QPointF(3, 3),
+        QtCore.Qt.MouseButton.LeftButton,
+        QtCore.Qt.MouseButton.LeftButton | QtCore.Qt.MouseButton.RightButton,
+        QtCore.Qt.KeyboardModifier.NoModifier,
+    )
+    assert QtCompat.QMouseEvent.globalPosition(mouse_event) == QtCore.QPointF(3, 3)
+    assert QtCompat.QMouseEvent.position(mouse_event) == QtCore.QPointF(1, 1)
+    assert QtCompat.QMouseEvent.scenePosition(mouse_event) == QtCore.QPointF(2, 2)
 
 
 def test_cli():

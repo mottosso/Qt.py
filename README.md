@@ -67,7 +67,6 @@ Qt.py enables you to write software that runs on any of the 4 supported bindings
 - [Projects using Qt.py](#projects-using-qtpy)
 - [Projects similar to Qt.py](#projects-similar-to-qtpy)
 - [Developer guide](#developer-guide)
-- [Qt 6 transition guide](#qt-6-transition-guide)
 
 <br>
 <br>
@@ -643,6 +642,15 @@ To make a new release onto PyPI, you'll need to have the correct permissions and
 | `QApplication.exec_()` | `QtCompat.QApplication.exec_()` | `exec` is no longer a reserved keyword in python 3 so Qt6 is removing the underscore from `exec_`. Qt.py is using exec_ to preserve compatibility with python 2. The same applies for `QCoreApplication`.
 | `QAction().setShortcut(Qt.SHIFT\|Qt.Key_Backspace)` | `QAction().setShortcut(QKeySequence(Qt.Modifier.SHIFT\|Qt.Key.Key_Backspace))` | PyQt6 doesn't accept `QKeyCombination` objects for shortcuts. To work around this cast them to `QKeySequence` objects.
 | int(QMainWindow().windowState()) | QtCompat.enumValue(QMainWindow().windowState()) | Consistent interface to convert an enum to an `int`
+| `QMouseEvent.globalPos()` | `QtCompat.QMouseEvent.globalPosition(event).toPoint()` | Deprecated in Qt6.0 and removed from PyQt6, currently still in PySide6. Changes from `QPoint` to `QPointF`.
+| `QMouseEvent.globalX()` | `QtCompat.QMouseEvent.globalPosition(event).x()` | See `globalPos()`
+| `QMouseEvent.globalY()` | `QtCompat.QMouseEvent.globalPosition(event).y()` | See `globalPos()`
+| `QMouseEvent.localPos()` | `QtCompat.QMouseEvent.position(event)` | See `globalPos()`
+| `QMouseEvent.pos()` | `QtCompat.QMouseEvent.position(event)` | Changes from `QPoint` to `QPointF`. See `globalPos()`
+| `QMouseEvent.screenPos()` | `QtCompat.QMouseEvent.globalPosition(event)` | See `globalPos()`
+| `QMouseEvent.windowPos()` | `QtCompat.QMouseEvent.scenePosition(event)` | See `globalPos()`
+| `QMouseEvent.x()` | `QtCompat.QMouseEvent.position(event).x()` | See `globalPos()`
+| `QMouseEvent.y()` | `QtCompat.QMouseEvent.position(event).y()` | See `globalPos()`
 | | Submit your known issues here! |
 
 ##### Removed Members (Qt.py\==2.\*)

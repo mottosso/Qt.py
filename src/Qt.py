@@ -1577,6 +1577,11 @@ _compatibility_members = {
             "fromString": "QtGui.QFont.fromString",
             "setWeight": "QtGui.QFont.setWeight",
         },
+        "QMouseEvent": {
+            "globalPosition": "QtGui.QMouseEvent.globalPosition",
+            "position": "QtGui.QMouseEvent.position",
+            "scenePosition": "QtGui.QMouseEvent.scenePosition",
+        },
         "Qt": {
             "MidButton": "QtCore.Qt.MiddleButton",
         },
@@ -1607,6 +1612,11 @@ _compatibility_members = {
         "QFont": {
             "fromString": "QtGui.QFont.fromString",
             "setWeight": "QtGui.QFont.setWeight",
+        },
+        "QMouseEvent": {
+            "globalPosition": "QtGui.QMouseEvent.globalPosition",
+            "position": "QtGui.QMouseEvent.position",
+            "scenePosition": "QtGui.QMouseEvent.scenePosition",
         },
         "Qt": {
             "MidButton": "QtCore.Qt.MouseButton.MiddleButton",
@@ -1640,6 +1650,11 @@ _compatibility_members = {
             "fromString": "QtGui.QFont.fromString",
             "setWeight": "QtGui.QFont.setWeight",
         },
+        "QMouseEvent": {
+            "globalPosition": "QtGui.QMouseEvent.screenPos",
+            "position": "QtGui.QMouseEvent.localPos",
+            "scenePosition": "QtGui.QMouseEvent.windowPos",
+        },
         "Qt": {
             "MidButton": "QtCore.Qt.MiddleButton",
         },
@@ -1670,6 +1685,11 @@ _compatibility_members = {
         "QFont": {
             "fromString": "QtGui.QFont.fromString",
             "setWeight": "QtGui.QFont.setWeight",
+        },
+        "QMouseEvent": {
+            "globalPosition": "QtGui.QMouseEvent.screenPos",
+            "position": "QtGui.QMouseEvent.localPos",
+            "scenePosition": "QtGui.QMouseEvent.windowPos",
         },
         "Qt": {
             "MidButton": "QtCore.Qt.MiddleButton",
