@@ -2133,17 +2133,17 @@ def _none():
 
 def _log(text):
     if QT_VERBOSE:
-        sys.stdout.write("Qt.py [info]: %s\n" % text)
+        print("Qt.py [info]: %s" % text)
 
 
 def _warn(text):
     try:
-        sys.stderr.write("Qt.py [warning]: %s\n" % text)
+        print(f"Qt.py [warning]: {text}", file=sys.stderr)
     except UnicodeDecodeError:
         import locale
 
         encoding = locale.getpreferredencoding()
-        sys.stderr.write("Qt.py [warning]: %s\n" % text.decode(encoding))
+        print(f"Qt.py [warning]: {text.decode(encoding)}", file=sys.stderr)
 
 
 def _convert(lines):
