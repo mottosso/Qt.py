@@ -1,6 +1,8 @@
 [build-system]
-# Supports python 3.7 building
-requires = ["setuptools <= 68.0.0"]
+# PyPi.org requires normalized package names. The wheel/sdists must be built
+# with python 3.9 or newer. This will still build and install with python 3.7.
+# but those versions can no longer be uploaded to pypi.org.
+requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
 [project]

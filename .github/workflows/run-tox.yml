@@ -149,5 +149,5 @@ jobs:
         with:
           name: pip-packages
           path: |
-            dist/Qt[._]py-*.whl
-            dist/Qt[._]py-*.tar.gz
+            dist/qt[._]py-*.whl
+            dist/qt[._]py-*.tar.gz
