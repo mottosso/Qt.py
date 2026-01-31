@@ -1,1 +1,1 @@
-from PySide2.QtWebEngineWidgets import *
+from PySide6.QtWebEngineWidgets import *

@@ -1,1 +1,1 @@
-from PySide2.QtPositioning import *
+from PySide6.QtPositioning import *

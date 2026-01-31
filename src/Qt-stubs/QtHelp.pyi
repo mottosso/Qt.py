@@ -1,1 +1,1 @@
-from PySide2.QtHelp import *
+from PySide6.QtHelp import *

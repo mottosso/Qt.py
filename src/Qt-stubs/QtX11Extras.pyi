@@ -1,1 +1,1 @@
-from PySide2.QtX11Extras import *
+from PySide6.QtX11Extras import *

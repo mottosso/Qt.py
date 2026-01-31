@@ -1,1 +1,1 @@
-from PySide2.QtOpenGL import *
+from PySide6.QtOpenGL import *

@@ -1,1 +1,1 @@
-from PySide2.QtBluetooth import *
+from PySide6.QtBluetooth import *

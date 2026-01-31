@@ -12,7 +12,7 @@ description = """\
     PySide2, PySide6, PyQt5 and PyQt6.\
 """
 authors = [{name = "Marcus Ottosson", email = "konstruktion@gmail.com"}]
-dependencies = ["types-PySide2"]
+dependencies = ["types-PySide6"]
 dynamic = ["version"]
 license = {text = "MIT"}
 requires-python = ">=3.7"
@@ -137,3 +137,12 @@ line-ending = "auto"
 "src/Qt-stubs/*.pyi" = [
     "F403",
 ]
+
+[tool.mypy]
+python_version="3.9"
+check_untyped_defs = true
+warn_unused_ignores = true
+files = [
+    "tests.py",
+]
+disable_error_code = ["truthy-function"]

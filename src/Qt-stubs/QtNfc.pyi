@@ -1,1 +1,1 @@
-from PySide2.QtNfc import *
+from PySide6.QtNfc import *

@@ -1,1 +1,1 @@
-from PySide2.QtLocation import *
+from PySide6.QtLocation import *

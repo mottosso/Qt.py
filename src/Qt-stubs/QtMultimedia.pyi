@@ -1,1 +1,1 @@
-from PySide2.QtMultimedia import *
+from PySide6.QtMultimedia import *
