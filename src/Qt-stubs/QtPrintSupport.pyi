@@ -1,1 +1,1 @@
-from PySide2.QtPrintSupport import *
+from PySide6.QtPrintSupport import *

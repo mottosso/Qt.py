@@ -1,1 +1,1 @@
-from PySide2.QtNetwork import *
+from PySide6.QtNetwork import *

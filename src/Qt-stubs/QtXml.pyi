@@ -1,1 +1,1 @@
-from PySide2.QtXml import *
+from PySide6.QtXml import *

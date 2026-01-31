@@ -9,18 +9,19 @@ import imp
 import shutil
 import tempfile
 import textwrap
+import typing
 import subprocess
 import contextlib
 import json
 from pathlib import Path
 
 # Third-party dependency
-import six
+import six  # type: ignore
 
 
 try:
     # Try importing assert_raises from nose.tools
-    from nose.tools import assert_raises
+    from nose.tools import assert_raises  # type: ignore
 except ImportError:
     # Fallback: Define assert_raises using unittest if the import fails
     import unittest
@@ -333,7 +334,7 @@ def setup():
     all tests have completed.
 
     """
-    self.tempdir = Path(tempfile.mkdtemp())
+    self.tempdir = Path(tempfile.mkdtemp())  # type: ignore
 
     def saveUiFile(filename, ui_template):
         filename = self.tempdir / filename
@@ -341,11 +342,11 @@ def setup():
             f.write(ui_template)
         return filename
 
-    self.ui_qwidget = saveUiFile("qwidget.ui", qwidget_ui)
-    self.ui_qmainwindow = saveUiFile("qmainwindow.ui", qmainwindow_ui)
-    self.ui_qdialog = saveUiFile("qdialog.ui", qdialog_ui)
-    self.ui_qdockwidget = saveUiFile("qdockwidget.ui", qdockwidget_ui)
-    self.ui_qpycustomwidget = saveUiFile("qcustomwidget.ui", qcustomwidget_ui)
+    self.ui_qwidget = saveUiFile("qwidget.ui", qwidget_ui)  # type: ignore
+    self.ui_qmainwindow = saveUiFile("qmainwindow.ui", qmainwindow_ui)  # type: ignore
+    self.ui_qdialog = saveUiFile("qdialog.ui", qdialog_ui)  # type: ignore
+    self.ui_qdockwidget = saveUiFile("qdockwidget.ui", qdockwidget_ui)  # type: ignore
+    self.ui_qpycustomwidget = saveUiFile("qcustomwidget.ui", qcustomwidget_ui)  # type: ignore
 
 
 def setUpModule():
@@ -500,8 +501,8 @@ def test_load_ui_signals():
     win = QtWidgets.QWidget()
     QtCompat.loadUi(self.ui_qwidget, win)
 
-    win.lineEdit.setText("Hello")
-    assert str(win.label.text()) == "Hello", "lineEdit signal did not fire"
+    win.lineEdit.setText("Hello")  # type: ignore  # dynamic attributes are not type safe
+    assert str(win.label.text()) == "Hello", "lineEdit signal did not fire"  # type: ignore  # dynamic attributes are not type safe
 
     app.exit()
 
@@ -1157,10 +1158,10 @@ def test_qtcompat_base_class():
     header = QtWidgets.QHeaderView(get_enum(QtCore.Qt, "Orientation", "Horizontal"))
 
     # Spot check compatibility functions
-    QtCompat.QHeaderView.setSectionsMovable(header, False)
-    assert QtCompat.QHeaderView.sectionsMovable(header) is False
-    QtCompat.QHeaderView.setSectionsMovable(header, True)
-    assert QtCompat.QHeaderView.sectionsMovable(header) is True
+    QtCompat.QHeaderView.setSectionsMovable(header, False)  # type: ignore  # compat is not type safe
+    assert QtCompat.QHeaderView.sectionsMovable(header) is False  # type: ignore  # compat is not type safe
+    QtCompat.QHeaderView.setSectionsMovable(header, True)  # type: ignore  # compat is not type safe
+    assert QtCompat.QHeaderView.sectionsMovable(header) is True  # type: ignore  # compat is not type safe
 
     # Verify that the grab function actually generates a non-null image
     button = QtWidgets.QPushButton("TestImage")
@@ -1193,7 +1194,7 @@ def test_cli():
     )
 
     out, err = popen.communicate()
-    assert out.startswith(b"usage: Qt.py"), "\n%s" % out
+    assert out.startswith(b"usage: Qt.py"), "\n%s" % out.decode()
 
 
 def test_membership():
@@ -1206,7 +1207,7 @@ def test_membership():
     """
     import Qt
 
-    common_members = Qt._common_members.copy()
+    common_members = Qt._common_members.copy()  # type: ignore
 
     ref_path = REPO_ROOT / ".members" / "common_members.json"
     assert ref_path.exists(), (
@@ -1253,7 +1254,7 @@ def test_misplaced():
     assert Qt.QtWidgets.QFileSystemModel
     # QAction was moved, then moved back. Qt.py exposes both places
     assert Qt.QtGui.QAction
-    assert Qt.QtGui.QAction == Qt.QtWidgets.QAction
+    assert Qt.QtGui.QAction == Qt.QtWidgets.QAction  # type: ignore
 
 
 def test__extras__():
@@ -1288,9 +1289,9 @@ def test_missing():
     """Missing members of Qt.py have been defined with placeholders"""
     import Qt
 
-    missing_members = Qt._missing_members.copy()
+    missing_members = Qt._missing_members.copy()  # type: ignore
 
-    missing = []
+    missing: typing.List[str] = []
     for module, members in missing_members.items():
         mod = getattr(Qt, module)
         missing.extend(
@@ -1413,7 +1414,7 @@ if binding("PySide2"):
         """Qt.py may be use alongside the actual binding"""
 
         from Qt import QtCore
-        import PySide2.QtGui
+        import PySide2.QtGui  # type: ignore
 
         # Qt remaps QStringListModel
         assert QtCore.QStringListModel
@@ -1630,7 +1631,7 @@ if binding("PySide6") and sys.version_info >= (3, 7):
     def test_convert_enum_duplicates():
         """Tests using PySide6 to show enums with duplicate short names"""
         code_path = REPO_ROOT / "src" / "Qt_convert_enum.py"
-        cmd = [sys.executable, code_path, "--show", "dups"]
+        cmd = [sys.executable, str(code_path), "--show", "dups"]
         proc = subprocess.run(
             cmd,
             stdout=subprocess.PIPE,

@@ -1,1 +1,1 @@
-from PySide2.QtWebSockets import *
+from PySide6.QtWebSockets import *

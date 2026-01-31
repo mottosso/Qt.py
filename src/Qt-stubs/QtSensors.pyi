@@ -1,1 +1,1 @@
-from PySide2.QtSensors import *
+from PySide6.QtSensors import *

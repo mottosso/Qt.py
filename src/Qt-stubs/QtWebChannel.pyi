@@ -1,1 +1,1 @@
-from PySide2.QtWebChannel import *
+from PySide6.QtWebChannel import *

@@ -1,1 +1,1 @@
-from PySide2.QtWebKit import *
+from PySide6.QtWebKit import *

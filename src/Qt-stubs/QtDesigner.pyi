@@ -1,1 +1,1 @@
-from PySide2.QtDesigner import *
+from PySide6.QtDesigner import *

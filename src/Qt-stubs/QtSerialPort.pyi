@@ -1,1 +1,1 @@
-from PySide2.QtSerialPort import *
+from PySide6.QtSerialPort import *

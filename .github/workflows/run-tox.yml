@@ -69,6 +69,20 @@ jobs:
           which tox
           tox -e format
 
+  stubs:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup tox
+        uses: ./.github/actions/setup-tox
+
+      - name: Run Tox
+        run: |
+          which tox
+          tox -e mypy
+
   test:
     runs-on: ubuntu-22.04
     needs: membership
