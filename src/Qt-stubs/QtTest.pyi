@@ -1,1 +1,1 @@
-from PySide2.QtTest import *
+from PySide6.QtTest import *

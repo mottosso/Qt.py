@@ -1,1 +1,1 @@
-from PySide2.QtSql import *
+from PySide6.QtSql import *

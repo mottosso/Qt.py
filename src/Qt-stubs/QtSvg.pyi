@@ -1,1 +1,1 @@
-from PySide2.QtSvg import *
+from PySide6.QtSvg import *

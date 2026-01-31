@@ -1,1 +1,1 @@
-from PySide2.QtQuickWidgets import *
+from PySide6.QtQuickWidgets import *
