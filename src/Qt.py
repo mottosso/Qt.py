@@ -46,7 +46,7 @@ import importlib
 import json
 
 
-__version__ = "2.0.3"
+__version__ = "2.1.0.dev1"
 
 # Enable support for `from Qt import *`
 __all__ = [
@@ -94,6 +94,7 @@ _common_members = {
         "QBuffer",
         "QByteArray",
         "QByteArrayMatcher",
+        "QCalendar",
         "QCborError",
         "QCborKnownTags",
         "QCborSimpleType",
@@ -110,6 +111,7 @@ _common_members = {
         "QDataStream",
         "QDate",
         "QDateTime",
+        "QDeadlineTimer",
         "QDir",
         "QDirIterator",
         "QDynamicPropertyChangeEvent",
@@ -168,6 +170,7 @@ _common_members = {
         "QReadWriteLock",
         "QRect",
         "QRectF",
+        "QRecursiveMutex",
         "QRegularExpression",
         "QRegularExpressionMatch",
         "QRegularExpressionMatchIterator",
@@ -248,6 +251,8 @@ _common_members = {
         "QClipboard",
         "QCloseEvent",
         "QColor",
+        "QColorConstants",
+        "QColorSpace",
         "QConicalGradient",
         "QContextMenuEvent",
         "QCursor",
@@ -329,6 +334,7 @@ _common_members = {
         "QRasterWindow",
         "QRawFont",
         "QRegion",
+        "QRegularExpressionValidator",
         "QResizeEvent",
         "QScreen",
         "QScrollEvent",
@@ -400,8 +406,10 @@ _common_members = {
         "QHelpEngineCore",
         "QHelpFilterData",
         "QHelpFilterEngine",
+        "QHelpFilterSettingsWidget",
         "QHelpIndexModel",
         "QHelpIndexWidget",
+        "QHelpLink",
         "QHelpSearchEngine",
         "QHelpSearchQuery",
         "QHelpSearchQueryWidget",
@@ -562,6 +570,7 @@ _common_members = {
         "QRemoteObjectRegistry",
         "QRemoteObjectRegistryHost",
         "QRemoteObjectReplica",
+        "QRemoteObjectSourceLocationInfo",
     ],
     "QtSensors": [
         "QAccelerometer",
@@ -617,6 +626,7 @@ _common_members = {
         "QTiltSensor",
         "qoutputrange",
     ],
+    "QtSerialPort": ["QSerialPort", "QSerialPortInfo"],
     "QtSql": [
         "QSql",
         "QSqlDatabase",
@@ -636,6 +646,7 @@ _common_members = {
     ],
     "QtSvg": ["QSvgGenerator", "QSvgRenderer"],
     "QtTest": ["QTest"],
+    "QtTextToSpeech": ["QTextToSpeech", "QVoice"],
     "QtWebChannel": ["QWebChannel", "QWebChannelAbstractTransport"],
     "QtWebSockets": [
         "QMaskGenerator",
@@ -857,10 +868,10 @@ The "_common_members_sources" list is generated using the
 
 """
 _common_members_sources = [
-    "PyQt5-5.13.2_py-3.7.17",
     "PyQt5-5.15.11_py-3.9.25",
+    "PyQt5-5.15.9_py-3.7.17",
     "PyQt6-6.7.1_py-3.11.14",
-    "PySide2-5.13.2_py-3.7.17",
+    "PySide2-5.15.2.1_py-3.7.17",
     "PySide2-5.15.2.1_py-3.9.25",
     "PySide6-6.5.3_py-3.11.14",
 ]
