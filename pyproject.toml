@@ -33,8 +33,9 @@ classifiers = [
 
 [project.optional-dependencies]
 dev = [
-    "ruff",
-    "tox>=4,<5"
+    "mypy==1.19.1",
+    "ruff==0.15.0",
+    "tox>=4,<5",
 ]
 
 [project.readme]
