@@ -106,7 +106,7 @@ $ conda install qt.py
 ```
 
 - Pro tip: **Never use the latest commit for production**. Instead, use [the latest release](https://github.com/mottosso/Qt.py/releases). That way, when you read bug reports or make one for yourself you will be able to match a version with the problem without which you will not know which fixes apply to you nor would we be able to help you. Installing via pip or conda as above ensures you are provided the latest *stable* release. Unstable releases are suffixed with a `.b`, e.g. `1.1.0.b3`.
-- Pro tip: Supports [vendoring](https://fredrikaverpil.github.io/blog/2017/05/04/vendoring-qtpy/)
+- Pro tip: Supports [vendoring](https://fredrikaverpil.github.io/blog/2017/05/04/vendoring-qt.py/)
 
 <br>
 <br>
