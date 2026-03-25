@@ -1259,14 +1259,30 @@ def test_misplaced():
     import Qt
 
     assert Qt.QtWidgets.QFileSystemModel
+
     # Members moved from QtWidgets to QtGui with Qt6 are available from both locations
-    assert Qt.QtGui.QAction
-    assert Qt.QtGui.QAction == Qt.QtWidgets.QAction  # type: ignore
-    assert Qt.QtGui.QActionGroup == Qt.QtWidgets.QActionGroup  # type: ignore
-    assert Qt.QtGui.QShortcut == Qt.QtWidgets.QShortcut  # type: ignore
-    assert Qt.QtGui.QUndoCommand == Qt.QtWidgets.QUndoCommand  # type: ignore
-    assert Qt.QtGui.QUndoGroup == Qt.QtWidgets.QUndoGroup  # type: ignore
-    assert Qt.QtGui.QUndoStack == Qt.QtWidgets.QUndoStack  # type: ignore
+    def from_dot_str(name) -> Qt.QtCore.QObject:
+        """Get the object stored on Qt.{name}."""
+        ret = Qt
+        for part in name.split("."):
+            ret = getattr(ret, part)
+        return ret  # type: ignore[return-value]
+
+    # Gather all multi-destination misplaced members for all bindings
+    multi_dests: dict[str, set] = {}
+    for binding in Qt._misplaced_members.values():  # type: ignore
+        for src, dests in binding.items():
+            if isinstance(dests, list) and dests[0] is True:
+                multi_dests.setdefault(src, set()).update(dests[1:])
+
+    # Verify that the current binding has access to all multi-destinations
+    # This effectively does this comparison
+    #   `assert Qt.QtGui.QAction == Qt.QtWidgets.QAction`
+    for src, dests in multi_dests.items():
+        src_obj = from_dot_str(src)
+        for dest in dests:
+            dest_obj = from_dot_str(dest)
+            assert src_obj == dest_obj, f"Checking {src} <> {dest}"
 
 
 def test__extras__():
