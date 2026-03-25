@@ -104,6 +104,14 @@ jobs:
           # Cy2024, Cy2025
           'test-py311-PySide6.5',
           'test-py311-PyQt6.5',
+          # Cy2026
+          'test-py313-PySide6.8',
+          'test-py313-PyQt6.8',
+          # Test newer versions of python/Qt than VFX Reference Platform has chosen
+          'test-py312-PySide6.8',
+          'test-py312-PyQt6.8',
+          'test-py314-PySide6.9',
+          'test-py314-PyQt6.9',
         ]
 
     env:

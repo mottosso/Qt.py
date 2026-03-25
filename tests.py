@@ -1194,7 +1194,10 @@ def test_cli():
     )
 
     out, err = popen.communicate()
-    assert out.startswith(b"usage: Qt.py"), "\n%s" % out.decode()
+    # Py 3.14 seems to add color codes by default, strip them out for the test
+    # Source - https://stackoverflow.com/a/14693789
+    out = re.sub(rb"\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])", b"", out)
+    assert b"usage: Qt.py" in out, "\n%s" % out.decode()
 
 
 def test_membership():
