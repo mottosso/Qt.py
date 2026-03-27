@@ -14,7 +14,7 @@ Qt.py enables you to write software that runs on any of the 4 supported bindings
 
 | Date     | Version   | Event
 |:---------|:----------|:----------
-| Jan 2025 | [2.0.0][] | Dropped support for Qt 4 and python versions older than 3.7
+| Jan 2025 | [2.0.1][] | Dropped support for Qt 4 and python versions older than 3.7
 | May 2024 | [1.4.1][] | Added support for Qt 6
 | Jan 2024 | [1.3.9][] | Run CI on Github Actions, instead of Travis CI.
 | Sep 2020 | [1.3.0][] | Stability improvements and greater ability for `QtCompat.wrapInstance` to do its job
@@ -36,6 +36,7 @@ Qt.py enables you to write software that runs on any of the 4 supported bindings
 [1.3.0]: https://github.com/mottosso/Qt.py/releases/tag/1.3.0
 [1.3.9]: https://github.com/mottosso/Qt.py/releases/tag/1.3.9
 [1.4.1]: https://github.com/mottosso/Qt.py/releases/tag/1.4.1
+[2.0.1]: https://github.com/mottosso/Qt.py/releases/tag/2.0.1
 
 ##### Guides
 

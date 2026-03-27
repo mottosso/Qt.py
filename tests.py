@@ -1259,9 +1259,14 @@ def test_misplaced():
     import Qt
 
     assert Qt.QtWidgets.QFileSystemModel
-    # QAction was moved, then moved back. Qt.py exposes both places
+    # Members moved from QtWidgets to QtGui with Qt6 are available from both locations
     assert Qt.QtGui.QAction
     assert Qt.QtGui.QAction == Qt.QtWidgets.QAction  # type: ignore
+    assert Qt.QtGui.QActionGroup == Qt.QtWidgets.QActionGroup  # type: ignore
+    assert Qt.QtGui.QShortcut == Qt.QtWidgets.QShortcut  # type: ignore
+    assert Qt.QtGui.QUndoCommand == Qt.QtWidgets.QUndoCommand  # type: ignore
+    assert Qt.QtGui.QUndoGroup == Qt.QtWidgets.QUndoGroup  # type: ignore
+    assert Qt.QtGui.QUndoStack == Qt.QtWidgets.QUndoStack  # type: ignore
 
 
 def test__extras__():
