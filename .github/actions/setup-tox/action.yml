@@ -63,9 +63,7 @@ runs:
 
     - name: Install dependencies
       shell: bash
-      # NOTE: The virtualenv and tox requirements support finding python 3.7,
-      # if we drop support for python 3.7 the reqs can be simplified and updated
       run: |
         python --version
         python -m pip install --upgrade pip
-        python -m pip install "tox<=4.23.2" "virtualenv<=20.26.6"
+        python -m pip install tox
