@@ -19,7 +19,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup tox
         uses: ./.github/actions/setup-tox
@@ -34,7 +34,7 @@ jobs:
           ls -lha .members
 
       - name: Upload membership report
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: membership-report
           path: |
@@ -45,7 +45,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup tox
         uses: ./.github/actions/setup-tox
@@ -59,7 +59,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup tox
         uses: ./.github/actions/setup-tox
@@ -73,7 +73,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup tox
         uses: ./.github/actions/setup-tox
@@ -120,14 +120,14 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup tox
         uses: ./.github/actions/setup-tox
 
       - name: Download coverage artifacts
         # This is needed by the test_membership test
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           name: membership-report
           path: .members
@@ -157,9 +157,9 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v6
         with:
           python-version: "3.10.x"
       - name: Install build dependency
@@ -167,7 +167,7 @@ jobs:
       - name: Build a binary wheel and a source tarball
         run: python3 -m build
       - name: Upload packages.
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: pip-packages
           path: |
