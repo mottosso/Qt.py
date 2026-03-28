@@ -5,7 +5,6 @@
 [![PyPI version](https://badge.fury.io/py/Qt.py.svg)](https://pypi.python.org/pypi/Qt.py)
 [![Anaconda-Server Badge](https://anaconda.org/conda-forge/qt.py/badges/version.svg)](https://anaconda.org/conda-forge/qt.py)
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/Qt-py/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-[![Reviewed by Hound](https://img.shields.io/badge/Reviewed_by-Hound-8E64B0.svg)](https://houndci.com)
 
 Qt.py enables you to write software that runs on any of the 4 supported bindings - PySide6, PyQt6, PySide2, PyQt5.
 
@@ -15,7 +14,8 @@ Qt.py enables you to write software that runs on any of the 4 supported bindings
 
 | Date     | Version   | Event
 |:---------|:----------|:----------
-| Jan 2025 | [2.0.0][] | Dropped support for Qt 4 and python versions older than 3.7
+| Jan 2025 | [2.1.0][] | Dropped support for Qt versions older than 5.15
+| Jan 2025 | [2.0.1][] | Dropped support for Qt 4 and python versions older than 3.7
 | May 2024 | [1.4.1][] | Added support for Qt 6
 | Jan 2024 | [1.3.9][] | Run CI on Github Actions, instead of Travis CI.
 | Sep 2020 | [1.3.0][] | Stability improvements and greater ability for `QtCompat.wrapInstance` to do its job
@@ -37,13 +37,15 @@ Qt.py enables you to write software that runs on any of the 4 supported bindings
 [1.3.0]: https://github.com/mottosso/Qt.py/releases/tag/1.3.0
 [1.3.9]: https://github.com/mottosso/Qt.py/releases/tag/1.3.9
 [1.4.1]: https://github.com/mottosso/Qt.py/releases/tag/1.4.1
+[2.0.1]: https://github.com/mottosso/Qt.py/releases/tag/2.0.1
+[2.1.0]: https://github.com/mottosso/Qt.py/releases/tag/2.1.0
 
 ##### Guides
 
 - [Qt 6 Transition Guide](#qt-6-transition-guide)
 - [Developing with Qt.py](https://fredrikaverpil.github.io/blog/2016/07/25/developing-with-qtpy/)
 - [Dealing with Maya 2017 and PySide2](https://fredrikaverpil.github.io/blog/2016/07/25/dealing-with-maya-2017-and-pyside2/)
-- [Vendoring Qt.py](https://fredrikaverpil.github.io/blog/2017/05/04/vendoring-qtpy/)
+- [Vendoring Qt.py](https://fredrikaverpil.github.io/blog/2017/05/04/vendoring-qt.py/)
 - [Udemy Course](https://www.udemy.com/python-for-maya/learn/v4/t/lecture/6027394)
 - [PythonBytes #77](https://pythonbytes.fm/episodes/show/77/you-don-t-have-to-be-a-workaholic-to-win) (Starts at 5:00)
 
@@ -106,7 +108,7 @@ $ conda install qt.py
 ```
 
 - Pro tip: **Never use the latest commit for production**. Instead, use [the latest release](https://github.com/mottosso/Qt.py/releases). That way, when you read bug reports or make one for yourself you will be able to match a version with the problem without which you will not know which fixes apply to you nor would we be able to help you. Installing via pip or conda as above ensures you are provided the latest *stable* release. Unstable releases are suffixed with a `.b`, e.g. `1.1.0.b3`.
-- Pro tip: Supports [vendoring](https://fredrikaverpil.github.io/blog/2017/05/04/vendoring-qtpy/)
+- Pro tip: Supports [vendoring](https://fredrikaverpil.github.io/blog/2017/05/04/vendoring-qt.py/)
 
 <br>
 <br>
@@ -214,6 +216,7 @@ See the wiki for a breakdown of what members are common across the supported Qt 
 - [Qt.py<1.4](https://github.com/mottosso/Qt.py/wiki/Membership-between-Qt4,Qt5): PySide2, PyQt5, PySide, PyQt4
 - [Qt.py=\=1.4.\*](https://github.com/mottosso/Qt.py/wiki/Membership-between-Qt4,Qt5,Qt6): PySide6, PyQt6, PySide2, PyQt5, PySide, PyQt4
 - [Qt.py=\=2.0.\*](https://github.com/mottosso/Qt.py/wiki/Membership-between-Qt5.13,Qt6): PySide6, PyQt6, PySide2, PyQt5. (Minimum Qt version 5.13)
+- [Qt.py=\=2.1.\*](https://github.com/mottosso/Qt.py/wiki/Membership-between-Qt5,Qt6): PySide6, PyQt6, PySide2, PyQt5. (Minimum Qt version 5.15)
 
 <br>
 
