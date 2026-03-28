@@ -5,7 +5,7 @@ import io
 import os
 import re
 import sys
-import imp
+import importlib.util
 import shutil
 import tempfile
 import textwrap
@@ -452,11 +452,15 @@ def test_environment():
 
     if sys.version_info >= (3, 11):
         # NOTE: Qt6 is only available for python 3.11 and above
-        imp.find_module("PySide6")
-        imp.find_module("PyQt6")
+        if importlib.util.find_spec("PySide6") is None:
+            raise ImportError("No module named 'PySide6'")
+        if importlib.util.find_spec("PyQt6") is None:
+            raise ImportError("No module named 'PyQt6'")
     else:
-        imp.find_module("PySide2")
-        imp.find_module("PyQt5")
+        if importlib.util.find_spec("PySide2") is None:
+            raise ImportError("No module named 'PySide2'")
+        if importlib.util.find_spec("PyQt5") is None:
+            raise ImportError("No module named 'PyQt5'")
 
 
 def test_load_ui_returntype():
@@ -1194,7 +1198,10 @@ def test_cli():
     )
 
     out, err = popen.communicate()
-    assert out.startswith(b"usage: Qt.py"), "\n%s" % out.decode()
+    # Py 3.14 seems to add color codes by default, strip them out for the test
+    # Source - https://stackoverflow.com/a/14693789
+    out = re.sub(rb"\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])", b"", out)
+    assert b"usage: Qt.py" in out, "\n%s" % out.decode()
 
 
 def test_membership():
@@ -1252,9 +1259,30 @@ def test_misplaced():
     import Qt
 
     assert Qt.QtWidgets.QFileSystemModel
-    # QAction was moved, then moved back. Qt.py exposes both places
-    assert Qt.QtGui.QAction
-    assert Qt.QtGui.QAction == Qt.QtWidgets.QAction  # type: ignore
+
+    # Members moved from QtWidgets to QtGui with Qt6 are available from both locations
+    def from_dot_str(name) -> Qt.QtCore.QObject:
+        """Get the object stored on Qt.{name}."""
+        ret = Qt
+        for part in name.split("."):
+            ret = getattr(ret, part)
+        return ret  # type: ignore[return-value]
+
+    # Gather all multi-destination misplaced members for all bindings
+    multi_dests: dict[str, set] = {}
+    for binding in Qt._misplaced_members.values():  # type: ignore
+        for src, dests in binding.items():
+            if isinstance(dests, list) and dests[0] is True:
+                multi_dests.setdefault(src, set()).update(dests[1:])
+
+    # Verify that the current binding has access to all multi-destinations
+    # This effectively does this comparison
+    #   `assert Qt.QtGui.QAction == Qt.QtWidgets.QAction`
+    for src, dests in multi_dests.items():
+        src_obj = from_dot_str(src)
+        for dest in dests:
+            dest_obj = from_dot_str(dest)
+            assert src_obj == dest_obj, f"Checking {src} <> {dest}"
 
 
 def test__extras__():
