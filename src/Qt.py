@@ -1594,10 +1594,40 @@ _compatibility_members = {
             "fromString": "QtGui.QFont.fromString",
             "setWeight": "QtGui.QFont.setWeight",
         },
+        "QDragEnterEvent": {
+            "position": "QtGui.QDragEnterEvent.position",
+        },
+        "QDragMoveEvent": {
+            "position": "QtGui.QDragMoveEvent.position",
+        },
+        "QDropEvent": {
+            "position": "QtGui.QDropEvent.position",
+        },
+        "QEnterEvent": {
+            "globalPosition": "QtGui.QEnterEvent.globalPosition",
+            "position": "QtGui.QEnterEvent.position",
+            "scenePosition": "QtGui.QEnterEvent.scenePosition",
+        },
+        "QHoverEvent": {
+            "position": "QtGui.QHoverEvent.position",
+        },
         "QMouseEvent": {
             "globalPosition": "QtGui.QMouseEvent.globalPosition",
             "position": "QtGui.QMouseEvent.position",
             "scenePosition": "QtGui.QMouseEvent.scenePosition",
+        },
+        "QNativeGestureEvent": {
+            "globalPosition": "QtGui.QNativeGestureEvent.globalPosition",
+            "position": "QtGui.QNativeGestureEvent.position",
+            "scenePosition": "QtGui.QNativeGestureEvent.scenePosition",
+        },
+        "QTabletEvent": {
+            "globalPosition": "QtGui.QTabletEvent.globalPosition",
+            "position": "QtGui.QTabletEvent.position",
+        },
+        "QWheelEvent": {
+            "globalPosition": "QtGui.QWheelEvent.globalPosition",
+            "position": "QtGui.QWheelEvent.position",
         },
         "Qt": {
             "MidButton": "QtCore.Qt.MiddleButton",
@@ -1630,10 +1660,40 @@ _compatibility_members = {
             "fromString": "QtGui.QFont.fromString",
             "setWeight": "QtGui.QFont.setWeight",
         },
+        "QDragEnterEvent": {
+            "position": "QtGui.QDragEnterEvent.position",
+        },
+        "QDragMoveEvent": {
+            "position": "QtGui.QDragMoveEvent.position",
+        },
+        "QDropEvent": {
+            "position": "QtGui.QDropEvent.position",
+        },
+        "QEnterEvent": {
+            "globalPosition": "QtGui.QEnterEvent.globalPosition",
+            "position": "QtGui.QEnterEvent.position",
+            "scenePosition": "QtGui.QEnterEvent.scenePosition",
+        },
+        "QHoverEvent": {
+            "position": "QtGui.QHoverEvent.position",
+        },
         "QMouseEvent": {
             "globalPosition": "QtGui.QMouseEvent.globalPosition",
             "position": "QtGui.QMouseEvent.position",
             "scenePosition": "QtGui.QMouseEvent.scenePosition",
+        },
+        "QNativeGestureEvent": {
+            "globalPosition": "QtGui.QNativeGestureEvent.globalPosition",
+            "position": "QtGui.QNativeGestureEvent.position",
+            "scenePosition": "QtGui.QNativeGestureEvent.scenePosition",
+        },
+        "QTabletEvent": {
+            "globalPosition": "QtGui.QTabletEvent.globalPosition",
+            "position": "QtGui.QTabletEvent.position",
+        },
+        "QWheelEvent": {
+            "globalPosition": "QtGui.QWheelEvent.globalPosition",
+            "position": "QtGui.QWheelEvent.position",
         },
         "Qt": {
             "MidButton": "QtCore.Qt.MouseButton.MiddleButton",
@@ -1667,10 +1727,40 @@ _compatibility_members = {
             "fromString": "QtGui.QFont.fromString",
             "setWeight": "QtGui.QFont.setWeight",
         },
+        "QDragEnterEvent": {
+            "position": "QtGui.QDragEnterEvent.pos",
+        },
+        "QDragMoveEvent": {
+            "position": "QtGui.QDragMoveEvent.pos",
+        },
+        "QDropEvent": {
+            "position": "QtGui.QDropEvent.pos",
+        },
+        "QEnterEvent": {
+            "globalPosition": "QtGui.QEnterEvent.screenPos",
+            "position": "QtGui.QEnterEvent.localPos",
+            "scenePosition": "QtGui.QEnterEvent.windowPos",
+        },
+        "QHoverEvent": {
+            "position": "QtGui.QHoverEvent.pos",
+        },
         "QMouseEvent": {
             "globalPosition": "QtGui.QMouseEvent.screenPos",
             "position": "QtGui.QMouseEvent.localPos",
             "scenePosition": "QtGui.QMouseEvent.windowPos",
+        },
+        "QNativeGestureEvent": {
+            "globalPosition": "QtGui.QNativeGestureEvent.screenPos",
+            "position": "QtGui.QNativeGestureEvent.localPos",
+            "scenePosition": "QtGui.QNativeGestureEvent.windowPos",
+        },
+        "QTabletEvent": {
+            "globalPosition": "QtGui.QTabletEvent.globalPos",
+            "position": "QtGui.QTabletEvent.pos",
+        },
+        "QWheelEvent": {
+            "globalPosition": "QtGui.QWheelEvent.globalPos",
+            "position": "QtGui.QWheelEvent.pos",
         },
         "Qt": {
             "MidButton": "QtCore.Qt.MiddleButton",
@@ -1703,10 +1793,40 @@ _compatibility_members = {
             "fromString": "QtGui.QFont.fromString",
             "setWeight": "QtGui.QFont.setWeight",
         },
+        "QDragEnterEvent": {
+            "position": "QtGui.QDragEnterEvent.pos",
+        },
+        "QDragMoveEvent": {
+            "position": "QtGui.QDragMoveEvent.pos",
+        },
+        "QDropEvent": {
+            "position": "QtGui.QDropEvent.pos",
+        },
+        "QEnterEvent": {
+            "globalPosition": "QtGui.QEnterEvent.screenPos",
+            "position": "QtGui.QEnterEvent.localPos",
+            "scenePosition": "QtGui.QEnterEvent.windowPos",
+        },
+        "QHoverEvent": {
+            "position": "QtGui.QHoverEvent.pos",
+        },
         "QMouseEvent": {
             "globalPosition": "QtGui.QMouseEvent.screenPos",
             "position": "QtGui.QMouseEvent.localPos",
             "scenePosition": "QtGui.QMouseEvent.windowPos",
+        },
+        "QNativeGestureEvent": {
+            "globalPosition": "QtGui.QNativeGestureEvent.screenPos",
+            "position": "QtGui.QNativeGestureEvent.localPos",
+            "scenePosition": "QtGui.QNativeGestureEvent.windowPos",
+        },
+        "QTabletEvent": {
+            "globalPosition": "QtGui.QTabletEvent.globalPos",
+            "position": "QtGui.QTabletEvent.pos",
+        },
+        "QWheelEvent": {
+            "globalPosition": "QtGui.QWheelEvent.globalPos",
+            "position": "QtGui.QWheelEvent.pos",
         },
         "Qt": {
             "MidButton": "QtCore.Qt.MiddleButton",
