@@ -1697,7 +1697,6 @@ _compatibility_members = {
         },
         "Qt": {
             "MidButton": "QtCore.Qt.MouseButton.MiddleButton",
-            "WindowMinMaxButtonsHint": "QtCore.Qt.WindowType.WindowMinMaxButtonsHint",
         },
     },
     "PySide2": {
