@@ -1188,6 +1188,34 @@ def test_qtcompat_base_class():
     assert QtCompat.QMouseEvent.scenePosition(mouse_event) == QtCore.QPointF(2, 2)
 
 
+def test_all_compatibility_members():
+    """Verify that _compatibility_members is defined for all supported bindings.
+
+    This ensures that all bindings will have consistent QtCompat class wrappers.
+    """
+    import Qt
+
+    # Build class mapping information for each binding and including all bindings
+    all_bindings = set()
+    bindings = {  # type: ignore[var-annotated]
+        "PySide6": set(),
+        "PyQt6": set(),
+        "PySide2": set(),
+        "PyQt5": set(),
+    }
+    compat = Qt._compatibility_members.items()  # type: ignore[attr-defined]
+    for binding, classes in compat:
+        for cls, members in classes.items():
+            mappings = {(cls, m) for m in members}
+            all_bindings.update(mappings)
+            bindings[binding].update(mappings)
+
+    # Verify that each binding contains all_bindings
+    for binding, mappings in bindings.items():
+        diff = all_bindings.difference(mappings)
+        assert not diff, f"QtCompat class binding {binding} does not define {diff}"
+
+
 def test_cli():
     """Qt.py is available from the command-line"""
     env = os.environ.copy()
