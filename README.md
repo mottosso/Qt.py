@@ -5,7 +5,6 @@
 [![PyPI version](https://badge.fury.io/py/Qt.py.svg)](https://pypi.python.org/pypi/Qt.py)
 [![Anaconda-Server Badge](https://anaconda.org/conda-forge/qt.py/badges/version.svg)](https://anaconda.org/conda-forge/qt.py)
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/Qt-py/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-[![Reviewed by Hound](https://img.shields.io/badge/Reviewed_by-Hound-8E64B0.svg)](https://houndci.com)
 
 Qt.py enables you to write software that runs on any of the 4 supported bindings - PySide6, PyQt6, PySide2, PyQt5.
 
@@ -15,7 +14,8 @@ Qt.py enables you to write software that runs on any of the 4 supported bindings
 
 | Date     | Version   | Event
 |:---------|:----------|:----------
-| Jan 2025 | [2.0.0][] | Dropped support for Qt 4 and python versions older than 3.7
+| Jan 2025 | [2.1.0][] | Dropped support for Qt versions older than 5.15
+| Jan 2025 | [2.0.1][] | Dropped support for Qt 4 and python versions older than 3.7
 | May 2024 | [1.4.1][] | Added support for Qt 6
 | Jan 2024 | [1.3.9][] | Run CI on Github Actions, instead of Travis CI.
 | Sep 2020 | [1.3.0][] | Stability improvements and greater ability for `QtCompat.wrapInstance` to do its job
@@ -37,13 +37,15 @@ Qt.py enables you to write software that runs on any of the 4 supported bindings
 [1.3.0]: https://github.com/mottosso/Qt.py/releases/tag/1.3.0
 [1.3.9]: https://github.com/mottosso/Qt.py/releases/tag/1.3.9
 [1.4.1]: https://github.com/mottosso/Qt.py/releases/tag/1.4.1
+[2.0.1]: https://github.com/mottosso/Qt.py/releases/tag/2.0.1
+[2.1.0]: https://github.com/mottosso/Qt.py/releases/tag/2.1.0
 
 ##### Guides
 
 - [Qt 6 Transition Guide](#qt-6-transition-guide)
 - [Developing with Qt.py](https://fredrikaverpil.github.io/blog/2016/07/25/developing-with-qtpy/)
 - [Dealing with Maya 2017 and PySide2](https://fredrikaverpil.github.io/blog/2016/07/25/dealing-with-maya-2017-and-pyside2/)
-- [Vendoring Qt.py](https://fredrikaverpil.github.io/blog/2017/05/04/vendoring-qtpy/)
+- [Vendoring Qt.py](https://fredrikaverpil.github.io/blog/2017/05/04/vendoring-qt.py/)
 - [Udemy Course](https://www.udemy.com/python-for-maya/learn/v4/t/lecture/6027394)
 - [PythonBytes #77](https://pythonbytes.fm/episodes/show/77/you-don-t-have-to-be-a-workaholic-to-win) (Starts at 5:00)
 
@@ -106,7 +108,7 @@ $ conda install qt.py
 ```
 
 - Pro tip: **Never use the latest commit for production**. Instead, use [the latest release](https://github.com/mottosso/Qt.py/releases). That way, when you read bug reports or make one for yourself you will be able to match a version with the problem without which you will not know which fixes apply to you nor would we be able to help you. Installing via pip or conda as above ensures you are provided the latest *stable* release. Unstable releases are suffixed with a `.b`, e.g. `1.1.0.b3`.
-- Pro tip: Supports [vendoring](https://fredrikaverpil.github.io/blog/2017/05/04/vendoring-qtpy/)
+- Pro tip: Supports [vendoring](https://fredrikaverpil.github.io/blog/2017/05/04/vendoring-qt.py/)
 
 <br>
 <br>
@@ -214,6 +216,7 @@ See the wiki for a breakdown of what members are common across the supported Qt 
 - [Qt.py<1.4](https://github.com/mottosso/Qt.py/wiki/Membership-between-Qt4,Qt5): PySide2, PyQt5, PySide, PyQt4
 - [Qt.py=\=1.4.\*](https://github.com/mottosso/Qt.py/wiki/Membership-between-Qt4,Qt5,Qt6): PySide6, PyQt6, PySide2, PyQt5, PySide, PyQt4
 - [Qt.py=\=2.0.\*](https://github.com/mottosso/Qt.py/wiki/Membership-between-Qt5.13,Qt6): PySide6, PyQt6, PySide2, PyQt5. (Minimum Qt version 5.13)
+- [Qt.py=\=2.1.\*](https://github.com/mottosso/Qt.py/wiki/Membership-between-Qt5,Qt6): PySide6, PyQt6, PySide2, PyQt5. (Minimum Qt version 5.15)
 
 <br>
 
@@ -630,27 +633,70 @@ To make a new release onto PyPI, you'll need to have the correct permissions and
 
 ### Qt 6 Transition Guide
 
+<!-- Tooltips used by the table -->
+[tt-event-pos]: ## "In Qt6 many but not all classes had their pos methods re-worked and simplified. If you are working with a instance of the a given class replace the old call with a QtCompat replacement class. The `.toPoint()` calls are only needed if you want to preserve the older int type instead of a float."
+
 | Replace | With | Notes
 |:--------|:-----|:----------------------------
+| `int(QMainWindow().windowState())` | `QtCompat.enumValue(QMainWindow().windowState())` | Consistent interface to convert an enum to an `int`
+| `QAction().setShortcut(Qt.SHIFT\|Qt.Key_Backspace)` | `QAction().setShortcut(QKeySequence(Qt.Modifier.SHIFT\|Qt.Key.Key_Backspace))` | PyQt6 doesn't accept `QKeyCombination` objects for shortcuts. To work around this cast them to `QKeySequence` objects.
+| `QApplication.exec_()` | `QtCompat.QApplication.exec_()` | `exec` is no longer a reserved keyword in python 3 so Qt6 is removing the underscore from `exec_`. Qt.py is using exec_ to preserve compatibility with python 2. The same applies for `QCoreApplication`.
+| `QDragEnterEvent.pos()` | `QtCompat.QDragEnterEvent.position(event).toPoint()` | [Event Pos][tt-event-pos]
+| `QDragEnterEvent.posF()` | `QtCompat.QDragEnterEvent.position(event)` | [Event Pos][tt-event-pos]
+| `QDragMoveEvent.pos()` | `QtCompat.QDragMoveEvent.position(event).toPoint()` | [Event Pos][tt-event-pos]
+| `QDragMoveEvent.posF()` | `QtCompat.QDragMoveEvent.position(event)` | [Event Pos][tt-event-pos]
+| `QDropEvent.pos()` | `QtCompat.QDropEvent.position(event).toPoint()` | [Event Pos][tt-event-pos]
+| `QDropEvent.posF()` | `QtCompat.QDropEvent.position(event)` | [Event Pos][tt-event-pos]
+| `QEnterEvent.globalPos()` | `QtCompat.QEnterEvent.globalPosition(event).toPoint()` | [Event Pos][tt-event-pos]
+| `QEnterEvent.globalX()` | `QtCompat.QEnterEvent.globalPosition(event).toPoint().x()` | [Event Pos][tt-event-pos]
+| `QEnterEvent.globalY()` | `QtCompat.QEnterEvent.globalPosition(event).toPoint().y()` | [Event Pos][tt-event-pos]
+| `QEnterEvent.localPos()` | `QtCompat.QEnterEvent.position(event)` | [Event Pos][tt-event-pos]
+| `QEnterEvent.pos()` | `QtCompat.QEnterEvent.position(event).toPoint()` | [Event Pos][tt-event-pos]
+| `QEnterEvent.screenPos()` | `QtCompat.QEnterEvent.globalPosition(event)` | [Event Pos][tt-event-pos]
+| `QEnterEvent.windowPos()` | `QtCompat.QEnterEvent.scenePosition(event)` | [Event Pos][tt-event-pos]
+| `QEnterEvent.x()` | `QtCompat.QEnterEvent.position(event).toPoint().x()` | [Event Pos][tt-event-pos]
+| `QEnterEvent.y()` | `QtCompat.QEnterEvent.position(event).toPoint().y()` | [Event Pos][tt-event-pos]
+| `QEvent().Resize` | `QEvent.Type.Resize` | All instances of class don't have enums, see [see Fully Qualified Enums](CAVEATS.md#fully-qualified-enums)
 | `QFont().fromString(...)` | `QtCompat.QFont.fromString(font, ...)` | Qt6 adds extra data to font strings and changes weight if you want to pass a font string from Qt6 to Qt4/5 use this
 | `QFont().setWeight(...)` | `QtCompat.QFont.setWeight(font, ...)`
 | `QFont().setWeight(QFont().Bold)` | `QFont().setWeight(QFont.Weight.Bold)` | Instance of class don't have enums, see [see Fully Qualified Enums](CAVEATS.md#fully-qualified-enums)
-| `QEvent().Resize` | `QEvent.Type.Resize` | All instances of class don't have enums, see [see Fully Qualified Enums](CAVEATS.md#fully-qualified-enums)
-| `QtCore.Qt.MidButton`  | `QtCompat.Qt.MidButton`
+| `QHoverEvent.pos()` | `QtCompat.QHoverEvent.position(event).toPoint()` | [Event Pos][tt-event-pos]
+| `QHoverEvent.posF()` | `QtCompat.QHoverEvent.position(event)` | [Event Pos][tt-event-pos]
 | `QLabel.setPixmap(str)` | `QLabel.setPixmap(QPixmap())` | Can't take a string anymore (tested in Maya 2025.0)
 | `QModelIndex.child` | `QModel.index` | This one is apparently from Qt 4 and should not have been in Qt.py to begin with
-| `QApplication.exec_()` | `QtCompat.QApplication.exec_()` | `exec` is no longer a reserved keyword in python 3 so Qt6 is removing the underscore from `exec_`. Qt.py is using exec_ to preserve compatibility with python 2. The same applies for `QCoreApplication`.
-| `QAction().setShortcut(Qt.SHIFT\|Qt.Key_Backspace)` | `QAction().setShortcut(QKeySequence(Qt.Modifier.SHIFT\|Qt.Key.Key_Backspace))` | PyQt6 doesn't accept `QKeyCombination` objects for shortcuts. To work around this cast them to `QKeySequence` objects.
-| int(QMainWindow().windowState()) | QtCompat.enumValue(QMainWindow().windowState()) | Consistent interface to convert an enum to an `int`
-| `QMouseEvent.globalPos()` | `QtCompat.QMouseEvent.globalPosition(event).toPoint()` | Deprecated in Qt6.0 and removed from PyQt6, currently still in PySide6. Changes from `QPoint` to `QPointF`.
-| `QMouseEvent.globalX()` | `QtCompat.QMouseEvent.globalPosition(event).x()` | See `globalPos()`
-| `QMouseEvent.globalY()` | `QtCompat.QMouseEvent.globalPosition(event).y()` | See `globalPos()`
-| `QMouseEvent.localPos()` | `QtCompat.QMouseEvent.position(event)` | See `globalPos()`
-| `QMouseEvent.pos()` | `QtCompat.QMouseEvent.position(event)` | Changes from `QPoint` to `QPointF`. See `globalPos()`
-| `QMouseEvent.screenPos()` | `QtCompat.QMouseEvent.globalPosition(event)` | See `globalPos()`
-| `QMouseEvent.windowPos()` | `QtCompat.QMouseEvent.scenePosition(event)` | See `globalPos()`
-| `QMouseEvent.x()` | `QtCompat.QMouseEvent.position(event).x()` | See `globalPos()`
-| `QMouseEvent.y()` | `QtCompat.QMouseEvent.position(event).y()` | See `globalPos()`
+| `QMouseEvent.globalPos()` | `QtCompat.QMouseEvent.globalPosition(event).toPoint()` | [Event Pos][tt-event-pos]
+| `QMouseEvent.globalX()` | `QtCompat.QMouseEvent.globalPosition(event).toPoint().x()` | [Event Pos][tt-event-pos]
+| `QMouseEvent.globalY()` | `QtCompat.QMouseEvent.globalPosition(event).toPoint().y()` | [Event Pos][tt-event-pos]
+| `QMouseEvent.localPos()` | `QtCompat.QMouseEvent.position(event)` | [Event Pos][tt-event-pos]
+| `QMouseEvent.pos()` | `QtCompat.QMouseEvent.position(event).toPoint()` | [Event Pos][tt-event-pos]
+| `QMouseEvent.screenPos()` | `QtCompat.QMouseEvent.globalPosition(event)` | [Event Pos][tt-event-pos]
+| `QMouseEvent.windowPos()` | `QtCompat.QMouseEvent.scenePosition(event)` | [Event Pos][tt-event-pos]
+| `QMouseEvent.x()` | `QtCompat.QMouseEvent.position(event).toPoint().x()` | [Event Pos][tt-event-pos]
+| `QMouseEvent.y()` | `QtCompat.QMouseEvent.position(event).toPoint().y()` | [Event Pos][tt-event-pos]
+| `QNativeGestureEvent.globalPos()` | `QtCompat.QNativeGestureEvent.globalPosition(event).toPoint()` | [Event Pos][tt-event-pos]
+| `QNativeGestureEvent.localPos()` | `QtCompat.QNativeGestureEvent.position(event)` | [Event Pos][tt-event-pos]
+| `QNativeGestureEvent.pos()` | `QtCompat.QNativeGestureEvent.position(event).toPoint()` | [Event Pos][tt-event-pos]
+| `QNativeGestureEvent.screenPos()` | `QtCompat.QNativeGestureEvent.globalPosition(event)` | [Event Pos][tt-event-pos]
+| `QNativeGestureEvent.windowPos()` | `QtCompat.QNativeGestureEvent.scenePosition(event)` | [Event Pos][tt-event-pos]
+| `QNativeGestureEvent.x()` | `QtCompat.QNativeGestureEvent.position(event).toPoint().x()` | [Event Pos][tt-event-pos]
+| `QNativeGestureEvent.y()` | `QtCompat.QNativeGestureEvent.position(event).toPoint().y()` | [Event Pos][tt-event-pos]
+| `QTabletEvent.globalPos()` | `QtCompat.QTabletEvent.globalPosition(event).toPoint()` | [Event Pos][tt-event-pos]
+| `QTabletEvent.globalPosF()` | `QtCompat.QTabletEvent.globalPosition(event)` | [Event Pos][tt-event-pos]
+| `QTabletEvent.globalX()` | `QtCompat.QTabletEvent.globalPosition(event).toPoint().x()` | [Event Pos][tt-event-pos]
+| `QTabletEvent.globalY()` | `QtCompat.QTabletEvent.globalPosition(event).toPoint().y()` | [Event Pos][tt-event-pos]
+| `QTabletEvent.pos()` | `QtCompat.QTabletEvent.position(event).toPoint()` | [Event Pos][tt-event-pos]
+| `QTabletEvent.posF()` | `QtCompat.QTabletEvent.position(event)` | [Event Pos][tt-event-pos]
+| `QTabletEvent.x()` | `QtCompat.QTabletEvent.position(event).toPoint().x()` | [Event Pos][tt-event-pos]
+| `QTabletEvent.y()` | `QtCompat.QTabletEvent.position(event).toPoint().y()` | [Event Pos][tt-event-pos]
+| `QtCore.Qt.MidButton` | `QtCompat.Qt.MidButton`
+| `QWheelEvent.globalPos()` | `QtCompat.QWheelEvent.globalPosition(event).toPoint()` | [Event Pos][tt-event-pos]
+| `QWheelEvent.globalPosF()` | `QtCompat.QWheelEvent.globalPosition(event)` | [Event Pos][tt-event-pos]
+| `QWheelEvent.globalX()` | `QtCompat.QWheelEvent.globalPosition(event).toPoint().x()` | [Event Pos][tt-event-pos]
+| `QWheelEvent.globalY()` | `QtCompat.QWheelEvent.globalPosition(event).toPoint().y()` | [Event Pos][tt-event-pos]
+| `QWheelEvent.pos()` | `QtCompat.QWheelEvent.position(event).toPoint()` | [Event Pos][tt-event-pos]
+| `QWheelEvent.posF()` | `QtCompat.QWheelEvent.position(event)` | [Event Pos][tt-event-pos]
+| `QWheelEvent.x()` | `QtCompat.QWheelEvent.position(event).toPoint().x()` | [Event Pos][tt-event-pos]
+| `QWheelEvent.y()` | `QtCompat.QWheelEvent.position(event).toPoint().y()` | [Event Pos][tt-event-pos]
 | | Submit your known issues here! |
 
 ##### Removed Members (Qt.py\==2.\*)
