@@ -1503,6 +1503,21 @@ def test__extras__():
     assert Qt.QtOpenGL.QOpenGLFunctions_2_1
     assert Qt.QtOpenGL.QOpenGLFunctions_4_1_Core
 
+    # PyQt6 6.7 and lower doesn't include QtStateMachine, exclude it from the test
+    ver = [int(x) for x in Qt.__binding_version__.split(".")]
+    if binding("PyQt6") and ver[:2] <= [6, 7]:
+        return
+    assert Qt.QtStateMachine.QAbstractState
+    assert Qt.QtStateMachine.QAbstractTransition
+    assert Qt.QtStateMachine.QEventTransition
+    assert Qt.QtStateMachine.QFinalState
+    assert Qt.QtStateMachine.QHistoryState
+    assert Qt.QtStateMachine.QKeyEventTransition
+    assert Qt.QtStateMachine.QMouseEventTransition
+    assert Qt.QtStateMachine.QSignalTransition
+    assert Qt.QtStateMachine.QState
+    assert Qt.QtStateMachine.QStateMachine
+
 
 def test__extras__none():
     """Preferring None should add the __extras__ modules"""
