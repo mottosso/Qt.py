@@ -14,7 +14,8 @@ Qt.py enables you to write software that runs on any of the 4 supported bindings
 
 | Date     | Version   | Event
 |:---------|:----------|:----------
-| Jan 2025 | [2.0.1][] | Dropped support for Qt 4 and python versions older than 3.7
+| Sep 2026 | [2.1.0][] | Dropped support for Qt versions older than 5.15. Removes [QRegExp](#qregexp-and-qregularexpression) and QState.
+| Jan 2026 | [2.0.1][] | Dropped support for Qt 4 and python versions older than 3.7
 | May 2024 | [1.4.1][] | Added support for Qt 6
 | Jan 2024 | [1.3.9][] | Run CI on Github Actions, instead of Travis CI.
 | Sep 2020 | [1.3.0][] | Stability improvements and greater ability for `QtCompat.wrapInstance` to do its job
@@ -37,6 +38,7 @@ Qt.py enables you to write software that runs on any of the 4 supported bindings
 [1.3.9]: https://github.com/mottosso/Qt.py/releases/tag/1.3.9
 [1.4.1]: https://github.com/mottosso/Qt.py/releases/tag/1.4.1
 [2.0.1]: https://github.com/mottosso/Qt.py/releases/tag/2.0.1
+[2.1.0]: https://github.com/mottosso/Qt.py/releases/tag/2.1.0
 
 ##### Guides
 
@@ -214,6 +216,7 @@ See the wiki for a breakdown of what members are common across the supported Qt 
 - [Qt.py<1.4](https://github.com/mottosso/Qt.py/wiki/Membership-between-Qt4,Qt5): PySide2, PyQt5, PySide, PyQt4
 - [Qt.py=\=1.4.\*](https://github.com/mottosso/Qt.py/wiki/Membership-between-Qt4,Qt5,Qt6): PySide6, PyQt6, PySide2, PyQt5, PySide, PyQt4
 - [Qt.py=\=2.0.\*](https://github.com/mottosso/Qt.py/wiki/Membership-between-Qt5.13,Qt6): PySide6, PyQt6, PySide2, PyQt5. (Minimum Qt version 5.13)
+- [Qt.py=\=2.1.\*](https://github.com/mottosso/Qt.py/wiki/Membership-between-Qt5,Qt6): PySide6, PyQt6, PySide2, PyQt5. (Minimum Qt version 5.15)
 
 <br>
 
@@ -696,7 +699,93 @@ To make a new release onto PyPI, you'll need to have the correct permissions and
 | `QWheelEvent.y()` | `QtCompat.QWheelEvent.position(event).toPoint().y()` | [Event Pos][tt-event-pos]
 | | Submit your known issues here! |
 
-##### Removed Members (Qt.py\==2.\*)
+##### Added and Removed Members (Qt.py\==2.1.\*)
+
+With the removal of support PySide and PyQt4 `Qt.QT_SIP_API_HINT` was removed. `Qt.IsPySide` and `Qt.IsPyQt4` remain for compatibility, but will always return `False` now.
+
+###### QRegExp and QRegularExpression
+
+For `Qt.py>=1.4.1,<2.1.0` Qt.py incorrectly exposes `QtCore.QRegularExpression` as `QtCore.RegExp` in Qt6. We assumed that QRegExp was compatible, and while it works for simply defining a regex to pass to Qt, it's interface isn't compatible with `QRegExp`'s interface. QRegExp was removed in Qt6.
+The same was done for `QtGui.QRegularExpressionValidator` as `QtGui.QRegExpValidator`.
+
+`Qt.py>=2.1.0` removes `QRegExp` and `QRegExpValidator`. It's recommended that where possible code should be rewritten to use the native python `re` module.
+However if you need to pass a regex to a Qt validator or similar use `QRegularExpression`.
+
+###### QStateMachine
+
+`QState` and other state classes were moved from `QtCore` to a dedicated `QtStateMachine` module in Qt6. While PyQt6 6.5-6.7 doesn't include this module, newer releases of PyQt6 match PySide6 so these have been moved into the new module.
+
+<details>
+
+<summary> See added and removed members</summary>
+
+**Added**:
+
+```json
+{
+    "QtCore":
+    [
+        "QCalendar",
+        "QDeadlineTimer",
+        "QRecursiveMutex"
+    ],
+    "QtGui":
+    [
+        "QColorConstants",
+        "QColorSpace",
+        "QRegularExpressionValidator"
+    ],
+    "QtHelp":
+    [
+        "QHelpFilterSettingsWidget",
+        "QHelpLink"
+    ],
+    "QtRemoteObjects":
+    [
+        "QRemoteObjectSourceLocationInfo"
+    ],
+    "QtSerialPort":
+    [
+        "QSerialPort",
+        "QSerialPortInfo"
+    ],
+    "QtStateMachine":
+    [
+        "QAbstractState",
+        "QAbstractTransition",
+        "QEventTransition",
+        "QFinalState",
+        "QHistoryState",
+        "QKeyEventTransition",
+        "QMouseEventTransition",
+        "QSignalTransition",
+        "QState",
+        "QStateMachine"
+    ],
+    "QtTextToSpeech":
+    [
+        "QTextToSpeech",
+        "QVoice"
+    ]
+}
+```
+
+**Removed**:
+
+```json
+{
+    "QtCore": [
+        "QState",
+        "QtStateMachine",
+        "QRegExp"
+    ],
+    "QtGui": ["QRegExpValidator"]
+}
+```
+
+</details>
+
+##### Removed Members (Qt.py\==2.0.\*)
 
 With the removal of support PySide and PyQt4 `Qt.QT_SIP_API_HINT` was removed. `Qt.IsPySide` and `Qt.IsPyQt4` remain for compatibility, but will always return `False` now.
 
