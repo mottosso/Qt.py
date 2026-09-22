@@ -1462,6 +1462,33 @@ def test_misplaced():
             assert src_obj == dest_obj, f"Checking {src} <> {dest}"
 
 
+def test_misplaced_duplicates():
+    """Check for any `Qt._misplaced_members` where the src matches the destination
+    across all bindings. These are redundant and should be removed. They likely
+    were added to support changes from previous bindings."""
+    import Qt
+
+    misplaced = Qt._misplaced_members  # type: ignore
+    all_bindings = list(misplaced.keys())
+
+    # Find members present across all bindings
+    common_keys = set.intersection(*(set(m.keys()) for m in misplaced.values()))
+    common_keys.discard("__extras__")
+
+    # Find any misplaced mappings that have identical src and dest and are
+    # identical across all bindings.
+    duplicates = [
+        member
+        for member in sorted(common_keys)
+        if all(misplaced[b][member] == member for b in all_bindings)
+    ]
+
+    assert not duplicates, (
+        "Remove identical entries from Qt._misplaced_members, they are "
+        f"identical across all bindings: {duplicates}"
+    )
+
+
 def test__extras__():
     """Spot check binding specific imports for missing members.
 
@@ -1475,6 +1502,21 @@ def test__extras__():
     assert Qt.QtOpenGL.QOpenGLFunctions_2_0
     assert Qt.QtOpenGL.QOpenGLFunctions_2_1
     assert Qt.QtOpenGL.QOpenGLFunctions_4_1_Core
+
+    # PyQt6 6.7 and lower doesn't include QtStateMachine, exclude it from the test
+    ver = [int(x) for x in Qt.__binding_version__.split(".")]
+    if binding("PyQt6") and ver[:2] <= [6, 7]:
+        return
+    assert Qt.QtStateMachine.QAbstractState
+    assert Qt.QtStateMachine.QAbstractTransition
+    assert Qt.QtStateMachine.QEventTransition
+    assert Qt.QtStateMachine.QFinalState
+    assert Qt.QtStateMachine.QHistoryState
+    assert Qt.QtStateMachine.QKeyEventTransition
+    assert Qt.QtStateMachine.QMouseEventTransition
+    assert Qt.QtStateMachine.QSignalTransition
+    assert Qt.QtStateMachine.QState
+    assert Qt.QtStateMachine.QStateMachine
 
 
 def test__extras__none():
