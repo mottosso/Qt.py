@@ -631,7 +631,7 @@ To make a new release onto PyPI, you'll need to have the correct permissions and
 ### Qt 6 Transition Guide
 
 <!-- Tooltips used by the table -->
-[tt-event-pos]: ## "In Qt6 many but not all classes had their pos methods re-worked and simplified. If you are working with a instance of the a given class replace the old call with a QtCompat replacement class. The `.toPoint()` calls are only needed if you want to preserve the older int type instead of a float."
+[tt-event-pos]: #qt-6-transition-guide "In Qt6 many but not all classes had their pos methods re-worked and simplified. If you are working with a instance of the a given class replace the old call with a QtCompat replacement class. The `.toPoint()` calls are only needed if you want to preserve the older int type instead of a float."
 
 | Replace | With | Notes
 |:--------|:-----|:----------------------------

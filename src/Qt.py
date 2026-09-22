@@ -1727,13 +1727,13 @@ _compatibility_members = {
             "setWeight": "QtGui.QFont.setWeight",
         },
         "QDragEnterEvent": {
-            "position": "QtGui.QDragEnterEvent.pos",
+            "position": "QtGui.QDragEnterEvent.posF",
         },
         "QDragMoveEvent": {
-            "position": "QtGui.QDragMoveEvent.pos",
+            "position": "QtGui.QDragMoveEvent.posF",
         },
         "QDropEvent": {
-            "position": "QtGui.QDropEvent.pos",
+            "position": "QtGui.QDropEvent.posF",
         },
         "QEnterEvent": {
             "globalPosition": "QtGui.QEnterEvent.screenPos",
@@ -1741,7 +1741,7 @@ _compatibility_members = {
             "scenePosition": "QtGui.QEnterEvent.windowPos",
         },
         "QHoverEvent": {
-            "position": "QtGui.QHoverEvent.pos",
+            "position": "QtGui.QHoverEvent.posF",
         },
         "QMouseEvent": {
             "globalPosition": "QtGui.QMouseEvent.screenPos",
@@ -1754,12 +1754,12 @@ _compatibility_members = {
             "scenePosition": "QtGui.QNativeGestureEvent.windowPos",
         },
         "QTabletEvent": {
-            "globalPosition": "QtGui.QTabletEvent.globalPos",
-            "position": "QtGui.QTabletEvent.pos",
+            "globalPosition": "QtGui.QTabletEvent.globalPosF",
+            "position": "QtGui.QTabletEvent.posF",
         },
         "QWheelEvent": {
-            "globalPosition": "QtGui.QWheelEvent.globalPos",
-            "position": "QtGui.QWheelEvent.pos",
+            "globalPosition": "QtGui.QWheelEvent.globalPosF",
+            "position": "QtGui.QWheelEvent.posF",
         },
         "Qt": {
             "MidButton": "QtCore.Qt.MiddleButton",
@@ -1793,13 +1793,13 @@ _compatibility_members = {
             "setWeight": "QtGui.QFont.setWeight",
         },
         "QDragEnterEvent": {
-            "position": "QtGui.QDragEnterEvent.pos",
+            "position": "QtGui.QDragEnterEvent.posF",
         },
         "QDragMoveEvent": {
-            "position": "QtGui.QDragMoveEvent.pos",
+            "position": "QtGui.QDragMoveEvent.posF",
         },
         "QDropEvent": {
-            "position": "QtGui.QDropEvent.pos",
+            "position": "QtGui.QDropEvent.posF",
         },
         "QEnterEvent": {
             "globalPosition": "QtGui.QEnterEvent.screenPos",
@@ -1807,7 +1807,7 @@ _compatibility_members = {
             "scenePosition": "QtGui.QEnterEvent.windowPos",
         },
         "QHoverEvent": {
-            "position": "QtGui.QHoverEvent.pos",
+            "position": "QtGui.QHoverEvent.posF",
         },
         "QMouseEvent": {
             "globalPosition": "QtGui.QMouseEvent.screenPos",
@@ -1820,12 +1820,12 @@ _compatibility_members = {
             "scenePosition": "QtGui.QNativeGestureEvent.windowPos",
         },
         "QTabletEvent": {
-            "globalPosition": "QtGui.QTabletEvent.globalPos",
-            "position": "QtGui.QTabletEvent.pos",
+            "globalPosition": "QtGui.QTabletEvent.globalPosF",
+            "position": "QtGui.QTabletEvent.posF",
         },
         "QWheelEvent": {
-            "globalPosition": "QtGui.QWheelEvent.globalPos",
-            "position": "QtGui.QWheelEvent.pos",
+            "globalPosition": "QtGui.QWheelEvent.globalPosF",
+            "position": "QtGui.QWheelEvent.posF",
         },
         "Qt": {
             "MidButton": "QtCore.Qt.MiddleButton",
