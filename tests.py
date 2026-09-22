@@ -1153,6 +1153,7 @@ def test_binding_states():
 def test_qtcompat_base_class():
     """Tests to ensure the QtCompat namespace object works as expected"""
     import sys
+    import Qt
     from Qt import QtCompat, QtCore, QtGui, QtWidgets
 
     if not QtWidgets.QApplication.instance():
@@ -1172,8 +1173,71 @@ def test_qtcompat_base_class():
     pixmap = QtCompat.QWidget.grab(button)
     assert not pixmap.isNull()
 
-    # Check QMouseEvent compatibility wrappers
-    # NOTE: PyQt6 requires passing QPointF. Also it doesn't have Qt.MouseButtons
+    # Test each position QtCompat function.
+    # NOTE: These tests assume you are being given the class object already created
+    # by Qt, not that you are able to create them. For example QPointingDevice is
+    # not a common member but is required for creating QNativeGestureEvent. For this
+    # test, we use the hidden Qt._QtGui.QPointingDevice.
+
+    # Check all of the Event Pos wrappers
+    mime_data = QtCore.QMimeData()
+    mime_data.setText("Sample Data")
+
+    # QDragEnterEvent
+    drag_enter = QtGui.QDragEnterEvent(
+        QtCore.QPoint(2, 2),
+        QtCore.Qt.DropAction.CopyAction,
+        mime_data,
+        QtCore.Qt.MouseButton.LeftButton,
+        QtCore.Qt.KeyboardModifier.NoModifier,
+    )
+    assert QtCompat.QDragEnterEvent.position(drag_enter) == QtCore.QPointF(2, 2)
+    assert QtCompat.QDragEnterEvent.position(drag_enter).toPoint() == QtCore.QPoint(
+        2, 2
+    )
+
+    # QDragMoveEvent
+    drag_move = QtGui.QDragMoveEvent(
+        QtCore.QPoint(2, 2),
+        QtCore.Qt.DropAction.CopyAction,
+        mime_data,
+        QtCore.Qt.MouseButton.LeftButton,
+        QtCore.Qt.KeyboardModifier.NoModifier,
+    )
+    assert QtCompat.QDragMoveEvent.position(drag_move) == QtCore.QPointF(2, 2)
+    assert QtCompat.QDragMoveEvent.position(drag_move).toPoint() == QtCore.QPoint(2, 2)
+
+    # QDropEvent
+    drop = QtGui.QDropEvent(
+        QtCore.QPointF(3, 3),
+        QtCore.Qt.DropAction.CopyAction,
+        mime_data,
+        QtCore.Qt.MouseButton.LeftButton,
+        QtCore.Qt.KeyboardModifier.NoModifier,
+    )
+    assert QtCompat.QDropEvent.position(drop) == QtCore.QPointF(3, 3)
+    assert QtCompat.QDropEvent.position(drop).toPoint() == QtCore.QPoint(3, 3)
+
+    # QEnterEvent
+    enter_event = QtGui.QEnterEvent(
+        QtCore.QPointF(1, 1), QtCore.QPointF(2, 2), QtCore.QPointF(3, 3)
+    )
+    assert QtCompat.QEnterEvent.globalPosition(enter_event) == QtCore.QPointF(3, 3)
+    assert QtCompat.QEnterEvent.globalPosition(enter_event).toPoint() == QtCore.QPoint(
+        3, 3
+    )
+    assert QtCompat.QEnterEvent.position(enter_event) == QtCore.QPointF(1, 1)
+    assert QtCompat.QEnterEvent.position(enter_event).toPoint() == QtCore.QPoint(1, 1)
+    assert QtCompat.QEnterEvent.scenePosition(enter_event) == QtCore.QPointF(2, 2)
+
+    # QHoverEvent
+    hover = QtGui.QHoverEvent(
+        QtCore.QEvent.Type.HoverEnter, QtCore.QPointF(3, 3), QtCore.QPointF(2, 2)
+    )
+    QtCompat.QHoverEvent.position(hover).toPoint()
+    QtCompat.QHoverEvent.position(hover)
+
+    # QMouseEvent
     mouse_event = QtGui.QMouseEvent(
         QtCore.QEvent.Type.MouseButtonPress,
         QtCore.QPointF(1, 1),
@@ -1184,8 +1248,93 @@ def test_qtcompat_base_class():
         QtCore.Qt.KeyboardModifier.NoModifier,
     )
     assert QtCompat.QMouseEvent.globalPosition(mouse_event) == QtCore.QPointF(3, 3)
+    assert QtCompat.QMouseEvent.globalPosition(mouse_event).toPoint() == QtCore.QPoint(
+        3, 3
+    )
     assert QtCompat.QMouseEvent.position(mouse_event) == QtCore.QPointF(1, 1)
+    assert QtCompat.QMouseEvent.position(mouse_event).toPoint() == QtCore.QPoint(1, 1)
     assert QtCompat.QMouseEvent.scenePosition(mouse_event) == QtCore.QPointF(2, 2)
+
+    # QNativeGestureEvent
+    args = [QtCore.QPointF(1, 1), QtCore.QPointF(2, 2), QtCore.QPointF(3, 3), 0.1, 2, 3]
+    if binding("PySide6") or binding("PyQt6"):
+        # Work around QPointingDevice not being common.
+        args.insert(0, Qt._QtGui.QPointingDevice.primaryPointingDevice())  # type: ignore[attr-defined]
+    gesture_event = QtGui.QNativeGestureEvent(  # type: ignore[call-overload]
+        QtCore.Qt.NativeGestureType.ZoomNativeGesture,
+        *args,
+    )
+    assert QtCompat.QNativeGestureEvent.globalPosition(gesture_event) == QtCore.QPointF(
+        3, 3
+    )
+    assert QtCompat.QNativeGestureEvent.globalPosition(
+        gesture_event
+    ).toPoint() == QtCore.QPoint(3, 3)
+    assert QtCompat.QNativeGestureEvent.position(gesture_event) == QtCore.QPointF(1, 1)
+    assert QtCompat.QNativeGestureEvent.position(
+        gesture_event
+    ).toPoint() == QtCore.QPoint(1, 1)
+    assert QtCompat.QNativeGestureEvent.scenePosition(gesture_event) == QtCore.QPointF(
+        2, 2
+    )
+
+    # QTabletEvent
+    if binding("PySide6") or binding("PyQt6"):
+        args = [
+            # Work around QPointingDevice not being common.
+            Qt._QtGui.QPointingDevice.primaryPointingDevice(),  # type: ignore[attr-defined]
+            QtCore.QPointF(1, 1),  # pos
+            QtCore.QPointF(2, 2),  # global pos
+            0.0,  # pressure
+            0.0,  # xTilt
+            0.0,  # yTilt
+            0.0,  # tangentialPressure
+            0.0,  # rotation
+            0.0,  # z
+            QtCore.Qt.KeyboardModifier.NoModifier,  # keyState
+            QtCore.Qt.MouseButton.LeftButton,
+            QtCore.Qt.MouseButton.LeftButton | QtCore.Qt.MouseButton.RightButton,
+        ]
+    else:
+        args = [
+            QtCore.QPointF(1, 1),  # pos
+            QtCore.QPointF(2, 2),  # global pos
+            0,  # Device int
+            0,  # pointer type
+            0.0,  # pressure
+            0,  # xTilt
+            0,  # yTilt
+            0.0,  # tangentialPressure
+            0.0,  # rotation
+            0,  # z
+            QtCore.Qt.KeyboardModifier.NoModifier,  # keyState
+            0,  # uniqueId
+        ]
+    tablet_event = QtGui.QTabletEvent(QtCore.QEvent.Type.TabletPress, *args)  # type: ignore[call-overload]
+    assert QtCompat.QTabletEvent.globalPosition(tablet_event) == QtCore.QPointF(2, 2)
+    assert QtCompat.QTabletEvent.globalPosition(
+        tablet_event
+    ).toPoint() == QtCore.QPoint(2, 2)
+    assert QtCompat.QTabletEvent.position(tablet_event) == QtCore.QPointF(1, 1)
+    assert QtCompat.QTabletEvent.position(tablet_event).toPoint() == QtCore.QPoint(1, 1)
+
+    # QWheelEvent
+    wheel_event = QtGui.QWheelEvent(
+        QtCore.QPointF(1, 1),
+        QtCore.QPointF(2, 2),
+        QtCore.QPoint(0, 0),
+        QtCore.QPoint(0, 0),
+        QtCore.Qt.MouseButton.LeftButton,
+        QtCore.Qt.KeyboardModifier.NoModifier,
+        QtCore.Qt.ScrollPhase.NoScrollPhase,
+        False,
+    )
+    assert QtCompat.QWheelEvent.globalPosition(wheel_event) == QtCore.QPointF(2, 2)
+    assert QtCompat.QWheelEvent.globalPosition(wheel_event).toPoint() == QtCore.QPoint(
+        2, 2
+    )
+    assert QtCompat.QWheelEvent.position(wheel_event) == QtCore.QPointF(1, 1)
+    assert QtCompat.QWheelEvent.position(wheel_event).toPoint() == QtCore.QPoint(1, 1)
 
 
 def test_all_compatibility_members():
