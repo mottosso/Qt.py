@@ -426,6 +426,27 @@ def subprocess_check_output(cmd, **kwargs):
     return subprocess.check_output(cmd, **kwargs)
 
 
+def test_qinstallmessagehandler():
+    """QtCompat.qInstallMessageHandler installs a working message handler"""
+    from Qt import QtCompat, QtCore
+
+    received = []
+
+    def handler(msgType, logContext, msg):
+        received.append((msgType, logContext, msg))
+
+    QtCompat.qInstallMessageHandler(handler)
+    try:
+        QtCore.qDebug("Qt.py test message")
+    finally:
+        QtCompat.qInstallMessageHandler(None)
+
+    assert received, "Message handler was never invoked"
+    msgType, logContext, msg = received[0]
+    assert isinstance(msg, str), "Expected msg to be str, got %r" % type(msg)
+    assert msg == "Qt.py test message"
+
+
 @contextlib.contextmanager
 def ignoreQtMessageHandler(msgs):
     """A context that ignores specific qMessages for all bindings
@@ -1462,6 +1483,33 @@ def test_misplaced():
             assert src_obj == dest_obj, f"Checking {src} <> {dest}"
 
 
+def test_misplaced_duplicates():
+    """Check for any `Qt._misplaced_members` where the src matches the destination
+    across all bindings. These are redundant and should be removed. They likely
+    were added to support changes from previous bindings."""
+    import Qt
+
+    misplaced = Qt._misplaced_members  # type: ignore
+    all_bindings = list(misplaced.keys())
+
+    # Find members present across all bindings
+    common_keys = set.intersection(*(set(m.keys()) for m in misplaced.values()))
+    common_keys.discard("__extras__")
+
+    # Find any misplaced mappings that have identical src and dest and are
+    # identical across all bindings.
+    duplicates = [
+        member
+        for member in sorted(common_keys)
+        if all(misplaced[b][member] == member for b in all_bindings)
+    ]
+
+    assert not duplicates, (
+        "Remove identical entries from Qt._misplaced_members, they are "
+        f"identical across all bindings: {duplicates}"
+    )
+
+
 def test__extras__():
     """Spot check binding specific imports for missing members.
 
@@ -1475,6 +1523,21 @@ def test__extras__():
     assert Qt.QtOpenGL.QOpenGLFunctions_2_0
     assert Qt.QtOpenGL.QOpenGLFunctions_2_1
     assert Qt.QtOpenGL.QOpenGLFunctions_4_1_Core
+
+    # PyQt6 6.7 and lower doesn't include QtStateMachine, exclude it from the test
+    ver = [int(x) for x in Qt.__binding_version__.split(".")]
+    if binding("PyQt6") and ver[:2] <= [6, 7]:
+        return
+    assert Qt.QtStateMachine.QAbstractState
+    assert Qt.QtStateMachine.QAbstractTransition
+    assert Qt.QtStateMachine.QEventTransition
+    assert Qt.QtStateMachine.QFinalState
+    assert Qt.QtStateMachine.QHistoryState
+    assert Qt.QtStateMachine.QKeyEventTransition
+    assert Qt.QtStateMachine.QMouseEventTransition
+    assert Qt.QtStateMachine.QSignalTransition
+    assert Qt.QtStateMachine.QState
+    assert Qt.QtStateMachine.QStateMachine
 
 
 def test__extras__none():

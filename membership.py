@@ -40,6 +40,7 @@ BINDING_NAMES_QT6 = ["PySide6", "PyQt6"]
 # members. They will be assigned using the misplaced members.
 MISPLACED_MODULES = [
     "QtOpenGL",
+    "QtStateMachine",
 ]
 
 

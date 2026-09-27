@@ -46,7 +46,7 @@ import importlib
 import json
 
 
-__version__ = "2.0.7"
+__version__ = "2.1.0.dev1"
 
 # Enable support for `from Qt import *`
 __all__ = [
@@ -94,6 +94,7 @@ _common_members = {
         "QBuffer",
         "QByteArray",
         "QByteArrayMatcher",
+        "QCalendar",
         "QCborError",
         "QCborKnownTags",
         "QCborSimpleType",
@@ -110,6 +111,7 @@ _common_members = {
         "QDataStream",
         "QDate",
         "QDateTime",
+        "QDeadlineTimer",
         "QDir",
         "QDirIterator",
         "QDynamicPropertyChangeEvent",
@@ -168,6 +170,7 @@ _common_members = {
         "QReadWriteLock",
         "QRect",
         "QRectF",
+        "QRecursiveMutex",
         "QRegularExpression",
         "QRegularExpressionMatch",
         "QRegularExpressionMatchIterator",
@@ -248,6 +251,8 @@ _common_members = {
         "QClipboard",
         "QCloseEvent",
         "QColor",
+        "QColorConstants",
+        "QColorSpace",
         "QConicalGradient",
         "QContextMenuEvent",
         "QCursor",
@@ -329,6 +334,7 @@ _common_members = {
         "QRasterWindow",
         "QRawFont",
         "QRegion",
+        "QRegularExpressionValidator",
         "QResizeEvent",
         "QScreen",
         "QScrollEvent",
@@ -400,8 +406,10 @@ _common_members = {
         "QHelpEngineCore",
         "QHelpFilterData",
         "QHelpFilterEngine",
+        "QHelpFilterSettingsWidget",
         "QHelpIndexModel",
         "QHelpIndexWidget",
+        "QHelpLink",
         "QHelpSearchEngine",
         "QHelpSearchQuery",
         "QHelpSearchQueryWidget",
@@ -562,6 +570,7 @@ _common_members = {
         "QRemoteObjectRegistry",
         "QRemoteObjectRegistryHost",
         "QRemoteObjectReplica",
+        "QRemoteObjectSourceLocationInfo",
     ],
     "QtSensors": [
         "QAccelerometer",
@@ -617,6 +626,7 @@ _common_members = {
         "QTiltSensor",
         "qoutputrange",
     ],
+    "QtSerialPort": ["QSerialPort", "QSerialPortInfo"],
     "QtSql": [
         "QSql",
         "QSqlDatabase",
@@ -634,8 +644,10 @@ _common_members = {
         "QSqlResult",
         "QSqlTableModel",
     ],
+    "QtStateMachine": [],
     "QtSvg": ["QSvgGenerator", "QSvgRenderer"],
     "QtTest": ["QTest"],
+    "QtTextToSpeech": ["QTextToSpeech", "QVoice"],
     "QtWebChannel": ["QWebChannel", "QWebChannelAbstractTransport"],
     "QtWebSockets": [
         "QMaskGenerator",
@@ -857,12 +869,14 @@ The "_common_members_sources" list is generated using the
 
 """
 _common_members_sources = [
-    "PyQt5-5.13.2_py-3.7.17",
-    "PyQt5-5.15.11_py-3.9.25",
-    "PyQt6-6.7.1_py-3.11.14",
-    "PySide2-5.13.2_py-3.7.17",
-    "PySide2-5.15.2.1_py-3.9.25",
-    "PySide6-6.5.3_py-3.11.14",
+    "PyQt5-5.15.11_py-3.9.13",
+    "PyQt5-5.15.9_py-3.7.9",
+    "PyQt6-6.7.1_py-3.11.9",
+    "PyQt6-6.8.1_py-3.13.3",
+    "PySide2-5.15.2.1_py-3.7.9",
+    "PySide2-5.15.2.1_py-3.9.13",
+    "PySide6-6.5.3_py-3.11.9",
+    "PySide6-6.8.3_py-3.13.3",
 ]
 
 """ Missing members
@@ -883,33 +897,28 @@ _missing_members = {
 
 
 def _qInstallMessageHandler(handler):
-    """Install a message handler that works in all bindings
+    """Install a message handler that works in all bindings.
+
+    This wrapper likely is no longer needed and is being kept for backwards
+    compatibility. The only reason to continue using this is if something passes
+    bytes to msg, but this likely only happened in Qt4.
+
+    The handler function should have this signature:
+
+    def msg_handler(msg_type: QtMsgType, context: QMessageLogContext, msg: str) -> None:
 
     Args:
-        handler: A function that takes 3 arguments, or None
+        handler: A function that takes 3 arguments, or None. None restores the
+            default handler.
+
+    Returns:
+        The previous message handler
     """
 
-    def messageOutputHandler(*args):
-        # TODO: Can this be removed by dropping Qt4?
-        # In Qt4 bindings, message handlers are passed 2 arguments
-        # In Qt5 bindings, message handlers are passed 3 arguments
-        # The first argument is a QtMsgType
-        # The last argument is the message to be printed
-        # The Middle argument (if passed) is a QMessageLogContext
-        if len(args) == 3:
-            msgType, logContext, msg = args
-        elif len(args) == 2:
-            msgType, msg = args
-            logContext = None
-        else:
-            raise TypeError(
-                "handler expected 2 or 3 arguments, got {0}".format(len(args))
-            )
-
+    def messageOutputHandler(msgType, logContext, msg):
         if isinstance(msg, bytes):
-            # In python 3, some bindings pass a bytestring, which cannot be
-            # used elsewhere. Decoding a python 2 or 3 bytestring object will
-            # consistently return a unicode object.
+            # Some bindings pass a bytestring, which cannot be used elsewhere.
+            # Decoding a bytestring object will consistently return a str object.
             msg = msg.decode()
 
         handler(msgType, logContext, msg)
@@ -1364,25 +1373,27 @@ _misplaced_members = {
     "PySide6": {
         "__extras__": ["QtSvgWidgets", "QtUiTools"],
         "QtCore.Property": "QtCore.Property",
-        "QtCore.QAbstractProxyModel": "QtCore.QAbstractProxyModel",
         "QtCore.QCoreApplication.translate": ["QtCompat.translate", _translate],
         "QtCore.qInstallMessageHandler": [
             "QtCompat.qInstallMessageHandler",
             _qInstallMessageHandler,
         ],
-        "QtCore.QItemSelection": "QtCore.QItemSelection",
-        "QtCore.QItemSelectionModel": "QtCore.QItemSelectionModel",
-        "QtCore.QItemSelectionRange": "QtCore.QItemSelectionRange",
-        "QtCore.QRegularExpression": "QtCore.QRegExp",
-        "QtCore.QSortFilterProxyModel": "QtCore.QSortFilterProxyModel",
-        "QtCore.QStringListModel": "QtCore.QStringListModel",
+        "QtStateMachine.QAbstractState": "QtStateMachine.QAbstractState",
+        "QtStateMachine.QAbstractTransition": "QtStateMachine.QAbstractTransition",
+        "QtStateMachine.QEventTransition": "QtStateMachine.QEventTransition",
+        "QtStateMachine.QFinalState": "QtStateMachine.QFinalState",
+        "QtStateMachine.QHistoryState": "QtStateMachine.QHistoryState",
+        "QtStateMachine.QKeyEventTransition": "QtStateMachine.QKeyEventTransition",
+        "QtStateMachine.QMouseEventTransition": "QtStateMachine.QMouseEventTransition",
+        "QtStateMachine.QSignalTransition": "QtStateMachine.QSignalTransition",
+        "QtStateMachine.QState": "QtStateMachine.QState",
+        "QtStateMachine.QStateMachine": "QtStateMachine.QStateMachine",
         "QtCore.Signal": "QtCore.Signal",
         "QtCore.Slot": "QtCore.Slot",
         # Preserve backwards compatibility while also supporting the Qt6 member locations
         "QtGui.QAction": [True, "QtGui.QAction", "QtWidgets.QAction"],
         "QtGui.QActionGroup": [True, "QtGui.QActionGroup", "QtWidgets.QActionGroup"],
         "QtWidgets.QFileSystemModel": "QtWidgets.QFileSystemModel",
-        "QtGui.QRegularExpressionValidator": "QtGui.QRegExpValidator",
         "QtGui.QShortcut": [True, "QtGui.QShortcut", "QtWidgets.QShortcut"],
         "QtGui.QUndoCommand": [True, "QtGui.QUndoCommand", "QtWidgets.QUndoCommand"],
         "QtGui.QUndoGroup": [True, "QtGui.QUndoGroup", "QtWidgets.QUndoGroup"],
@@ -1392,8 +1403,6 @@ _misplaced_members = {
         "QtOpenGL.QOpenGLFunctions_2_0": "QtOpenGL.QOpenGLFunctions_2_0",
         "QtOpenGL.QOpenGLFunctions_2_1": "QtOpenGL.QOpenGLFunctions_2_1",
         "QtOpenGL.QOpenGLFunctions_4_1_Core": "QtOpenGL.QOpenGLFunctions_4_1_Core",
-        "QtStateMachine.QState": "QtCore.QState",
-        "QtStateMachine.QStateMachine": "QtCore.QStateMachine",
         "QtSvgWidgets.QGraphicsSvgItem": "QtSvg.QGraphicsSvgItem",
         "QtSvgWidgets.QSvgWidget": "QtSvg.QSvgWidget",
         "QtUiTools.QUiLoader": ["QtCompat.loadUi", _loadUi],
@@ -1409,23 +1418,27 @@ _misplaced_members = {
         "QtCore.pyqtProperty": "QtCore.Property",
         "QtCore.pyqtSignal": "QtCore.Signal",
         "QtCore.pyqtSlot": "QtCore.Slot",
-        "QtCore.QAbstractProxyModel": "QtCore.QAbstractProxyModel",
         "QtCore.QCoreApplication.translate": ["QtCompat.translate", _translate],
         "QtCore.qInstallMessageHandler": [
             "QtCompat.qInstallMessageHandler",
             _qInstallMessageHandler,
         ],
-        "QtCore.QItemSelection": "QtCore.QItemSelection",
-        "QtCore.QItemSelectionModel": "QtCore.QItemSelectionModel",
-        "QtCore.QItemSelectionRange": "QtCore.QItemSelectionRange",
-        "QtCore.QRegularExpression": "QtCore.QRegExp",
-        "QtCore.QSortFilterProxyModel": "QtCore.QSortFilterProxyModel",
-        "QtCore.QStringListModel": "QtCore.QStringListModel",
+        # Note: PyQt6 6.7 and lower don't include QtStateMachine so these will not
+        # resolve in those environments, but this enables support for PyQt6 6.8+.
+        "QtStateMachine.QAbstractState": "QtStateMachine.QAbstractState",
+        "QtStateMachine.QAbstractTransition": "QtStateMachine.QAbstractTransition",
+        "QtStateMachine.QEventTransition": "QtStateMachine.QEventTransition",
+        "QtStateMachine.QFinalState": "QtStateMachine.QFinalState",
+        "QtStateMachine.QHistoryState": "QtStateMachine.QHistoryState",
+        "QtStateMachine.QKeyEventTransition": "QtStateMachine.QKeyEventTransition",
+        "QtStateMachine.QMouseEventTransition": "QtStateMachine.QMouseEventTransition",
+        "QtStateMachine.QSignalTransition": "QtStateMachine.QSignalTransition",
+        "QtStateMachine.QState": "QtStateMachine.QState",
+        "QtStateMachine.QStateMachine": "QtStateMachine.QStateMachine",
         # Preserve backwards compatibility while also supporting the Qt6 member locations
         "QtGui.QAction": [True, "QtGui.QAction", "QtWidgets.QAction"],
         "QtGui.QActionGroup": [True, "QtGui.QActionGroup", "QtWidgets.QActionGroup"],
         "QtGui.QFileSystemModel": "QtWidgets.QFileSystemModel",
-        "QtGui.QRegularExpressionValidator": "QtGui.QRegExpValidator",
         "QtGui.QShortcut": [True, "QtGui.QShortcut", "QtWidgets.QShortcut"],
         "QtGui.QUndoCommand": [True, "QtGui.QUndoCommand", "QtWidgets.QUndoCommand"],
         "QtGui.QUndoGroup": [True, "QtGui.QUndoGroup", "QtWidgets.QUndoGroup"],
@@ -1435,8 +1448,6 @@ _misplaced_members = {
         "QtOpenGL.QOpenGLFunctions_2_0": "QtOpenGL.QOpenGLFunctions_2_0",
         "QtOpenGL.QOpenGLFunctions_2_1": "QtOpenGL.QOpenGLFunctions_2_1",
         "QtOpenGL.QOpenGLFunctions_4_1_Core": "QtOpenGL.QOpenGLFunctions_4_1_Core",
-        "QtStateMachine.QState": "QtCore.QState",
-        "QtStateMachine.QStateMachine": "QtCore.QStateMachine",
         "QtSvgWidgets.QGraphicsSvgItem": "QtSvg.QGraphicsSvgItem",
         "QtSvgWidgets.QSvgWidget": "QtSvg.QSvgWidget",
         "QtWidgets.qApp": "QtWidgets.QApplication.instance()",
@@ -1450,24 +1461,26 @@ _misplaced_members = {
     "PySide2": {
         "__extras__": ["QtOpenGLFunctions", "QtUiTools"],
         "QtCore.Property": "QtCore.Property",
-        "QtCore.QAbstractProxyModel": "QtCore.QAbstractProxyModel",
         "QtCore.QCoreApplication.translate": ["QtCompat.translate", _translate],
         "QtCore.qInstallMessageHandler": [
             "QtCompat.qInstallMessageHandler",
             _qInstallMessageHandler,
         ],
-        "QtCore.QItemSelection": "QtCore.QItemSelection",
-        "QtCore.QItemSelectionModel": "QtCore.QItemSelectionModel",
-        "QtCore.QItemSelectionRange": "QtCore.QItemSelectionRange",
-        "QtCore.QRegExp": "QtCore.QRegExp",
-        "QtCore.QSortFilterProxyModel": "QtCore.QSortFilterProxyModel",
-        "QtCore.QStringListModel": "QtCore.QStringListModel",
+        "QtCore.QAbstractState": "QtStateMachine.QAbstractState",
+        "QtCore.QAbstractTransition": "QtStateMachine.QAbstractTransition",
+        "QtCore.QEventTransition": "QtStateMachine.QEventTransition",
+        "QtCore.QFinalState": "QtStateMachine.QFinalState",
+        "QtCore.QHistoryState": "QtStateMachine.QHistoryState",
+        "QtWidgets.QKeyEventTransition": "QtStateMachine.QKeyEventTransition",
+        "QtWidgets.QMouseEventTransition": "QtStateMachine.QMouseEventTransition",
+        "QtCore.QSignalTransition": "QtStateMachine.QSignalTransition",
+        "QtCore.QState": "QtStateMachine.QState",
+        "QtCore.QStateMachine": "QtStateMachine.QStateMachine",
         "QtCore.Signal": "QtCore.Signal",
         "QtCore.Slot": "QtCore.Slot",
         "QtGui.QAbstractOpenGLFunctions": "QtOpenGL.QAbstractOpenGLFunctions",
         "QtWidgets.QFileSystemModel": "QtWidgets.QFileSystemModel",
         "QtGui.QOpenGLBuffer": "QtOpenGL.QOpenGLBuffer",
-        "QtGui.QRegExpValidator": "QtGui.QRegExpValidator",
         # Older versions of PySide2 still left this in QtGui, this accounts for those too
         "QtGui.QStringListModel": "QtCore.QStringListModel",
         "QtOpenGLFunctions.QOpenGLFunctions_2_0": "QtOpenGL.QOpenGLFunctions_2_0",
@@ -1511,22 +1524,24 @@ _misplaced_members = {
         "QtCore.pyqtProperty": "QtCore.Property",
         "QtCore.pyqtSignal": "QtCore.Signal",
         "QtCore.pyqtSlot": "QtCore.Slot",
-        "QtCore.QAbstractProxyModel": "QtCore.QAbstractProxyModel",
         "QtCore.QCoreApplication.translate": ["QtCompat.translate", _translate],
         "QtCore.qInstallMessageHandler": [
             "QtCompat.qInstallMessageHandler",
             _qInstallMessageHandler,
         ],
-        "QtCore.QItemSelection": "QtCore.QItemSelection",
-        "QtCore.QItemSelectionModel": "QtCore.QItemSelectionModel",
-        "QtCore.QItemSelectionRange": "QtCore.QItemSelectionRange",
-        "QtCore.QRegExp": "QtCore.QRegExp",
-        "QtCore.QSortFilterProxyModel": "QtCore.QSortFilterProxyModel",
-        "QtCore.QStringListModel": "QtCore.QStringListModel",
+        "QtCore.QAbstractState": "QtStateMachine.QAbstractState",
+        "QtCore.QAbstractTransition": "QtStateMachine.QAbstractTransition",
+        "QtCore.QEventTransition": "QtStateMachine.QEventTransition",
+        "QtCore.QFinalState": "QtStateMachine.QFinalState",
+        "QtCore.QHistoryState": "QtStateMachine.QHistoryState",
+        "QtWidgets.QKeyEventTransition": "QtStateMachine.QKeyEventTransition",
+        "QtWidgets.QMouseEventTransition": "QtStateMachine.QMouseEventTransition",
+        "QtCore.QSignalTransition": "QtStateMachine.QSignalTransition",
+        "QtCore.QState": "QtStateMachine.QState",
+        "QtCore.QStateMachine": "QtStateMachine.QStateMachine",
         "QtGui.QAbstractOpenGLFunctions": "QtOpenGL.QAbstractOpenGLFunctions",
         "QtWidgets.QFileSystemModel": "QtWidgets.QFileSystemModel",
         "QtGui.QOpenGLBuffer": "QtOpenGL.QOpenGLBuffer",
-        "QtGui.QRegExpValidator": "QtGui.QRegExpValidator",
         "QtSvg.QGraphicsSvgItem": "QtSvg.QGraphicsSvgItem",
         "QtSvg.QSvgWidget": "QtSvg.QSvgWidget",
         "QtWidgets.QAction": [True, "QtWidgets.QAction", "QtGui.QAction"],
