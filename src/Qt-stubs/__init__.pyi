@@ -15,6 +15,7 @@ from . import QtQuickWidgets as QtQuickWidgets
 from . import QtRemoteObjects as QtRemoteObjects
 from . import QtSensors as QtSensors
 from . import QtSql as QtSql
+from . import QtStateMachine as QtStateMachine
 from . import QtSvg as QtSvg
 from . import QtTest as QtTest
 from . import QtWebChannel as QtWebChannel

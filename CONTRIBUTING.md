@@ -4,7 +4,7 @@ Thanks for taking the time to contribute!
 
 In here you'll find a series of guidelines for how you can make Qt.py better suit your needs and the needs of the target audience - film, games and tv.
 
-Qt.py was born to address the growing needs in these industries for the development of software capable of running with more than a single flavor of the Qt bindings for Python - PySide, PySide2, PyQt4 and PyQt5.
+Qt.py was born to address the growing needs in these industries for the development of software capable of running with more than a single flavor of the Qt bindings for Python - PySide2, PySide6, PyQt5 and PyQt6.
 
 **Table of contents**
 
@@ -26,7 +26,7 @@ Qt.py was born to address the growing needs in these industries for the developm
 
 ### Development Goals
 
-Qt.py was born in the film and visual effects industry to address the growing needs for the development of software capable of running with more than one flavor of the Qt bindings for Python - PySide, PySide2, PyQt4 and PyQt5.
+Qt.py was born in the film and visual effects industry to address the growing needs for the development of software capable of running with more than one flavor of the Qt bindings for Python - PySide2, PySide6, PyQt5 and PyQt6.
 
 | Goal                       | Description
 |:---------------------------|:---------------
@@ -62,7 +62,7 @@ QtCompat.translate = translate
 
 ##### Keep it simple
 
-At the end of the day, Qt.py is a middle-man. It delegates requests you make to the appropriate receiver, such as PySide2. Try and keep it that way without the added overhead of complexity.
+At the end of the day, Qt.py is a middle-man. It delegates requests you make to the appropriate receiver, such as PySide6. Try and keep it that way without the added overhead of complexity.
 
 <br>
 
@@ -144,7 +144,7 @@ Your code will be reviewed and merged once it:
 
 The parent project ever only contains a single branch, a branch containing the latest working version of the project.
 
-We understand and recognise that "forking" and "pull-requests" can be a daunting aspect for a beginner, so don't hesitate to ask. A pull-request should normally follow an issue where you elaborate on your desires; this is also a good place to ask about these things.
+We understand and recognize that "forking" and "pull-requests" can be a daunting aspect for a beginner, so don't hesitate to ask. A pull-request should normally follow an issue where you elaborate on your desires; this is also a good place to ask about these things.
 
 <br>
 
